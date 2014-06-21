@@ -1,6 +1,7 @@
 {
 	"type":"User orders",
 	"description":"",
+    "isECommerce":true,
 	"configBasique":{
 		"title":"User orders",
 		"bType":"userOrders",

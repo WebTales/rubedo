@@ -1,6 +1,7 @@
 {
 	"type":"Order detail",
 	"description":"",
+    "isECommerce":true,
 	"configBasique":{
 		"title":"Order detail",
 		"bType":"orderDetail",

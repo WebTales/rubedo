@@ -1,6 +1,7 @@
 {
 	"type":"Shopping Cart",
 	"description":"",
+    "isECommerce":true,
 	"configBasique":{
 		"title":"Shopping Cart",
 		"bType":"shoppingCart",

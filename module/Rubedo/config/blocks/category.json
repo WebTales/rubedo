@@ -1,6 +1,7 @@
 {
 	"type":"Category",
 	"description":"",
+    "isECommerce":true,
 	"configBasique":{
 		"title":"Category",
 		"bType":"category",
