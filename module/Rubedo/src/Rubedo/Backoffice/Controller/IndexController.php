@@ -51,7 +51,7 @@ class IndexController extends AbstractExtLoaderController
         
         if (! Manager::getService('Acl')->hasAccess('ui.backoffice')) {
             $redirectParams = array(
-                'action' => 'confirm-logout',
+                'action' => 'index',
                 'controller' => 'logout'
             );
             return $this->redirect()->toRoute(null, $redirectParams);
