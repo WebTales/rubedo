@@ -20,6 +20,8 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Rubedo\Content\Context;
 use Zend\View\Model\JsonModel;
+use Zend\Http\Client;
+use Zend\Http\Request;
 
 /**
  * Controller providing access control list
@@ -79,28 +81,41 @@ class FileController extends AbstractActionController
     public function updateAction()
     {
         Context::setExpectJson();
-        $fileInfos = $this->params()->fromFiles('image');
+        $imageUrl=$this->params()->fromQuery("image");
+
+
+        $info = pathinfo($imageUrl);
         
-        $mimeType = mime_content_type($fileInfos['tmp_name']);
+        $mimeType = "image/" . strtolower($info['extension']);
         
         $fileService = Manager::getService('Files');
         $originalId = $this->params()->fromQuery("originalId");
         if(!$originalId){
             throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
         }
+        $c = new Client();
+        $request = new Request;
+        $request->setUri($imageUrl);
+        $result = $c->send($request);
+        if(!$result){
+            throw new \Rubedo\Exceptions\Server("Unable to download new image");
+        }
+        $img = $result->getBody();
+
         $removeOldResult = $fileService->destroy(array(
             'id' => $originalId,
             'version' => 1
         ));
         $fileObj = array(
-            'serverFilename' => $fileInfos['tmp_name'],
-            'text' => $fileInfos['name'],
-            'filename' => $fileInfos['name'],
-            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfos['type'],
+            'bytes' => $img,
+            'text' => $info['filename'],
+            'filename' => $info['basename'],
+            'Content-Type' => $mimeType,
             'mainFileType' => 'Image',
             '_id' => new \MongoId($originalId)
         );
-        $updateResult = $fileService->create($fileObj);
+
+        $updateResult = $fileService->createBinary($fileObj);
         
         // trigger deletion of cache : sys_get_temp_dir() . '/' . $fileId . '_'
         $directoryIterator = new \DirectoryIterator(sys_get_temp_dir());
