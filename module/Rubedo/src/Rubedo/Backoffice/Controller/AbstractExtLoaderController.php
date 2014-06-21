@@ -40,7 +40,8 @@ abstract class AbstractExtLoaderController extends AbstractActionController
         $this->viewData = array();
         $config=Manager::getService("config");
         $extjsOptions = array();
-        $extjsOptions['debug']=$config['rubedo_config']['extDebug'];
+        $extjsOptions['debug']=isset($config['rubedo_config']['extDebug']) ? $config['rubedo_config']['extDebug'] : "0";
+        $extjsOptions['addECommerce']=isset($config['rubedo_config']['addECommerce']) ? $config['rubedo_config']['addECommerce'] : "1";
         $this->viewData['baseUrl'] = $this->request->getBasePath();
         
 
@@ -52,10 +53,15 @@ abstract class AbstractExtLoaderController extends AbstractActionController
             $this->viewData['userLang'] = $currentUserLanguage;
         }
         
-        if ( isset($extjsOptions['debug']) && $extjsOptions['debug'] == "1") {
+        if ( $extjsOptions['debug'] == "1") {
             $this->viewData['extJsScript'] = 'ext-all-debug.js';
         } else {
             $this->viewData['extJsScript'] = 'ext-all.js';
+        }
+        if ( $extjsOptions['addECommerce'] == "1") {
+            $this->viewData['addECommerce'] = true;
+        } else {
+            $this->viewData['addECommerce'] = false;
         }
         $viewModel = new ViewModel($this->viewData);
         $viewModel->setTerminal(true);
