@@ -191,6 +191,11 @@ class Sites extends AbstractLocalizableCollection implements ISites
             if (!empty($site)) {
                 return $site;
             }
+        } else {
+            $site = $this->findByName($host);
+            if (!empty($site)) {
+                return $site;
+            }
         }
         throw new Server('No site found');
     }
