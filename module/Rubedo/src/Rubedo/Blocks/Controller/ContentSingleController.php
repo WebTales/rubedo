@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,11 +16,10 @@
  */
 namespace Rubedo\Blocks\Controller;
 
-Use Rubedo\Services\Manager;
-Use Alb\OEmbed;
-use Zend\Debug\Debug;
-use Zend\View\Model\JsonModel;
+use Alb\OEmbed;
 use Rubedo\Services\Cache;
+use Rubedo\Services\Manager;
+use Zend\View\Model\JsonModel;
 
 /**
  *
@@ -31,23 +30,23 @@ use Rubedo\Services\Cache;
 class ContentSingleController extends AbstractController
 {
 
-    public function indexAction ()
+    public function indexAction()
     {
         $this->_dataReader = Manager::getService('Contents');
         $this->_typeReader = Manager::getService('ContentTypes');
         $site = $this->params()->fromQuery('site');
         $blockConfig = $this->params()->fromQuery('block-config');
         $output["blockConfig"] = $blockConfig;
-        
+
         $mongoId = $this->params()->fromQuery('content-id');
         if (isset($output["blockConfig"]["contentId"])) {
             $mongoId = $output["blockConfig"]["contentId"];
         }
         $frontOfficeTemplatesService = Manager::getService('FrontOfficeTemplates');
-        
+
         if (isset($mongoId) && $mongoId != 0) {
             $content = $this->_dataReader->findById($mongoId, true, false);
-            if (! $content) {
+            if (!$content) {
                 return $this->_sendResponse(array(), "block.html.twig");
             }
             $data = $content['fields'];
@@ -58,20 +57,20 @@ class ContentSingleController extends AbstractController
                         if ($key == 'navigation') {
                             continue;
                         }
-                        
-                        if (! is_array($terms) && is_string($terms)) {
+
+                        if (!is_array($terms) && is_string($terms)) {
                             $terms = array(
                                 $terms
                             );
                         }
-                        if (is_array($terms)){
+                        if (is_array($terms)) {
                             foreach ($terms as $term) {
                                 $readTerm = Manager::getService('TaxonomyTerms')->getTerm($term);
-                                
+
                                 if ($readTerm === null) {
                                     $readTerm = array();
                                 }
-                                
+
                                 foreach ($readTerm as $key => $value) {
                                     $termsArray[$key][] = $value;
                                 }
@@ -83,7 +82,7 @@ class ContentSingleController extends AbstractController
             $data['terms'] = $termsArray;
             $data["id"] = $mongoId;
             $data['locale'] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
-            
+
             $type = $this->_typeReader->findById($content['typeId'], true, false);
             $cTypeArray = array();
             $variantTypeArray = array();
@@ -92,7 +91,7 @@ class ContentSingleController extends AbstractController
             $output = $this->params()->fromQuery();
             foreach ($type["fields"] as $value) {
 
-                if ((isset($value['config']['useAsVariation']))&&($value['config']['useAsVariation']===true)){
+                if ((isset($value['config']['useAsVariation'])) && ($value['config']['useAsVariation'] === true)) {
                     $variantTypeArray[$value['config']['name']] = $value;
                 } else {
                     $cTypeArray[$value['config']['name']] = $value;
@@ -111,117 +110,117 @@ class ContentSingleController extends AbstractController
                             $contentTitlesArray[$value['config']['name']] = $intermedContent['fields']['text'];
                         }
                     }
-                } else 
-                    if (($value["cType"] == "CKEField")&&(isset($value["config"]["CKETBConfig"]))) {
+                } else
+                    if (($value["cType"] == "CKEField") && (isset($value["config"]["CKETBConfig"]))) {
                         $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
-                    } else 
-                        if (($value["cType"] == "externalMediaField")&&(isset( $data[$value["config"]["name"]]))) {
+                    } else
+                        if (($value["cType"] == "externalMediaField") && (isset($data[$value["config"]["name"]]))) {
                             $mediaConfig = $data[$value["config"]["name"]];
-                            
+
                             if (isset($mediaConfig['url'])) {
-                                
+
                                 $oembedParams['url'] = $mediaConfig['url'];
-                                
+
                                 $cache = Cache::getCache('oembed');
-            
-            $options = array();
-            
-            if (isset($blockConfig['maxWidth'])) {
-                $oembedParams['maxWidth'] = $blockConfig['maxWidth'];
-                $options['maxWidth'] = $blockConfig['maxWidth'];
-            } else {
-                $oembedParams['maxWidth'] = 0;
-            }
-            
-            if (isset($blockConfig['maxHeight'])) {
-                $oembedParams['maxHeight'] = $blockConfig['maxHeight'];
-                $options['maxHeight'] = $blockConfig['maxHeight'];
-            } else {
-                $oembedParams['maxHeight'] = 0;
-            }
-            
-            $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
-            $loaded = false;
-            $item = $cache->getItem($cacheKey,$loaded);
-            
-            if (!$loaded) {
-                // If the URL come from flickr, we check the URL
-                if (stristr($oembedParams['url'], 'www.flickr.com')) {
-                    $decomposedUrl = explode("/", $oembedParams['url']);
-                    
-                    $end = false;
-                    
-                    // We search the photo identifiant and we remove all parameters after it
-                    foreach ($decomposedUrl as $key => $value) {
-                        if (is_numeric($value) && strlen($value) === 10) {
-                            $end = true;
-                            continue;
-                        }
-                        
-                        if ($end) {
-                            unset($decomposedUrl[$key]);
-                        }
-                    }
-                    
-                    $oembedParams['url'] = implode("/", $decomposedUrl);
-                }
-                
-                $response = OEmbed\Simple::request($oembedParams['url'], $options);
-                
-                $item['width'] = $oembedParams['maxWidth'];
-                $item['height'] = $oembedParams['maxHeight'];
-                if (! stristr($oembedParams['url'], 'www.flickr.com')) {
-                    $item['html'] = $response->getHtml();
-                } else {
-                    $raw = $response->getRaw();
-                    if ($oembedParams['maxWidth'] > 0) {
-                        $width_ratio = $raw->width / $oembedParams['maxWidth'];
-                    } else {
-                        $width_ratio = 1;
-                    }
-                    if ($oembedParams['maxHeight'] > 0) {
-                        $height_ratio = $raw->height / $oembedParams['maxHeight'];
-                    } else {
-                        $height_ratio = 1;
-                    }
-                    
-                    $size = "";
-                    if ($width_ratio > $height_ratio) {
-                        $size = "width='" . $oembedParams['maxWidth'] . "'";
-                    }
-                    if ($width_ratio < $height_ratio) {
-                        $size = "height='" . $oembedParams['maxHeight'] . "'";
-                    }
-                    $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
-                }
-                
-                $cache->setItem($cacheKey,$item);
-            }
-            
-            $output['item'] = $item;
+
+                                $options = array();
+
+                                if (isset($blockConfig['maxWidth'])) {
+                                    $oembedParams['maxWidth'] = $blockConfig['maxWidth'];
+                                    $options['maxWidth'] = $blockConfig['maxWidth'];
+                                } else {
+                                    $oembedParams['maxWidth'] = 0;
+                                }
+
+                                if (isset($blockConfig['maxHeight'])) {
+                                    $oembedParams['maxHeight'] = $blockConfig['maxHeight'];
+                                    $options['maxHeight'] = $blockConfig['maxHeight'];
+                                } else {
+                                    $oembedParams['maxHeight'] = 0;
+                                }
+
+                                $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
+                                $loaded = false;
+                                $item = $cache->getItem($cacheKey, $loaded);
+
+                                if (!$loaded) {
+                                    // If the URL come from flickr, we check the URL
+                                    if (stristr($oembedParams['url'], 'www.flickr.com')) {
+                                        $decomposedUrl = explode("/", $oembedParams['url']);
+
+                                        $end = false;
+
+                                        // We search the photo identifiant and we remove all parameters after it
+                                        foreach ($decomposedUrl as $key => $value) {
+                                            if (is_numeric($value) && strlen($value) === 10) {
+                                                $end = true;
+                                                continue;
+                                            }
+
+                                            if ($end) {
+                                                unset($decomposedUrl[$key]);
+                                            }
+                                        }
+
+                                        $oembedParams['url'] = implode("/", $decomposedUrl);
+                                    }
+
+                                    $response = OEmbed\Simple::request($oembedParams['url'], $options);
+
+                                    $item['width'] = $oembedParams['maxWidth'];
+                                    $item['height'] = $oembedParams['maxHeight'];
+                                    if (!stristr($oembedParams['url'], 'www.flickr.com')) {
+                                        $item['html'] = $response->getHtml();
+                                    } else {
+                                        $raw = $response->getRaw();
+                                        if ($oembedParams['maxWidth'] > 0) {
+                                            $width_ratio = $raw->width / $oembedParams['maxWidth'];
+                                        } else {
+                                            $width_ratio = 1;
+                                        }
+                                        if ($oembedParams['maxHeight'] > 0) {
+                                            $height_ratio = $raw->height / $oembedParams['maxHeight'];
+                                        } else {
+                                            $height_ratio = 1;
+                                        }
+
+                                        $size = "";
+                                        if ($width_ratio > $height_ratio) {
+                                            $size = "width='" . $oembedParams['maxWidth'] . "'";
+                                        }
+                                        if ($width_ratio < $height_ratio) {
+                                            $size = "height='" . $oembedParams['maxHeight'] . "'";
+                                        }
+                                        $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
+                                    }
+
+                                    $cache->setItem($cacheKey, $item);
+                                }
+
+                                $output['item'] = $item;
                             }
                         }
             }
-            if (isset($type['code']) && ! empty($type['code'])) {
+            if (isset($type['code']) && !empty($type['code'])) {
                 $templateName = $type['code'] . ".html.twig";
             } else {
                 $templateName = preg_replace('#[^a-zA-Z]#', '', $type["type"]);
                 $templateName .= ".html.twig";
             }
-            $hasCustomLayout=false;
-            $customLayoutRows=array();
-            if ((isset($type['layouts']))&&(is_array($type['layouts']))){
+            $hasCustomLayout = false;
+            $customLayoutRows = array();
+            if ((isset($type['layouts'])) && (is_array($type['layouts']))) {
                 foreach ($type['layouts'] as $key => $value) {
-                    if (($value['type']=="Detail")&&($value['active'])&&($value['site']==$site['id'])){
-                        $hasCustomLayout=true;
-                        $customLayoutRows=$value['rows'];
+                    if (($value['type'] == "Detail") && ($value['active']) && ($value['site'] == $site['id'])) {
+                        $hasCustomLayout = true;
+                        $customLayoutRows = $value['rows'];
                     }
                 }
             }
             $output["data"] = $data;
-            $output["isProduct"]=false;
+            $output["isProduct"] = false;
 
-            $output["customLayoutRows"]=$customLayoutRows;
+            $output["customLayoutRows"] = $customLayoutRows;
             $output['activateDisqus'] = isset($type['activateDisqus']) ? $type['activateDisqus'] : false;
             $output["type"] = $cTypeArray;
             $output["variantType"] = $variantTypeArray;
@@ -233,24 +232,24 @@ class ContentSingleController extends AbstractController
                 $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/map.js"),
                 $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/rating.js")
             );
-            if ((isset($content['isProduct']))&&($content['isProduct']===true)){
-                $output["isProduct"]=true;
-                foreach($content['productProperties']['variations'] as &$variation) {
+            if ((isset($content['isProduct'])) && ($content['isProduct'] === true)) {
+                $output["isProduct"] = true;
+                foreach ($content['productProperties']['variations'] as &$variation) {
                     if (isset($variation['specialOffers'])) {
                         $variation['specialOffer'] = $this->getBetterSpecialOffer($variation['specialOffers'], $variation['price']);
                     }
                 }
-                $output["productProperties"]=$content['productProperties'];
-                $output["productProperties"]["manageStock"]=$type["manageStock"];
-                $output["initialVariant"]=$content['productProperties']['variations'][0];
-                $js[]=$this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/productdetail.js");
+                $output["productProperties"] = $content['productProperties'];
+                $output["productProperties"]["manageStock"] = $type["manageStock"];
+                $output["initialVariant"] = $content['productProperties']['variations'][0];
+                $js[] = $this->getRequest()->getBasePath() . '/' . $frontOfficeTemplatesService->getFileThemePath("js/productdetail.js");
             }
 
             if (isset($blockConfig['displayType']) && !empty($blockConfig['displayType'])) {
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
             } else if ($hasCustomLayout) {
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/customLayout.html.twig");
-            } else{
+            } else {
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/" . $templateName);
 
                 if (!Manager::getService('FrontOfficeTemplates')->templateFileExists($template)) {
@@ -262,7 +261,7 @@ class ContentSingleController extends AbstractController
             $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/noContent.html.twig");
             $js = array();
         }
-        
+
         $css = array(
             "/components/jquery/timepicker/jquery.ui.timepicker.css",
             "/components/jquery/jqueryui/themes/base/jquery-ui.css"
@@ -270,12 +269,12 @@ class ContentSingleController extends AbstractController
         return $this->_sendResponse($output, $template, $css, $js);
     }
 
-    public function getContentsAction ()
+    public function getContentsAction()
     {
         $this->_dataReader = Manager::getService('Contents');
         $returnArray = array();
         $data = $this->params()->fromQuery();
-        if (isset($data['block']['contentId']) && ! empty($data['block']['contentId'])) {
+        if (isset($data['block']['contentId']) && !empty($data['block']['contentId'])) {
             $content = $this->_dataReader->findById($data['block']['contentId']);
             $returnArray[] = array(
                 'text' => $content['text'],
@@ -291,12 +290,14 @@ class ContentSingleController extends AbstractController
         }
         return new JsonModel($returnArray);
     }
-    protected function getBetterSpecialOffer($offers, $basePrice) {
+
+    protected function getBetterSpecialOffer($offers, $basePrice)
+    {
         $offerPrice = null;
         $actualDate = new \DateTime();
         if (empty($offers))
             return null;
-        foreach($offers as $offer) {
+        foreach ($offers as $offer) {
             $offer['beginDate'] = new \DateTime($offer['beginDate']);
             $offer['endDate'] = new \DateTime($offer['endDate']);
             if (
