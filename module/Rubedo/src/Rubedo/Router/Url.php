@@ -329,22 +329,22 @@ class Url implements IUrl
                 $url .= self::URI_DELIMITER;
                 $url .= (string) $content['id'];
                 $url .= self::URI_DELIMITER;
-                $url .= urlencode((string) $content['i18n'][$locale]['fields']['urlSegment']);
+                $url .= $this->slugify((string) $content['i18n'][$locale]['fields']['urlSegment']);
             } elseif ($fallbackLocale && isset($content['i18n'][$fallbackLocale]['fields']['urlSegment']) && ! empty($content['i18n'][$fallbackLocale]['fields']['urlSegment'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= (string) $content['id'];
                 $url .= self::URI_DELIMITER;
-                $url .= urlencode((string) $content['i18n'][$fallbackLocale]['fields']['urlSegment']);
+                $url .= $this->slugify((string) $content['i18n'][$fallbackLocale]['fields']['urlSegment']);
             } elseif (isset($content['i18n'][$locale]['fields']['text'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= (string) $content['id'];
                 $url .= self::URI_DELIMITER;
-                $url .= urlencode((string) $content['i18n'][$locale]['fields']['text']);
+                $url .= $this->slugify((string) $content['i18n'][$locale]['fields']['text']);
             } elseif ($fallbackLocale && isset($content['i18n'][$fallbackLocale]['fields']['text'])) {
                 $url .= self::URI_DELIMITER;
                 $url .= (string) $content['id'];
                 $url .= self::URI_DELIMITER;
-                $url .= urlencode((string) $content['i18n'][$fallbackLocale]['fields']['text']);
+                $url .= $this->slugify((string) $content['i18n'][$fallbackLocale]['fields']['text']);
             }
         }
         if (! empty($url)) {
@@ -794,5 +794,14 @@ class Url implements IUrl
             self::$avatarUrls[$userId] = $url;
         }
         return self::$avatarUrls[$userId];
+    }
+
+    public function slugify($fragmentToSlug)
+    {
+        $clean = preg_replace('/[^a-zA-Z0-9\/_|+ -]/', '', $fragmentToSlug);
+        $clean = strtolower(trim($clean, '-'));
+        $clean = preg_replace('/[\/_|+ -]+/', '-', $clean);
+
+        return $clean;
     }
 }

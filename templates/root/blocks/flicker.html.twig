@@ -1,4 +1,4 @@
-{% extends "@Root/block.html.twig" %} 
+{% extends "/block.html.twig" %}
 
 {% block mainContent %}
 {% if not doNotShow %}
@@ -19,7 +19,7 @@ data-tagmode="{{ tagMode }}">
 	</div>
 	<div class="clearfix"></div>
 	
-	{% include '@Root/blocks/flickr/items.html.twig' %}
+	{% include '/blocks/flickr/items.html.twig' %}
 </div>
 {% endif %}
 

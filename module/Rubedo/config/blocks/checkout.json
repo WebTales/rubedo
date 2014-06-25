@@ -1,6 +1,7 @@
 {
 	"type":"Checkout",
 	"description":"",
+    "isECommerce":true,
 	"configBasique":{
 		"title":"Checkout",
 		"bType":"checkout",

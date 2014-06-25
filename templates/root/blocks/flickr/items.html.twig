@@ -4,11 +4,11 @@
 		<img src="{{ slide.thumbnail }}" alt="{{slide.title}}" title="{{slide.title}}">
 	</a>
 	{% endfor %}
-	
+
 	{% if previous == true %}
-	<a class="carousel-control left" href="{{url({'page':page-1,'prefix':prefix}, true)}}" onclick="changePage({{page-1}}, {{allFlickrCount}}, {{pageSize}}, {{maxPage}}, '{{ prefix }}', null, null, null, '{{url({'module':'blocks', 'controller':'flickr-gallery', 'action':'xhr-get-images'},null,null,'blocks')}}', {% if user %}{{user}}{% else %}null{% endif %}, {% if tags %}{{tags}}, '{{tagMode}}'{% endif %});return false;">&lsaquo;</a>
+	<a class="carousel-control left" href="{{url({'page':page-1,'prefix':prefix}, true)}}" onclick="changePage({{page-1}}, {{allFlickrCount}}, {{pageSize}}, {{maxPage}}, '{{ prefix }}', null, null, null, '{{url({'module':'blocks', 'controller':'flickr-gallery', 'action':'xhr-get-images'},null,null,'blocks')}}', {% if user %}'{{ user|e }}'{% else %}null{% endif %}{% if tags is not empty %}, {{tags}}, '{{tagMode}}'{% endif %});return false;">&lsaquo;</a>
 	{% endif %}
 	{% if next == true %}
-	<a class="carousel-control right" href="{{url({'page':page+1,'prefix':prefix}, true)}}" onclick="changePage({{page+1}}, {{allFlickrCount}}, {{pageSize}}, {{maxPage}}, '{{ prefix }}', null, null, null, '{{url({'module':'blocks', 'controller':'flickr-gallery', 'action':'xhr-get-images'},null,null,'blocks')}}', {% if user %}{{user}}{% else %}null{% endif %}, {% if tags %}{{tags}}, '{{tagMode}}'{% endif %});return false;">&rsaquo;</a>
+	<a class="carousel-control right" href="{{url({'page':page+1,'prefix':prefix}, true)}}" onclick="changePage({{page+1}}, {{allFlickrCount}}, {{pageSize}}, {{maxPage}}, '{{ prefix }}', null, null, null, '{{url({'module':'blocks', 'controller':'flickr-gallery', 'action':'xhr-get-images'},null,null,'blocks')}}', {% if user %}'{{ user|e }}'{% else %}null{% endif %}{% if tags is not empty %}, {{tags}}, '{{tagMode}}'{% endif %});return false;">&rsaquo;</a>
 	{% endif %}
 </div>

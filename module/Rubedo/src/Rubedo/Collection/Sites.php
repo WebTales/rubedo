@@ -191,6 +191,11 @@ class Sites extends AbstractLocalizableCollection implements ISites
             if (!empty($site)) {
                 return $site;
             }
+        } else {
+            $site = $this->findByName($host);
+            if (!empty($site)) {
+                return $site;
+            }
         }
         throw new Server('No site found');
     }
@@ -483,7 +488,8 @@ class Sites extends AbstractLocalizableCollection implements ISites
                 $homePageObj['i18n'] = array($site['data']['nativeLanguage'] => array(
                     "text" => $homePageObj['text'],
                     "title" => $homePageObj['title'],
-                    "description" => $homePageObj['description']
+                    "description" => $homePageObj['description'],
+                    "pageURL" => $homePageObj['pageURL'],
 
                 ));
                 $homePage = Manager::getService('Pages')->create($homePageObj);
@@ -502,7 +508,8 @@ class Sites extends AbstractLocalizableCollection implements ISites
                 $singlePageObj['i18n'] = array($site['data']['nativeLanguage'] => array(
                     "text" => $singlePageObj['text'],
                     "title" => $singlePageObj['title'],
-                    "description" => $singlePageObj['description']
+                    "description" => $singlePageObj['description'],
+                    "pageURL" => $singlePageObj['pageURL'],
 
                 ));
                 $singlePageObj['blocks'][0]['id'] = (string)new \MongoId();
@@ -521,8 +528,8 @@ class Sites extends AbstractLocalizableCollection implements ISites
                 $searchPageObj['i18n'] = array($site['data']['nativeLanguage'] => array(
                     "text" => $searchPageObj['text'],
                     "title" => $searchPageObj['title'],
-                    "description" => $searchPageObj['description']
-
+                    "description" => $searchPageObj['description'],
+                    "pageURL" => $searchPageObj['pageURL'],
                 ));
                 $searchPageObj['site'] = $site['data']['id'];
                 $searchPageObj['maskId'] = $searchMaskCreation['data']['id'];

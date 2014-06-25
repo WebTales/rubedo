@@ -95,6 +95,10 @@ class PhpSettingsForm extends BootstrapForm
         $extDebug->setValue(isset($params['rubedo_config']['extDebug']) ? $params['rubedo_config']['extDebug'] : null);
         $extDebug->setLabel('Use debug mode of ExtJs');
 
+        $eCommerce = new Checkbox('addECommerce');
+        $eCommerce->setValue(isset($params['rubedo_config']['addECommerce']) ? $params['rubedo_config']['addECommerce'] : 1);
+        $eCommerce->setLabel('Activate e-commerce features');
+
         $sessionFieldset = new Fieldset('session');
         $sessionFieldset->setAttribute('legend', 'Session parameters');
         $sessionName = new Text('name');
@@ -146,6 +150,7 @@ class PhpSettingsForm extends BootstrapForm
         $rubedoConfigFieldset->add($minify);
         $rubedoConfigFieldset->add($cachePage);
         $rubedoConfigFieldset->add($extDebug);
+        $rubedoConfigFieldset->add($eCommerce);
         $rubedoConfigFieldset->add($defaultBackofficeHost);
         $rubedoConfigFieldset->add($isBackofficeSSL);
         $rubedoConfigFieldset->add($enableEmailNotification);
