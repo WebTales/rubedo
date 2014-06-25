@@ -1,7 +1,7 @@
 {% extends "/block.html.twig" %}
 
 {% block mainContent %}
-    {% if canEdit and editProfile is defined %}
+    {% if canEdit and editProfile is defined and success is empty %}
         {% include '/blocks/userProfile/userProfile_edit.html.twig' %}
     {% elseif canEdit and editLogin is defined %}
         {% include '/blocks/userProfile/userLogin_edit.html.twig' %}

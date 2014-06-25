@@ -93,6 +93,7 @@ class UserProfileController extends AbstractController
             if (isset($output['editProfile'])){
                 $user['fields'] = $this->filterFields($userType['fields'], $post); //todo make an intelligent merge !
                 $this->usersService->update($user);
+                $output['success'] = true;
             } elseif (isset($output['editLogin'])) {
                 if (!empty($post['password']) && !empty($post['password-old']) && !empty($post['password-confirm'])) {
                     if ($post['password-confirm'] != $post['password']) {
