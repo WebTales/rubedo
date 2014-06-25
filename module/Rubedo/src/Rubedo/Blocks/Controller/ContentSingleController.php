@@ -51,29 +51,27 @@ class ContentSingleController extends AbstractController
             }
             $data = $content['fields'];
             $termsArray = array();
-            if (isset($content['taxonomy'])) {
-                if (is_array($content['taxonomy'])) {
-                    foreach ($content['taxonomy'] as $key => $terms) {
-                        if ($key == 'navigation') {
-                            continue;
-                        }
+            if (isset($content['taxonomy']) && is_array($content['taxonomy'])) {
+                foreach ($content['taxonomy'] as $key => $terms) {
+                    if ($key == 'navigation') {
+                        continue;
+                    }
 
-                        if (!is_array($terms) && is_string($terms)) {
-                            $terms = array(
-                                $terms
-                            );
-                        }
-                        if (is_array($terms)) {
-                            foreach ($terms as $term) {
-                                $readTerm = Manager::getService('TaxonomyTerms')->getTerm($term);
+                    if (!is_array($terms) && is_string($terms)) {
+                        $terms = array(
+                            $terms
+                        );
+                    }
+                    if (is_array($terms)) {
+                        foreach ($terms as $term) {
+                            $readTerm = Manager::getService('TaxonomyTerms')->getTerm($term);
 
-                                if ($readTerm === null) {
-                                    $readTerm = array();
-                                }
+                            if ($readTerm === null) {
+                                $readTerm = array();
+                            }
 
-                                foreach ($readTerm as $key => $value) {
-                                    $termsArray[$key][] = $value;
-                                }
+                            foreach ($readTerm as $key => $value) {
+                                $termsArray[$key][] = $value;
                             }
                         }
                     }
@@ -104,102 +102,23 @@ class ContentSingleController extends AbstractController
                             $intermedContent = $this->_dataReader->findById($intermedValue, true, false);
                             $contentTitlesArray[$value['config']['name']][] = $intermedContent['fields']['text'];
                         }
-                    } else {
-                        if (is_string($data[$value['config']['name']]) && preg_match('/[\dabcdef]{24}/', $data[$value['config']['name']]) == 1) {
-                            $intermedContent = $this->_dataReader->findById($data[$value['config']['name']], true, false);
-                            $contentTitlesArray[$value['config']['name']] = $intermedContent['fields']['text'];
-                        }
+                    } elseif (is_string($data[$value['config']['name']]) && preg_match('/[\dabcdef]{24}/', $data[$value['config']['name']]) == 1) {
+                        $intermedContent = $this->_dataReader->findById($data[$value['config']['name']], true, false);
+                        $contentTitlesArray[$value['config']['name']] = $intermedContent['fields']['text'];
                     }
-                } else
-                    if (($value["cType"] == "CKEField") && (isset($value["config"]["CKETBConfig"]))) {
-                        $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
-                    } else
-                        if (($value["cType"] == "externalMediaField") && (isset($data[$value["config"]["name"]]))) {
-                            $mediaConfig = $data[$value["config"]["name"]];
+                } elseif (($value["cType"] == "CKEField") && (isset($value["config"]["CKETBConfig"]))) {
+                    $CKEConfigArray[$value['config']['name']] = $value["config"]["CKETBConfig"];
+                } elseif (($value["cType"] == "externalMediaField") && (isset($data[$value["config"]["name"]]))) {
 
-                            if (isset($mediaConfig['url'])) {
-
-                                $oembedParams['url'] = $mediaConfig['url'];
-
-                                $cache = Cache::getCache('oembed');
-
-                                $options = array();
-
-                                if (isset($blockConfig['maxWidth'])) {
-                                    $oembedParams['maxWidth'] = $blockConfig['maxWidth'];
-                                    $options['maxWidth'] = $blockConfig['maxWidth'];
-                                } else {
-                                    $oembedParams['maxWidth'] = 0;
-                                }
-
-                                if (isset($blockConfig['maxHeight'])) {
-                                    $oembedParams['maxHeight'] = $blockConfig['maxHeight'];
-                                    $options['maxHeight'] = $blockConfig['maxHeight'];
-                                } else {
-                                    $oembedParams['maxHeight'] = 0;
-                                }
-
-                                $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
-                                $loaded = false;
-                                $item = $cache->getItem($cacheKey, $loaded);
-
-                                if (!$loaded) {
-                                    // If the URL come from flickr, we check the URL
-                                    if (stristr($oembedParams['url'], 'www.flickr.com')) {
-                                        $decomposedUrl = explode("/", $oembedParams['url']);
-
-                                        $end = false;
-
-                                        // We search the photo identifiant and we remove all parameters after it
-                                        foreach ($decomposedUrl as $key => $value) {
-                                            if (is_numeric($value) && strlen($value) === 10) {
-                                                $end = true;
-                                                continue;
-                                            }
-
-                                            if ($end) {
-                                                unset($decomposedUrl[$key]);
-                                            }
-                                        }
-
-                                        $oembedParams['url'] = implode("/", $decomposedUrl);
-                                    }
-
-                                    $response = OEmbed\Simple::request($oembedParams['url'], $options);
-
-                                    $item['width'] = $oembedParams['maxWidth'];
-                                    $item['height'] = $oembedParams['maxHeight'];
-                                    if (!stristr($oembedParams['url'], 'www.flickr.com')) {
-                                        $item['html'] = $response->getHtml();
-                                    } else {
-                                        $raw = $response->getRaw();
-                                        if ($oembedParams['maxWidth'] > 0) {
-                                            $width_ratio = $raw->width / $oembedParams['maxWidth'];
-                                        } else {
-                                            $width_ratio = 1;
-                                        }
-                                        if ($oembedParams['maxHeight'] > 0) {
-                                            $height_ratio = $raw->height / $oembedParams['maxHeight'];
-                                        } else {
-                                            $height_ratio = 1;
-                                        }
-
-                                        $size = "";
-                                        if ($width_ratio > $height_ratio) {
-                                            $size = "width='" . $oembedParams['maxWidth'] . "'";
-                                        }
-                                        if ($width_ratio < $height_ratio) {
-                                            $size = "height='" . $oembedParams['maxHeight'] . "'";
-                                        }
-                                        $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
-                                    }
-
-                                    $cache->setItem($cacheKey, $item);
-                                }
-
-                                $output['item'] = $item;
-                            }
+                    if ($value['config']['multivalued']) {
+                        $output['item'] = array();
+                        foreach ($data[$value["config"]["name"]] as $externalMedia) {
+                            $output['item'][] = $this->getExternalMedia($blockConfig, $externalMedia);
                         }
+                    } else {
+                        $output['item'] = $this->getExternalMedia($blockConfig, $data[$value["config"]["name"]]);
+                    }
+                }
             }
             if (isset($type['code']) && !empty($type['code'])) {
                 $templateName = $type['code'] . ".html.twig";
@@ -209,8 +128,8 @@ class ContentSingleController extends AbstractController
             }
             $hasCustomLayout = false;
             $customLayoutRows = array();
-            if ((isset($type['layouts'])) && (is_array($type['layouts']))) {
-                foreach ($type['layouts'] as $key => $value) {
+            if (isset($type['layouts']) && is_array($type['layouts'])) {
+                foreach ($type['layouts'] as $value) {
                     if (($value['type'] == "Detail") && ($value['active']) && ($value['site'] == $site['id'])) {
                         $hasCustomLayout = true;
                         $customLayoutRows = $value['rows'];
@@ -310,5 +229,79 @@ class ContentSingleController extends AbstractController
             }
         }
         return $offerPrice;
+    }
+
+    protected function getExternalMedia($blockConfig, $mediaConfig) {
+        $oembedParams = array();
+        if (isset($mediaConfig['url'])) {
+
+            $oembedParams['url'] = $mediaConfig['url'];
+
+            /** @var \Zend\Cache\Storage\StorageInterface $cache */
+            $cache = Cache::getCache('oembed');
+
+            $oembedParams['maxWidth'] = isset($blockConfig['maxWidth'])?$blockConfig['maxWidth']:0;
+            $oembedParams['maxHeight'] = isset($blockConfig['maxHeight'])?$blockConfig['maxHeight']:0;
+
+            $cacheKey = 'oembed_item_' . md5(serialize($oembedParams));
+            $loaded = false;
+            $item = $cache->getItem($cacheKey, $loaded);
+
+            if (!$loaded) {
+                // If the URL come from flickr, we check the URL
+                if (stristr($oembedParams['url'], 'www.flickr.com')) {
+                    $decomposedUrl = explode("/", $oembedParams['url']);
+
+                    $end = false;
+
+                    // We search the photo identifiant and we remove all parameters after it
+                    foreach ($decomposedUrl as $key => $value) {
+                        if (is_numeric($value) && strlen($value) === 10) {
+                            $end = true;
+                            continue;
+                        }
+
+                        if ($end) {
+                            unset($decomposedUrl[$key]);
+                        }
+                    }
+
+                    $oembedParams['url'] = implode("/", $decomposedUrl);
+                }
+                /** @var \Alb\OEmbed\Response $response */
+                $response = OEmbed\Simple::request($oembedParams['url'], array_intersect_key($oembedParams, array_flip(array('maxWidth', 'maxHeight'))));
+
+                $item['width'] = $oembedParams['maxWidth'];
+                $item['height'] = $oembedParams['maxHeight'];
+                if (!stristr($oembedParams['url'], 'www.flickr.com')) {
+                    $item['html'] = $response->getHtml();
+                } else {
+                    $raw = $response->getRaw();
+                    if ($oembedParams['maxWidth'] > 0) {
+                        $width_ratio = $raw->width / $oembedParams['maxWidth'];
+                    } else {
+                        $width_ratio = 1;
+                    }
+                    if ($oembedParams['maxHeight'] > 0) {
+                        $height_ratio = $raw->height / $oembedParams['maxHeight'];
+                    } else {
+                        $height_ratio = 1;
+                    }
+
+                    $size = "";
+                    if ($width_ratio > $height_ratio) {
+                        $size = "width='" . $oembedParams['maxWidth'] . "'";
+                    }
+                    if ($width_ratio < $height_ratio) {
+                        $size = "height='" . $oembedParams['maxHeight'] . "'";
+                    }
+                    $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
+                }
+
+                $cache->setItem($cacheKey, $item);
+            }
+            return $item;
+        }
+        return null;
     }
 }

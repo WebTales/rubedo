@@ -1,3 +1,11 @@
-<div id="{{ data.id }}_{{ key }}">
-    {{ item.html | raw }}
-</div>
+{% if type[key]["config"]["multivalued"] and item is iterable %}
+    {% for itemRow in item %}
+        <div id="{{ itemRow.id }}_{{ key }}">
+            {{ itemRow.html | raw }}
+        </div>
+    {% endfor %}
+{% else %}
+    <div id="{{ data.id }}_{{ key }}">
+        {{ item.html | raw }}
+    </div>
+{% endif %}
