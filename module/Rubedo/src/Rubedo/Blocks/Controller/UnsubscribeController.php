@@ -32,36 +32,41 @@ use Rubedo\Services\Manager;
 class UnsubscribeController extends AbstractController
 {
 
-    protected $_defaultTemplate = 'unsubscribe';
+    protected $defaultTemplate = 'unsubscribe';
 
+    /**
+     * @var \Rubedo\Interfaces\Templates\IFrontOfficeTemplates
+     */
+    protected $frontOfficeTemplatesService;
+
+    /**
+     * @var \Rubedo\Interfaces\Collection\IMailingList
+     */
+    protected $mailingListService;
+    public function __construct()
+    {
+        $this->frontOfficeTemplatesService = Manager::getService('FrontOfficeTemplates');
+        $this->mailingListService = Manager::getService('MailingList');
+    }
     public function indexAction()
     {
         $output = $this->params()->fromQuery();
         $email = $this->params()->fromPost("email");
-        if (($this->getRequest()->isPost())&&(isset($email))) {
-
-
-            if ((!isset($email)) || (empty($email))) {
-                $output['signupMessage'] = "Blocks.SignUp.emailConfirmError.invalidEmail";
-                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
-                return $this->_sendResponse($output, $template);
+        if ($this->getRequest()->isPost() && isset($email)) {
+            $output['email'] = $email;
+            if ((empty($email))) {
+                $output['error'] = "Blocks.SignUp.emailConfirmError.invalidEmail";
             }
-            $result = Manager::getService("MailingList")->unsubscribeFromAll($email);
-            if (!$result['success']) {
-                $output['signupMessage'] = $result['msg'];
-                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/emailconfirmerror.html.twig");
-                return $this->_sendResponse($output, $template);
+            $result = $this->mailingListService->unsubscribeFromAll($email);
+            if ($result['success']) {
+                $template = $this->frontOfficeTemplatesService->getFileThemePath("blocks/signup/unsubscribeok.html.twig");
             } else {
-                $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/signup/unsubscribeok.html.twig");
-                return $this->_sendResponse($output, $template);
+                $output['error'] = $result['msg'];
             }
-
         }
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
-        $css = array();
-        $js = array();
-        return $this->_sendResponse($output, $template, $css, $js);
+        if (!isset($template)) {
+            $template = $this->frontOfficeTemplatesService->getFileThemePath("blocks/" . $this->defaultTemplate . ".html.twig");
+        }
+        return $this->_sendResponse($output, $template);
     }
-
-
 }
