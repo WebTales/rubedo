@@ -129,11 +129,11 @@
     				{% if not (constrainToSite and facet.id == 'navigation' and term.term == currentSite) %}
     				{% if displayMode == 'checkbox' %}
     				<label class="checkbox">
-      					<input type="checkbox" class="facetBox" data-target="{{url({(facet.id) : [term.term]},'true')}}" data-target-off="{{url({(facet.id) : [term.term]},'sub')}}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
+      					<input type="checkbox" class="facetBox" data-target="{{url({(facet.id) : [term.term],'pager':0})}}" data-target-off="{{url({(facet.id) : [term.term]},'sub')}}" {% if term.term in activeFacetsList %}checked{% endif %}> {{ term.label }} ({{ term.count }})
     				</label>
     				{% else %}
     				<li>
-    					<a href="{{url({(facet.id) : [term.term]},'true')}}">{{ term.label }} ({{ term.count }})</a>
+    					<a href="{{url({(facet.id) : [term.term],'pager':0})}}">{{ term.label }} ({{ term.count }})</a>
     				</li>
     				{% endif %}
     				{% endif %}
@@ -156,11 +156,11 @@
     	        			{% endif %}
                             {% if displayMode == 'checkbox' %}
             				<label class="checkbox">
-              					<input type="checkbox" class="facetBox" data-target="{{url({lastupdatetime : range.from},'true')}}" data-target-off="{{url({lastupdatetime : range.from},'sub')}}" {% if range.from in activeFacetsList %}checked{% endif %}> {{ range.label }} ({{ range.count }})
+              					<input type="checkbox" class="facetBox" data-target="{{url({lastupdatetime : range.from,'pager':0})}}" data-target-off="{{url({lastupdatetime : range.from},'sub')}}" {% if range.from in activeFacetsList %}checked{% endif %}> {{ range.label }} ({{ range.count }})
             				</label>                            
                             {% else %}
     						<li>
-    							<a href="{{url({lastupdatetime : range.from},'true')}}">{{ range.label }} ({{ range.count }})</a>
+    							<a href="{{url({lastupdatetime : range.from,'pager':0})}}">{{ range.label }} ({{ range.count }})</a>
     						</li>
                             {% endif %}
 
