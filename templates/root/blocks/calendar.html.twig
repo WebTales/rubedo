@@ -1,4 +1,4 @@
-{% extends "@Root/blocks/contentlist.html.twig" %}
+{% extends "/blocks/contentlist.html.twig" %}
 
 {% block mainList %}
     {% set displayBoth =  display.showList and display.showCal %}
@@ -7,13 +7,13 @@
         <div class="span12">
             {% if display.showCal %}
                 <div id='calendar-{{ prefix }}' class='calendar-rubedo'>
-                    {% include '@Root/blocks/calendar/table.html.twig' %}
+                    {% include '/blocks/calendar/table.html.twig' %}
                 </div>
             {% endif %}
             
             {% if display.showList %}
                 <div id='calendar-items-{{ prefix }}' class="calendar-items-rubedo">
-                    {% include '@Root/blocks/calendar/list.html.twig' %}
+                    {% include '/blocks/calendar/list.html.twig' %}
                 </div>
             {% endif %}
         </div>

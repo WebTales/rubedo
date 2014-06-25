@@ -1,9 +1,9 @@
-{% extends "@Root/block.html.twig" %}
+{% extends "/block.html.twig" %}
 {% block mainContent %}
     <div class="well productbuybox" data-productproperties="{{ productProperties|json_encode }}">
 
         {% for field in variantType %}
-            {% include '@Root/blocks/inputFields/combobox.html.twig' %}
+            {% include '/blocks/inputFields/combobox.html.twig' %}
         {% endfor %}
         <h3 class="productpricetext"></h3>
         <h5 class="productavailabilitytext text-info">In stock</h5>

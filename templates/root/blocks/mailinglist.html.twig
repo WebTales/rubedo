@@ -1,4 +1,4 @@
-{% extends "@Root/block.html.twig" %} {% block mainContent %}
+{% extends "/block.html.twig" %} {% block mainContent %}
 <div class="block newsletter">
 	<form method="post" class="form" id="mailingListForm">
 		<div class="control-group">
@@ -20,11 +20,11 @@
     		{% for field in fields %}
                 
                     {% if field['cType']=='Ext.form.field.Text' %}
-                        {% include '@Root/blocks/inputFields/text.html.twig' %}
+                        {% include '/blocks/inputFields/text.html.twig' %}
                     {% elseif field['cType']=='Ext.form.field.TextArea' %}
-                        {% include '@Root/blocks/inputFields/textarea.html.twig' %}
+                        {% include '/blocks/inputFields/textarea.html.twig' %}
                     {% elseif field['cType']=='Ext.form.field.ComboBox' %}
-                        {% include '@Root/blocks/inputFields/combobox.html.twig' %}
+                        {% include '/blocks/inputFields/combobox.html.twig' %}
                     {% endif %}
                 
             {% endfor %}
