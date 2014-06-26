@@ -36,7 +36,8 @@ class ContentSingleController extends AbstractController
         $this->_typeReader = Manager::getService('ContentTypes');
         $site = $this->params()->fromQuery('site');
         $blockConfig = $this->params()->fromQuery('block-config');
-        $output["blockConfig"] = $blockConfig;
+        $output = $this->params()->fromQuery();
+        $output["blockConfig"] = &$blockConfig;
 
         $mongoId = $this->params()->fromQuery('content-id');
         if (isset($output["blockConfig"]["contentId"])) {
@@ -86,7 +87,6 @@ class ContentSingleController extends AbstractController
             $variantTypeArray = array();
             $CKEConfigArray = array();
             $contentTitlesArray = array();
-            $output = $this->params()->fromQuery();
             foreach ($type["fields"] as $value) {
 
                 if ((isset($value['config']['useAsVariation'])) && ($value['config']['useAsVariation'] === true)) {
@@ -176,7 +176,6 @@ class ContentSingleController extends AbstractController
                 }
             }
         } else {
-            $output = array();
             $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/noContent.html.twig");
             $js = array();
         }
