@@ -295,6 +295,11 @@ function checkoutSetFormData(formId, data){
     jQuery("#"+formId+" input").each(function(){
         jQuery(this).val(data[jQuery(this).attr("name")]);
     });
+    if (data['address_country']){
+        jQuery("#"+formId+" select").val(data['address_country']);
+    } else if (data['country']){
+        jQuery("#"+formId+" select").val(data['country']);
+    }
 }
 
 function adaptToUserData(userData){
