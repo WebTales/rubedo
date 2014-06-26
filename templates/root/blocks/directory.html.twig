@@ -85,9 +85,10 @@
 {% endif %}
 {% if alphabeticIndex %}
 <div class="pagination text-center">
-<ul>
-{% for facet in facets %}
-		    {% if facet.id == 'userName' %}
+    <ul>
+        {% for facet in facets %}
+            {% if facet.id == 'userName' %}
+                <li><a href="?">All</a></li>
                 {% for letter in alphaArray %}
                     {% set acounter=0 %}
                     {% for term in facet.terms %}
@@ -101,7 +102,6 @@
                                     {{ acounter }}
                                 {% endif %}
                         </sup></a>
-
                     </li>
                 {% endfor %}
 
