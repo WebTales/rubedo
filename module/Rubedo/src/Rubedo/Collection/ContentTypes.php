@@ -46,7 +46,6 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
                 'productType'=>1
             )
         )
-        // array('keys'=>array('CTType'=>1),'options'=>array('unique'=>true)),
     );
 
     /**
@@ -438,5 +437,27 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         }
 
         return $localizableFieldArray;
+    }
+
+    protected function localizeOutput($obj, $alternativeFallBack = null)
+    {
+        $obj = parent::localizeOutput($obj, $alternativeFallBack);
+        if (static::$workingLocale === null) {
+            if (!isset($obj['nativeLanguage'])) {
+                return $obj;
+            } else {
+                $locale = $obj['nativeLanguage'];
+            }
+        } else {
+            $locale = static::$workingLocale;
+        }
+        if (isset($obj['fields'])) {
+            foreach ($obj['fields'] as &$field) {
+                if (isset($field['config']['i18n'][$locale]['fieldLabel'])) {
+                    $field['config']['fieldLabel'] = $field['config']['i18n'][$locale]['fieldLabel'];
+                }
+            }
+        }
+        return $obj;
     }
 }

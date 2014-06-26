@@ -291,13 +291,12 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     }
 
     /**
-     *
-     *
-     *
      * Update item with localized content as fields.
      *
      * @param array $obj
      *            collection item
+     * @param string $alternativeFallBack
+     * @throws \Rubedo\Exceptions\Server
      * @return array collection item localized
      */
     protected function localizeOutput($obj, $alternativeFallBack = null)
