@@ -22,11 +22,11 @@
                        <div class="{{ assignedField.responsiveClass }} {{ assignedField.classHTML }}" style="{{ assignedField.elementStyle }}">
                        {% if assignedField.showLabel %}
                        <dl class="dl-horizontal">
-                         <dt>{{ type[assignedField.name]["config"]["fieldLabel"] }}</dt>
+                         <dt>{{ assignedField.title }}</dt>
                          <dd>
                        {% endif %}
                        {% if assignedField.name=="name"%}
-                           <h2>{{ user.name }}</h2>
+                           <p>{{ user.name }}</p>
                        {% elseif assignedField.name=="email"%}
                            <p>{{ user.email }}</p>
                        {% elseif assignedField.name=="photo"%}
