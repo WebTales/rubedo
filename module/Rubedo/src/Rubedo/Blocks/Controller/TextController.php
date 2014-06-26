@@ -36,7 +36,7 @@ class TextController extends AbstractController
         }
         $output = $this->params()->fromQuery();
         $output['contentId'] = $blockConfig["contentId"];
-        $output['text'] = $content["fields"]["body"];
+        $output['text'] = (empty($content["fields"]["body"])?'':$content["fields"]["body"]);
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/text.html.twig");
         
         $css = array();
