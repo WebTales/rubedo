@@ -34,9 +34,6 @@ class TextController extends AbstractController
         if ($blockConfig["contentId"]) {
             $content = Manager::getService('Contents')->findById($blockConfig["contentId"], true, false);
         }
-        if (! $content) {
-            return $this->_sendResponse(array(), "block.html.twig");
-        }
         $output = $this->params()->fromQuery();
         $output['contentId'] = $blockConfig["contentId"];
         $output['text'] = $content["fields"]["body"];
