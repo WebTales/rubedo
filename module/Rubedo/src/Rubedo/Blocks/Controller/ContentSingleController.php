@@ -216,8 +216,12 @@ class ContentSingleController extends AbstractController
         if (empty($offers))
             return null;
         foreach ($offers as $offer) {
-            $offer['beginDate'] = new \DateTime($offer['beginDate']);
-            $offer['endDate'] = new \DateTime($offer['endDate']);
+            $beginDate = $offer['beginDate'];
+            $endDate = $offer['endDate'];
+            $offer['beginDate'] = new \DateTime();
+            $offer['beginDate']->setTimestamp($beginDate);
+            $offer['endDate'] = new \DateTime();
+            $offer['endDate']->setTimestamp($endDate);
             if (
                 $offer['beginDate'] <= $actualDate
                 && $offer['beginDate'] <= $actualDate
