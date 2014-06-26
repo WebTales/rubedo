@@ -48,7 +48,8 @@ class ContentSingleController extends AbstractController
         if (isset($mongoId) && $mongoId != 0) {
             $content = $this->_dataReader->findById($mongoId, true, false);
             if (!$content) {
-                return $this->_sendResponse(array(), "block.html.twig");
+                $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/noContent.html.twig");
+                return $this->_sendResponse($output, $template);
             }
             $data = $content['fields'];
             $termsArray = array();
