@@ -184,6 +184,7 @@
 			{% if result.objectType == 'content' %}
 			<tr>
 				<td><h3><a href="{{ displayUrl(result.id,"default",null,singlePage) }}">{{ result.title }}</a></h3>
+                    {#<pre>{{ dump(_parent._parent._parent) }}</pre>#}
 				<div class="progress progress-success search-progress">
 					<div class="bar {%if result.score >= 70%}bar-success{% else %} bar-warning{%endif%}" style="width: 100%">
 						{{ result.score }}%
