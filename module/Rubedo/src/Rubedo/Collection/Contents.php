@@ -149,6 +149,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
         parent::__construct();
     }
 
+    public function reInit() {
+        $this->_init();
+    }
     /**
      * ensure that no nested contents are requested directly
      */

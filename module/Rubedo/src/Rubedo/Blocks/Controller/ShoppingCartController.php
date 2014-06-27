@@ -133,7 +133,11 @@ class ShoppingCartController extends AbstractController
         $totalPrice=0;
         $totalItems=0;
         $ignoredArray=array("price","amount","id","sku","stock", 'basePrice', 'specialOffers');
+        /** @var \Rubedo\Interfaces\Collection\IContents $contentsService */
         $contentsService=Manager::getService("Contents");
+        $contentsService->switchLocaleFiltered();
+        $contentsService->reInit();
+        $contentsService->switchLocaleFiltered();
         foreach ($cart as &$value){
             $myContent=$contentsService->findById($value["productId"], true, false);
             if ($myContent){

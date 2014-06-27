@@ -342,16 +342,16 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if ($locale != $obj['nativeLanguage']) {
             if (isset($obj['i18n'][$locale])) {
                 $obj = $this->merge($obj, $obj['i18n'][$locale]);
+                if (isset($obj['i18n'][$locale]['fields']['text'])) {
+                    $obj['text'] = $obj['i18n'][$locale]['fields']['text'];
+                }
                 $obj['locale'] = $locale;
-//                 if(static::$_isFrontEnd){
-//                     $obj[static::$labelField]=$obj['i18n'][$locale][static::$labelField];
-//                 }
             } elseif (isset($alternativeFallBack) && isset($obj['i18n'][$alternativeFallBack])) {
                 $obj = $this->merge($obj, $obj['i18n'][$alternativeFallBack]);
+                if (isset($obj['i18n'][$locale]['fields']['text'])) {
+                    $obj['text'] = $obj['i18n'][$locale]['fields']['text'];
+                }
                 $obj['locale'] = $alternativeFallBack;
-//                 if(static::$_isFrontEnd){
-//                     $obj[static::$labelField]=$obj['i18n'][$alternativeFallBack][static::$labelField];
-//                 }
             }
         }
 
@@ -604,6 +604,10 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     public static function setFallbackLocale($fallbackLocale)
     {
         AbstractLocalizableCollection::$fallbackLocale = $fallbackLocale;
+    }
+
+    public static function switchLocaleFiltered() {
+        static::$isLocaleFiltered = !static::$isLocaleFiltered;
     }
 }
 	
