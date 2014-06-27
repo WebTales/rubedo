@@ -3,10 +3,10 @@
     <div id="shoppingcart">
         <div class="navbar">
             <div class="navbar-inner">
-                <a class="brand">Shopping Cart <span class="badge" id="spcnboitems">{{ totalItems }}</span></a>
+                <a class="brand">Shopping Cart <span class="badge spcnboitems">{{ totalItems }}</span></a>
             </div>
         </div>
-        <div id="shoppingcartholder">
+        <div class="shoppingcartholder details">
             {% include '/blocks/shoppingCart/productList.html.twig' %}
         </div>
         <div>

@@ -33,6 +33,7 @@ class ShoppingCartController extends AbstractController
     public function indexAction ()
     {
         $output = $this->params()->fromQuery();
+        $output['blockConfig'] = &$output['block-config'];
         $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
         $processedCart=$this->addCartInfos($myCart);
         $output["cartItems"]=$processedCart['cart'];
@@ -61,7 +62,7 @@ class ShoppingCartController extends AbstractController
             ), $urlOptions);
         }
         $output['displayMode'] = isset($output['block-config']['displayMode']) ? $output['block-config']['displayMode'] : "button";
-        if ($output['displayMode']=="detail"){
+        if ($output['displayMode']=="detail") {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/shoppingCartDetail.html.twig");
         } else {
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/shoppingCart.html.twig");
@@ -76,8 +77,10 @@ class ShoppingCartController extends AbstractController
     }
 
     public function addItemToCartAction () {
+        $output = array();
         if ($this->getRequest()->isXmlHttpRequest()){
             $this->init();
+            $output['isXhr'] = true;
         }
         $params = $this->params()->fromPost();
         $cartUpdate = Manager::getService("ShoppingCart")->addItemToCart($params["productId"], $params["variationId"], $params["amount"]);
@@ -87,7 +90,6 @@ class ShoppingCartController extends AbstractController
         }
         $templateService = Manager::getService('FrontOfficeTemplates');
         $template = $templateService->getFileThemePath("blocks/shoppingCart/productList.html.twig");
-        $output = array();
         $processedCart = $this->addCartInfos($cartUpdate);
         $output["cartItems"] = $processedCart['cart'];
         $output["totalAmount"] = $processedCart['totalAmount'];
@@ -102,8 +104,10 @@ class ShoppingCartController extends AbstractController
     }
 
     public function removeItemFromCartAction () {
+        $output = array();
         if ($this->getRequest()->isXmlHttpRequest()){
             $this->init();
+            $output['isXhr'] = true;
         }
         $params=$this->params()->fromPost();
         $cartUpdate = Manager::getService("ShoppingCart")->removeItemFromCart($params["productId"], $params["variationId"], $params["amount"]);
@@ -113,7 +117,6 @@ class ShoppingCartController extends AbstractController
         }
         $templateService = Manager::getService('FrontOfficeTemplates');
         $template = $templateService->getFileThemePath("blocks/shoppingCart/productList.html.twig");
-        $output = array();
         $processedCart=$this->addCartInfos($cartUpdate);
         $output["cartItems"]=$processedCart['cart'];
         $output["totalAmount"]=$processedCart['totalAmount'];
@@ -124,7 +127,6 @@ class ShoppingCartController extends AbstractController
         $results['totalAmount'] = $output['totalAmount'];
         $results['success'] = true;
         return new JsonModel($results);
-
     }
 
     protected function addCartInfos ($cart) {

@@ -3,18 +3,43 @@
 {% else %}
 
 <table class="table table-condensed table-striped table-hover">
-    {% for item in cartItems %}
-    <tr>
-        <td><a href='{{ displayUrl(item.productId,"default",null) }}?variation={{ item.variationId}}'>{{ item.title }} <small class="muted">{{ item.subtitle }}</small></a></td>
-        <td>x {{ item.amount }}</td>
-            <td>
-                <i class="icon-plus productincreasebtn" data-productid="{{ item.productId }}" data-variationid="{{ item.variationId}}"></i>
-                <i class="icon-minus productdecreasebtn" data-productid="{{ item.productId }}" data-variationid="{{ item.variationId}}"></i>
-            </td>
-        <td>{{ item.price }} €</td>
-        <td><i class="icon-remove productremovelingnbtn" data-productid="{{ item.productId }}" data-variationid="{{ item.variationId}}" data-amount="{{ item.amount }}"></i></td>
-    </tr>
-    {% endfor %}
+    {% if blockConfig.displayMode == 'detail' or isXhr %}
+        <thead data-designed-to="details">
+            <tr>
+                <th></th>
+                <th>{{ 'Blocks.ShoppingCart.Label.Name'|fotrans }}</th>
+                <th>{{ 'Blocks.ShoppingCart.Label.UnitPrice'|fotrans }}</th>
+                <th>{{ 'Blocks.ShoppingCart.Label.Number'|fotrans }}</th>
+                <th>{{ 'Blocks.ShoppingCart.Label.AddRemove'|fotrans }}</th>
+                <th>{{ 'Blocks.ShoppingCart.Label.Price'|fotrans }}</th>
+                <th>{{ 'Blocks.ShoppingCart.Label.Delete'|fotrans }}</th>
+            </tr>
+        </thead>
+    {% endif %}
+    <tbody>
+        {% for item in cartItems %}
+        <tr>
+            {% if blockConfig.displayMode == 'detail' or isXhr %}
+                <td data-designed-to="details">
+                    {% if item.product.fields.image is not empty %}<img src="{{ imageUrl(item.product.fields.image, 100, 100, 'boxed') }}" alt="{{ item.product.text }}" />{% endif %}
+                </td>
+            {% endif %}
+            <td><a href='{{ displayUrl(item.productId,"default",null) }}?variation={{ item.variationId}}'>{{ item.title }} <small class="muted">{{ item.subtitle }}</small></a></td>
+            {% if blockConfig.displayMode == 'detail' or isXhr %}
+                <td data-designed-to="details">
+                    {{ item.unitPrice }}€
+                </td>
+            {% endif %}
+            <td>× {{ item.amount }}</td>
+                <td>
+                    <i class="icon-plus productincreasebtn" data-productid="{{ item.productId }}" data-variationid="{{ item.variationId}}"></i>
+                    <i class="icon-minus productdecreasebtn" data-productid="{{ item.productId }}" data-variationid="{{ item.variationId}}"></i>
+                </td>
+            <td>{{ item.price }} €</td>
+            <td><i class="icon-remove productremovelingnbtn" data-productid="{{ item.productId }}" data-variationid="{{ item.variationId}}" data-amount="{{ item.amount }}"></i></td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 <dl class="dl-horizontal pull-right">
     <dt>Total :</dt>

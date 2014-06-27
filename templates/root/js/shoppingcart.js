@@ -1,3 +1,17 @@
+function updateShoppingCarts(data) {
+    var shoppingcartHolder = jQuery(".shoppingcartholder");
+    shoppingcartHolder.each(function(){
+        var html = data.html.slice(0);
+        html = jQuery(html);
+        if (!jQuery(this).hasClass('details')) {
+            jQuery('[data-designed-to="details"]', html).remove();
+        }
+        jQuery(this).html(html);
+    });
+    jQuery(".spcnboitems").text(data.totalItems);
+    handleProductCartBtns();
+}
+
 function addProductToCart (productId, variationId, amount) {
     var request2 = jQuery.ajax({
         url : window.location.protocol + '//'
@@ -13,12 +27,7 @@ function addProductToCart (productId, variationId, amount) {
         dataType : "json"
     });
 
-    request2.done(function(data) {
-        jQuery("#shoppingcartholder").empty();
-        jQuery("#shoppingcartholder").append(data.html);
-        jQuery("#spcnboitems").text(data.totalItems);
-        handleProductCartBtns();
-    });
+    request2.done(updateShoppingCarts);
 
     request2.fail(function(jqXHR, textStatus) {
         console.log("error in adding item to cart");
@@ -41,12 +50,7 @@ function removeProductFromCart (productId, variationId, amount) {
         dataType : "json"
     });
 
-    request2.done(function(data) {
-        jQuery("#shoppingcartholder").empty();
-        jQuery("#shoppingcartholder").append(data.html);
-        jQuery("#spcnboitems").text(data.totalItems);
-        handleProductCartBtns();
-    });
+    request2.done(updateShoppingCarts);
 
     request2.fail(function(jqXHR, textStatus) {
         console.log("error in adding item to cart");
