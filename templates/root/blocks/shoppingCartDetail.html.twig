@@ -9,8 +9,8 @@
         <div class="shoppingcartholder details">
             {% include '/blocks/shoppingCart/productList.html.twig' %}
         </div>
-        <div>
-            {% if checkoutPage %}<a href="{{ checkoutPageUrl }}"><button class="btn pull-right scartbtn">Checkout</button></a>{% endif %}
+        <div class="text-right hidden-if-empty {% if cartItems is empty %}hidden{% endif %}">
+            {% if checkoutPage %}<a href="{{ checkoutPageUrl }}"><button class="btn scartbtn">Checkout</button></a>{% endif %}
         </div>
     </div>
 

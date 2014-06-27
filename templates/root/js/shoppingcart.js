@@ -9,6 +9,11 @@ function updateShoppingCarts(data) {
         jQuery(this).html(html);
     });
     jQuery(".spcnboitems").text(data.totalItems);
+    if (data.totalItems > 0) {
+        jQuery('.checkout-hidden-if-empty').removeClass("hidden");
+    } else {
+        jQuery('.checkout-hidden-if-empty').addClass("hidden");
+    }
     handleProductCartBtns();
 }
 
