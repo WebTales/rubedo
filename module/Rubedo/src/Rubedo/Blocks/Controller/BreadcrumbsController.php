@@ -64,7 +64,7 @@ class BreadcrumbsController extends AbstractController
         if ($this->params()->fromQuery('content-id')){
             $currentContent=Manager::getService("Contents")->findById($this->params()->fromQuery('content-id'), true, false);
             if ($currentContent){
-                $output['text']=$currentContent['text'];
+                $output['text']=$currentContent['fields']['text'];
             }
         }
         
