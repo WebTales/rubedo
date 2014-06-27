@@ -12,9 +12,13 @@ jQuery(document).ready(function(e) {
             });
         }
         if (!initialVariation){
-            var initialVariation=configData.variations[0];
+            initialVariation=configData.variations[0];
         }
-        mainBox.find(".productpricetext").text(initialVariation.price+" €");
+        if ('undefined' != typeof initialVariation.specialOffer && null != initialVariation.specialOffer) {
+            mainBox.find(".productpricetext").text(initialVariation.specialOffer + " €");
+        } else {
+            mainBox.find(".productpricetext").text(initialVariation.price+" €");
+        }
         mainBox.find(".productbuybtn").attr("data-variationid",initialVariation.id);
         mainBox.find(".productbuybtn").removeAttr("disabled");
         mainBox.find(".productavailabilitytext").text("");
@@ -22,8 +26,9 @@ jQuery(document).ready(function(e) {
         mainBox.find(".productavailabilitytext").removeClass("text-error");
         if (configData.manageStock){
             var stock=initialVariation.stock;
+            var complement;
             if (stock < configData.outOfStockLimit){
-                var complement=configData.resupplyDelay > 1 ? " days" : " day";
+                complement=configData.resupplyDelay > 1 ? " days" : " day";
                 mainBox.find(".productavailabilitytext").text("Out of stock : ressuplied before "+configData.resupplyDelay+ complement);
                 if (configData.canOrderNotInStock=="false"){
                     mainBox.find(".productavailabilitytext").removeClass("text-info");
@@ -31,7 +36,7 @@ jQuery(document).ready(function(e) {
                     mainBox.find(".productbuybtn").attr("disabled","disabled");
                 }
             } else {
-                var complement=configData.preparationDelay > 1 ? " days" : " day";
+                complement=configData.preparationDelay > 1 ? " days" : " day";
                 mainBox.find(".productavailabilitytext").text("In stock : sent before "+configData.preparationDelay + complement);
             }
         }
@@ -57,7 +62,7 @@ function extractOptionPossibilities (variations, optionName, constraints) {
     variations.forEach(function(variation){
         var isOk=true;
         for (var constraint in constraints) {
-            if (isOk&&(constraints.hasOwnProperty(constraint))){
+            if (isOk && constraints.hasOwnProperty(constraint)){
                 if (constraints[constraint]!=variation[constraint].toString()){
                     isOk=false;
                 }
@@ -113,7 +118,11 @@ function adaptToProductOptionsChange (productBox, changedIndex,configData) {
             console.log("Warning : multiple variation possibilities");
         }
         var newVariation=newVariations[0];
-        productBox.find(".productpricetext").text(newVariation.price+" €");
+        if ('undefined' != typeof newVariation.specialOffer && null != newVariation.specialOffer) {
+            productBox.find(".productpricetext").text(newVariation.specialOffer + " €");
+        } else {
+            productBox.find(".productpricetext").text(newVariation.price+" €");
+        }
         productBox.find(".productbuybtn").attr("data-variationid",newVariation.id);
         productBox.find(".productbuybtn").removeAttr("disabled");
         productBox.find(".productavailabilitytext").text("");
