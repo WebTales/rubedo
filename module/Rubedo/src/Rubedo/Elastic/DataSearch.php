@@ -997,6 +997,7 @@ class DataSearch extends DataAbstract implements IDataSearch {
 					} else {
 						$resultData ['name'] = $data ['email'] [0];
 					}
+					$resultData ['title'] = $resultData ['name'];
 					$userType = $this->_getUserType ( $data ['userType'] [0] );
 					$resultData ['type'] = $userType ['type'];
 					break;
