@@ -551,7 +551,7 @@ class DataSearch extends DataAbstract implements IDataSearch {
 		if ($option != "user") {
 			switch ($localizationStrategy) {
 				case 'backOffice' :
-					$this->setLocaleFilter ( Manager::getService ( 'Languages' )->getActiveLocales () );
+					//$this->setLocaleFilter ( Manager::getService ( 'Languages' )->getActiveLocales () );
 					$elasticaQueryString->setFields ( array (
 							"all_" . $currentLocale,
 							"_all^0.1" 
