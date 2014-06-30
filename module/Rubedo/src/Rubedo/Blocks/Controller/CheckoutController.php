@@ -418,6 +418,7 @@ class CheckoutController extends AbstractController
                     $shippingTaxedPrice = $shippingPrice + $shippingTax;
                 }
             }
+            (empty($currentUser['shippingAddress']['regionState'])?$currentUser['shippingAddress']['regionState']='':$currentUser['shippingAddress']['regionState']);
             $twigVars = $this->addCartInfos($myCart, $currentUser['typeId'], $currentUser['shippingAddress']['country'], $currentUser['shippingAddress']['regionState'], $currentUser['shippingAddress']['postCode']);
             $twigVars['shippingPrice'] = $shippingPrice;
             $twigVars['shippingTaxedPrice'] = $shippingTaxedPrice;
