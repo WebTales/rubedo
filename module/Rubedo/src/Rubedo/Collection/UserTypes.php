@@ -25,7 +25,7 @@ use Rubedo\Services\Events;
  * @category Rubedo
  * @package Rubedo
  */
-class UserTypes extends AbstractLocalizableCollection implements IUserTypes
+class UserTypes extends AbstractCollection implements IUserTypes
 {
 
     public function __construct()
@@ -49,26 +49,5 @@ class UserTypes extends AbstractLocalizableCollection implements IUserTypes
         $args['data'] = $obj;
         Events::getEventManager()->trigger(self::POST_DELETE_COLLECTION, $this, $args);
         return $result;
-    }
-    protected function localizeOutput($obj, $alternativeFallBack = null)
-    {
-        $obj = parent::localizeOutput($obj, $alternativeFallBack);
-        if (static::$workingLocale === null) {
-            if (!isset($obj['nativeLanguage'])) {
-                return $obj;
-            } else {
-                $locale = $obj['nativeLanguage'];
-            }
-        } else {
-            $locale = static::$workingLocale;
-        }
-        if (isset($obj['fields'])) {
-            foreach ($obj['fields'] as &$field) {
-                if (isset($field['config']['i18n'][$locale]['fieldLabel'])) {
-                    $field['config']['fieldLabel'] = $field['config']['i18n'][$locale]['fieldLabel'];
-                }
-            }
-        }
-        return $obj;
     }
 }
