@@ -19,8 +19,10 @@
       						{% include '/blocks/fields/CKEfield.html.twig' %}
       					{%elseif(cValue["cType"]=="ratingField")%}
       						{% include '/blocks/fields/rating.html.twig' %}
-      					{%elseif(cValue["cType"]=="textareafield")%}
+      					{%elseif(cValue["cType"]=="textarea")%}
       						{% include '/blocks/fields/textarea.html.twig' %}
+                        {%elseif(cValue["cType"]=="textareafield")%}
+                            {% include '/blocks/fields/textarea.html.twig' %}
       					{%elseif(cValue["cType"]=="textfield")%}
       						{% include '/blocks/fields/text.html.twig' %}
       					{%elseif(cValue["cType"]=="slider")%}
