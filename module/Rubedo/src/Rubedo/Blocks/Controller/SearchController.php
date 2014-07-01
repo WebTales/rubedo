@@ -138,10 +138,6 @@ class SearchController extends AbstractController
                          Manager::getService('FrontOfficeTemplates')->getFileThemePath(
                                 "js/autocomplete.js")
         );
-        foreach ($results['data'] as $key => $data){
-            $results['data'][$key]['title'] = $data['i18n.'.$currentLocale.'.fields.text'][0];
-        }
-        
         return $this->_sendResponse($results, $template, $css, $js);
     }
 
