@@ -76,20 +76,20 @@
             <td colspan="4">Your cart is empty</td>
         </tr>
     {% endfor %}
-    <tr>
-        <td>
-            {{ 'Blocks.OrderDetails.Table.ShippingMethod'|fotrans }} : {{ shipper.name }}<br />
-            <small>{{ shipper.hRDelay }} {{ shipper.hRUnit }}</small>
-        </td>
-        <td colspan="2"></td>
-        <td>{{ shippingPrice }} €</td>
-    </tr>
     </tbody>
     <tfoot>
         <tr>
             <th>Sub-total</th>
             <td colspan="2"></td>
             <td>{{ totalPrice }} €</td>
+        </tr>
+        <tr>
+            <th>
+                {{ 'Blocks.OrderDetails.Table.ShippingMethod'|fotrans }} : {{ shipper.name }}<br />
+                <small>{{ shipper.hRDelay }} {{ shipper.hRUnit }}</small>
+            </th>
+            <td colspan="2"></td>
+            <td>{{ shippingPrice }} €</td>
         </tr>
         <tr>
             <th>{{ 'Blocks.OrderDetails.Table.ShippingTax'|fotrans }}</th>
