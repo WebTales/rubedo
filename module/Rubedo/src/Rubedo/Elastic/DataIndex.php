@@ -1112,8 +1112,8 @@ class DataIndex extends DataAbstract implements IDataIndex
         $indexData = array(
                 'objectType' => 'user',
                 'userType' => $typeId,
+        		'text' => $data['name'],
                 'email' => $data['email'],
-                'userType' => $typeId,
                 'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string) ($data['lastUpdateTime'] *
                          1000) : 0,
                         'fields' => $data['fields'],
