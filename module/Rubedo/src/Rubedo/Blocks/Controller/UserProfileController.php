@@ -171,6 +171,11 @@ class UserProfileController extends AbstractController
             $this->getRequest()->getBasePath() . '/' . $this->frontOfficeTemplatesService->getFileThemePath('js/fields.js'),
             $this->getRequest()->getBasePath() . '/' . $this->frontOfficeTemplatesService->getFileThemePath('js/userfields.js'),
         );
+        foreach($output['type'] as $typeName => $type){
+            if (!empty($type['config']['i18n'][$data['locale']])){
+                $output['type'][$typeName]['config']['fieldLabel'] = $type['config']['i18n'][$data['locale']]['fieldLabel'];
+            }
+        }
         return $this->_sendResponse($output, $template, $css, $js);
     }
 
