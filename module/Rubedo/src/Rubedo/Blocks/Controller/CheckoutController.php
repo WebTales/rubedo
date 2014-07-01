@@ -50,6 +50,7 @@ class CheckoutController extends AbstractController
             if (!$currentUser) {
                 throw new \Rubedo\Exceptions\User('No authenticated user');
             }
+            (empty($currentUser['shippingAddress']['regionState'])?$currentUser['shippingAddress']['regionState']='':$currentUser['shippingAddress']['regionState']);
             if ((!isset($currentUser['shippingAddress'])) || (!isset($currentUser['shippingAddress']['country']))) {
                 throw new \Rubedo\Exceptions\User('Missing shipping address country');
             }
