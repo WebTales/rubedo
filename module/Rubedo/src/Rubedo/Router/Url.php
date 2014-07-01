@@ -370,6 +370,8 @@ class Url implements IUrl
         AbstractLocalizableCollection::setIncludeI18n($wasWithI18n);
         if (!$content){
             return null;
+        } elseif ((isset($content['online']))&&($content['online']===false)){
+            return null;
         } else {
             return $contentId;
         }
