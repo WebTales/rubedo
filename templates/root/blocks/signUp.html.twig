@@ -53,7 +53,7 @@
         {% endif %}
         {% if  mailingListArray%}
         <div class="control-group">
-            <label class="control-label">Subscribe to the following mailing lists</label>
+            <label class="control-label">{{ 'Blocks.SignUp.label.mailingList'|fotrans }}</label>
             <div class="controls">
                 {% for mailinglist in mailingListArray %}
                     <label class="checkbox">
