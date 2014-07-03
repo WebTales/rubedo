@@ -15,7 +15,7 @@
         "jschr/bootstrap-modal": "2.1",
         "WebTales/bsie": "1.4.0",
         "stowball/jQuery-rwdImageMaps": "1.0",
-        "webTales/bootstrap-less": "1.4.0"
+        "webTales/bootstrap-less": "dev-master"
     },
     "require-dev": {},
     "repositories": [
