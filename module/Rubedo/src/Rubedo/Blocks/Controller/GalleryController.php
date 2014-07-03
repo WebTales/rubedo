@@ -75,8 +75,8 @@ class GalleryController extends ContentListController
 
             $limit = (int) (isset($blockConfig["pageSize"])) ? $blockConfig['pageSize'] : 5;
             $query = Json::decode($blockConfig["query"], Json::TYPE_ARRAY);
-            $imgWidth = $blockConfig['imageThumbnailWidth'];
-            $imgHeight = $blockConfig['imageThumbnailHeight'];
+            $imgWidth = isset($blockConfig['imageThumbnailWidth'])?$blockConfig['imageThumbnailWidth'] : null;
+            $imgHeight = isset($blockConfig['imageThumbnailHeight'])?$blockConfig['imageThumbnailHeight'] : null;
         }
             $prefix = $this->getParamFromQuery('prefix');
             $filter = $this->setFilters($query);
@@ -118,10 +118,10 @@ class GalleryController extends ContentListController
         $mediaArray = $this->_dataService->getList($filter['filter'], $filter['sort'], (($currentPage - 1) * $limit), $limit);
         
         // Set the ID and the title for each pictures
-         $data=array();
+        $data=array();
         foreach ($mediaArray['data'] as $media) {
             $fields["image"] = (string) $media['id'];
-            $fields["title"] = $media['title'];
+            $fields["title"] = $media['fields']['title'];
             $data[] = $fields;
         }
         
