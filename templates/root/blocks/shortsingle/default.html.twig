@@ -2,7 +2,7 @@
 	
 	<header class="entry-header">
 		<h2 class="post-title-small">
-			<a href='{{ displayUrl(content.id,"default",null,singlePage) }}' title='{{content.title}}'>{{content.title}} </a>
+			<a href='{{ displayUrl(content.id,"default",null,singlePage) }}' title='{{content.title}}'>{{content.title}} {{ singlePage }}</a>
 		</h2>
 	</header>
 	{% if not blockConfig.showOnlyTitle %}

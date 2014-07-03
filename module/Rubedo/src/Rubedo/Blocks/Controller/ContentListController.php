@@ -157,7 +157,7 @@ class ContentListController extends AbstractController
             $defaultLimit = isset($blockConfig['pageSize']) ? $blockConfig['pageSize'] : 6;
             $output['limit'] = $this->getParamFromQuery('limit', $defaultLimit);
             
-            $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : $this->getParamFromQuery('current-page');
+            $singlePage = isset($blockConfig['singlePage']) ? $blockConfig['singlePage'] : null;
             $output['singlePage'] = $this->getParamFromQuery('single-page', $singlePage);
             $displayType = isset($blockConfig['displayType']) ? $blockConfig['displayType'] : $this->getParamFromQuery('displayType', null);
             $output['displayType'] = $displayType;
