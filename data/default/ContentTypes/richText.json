@@ -6,13 +6,12 @@
 			"config": {
 				"name": "body",
 				"fieldLabel": "Corps *",
-				"maxLength": 6000,
 				"minLength": 0,
 				"allowBlank": false,
 				"localizable": true,
 				"searchable": true,
 				"multivalued": false,
-				"CKETBConfig": "Standard",
+				"CKETBConfig": "Complet",
 				"tooltip": "",
 				"vtype": null,
 				"labelSeparator": ""
