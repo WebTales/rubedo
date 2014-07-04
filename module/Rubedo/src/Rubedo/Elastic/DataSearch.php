@@ -353,7 +353,7 @@ class DataSearch extends DataAbstract implements IDataSearch {
 		
 		if (! array_key_exists ( 'query', $this->_params ))
 			$this->_params ['query'] = $defaultVars ['query'];
-		
+
 		$this->_params ['query'] = strip_tags ( $this->_params ['query'] );
 		
 		// Build global filter
@@ -379,9 +379,17 @@ class DataSearch extends DataAbstract implements IDataSearch {
 			$this->_setFilter = true;
 		}
 		
-		// Frontend filter on start and end publication date, for contents only
+		// Frontend filters, for contents only : online, start and end publication date
 		
 		if ((self::$_isFrontEnd) && ($option != "user") && ($option != "dam")) {
+			
+			// Only 'online' contents
+			
+			$onlineFilter =new \Elastica\Filter\Term ();
+			$onlineFilter->setTerm ( 'online', true );
+			
+			//  Filter on start and end publication date
+			
 			$now = Manager::getService ( 'CurrentTime' )->getCurrentTime ();
 			
 			// filter on start
@@ -414,15 +422,17 @@ class DataSearch extends DataAbstract implements IDataSearch {
 			$endFilter->addFilter ( $endFilterNotExists );
 			$endFilter->addFilter ( $endFilterWithoutValue );
 			$endFilter->addFilter ( $endFilterWithValue );
-			
+						
 			// build complete filter
 			$frontEndFilter = new \Elastica\Filter\BoolAnd ();
+			$frontEndFilter->addFilter ( $onlineFilter );
 			$frontEndFilter->addFilter ( $beginFilter );
 			$frontEndFilter->addFilter ( $endFilter );
 			
 			// push filter to global
 			$this->_globalFilterList ['frontend'] = $frontEndFilter;
 			$this->_setFilter = true;
+	
 		}
 		
 		// filter on query

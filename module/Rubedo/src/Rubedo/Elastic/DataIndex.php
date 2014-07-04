@@ -171,13 +171,17 @@ class DataIndex extends DataAbstract implements IDataIndex
 			if ($type == 'content') {
 				$specific_mapping = array (
 						'summary' => array (
-								'type' => 'string',
-								'store' => 'yes' 
+							'type' => 'string',
+							'store' => 'yes' 
 						),
 						'contentType' => array (
-								'type' => 'string',
-								'index' => 'not_analyzed',
-								'store' => 'yes' 
+							'type' => 'string',
+							'index' => 'not_analyzed',
+							'store' => 'yes' 
+						),
+						'online' => array(
+							'type' => 'boolean',
+							'store' => 'yes'	
 						) 
 				);
 			}
@@ -868,6 +872,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 'createUser' => $data['createUser'],
                 'availableLanguages' => $availableLanguages,
                 'version' => $data['version'],
+        		'online' => $data['online']
         );
         
         // Index product properties if exists

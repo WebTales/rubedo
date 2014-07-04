@@ -68,7 +68,11 @@ class SearchController extends AbstractController
                     Json::TYPE_ARRAY);
             if (is_array($predefParamsArray)) {
                 foreach ($predefParamsArray as $key => $value) {
-                    $params[$key][] = $value;
+                	if ($key != 'query') {
+                		$params[$key][] = $value;
+                	} else {
+                		$params[$key] = $value;
+                	}
                     $facetsToHide[] = $value;
                 }
             }
