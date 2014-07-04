@@ -917,14 +917,14 @@ class Import extends AbstractCollection
 	 */
 	protected function updateContents () {
 	
-		$query = "typeId: '".$this->_typeId."',".$this->uniqueKeyField.": foo._id";
+		$query = "typeId: '".$this->_typeId."','".$this->uniqueKeyField."': foo._id";
 		
 		$update = "\$set: {";
 		
 		foreach ($this->_importAsField as $key => $value) {
 		
-			$update.= "'live.fields.".$value['name']."': foo.".$value['name'].","; // live fields
-			$update.= "'live.i18n.".$this->_workingLanguage.".fields.".$value['name']."': foo.".$value['name'].","; // i18n fields in working language
+			$update.= "live['fields']['".$value['name']."']: foo.".$value['name'].","; // live fields
+			$update.= "live['i18n']['".$this->_workingLanguage."']['fields']['".$value['name']."']: foo['".$value['name']."'],"; // i18n fields in working language
 		
 		}
 		
