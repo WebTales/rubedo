@@ -970,10 +970,10 @@ class DataSearch extends DataAbstract implements IDataSearch {
 			
 			switch ($resultData ['objectType']) {
 				case 'content' :
-					if (isset ( $data ["text_" . $currentLocale] [0] )) {
-						$resultData ['title'] = $data ["text_" . $currentLocale] [0];
+					if (isset ( $data ["i18n." . $currentLocale . ".fields.text"][0] )) {		
+						$resultData ['title'] = $data ["i18n." . $currentLocale . ".fields.text"][0];
 						if ($withSummary) {
-							$resultData ['summary'] = (isset ( $data ["summary_" . $currentLocale] [0] )) ? $data ["summary_" . $currentLocale] [0] : $data ["text_" . $currentLocale] [0];
+							$resultData ['summary'] = (isset ( $data ["i18n." . $currentLocale. ".fields.summary"][0] )) ? $data ["i18n." . $currentLocale. ".fields.summary"][0] : "";
 						}
 					} else {
 						$resultData ['title'] = $data ['text'] [0];
@@ -987,8 +987,8 @@ class DataSearch extends DataAbstract implements IDataSearch {
 					$resultData ['type'] = $contentType ['type'];
 					break;
 				case 'dam' :
-					if (isset ( $data ["title_" . $currentLocale] [0] )) {
-						$resultData ['title'] = $data ["title_" . $currentLocale] [0];
+					if (isset ( $data ["i18n." . $currentLocale . ".fields.title"][0] )) {
+						$resultData ['title'] = $data ["i18n." . $currentLocale . ".fields.title"][0];
 					} else {
 						$resultData ['title'] = $data ['text'] [0];
 					}
