@@ -243,6 +243,7 @@ public function importAction ()
 				$options['skuFieldIndex'] = $configs['skuFieldIndex'];
 				$options['priceFieldIndex'] = $configs['priceFieldIndex'];
 				$options['stockFieldIndex'] = $configs['stockFieldIndex'];
+				$options['preparationDelayFieldIndex'] = $configs['preparationDelayFieldIndex'];
 			}
 			
 			// INSERT MODE : create vocabularies and content type

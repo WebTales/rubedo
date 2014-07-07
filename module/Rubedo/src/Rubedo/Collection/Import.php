@@ -175,7 +175,8 @@ class Import extends AbstractCollection
 	    		'basePriceFieldIndex' => $options['basePriceFieldIndex'],
 	    		'skuFieldIndex' => $options['skuFieldIndex'],
 	    		'priceFieldIndex' => $options['priceFieldIndex'],
-	    		'stockFieldIndex' => $options['stockFieldIndex']
+	    		'stockFieldIndex' => $options['stockFieldIndex'],
+	    		'preparationDelayFieldIndex' => $options['preparationDelayFieldIndex']	
 	    	);
     	} else {
     		$this->_productOptions = null;
@@ -433,7 +434,8 @@ class Import extends AbstractCollection
     				basePrice: this.col".$this->_productOptions['basePriceFieldIndex'].",
     				sku: this.col".$this->_productOptions['skuFieldIndex'].",
     				price: this.col".$this->_productOptions['priceFieldIndex'].",
-    				stock: this.col".$this->_productOptions['stockFieldIndex'];
+    				stock: this.col".$this->_productOptions['stockFieldIndex'].",
+    				preparationDelay: this.col".$this->_productOptions['preparationDelayFieldIndex'];
     				// add variation fields
     				foreach ($this->_importAsField as $key => $value) {
     					if (isset($value['useAsVariation']) && $value['useAsVariation']) {
@@ -457,7 +459,7 @@ class Import extends AbstractCollection
     			var productProperties = {
     				sku : value.baseSku,
 					basePrice: value.basePrice,
-					preparationDelay: 1,
+					preparationDelay: value.preparationDelay,
 					canOrderNotInStock: false,
 					outOfStockLimit: 1,
 					notifyForQuantityBelow : 1,
@@ -596,7 +598,8 @@ class Import extends AbstractCollection
     				basePrice: this.col".$this->_productOptions['basePriceFieldIndex'].",
     				sku: this.col".$this->_productOptions['skuFieldIndex'].",
     				price: this.col".$this->_productOptions['priceFieldIndex'].",
-    				stock: this.col".$this->_productOptions['stockFieldIndex'];
+    				stock: this.col".$this->_productOptions['stockFieldIndex'].",
+    				preparationDelay: this.col".$options['preparationDelayFieldIndex'];
     		// add variation fields
     		foreach ($this->_importAsField as $key => $value) {
     			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
@@ -620,7 +623,7 @@ class Import extends AbstractCollection
     			var productProperties = {
     				sku : value.baseSku,
 					basePrice: value.basePrice,
-					preparationDelay: 1,
+					preparationDelay: value.preparationDelay,
 					canOrderNotInStock: false,
 					outOfStockLimit: 1,
 					notifyForQuantityBelow : 1,
