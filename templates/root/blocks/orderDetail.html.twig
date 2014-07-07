@@ -105,7 +105,7 @@
             <tr>
                 <th>{{ 'Blocks.OrderDetails.Table.TotalPrice'|fotrans }}</th>
                 <td colspan="2"></td>
-                <td>{{ order.finalTFPrice }} €</td>
+                <td>{{ order.finalPrice }} €</td>
             </tr>
         </tfoot>
     </table>
@@ -116,6 +116,9 @@
         <li><strong>{{ 'Blocks.OrderDetails.Payment.Status'|fotrans }}</strong> : {{ order.status }}</li>
         {% if order.billingAddress.vatEin is not empty %}
             <li><strong>{{ 'Blocks.OrderDetails.Payment.VatEin' }}</strong> : {{ order.billingAddress.vatEin }}</li>
+        {% endif %}
+        {% if order.billDocument %}
+            <li><strong><a href="{{ mediaUrl(order.billDocument) }}" target="_blank">Order bill</a></strong></li>
         {% endif %}
     </ul>
 {% endblock %}

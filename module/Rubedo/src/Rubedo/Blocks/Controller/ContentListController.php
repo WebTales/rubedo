@@ -265,5 +265,5 @@ class ContentListController extends AbstractController
         }
         
         return new JsonModel($returnArray);
-        }
+    }
 }
