@@ -81,5 +81,6 @@ return array(
     'Rubedo\\Backoffice\\Controller\\PaymentMeans' => 'Rubedo\\Backoffice\\Controller\\PaymentMeansController',
     'Rubedo\\Backoffice\\Controller\\PaymentConfigs' => 'Rubedo\\Backoffice\\Controller\\PaymentConfigsController',
     'Rubedo\\Backoffice\\Controller\\Orders' => 'Rubedo\\Backoffice\\Controller\\OrdersController',
-    'Rubedo\\Backoffice\\Controller\\PaypalIpn' => 'Rubedo\\Backoffice\\Controller\\PaypalIpnController'
+    'Rubedo\\Backoffice\\Controller\\PaypalIpn' => 'Rubedo\\Backoffice\\Controller\\PaypalIpnController',
+    'Rubedo\\Backoffice\\Controller\\ImportPresets' => 'Rubedo\\Backoffice\\Controller\\ImportPresetsController'
 );

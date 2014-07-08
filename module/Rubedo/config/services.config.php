@@ -91,5 +91,6 @@ return array(
     'Orders' => 'Rubedo\\Collection\\Orders',
     'Stock' => 'Rubedo\\Collection\\Stock',
     'PaypalIPN' => 'Rubedo\\Collection\\PaypalIPN',
-    'Import' => 'Rubedo\\Collection\\Import'
+    'Import' => 'Rubedo\\Collection\\Import',
+    'ImportPresets'=> 'Rubedo\\Collection\\ImportPresets'
 );
