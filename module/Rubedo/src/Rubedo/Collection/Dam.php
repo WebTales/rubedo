@@ -387,5 +387,10 @@ class Dam extends AbstractLocalizableCollection implements IDam
         return count(array_intersect($media['target'], $publicWorkspaces)) > 0;
     }
 
+    public function toggleLocaleFilters ()
+    {
+        $this->switchLocaleFiltered();
+        $this->initLocaleFilter();
+    }
 }
 

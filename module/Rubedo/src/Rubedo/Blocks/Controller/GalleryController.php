@@ -82,6 +82,7 @@ class GalleryController extends ContentListController
             $filter = $this->setFilters($query);
 
         $this->_dataService = Manager::getservice('Dam');
+        $this->_dataService->toggleLocaleFilters();
         if (!isset($filter['filter'])){
             $filter['filter'] = null;
         }
