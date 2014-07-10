@@ -106,7 +106,8 @@ class ContentListController extends AbstractController
                 
                 $nbItems = $unorderedContentArray["count"];
             } else {
-                $contentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig));
+                $ismagic = isset($blockConfig['magicQuery']) ? $blockConfig['magicQuery'] : false;
+                $contentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig), $ismagic);
                 $nbItems = $contentArray["count"];
             }
         } else {
@@ -209,10 +210,10 @@ class ContentListController extends AbstractController
      * @param array $pageData            
      * @return array
      */
-    protected function getContentList($filters, $pageData)
+    protected function getContentList($filters, $pageData, $ismagic = false)
     {
         $filters["sort"] = isset($filters["sort"]) ? $filters["sort"] : array();
-        $contentArray = $this->_dataReader->getOnlineList($filters["filter"], $filters["sort"], (($pageData['currentPage'] - 1) * $pageData['limit']) + $pageData['skip'], $pageData['limit']);
+        $contentArray = $this->_dataReader->getOnlineList($filters["filter"], $filters["sort"], (($pageData['currentPage'] - 1) * $pageData['limit']) + $pageData['skip'], $pageData['limit'],$ismagic);
         $contentArray['page'] = $pageData;
         $contentArray['count'] = max(0, $contentArray['count'] - $pageData['skip']);
         return $contentArray;

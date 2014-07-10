@@ -51,6 +51,8 @@ class ContentSingleController extends AbstractController
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/noContent.html.twig");
                 return $this->_sendResponse($output, $template);
             }
+            $currentTime=Manager::getService("CurrentTime")->getCurrentTime();
+            Manager::getService("ContentViewLog")->log($content['id'], $content['locale'], $_SERVER['REMOTE_ADDR'], $currentTime);
             $data = $content['fields'];
             $termsArray = array();
             if (isset($content['taxonomy']) && is_array($content['taxonomy'])) {

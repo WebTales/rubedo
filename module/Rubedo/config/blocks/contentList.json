@@ -63,6 +63,13 @@
                                 "name":"filterByUser",
                                 "inputValue":true
                             }
+                        },{
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Activate Magic Query",
+                                "name":"magicQuery",
+                                "inputValue":true
+                            }
                         }
 					]
 				},

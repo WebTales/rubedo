@@ -77,7 +77,8 @@ class CarrouselController extends ContentListController
                 
                 $nbItems = $unorderedContentArray["count"];
             } else {
-                $contentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig));
+                $ismagic = isset($blockConfig['magicQuery']) ? $blockConfig['magicQuery'] : false;
+                $contentArray = $this->getContentList($filters, $this->setPaginationValues($blockConfig), $ismagic);
                 
                 $nbItems = $contentArray["count"];
             }

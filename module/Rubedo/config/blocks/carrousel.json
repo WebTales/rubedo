@@ -68,7 +68,14 @@
                                     "name": "imageField",
                                     "value": "image"
                                 }
+                            },{
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Activate Magic Query",
+                                "name":"magicQuery",
+                                "inputValue":true
                             }
+                        }
 					]
 				},
 				{
