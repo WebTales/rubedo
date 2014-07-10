@@ -19,6 +19,7 @@ namespace Rubedo\Blocks\Controller;
 use Alb\OEmbed;
 use Rubedo\Services\Cache;
 use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 use Zend\View\Model\JsonModel;
 
 /**
@@ -51,8 +52,13 @@ class ContentSingleController extends AbstractController
                 $template = $frontOfficeTemplatesService->getFileThemePath("blocks/single/noContent.html.twig");
                 return $this->_sendResponse($output, $template);
             }
-            $currentTime=Manager::getService("CurrentTime")->getCurrentTime();
-            Manager::getService("ContentViewLog")->log($content['id'], $content['locale'], $_SERVER['REMOTE_ADDR'], $currentTime);
+
+            $config=Manager::getService("config");
+            if ((isset($config["rubedo_config"]["activateMagic"]))&&($config["rubedo_config"]["activateMagic"]=="1")){
+                $currentTime=Manager::getService("CurrentTime")->getCurrentTime();
+                Manager::getService("ContentViewLog")->log($content['id'], $content['locale'], $_SERVER['REMOTE_ADDR'], $currentTime);
+            }
+
             $data = $content['fields'];
             $termsArray = array();
             if (isset($content['taxonomy']) && is_array($content['taxonomy'])) {

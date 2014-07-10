@@ -99,6 +99,10 @@ class PhpSettingsForm extends BootstrapForm
         $eCommerce->setValue(isset($params['rubedo_config']['addECommerce']) ? $params['rubedo_config']['addECommerce'] : 1);
         $eCommerce->setLabel('Activate e-commerce features');
 
+        $magicActivator = new Checkbox('activateMagic');
+        $magicActivator->setValue(isset($params['rubedo_config']['activateMagic']) ? $params['rubedo_config']['activateMagic'] : 0);
+        $magicActivator->setLabel('Activate Magic Queries');
+
         $sessionFieldset = new Fieldset('session');
         $sessionFieldset->setAttribute('legend', 'Session parameters');
         $sessionName = new Text('name');
@@ -151,6 +155,7 @@ class PhpSettingsForm extends BootstrapForm
         $rubedoConfigFieldset->add($cachePage);
         $rubedoConfigFieldset->add($extDebug);
         $rubedoConfigFieldset->add($eCommerce);
+        $rubedoConfigFieldset->add($magicActivator);
         $rubedoConfigFieldset->add($defaultBackofficeHost);
         $rubedoConfigFieldset->add($isBackofficeSSL);
         $rubedoConfigFieldset->add($enableEmailNotification);

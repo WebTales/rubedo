@@ -42,6 +42,7 @@ abstract class AbstractExtLoaderController extends AbstractActionController
         $extjsOptions = array();
         $extjsOptions['debug']=isset($config['rubedo_config']['extDebug']) ? $config['rubedo_config']['extDebug'] : "0";
         $extjsOptions['addECommerce']=isset($config['rubedo_config']['addECommerce']) ? $config['rubedo_config']['addECommerce'] : "1";
+        $extjsOptions['activateMagic']=isset($config['rubedo_config']['activateMagic']) ? $config['rubedo_config']['activateMagic'] : "0";
         $this->viewData['baseUrl'] = $this->request->getBasePath();
         
 
@@ -62,6 +63,11 @@ abstract class AbstractExtLoaderController extends AbstractActionController
             $this->viewData['addECommerce'] = true;
         } else {
             $this->viewData['addECommerce'] = false;
+        }
+        if ( $extjsOptions['activateMagic'] == "1") {
+            $this->viewData['activateMagic'] = true;
+        } else {
+            $this->viewData['activateMagic'] = false;
         }
         $viewModel = new ViewModel($this->viewData);
         $viewModel->setTerminal(true);
