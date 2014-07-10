@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle Item to User recommendations
@@ -36,11 +37,11 @@ class UserRecommendations extends AbstractCollection
     }
     
     public function read($limit = 50){
-    	
+        $fingerprint=Manager::getService("Session")->get("fingerprint");
         $pipeline=array();
         $pipeline[]=array(
             '$match'=>array(
-                'userIP'=> $_SERVER['REMOTE_ADDR']
+                'userFingerprint'=> $fingerprint
             )
         );
         $pipeline[]=array(
@@ -88,19 +89,19 @@ class UserRecommendations extends AbstractCollection
 				if (v) {
 					for (var content in v.value) {
 						db.UserRecommendations.update(
-							{ userIP: foo.userIP },
+							{ userFingerprint: foo.userFingerprint },
 							{ \$addToSet : {reco: {cid: content, score:  v.value[content]}}},
 							{ upsert: true }
 						);
 						db.UserRecommendations.update(
-							{ userIP: foo.userIP, reco: { \$elemMatch: { cid: content } } },
+							{ userFingerprint: foo.userFingerprint, reco: { \$elemMatch: { cid: content } } },
 							{ \$inc: {'reco.$.score' : v.value[content]}}
 						);
 						var action = {};
 						action[foo.contentId] = '';
 					}
 					db.ContentViewLog.remove(foo);
-					db.UserRecommendations.update({ userIP: foo.userIP },{\$pull: { reco: {'cid': foo.ContentId}}});
+					db.UserRecommendations.update({ userFingerprint: foo.userFingerprint },{\$pull: { reco: {'cid': foo.ContentId}}});
 				}
 			});";
     

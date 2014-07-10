@@ -157,4 +157,13 @@ class XhrAuthenticationController extends AbstractActionController
         }
         return new JsonModel($output);
     }
+
+    public function setFingerprintAction(){
+        $fingerprint=$this->params()->fromPost("fingerprint", null);
+        if (!$fingerprint){
+            return new JsonModel(array("success"=>false));
+        }
+        Manager::getService("Session")->set("fingerprint",$fingerprint);
+        return new JsonModel(array("success"=>true));
+    }
 }

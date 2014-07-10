@@ -20,6 +20,7 @@ use Rubedo\Services\Manager;
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Content\Context;
 use Rubedo\Templates\Twig\TwigViewModel;
+use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 
 /**
@@ -273,6 +274,13 @@ class IndexController extends AbstractActionController
                 } else {
                 	$this->_servicePage->setDescription("");
                 }
+            }
+        }
+        $rConfig=Manager::getService("config");
+        if ((isset($rConfig["rubedo_config"]["activateMagic"]))&&($rConfig["rubedo_config"]["activateMagic"]=="1")){
+            $fingerprint=Manager::getService("Session")->get("fingerprint");
+            if (!$fingerprint){
+                $twigVar["fingerprintNeeded"]=true;
             }
         }
         $twigVar['currentPage'] = $this->_pageId;

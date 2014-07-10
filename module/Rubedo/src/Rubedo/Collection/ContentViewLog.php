@@ -37,11 +37,11 @@ class ContentViewLog extends AbstractCollection
     	
     }
     
-    public function log ($contentId, $locale, $ip, $timestamp){
+    public function log ($contentId, $locale, $fingerprint, $timestamp){
         $this->_dataService->directCreate(array(
             "contentId"=>$contentId,
             "viewedLocale"=>$locale,
-            "userIP"=>$ip,
+            "userFingerprint"=>$fingerprint,
             "timestamp"=>$timestamp
         ));
     }

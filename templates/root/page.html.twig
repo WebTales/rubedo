@@ -247,9 +247,22 @@
     	<script src="{{staticUrl('/components/webtales/bootstrap-less/bootstrap.min.js')}}"></script>
     	<script src="{{staticUrl('/components/jschr/bootstrap-modal/js/bootstrap-modalmanager.js')}}"></script>
     	<script src="{{staticUrl('/components/jschr/bootstrap-modal/js/bootstrap-modal.js')}}"></script>
-    	
+
+    	{%  if fingerprintNeeded %}
+            <script src="{{staticUrl('/components/fingerprintjs/fingerprint.js')}}"></script>
+            <script type="text/javascript">
+                var fingerprint=new Fingerprint({canvas: true}).get();
+                jQuery.ajax({
+                    type: 'POST',
+                    url: '/xhr-authentication/set-fingerprint',
+                    dataType: 'json',
+                    data: {"fingerprint":fingerprint}
+                });
+            </script>
+        {% endif %}
+
     	{% for file in js %}
-    	<script type="text/javascript" src="{{file}}"></script>
+    	    <script type="text/javascript" src="{{file}}"></script>
     	{% endfor %}
     	
     	

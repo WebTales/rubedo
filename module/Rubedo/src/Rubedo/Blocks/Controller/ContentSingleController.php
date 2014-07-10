@@ -55,8 +55,11 @@ class ContentSingleController extends AbstractController
 
             $config=Manager::getService("config");
             if ((isset($config["rubedo_config"]["activateMagic"]))&&($config["rubedo_config"]["activateMagic"]=="1")){
-                $currentTime=Manager::getService("CurrentTime")->getCurrentTime();
-                Manager::getService("ContentViewLog")->log($content['id'], $content['locale'], $_SERVER['REMOTE_ADDR'], $currentTime);
+                $fingerprint=Manager::getService("Session")->get("fingerprint");
+                if ($fingerprint){
+                    $currentTime=Manager::getService("CurrentTime")->getCurrentTime();
+                    Manager::getService("ContentViewLog")->log($content['id'], $content['locale'], $fingerprint, $currentTime);
+                }
             }
 
             $data = $content['fields'];
