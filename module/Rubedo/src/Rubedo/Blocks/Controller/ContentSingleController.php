@@ -19,6 +19,7 @@ namespace Rubedo\Blocks\Controller;
 use Alb\OEmbed;
 use Rubedo\Services\Cache;
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 use Zend\Debug\Debug;
 use Zend\View\Model\JsonModel;
 
@@ -55,10 +56,33 @@ class ContentSingleController extends AbstractController
 
             $config=Manager::getService("config");
             if ((isset($config["rubedo_config"]["activateMagic"]))&&($config["rubedo_config"]["activateMagic"]=="1")){
+                $currentTime=Manager::getService("CurrentTime")->getCurrentTime();
+                //get user fingerprint
                 $fingerprint=Manager::getService("Session")->get("fingerprint");
+                //log content view
                 if ($fingerprint){
-                    $currentTime=Manager::getService("CurrentTime")->getCurrentTime();
                     Manager::getService("ContentViewLog")->log($content['id'], $content['locale'], $fingerprint, $currentTime);
+                }
+                //rebuild user recommendations if necessary
+                $emptyFilter=Filter::factory();
+                $oldestView=Manager::getService("ContentViewLog")->findOne($emptyFilter);
+                if ($oldestView) {
+                    $currentTime=Manager::getService("CurrentTime")->getCurrentTime();
+                    $timeSinceLastRun=$currentTime-$oldestView['timestamp'];
+                    if ($timeSinceLastRun>60){
+                        $curlUrl="http://".$_SERVER['HTTP_HOST']."/queue?service=UserRecommendations&class=build";
+                        $curly=curl_init();
+                        curl_setopt($curly, CURLOPT_URL, $curlUrl);
+                        curl_setopt($curly, CURLOPT_FOLLOWLOCATION, true);  // Follow the redirects (needed for mod_rewrite)
+                        curl_setopt($curly, CURLOPT_HEADER, false);         // Don't retrieve headers
+                        curl_setopt($curly, CURLOPT_NOBODY, true);          // Don't retrieve the body
+                        curl_setopt($curly, CURLOPT_RETURNTRANSFER, true);  // Return from curl_exec rather than echoing
+                        curl_setopt($curly, CURLOPT_FRESH_CONNECT, true);   // Always ensure the connection is fresh
+
+                        // Timeout super fast once connected, so it goes into async.
+                        curl_setopt( $curly, CURLOPT_TIMEOUT, 1 );
+                        curl_exec( $curly );
+                    }
                 }
             }
 
