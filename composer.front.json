@@ -15,7 +15,8 @@
         "jschr/bootstrap-modal": "2.1",
         "WebTales/bsie": "1.4.0",
         "stowball/jQuery-rwdImageMaps": "1.0",
-        "webTales/bootstrap-less": "dev-master"
+        "webTales/bootstrap-less": "dev-master",
+        "fingerprintjs":"0.5.3"
     },
     "require-dev": {},
     "repositories": [
@@ -100,6 +101,17 @@
                 }
             }
         },
+        {
+            "type": "package",
+            "package": {
+                "name": "fingerprintjs",
+                "version": "0.5.3",
+                "dist": {
+                    "url": "https://github.com/Valve/fingerprintjs/archive/v0.5.3.zip",
+                    "type": "zip"
+                }
+            }
+        },
 
 
         {
@@ -126,6 +138,7 @@
             "type": "vcs",
             "url": "git://github.com/WebTales/bootstrap-less.git"
         }
+
     ],
     "minimum-stability": "stable",
     "config": {
