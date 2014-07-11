@@ -15,7 +15,8 @@ jQuery(document).ready(function(e) {
             initialVariation=configData.variations[0];
         }
         if ('undefined' != typeof initialVariation.specialOffer && null != initialVariation.specialOffer) {
-            mainBox.find(".productpricetext").text(initialVariation.specialOffer + " €");
+            mainBox.find(".productpricetext").replaceWith('<h3><del style="color: #FF0000">'+initialVariation.price+" €"+'</del></h3>');
+            mainBox.find(".productspecialoffertext").text("  "+initialVariation.specialOffer + " €").css("display", "inline");
         } else {
             mainBox.find(".productpricetext").text(initialVariation.price+" €");
         }
