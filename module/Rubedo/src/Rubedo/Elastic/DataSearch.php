@@ -385,9 +385,16 @@ class DataSearch extends DataAbstract implements IDataSearch {
 			
 			// Only 'online' contents
 			
-			$onlineFilter =new \Elastica\Filter\Term ();
-			$onlineFilter->setTerm ( 'online', true );
-			
+			$onlineFilterIsTrue = new \Elastica\Filter\Term ();
+			$onlineFilterIsTrue->setTerm ( 'online', true );
+			$onlineFilterNotExists = new \Elastica\Filter\Missing ();
+			$onlineFilterNotExists->setField ( 'online' );
+			$onlineFilterNotExists->setParam ( 'existence', true );
+			$onlineFilterNotExists->setParam ( 'null_value', true );
+			$onlineFilter = new \Elastica\Filter\BoolOr ();
+			$onlineFilter->addFilter ( $onlineFilterIsTrue );
+			$onlineFilter->addFilter ( $onlineFilterNotExists );
+					
 			//  Filter on start and end publication date
 			
 			$now = Manager::getService ( 'CurrentTime' )->getCurrentTime ();
@@ -928,7 +935,7 @@ class DataSearch extends DataAbstract implements IDataSearch {
 		
 		// Get resultset
 		$elasticaResultSet = $search->search ( $elasticaQuery );
-		
+
 		// Update data
 		$resultsList = $elasticaResultSet->getResults ();
 
