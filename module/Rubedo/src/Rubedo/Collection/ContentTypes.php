@@ -438,6 +438,27 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
 
         return $localizableFieldArray;
     }
+    
+    /**
+     * Return variation fields for content type
+     *
+     * @param string $cTypeId
+     * @return array
+     */
+    public function getVariationFieldForCType($cTypeId)
+    {
+    	$contentType = $this->findById($cTypeId);
+    	$fieldsDef = $contentType['fields'];
+    
+    	$variationFieldArray = array();
+    
+    	foreach ($fieldsDef as $fieldDef) {
+    		if (isset($fieldDef['config']['useAsVariation']) && $fieldDef['config']['useAsVariation'] == true) {
+    			$variationFieldArray[] = $fieldDef['config']['name'];
+    		}
+    	}    
+    	return $variationFieldArray;
+    }
 
     protected function localizeOutput($obj, $alternativeFallBack = null)
     {

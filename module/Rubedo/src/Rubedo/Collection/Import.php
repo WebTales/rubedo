@@ -149,34 +149,44 @@ class Import extends AbstractCollection
      */
     public function run($fileName, $options) {
 
-    	// Get import settings
+    	// Get general params
     	$this->_importMode = $options['importMode'];
     	$this->_importKeyValue = $options['importKey'];
     	$this->_userEncoding = $options['userEncoding'];
-    	$this->_importAsField = $options['importAsField'];
-    	$this->_importAsFieldTranslation = $options['importAsFieldTranslation'];
-    	$this->_importAsTaxo = $options['importAsTaxo'];
-    	$this->_importAsTaxoTranslation = $options['importAsTaxoTranslation'];
     	$this->_workingLanguage = $options['workingLanguage'];
     	$this->_separator = isset($options['separator']) ? $options['separator'] : ';';
-    	$this->_vocabularies = $options['vocabularies'];
-    	$this->_navigationTaxonomy = $options['contentsNavTaxo'];
-    	$this->_target = $options['contentsTarget'];
     	$this->_typeId = $options['typeId'];
-    	$this->uniqueKeyIndex = $options['uniqueKeyIndex'];
-    	$this->uniqueKeyField = $options['uniqueKeyField'];
     	$this->_fileName = $fileName;
-
-    	// Product options
     	$this->_isProduct = isset($options['isProduct']) ? $options['isProduct'] : false;
+    	$this->_importAsField = $options['importAsField'];
+    	
+    	// Get params for insert mode
+    	if ($this->_importMode == 'insert') {
+    		$this->_importAsFieldTranslation = $options['importAsFieldTranslation'];
+    		$this->_importAsTaxo = $options['importAsTaxo'];
+    		$this->_importAsTaxoTranslation = $options['importAsTaxoTranslation'];
+    		$this->_vocabularies = $options['vocabularies'];
+    		$this->_navigationTaxonomy = $options['contentsNavTaxo'];
+    		$this->_target = $options['contentsTarget'];    		
+    	} else { // get params for update mode
+    		$this->uniqueKeyIndex = $options['uniqueKeyIndex'];
+    		$this->uniqueKeyField = $options['uniqueKeyField'];
+    		$this->_importAsTaxo = array();
+    		$this->_target = '';
+    	}
+    	
+    	// Product options
+    	
     	if ($this->_isProduct) {
 	    	$this->_productOptions = array(
+	    		'textFieldIndex' => $options['text'],
+	    		'summaryFieldIndex' => $options['summary'],
 	    		'baseSkuFieldIndex' => $options['baseSkuFieldIndex'],
 	    		'basePriceFieldIndex' => $options['basePriceFieldIndex'],
 	    		'skuFieldIndex' => $options['skuFieldIndex'],
 	    		'priceFieldIndex' => $options['priceFieldIndex'],
 	    		'stockFieldIndex' => $options['stockFieldIndex'],
-	    		'preparationDelayFieldIndex' => $options['preparationDelayFieldIndex']	
+	    		'preparationDelayFieldIndex' => $options['preparationDelayFieldIndex']
 	    	);
     	} else {
     		$this->_productOptions = null;
@@ -293,6 +303,7 @@ class Import extends AbstractCollection
     	
     	// Create fields
     	$fields = array();
+    	
     	foreach ($this->_importAsField as $key => $value) {
     		
     		// Fields that are not product variations
@@ -543,6 +554,7 @@ class Import extends AbstractCollection
     	 
     	// Create fields
     	$fields = array();
+
     	foreach ($this->_importAsField as $key => $value) {
     
     		// Fields that are not product variations
@@ -561,14 +573,14 @@ class Import extends AbstractCollection
     						$fields[$value['newName']] = 'this.col'.$value['csvIndex'];
     					} else {
     						$fields['position'] = array(
-    								'address' => '',
-    								'altitude' => '',
-    								'lat' => 'this.col'.$value['csvIndex'].'[0]',
-    								'lon' => 'this.col'.$value['csvIndex'].'[1]',
-    								'location' => array(
-    										'type' => 'Point',
-    										'coordinates' => array('this.col'.$value['csvIndex'].'[1]','this.col'.$value['csvIndex'].'[0]')
-    								)
+    							'address' => '',
+    							'altitude' => '',
+    							'lat' => 'this.col'.$value['csvIndex'].'[0]',
+    							'lon' => 'this.col'.$value['csvIndex'].'[1]',
+    							'location' => array(
+    								'type' => 'Point',
+    								'coordinates' => array('this.col'.$value['csvIndex'].'[1]','this.col'.$value['csvIndex'].'[0]')
+    							)
     						);
     					}
     					break;
@@ -577,44 +589,39 @@ class Import extends AbstractCollection
     	}
            	 
     	// add taxonomy
-    	 
     	$taxonomy = array();
     	 
     	foreach ($this->_importAsTaxo as $key => $value) {
     		$taxonomy[$this->_vocabularies[$key+1]] = 'this.col'.$value['csvIndex'];
     	}
     	 
-   	 
     	$mapCode =	"function() {
     		var value = {";
     	
     	foreach ($this->_importAsField as $key => $value) {
-    		$mapCode.= $value['name'].": this.col".$value['csvIndex'].",";
+    		$mapCode.= "'".$value['name']."' : this.col".$value['csvIndex'].",";
     	}
-    	 
+ 	 
     	if ($this->_isProduct) {
-    		$mapCode.=",isProduct:true,
-    				baseSku: this.col".$this->_productOptions['baseSkuFieldIndex'].",
-    				basePrice: this.col".$this->_productOptions['basePriceFieldIndex'].",
-    				sku: this.col".$this->_productOptions['skuFieldIndex'].",
-    				price: this.col".$this->_productOptions['priceFieldIndex'].",
-    				stock: this.col".$this->_productOptions['stockFieldIndex'].",
-    				preparationDelay: this.col".$options['preparationDelayFieldIndex'];
-    		// add variation fields
-    		foreach ($this->_importAsField as $key => $value) {
-    			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
-    				$mapCode.=",".$value['newName'].": this.col".$value['csvIndex'];
-    			}
-    		}
+    		//$mapCode.=",isProduct:true,";
+    		if ($this->_productOptions['textFieldIndex']!="") $mapCode.="text: this.col".$this->_productOptions['textFieldIndex'].",";
+    		if ($this->_productOptions['summaryFieldIndex']!="") $mapCode.="summary: this.col".$this->_productOptions['summaryFieldIndex'].",";
+    		if ($this->_productOptions['baseSkuFieldIndex']!="") $mapCode.="baseSku: this.col".$this->_productOptions['baseSkuFieldIndex'].",";
+    		if ($this->_productOptions['basePriceFieldIndex']!="") $mapCode.="basePrice: this.col".$this->_productOptions['basePriceFieldIndex'].",";
+    		if ($this->_productOptions['preparationDelayFieldIndex']!="") $mapCode.="preparationDelay: this.col".$this->_productOptions['preparationDelayFieldIndex'].",";
+    		if ($this->_productOptions['priceFieldIndex']!="") $mapCode.="price: this.col".$this->_productOptions['priceFieldIndex'].",";
+    		if ($this->_productOptions['stockFieldIndex']!="") $mapCode.="stock: this.col".$this->_productOptions['stockFieldIndex'].",";
+    		if ($this->_productOptions['skuFieldIndex']!="") $mapCode.="sku: this.col".$this->_productOptions['skuFieldIndex'];
+    				
     	}
     
     	$mapCode.= "};";
-    	$mapKey = $this->_isProduct ? "this.col".$this->_productOptions['baseSkuFieldIndex'] : "this.col".$this->uniqueKeyIndex;
-    
+    	//$mapKey = $this->_isProduct ? "this.col".$this->_productOptions['baseSkuFieldIndex'] : "this.col".$this->uniqueKeyIndex;
+    	$mapKey = "this.col".$this->uniqueKeyIndex;
     	$mapCode.="emit(".$mapKey.", value);};";
-    
+    	   
     	$map = new \MongoCode($mapCode);
-    	 
+
     	if (!$this->_isProduct) {
     		$reduceCode = "function(key, values) { return {key: values[0]} }";
     	} else {
@@ -640,9 +647,10 @@ class Import extends AbstractCollection
 					};";
     
     		// add variation fields
+
     		foreach ($this->_importAsField as $key => $value) {
     			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
-    				$reduceCode.="variation['".$value['newName']."']=v.".$value['newName'].";";
+    				$reduceCode.="variation['".$value['newName']."']=v['".$value['newName']."'];";
     			}
     		}
     
@@ -669,7 +677,7 @@ class Import extends AbstractCollection
     
     		};";
     	}
-    	 
+
     	$reduce = new \MongoCode($reduceCode);
     	 
     	// global JavaScript variables passed to map, reduce and finalize functions
@@ -679,16 +687,16 @@ class Import extends AbstractCollection
     			"typeId" => $this->_typeId,
     			"target" => $this->_target
     	);
-    	 
+
     	$params = array(
     			"mapreduce" => "Import", // collection
     			"query" => array("importKey" => $this->_importKeyValue), // query
     			"map" => $map, // map
     			"reduce" => $reduce, // reduce
-    			"scope" => $scope, // scope
     			"out" => array("replace" => "ImportContents") // out
     	);
-    	$response = $this->_dataService->command($params);
+    	
+      	$response = $this->_dataService->command($params);
     
     	if ($response['ok']!=1) {
     		throw new \Rubedo\Exceptions\Server("Extracting Contents error");
@@ -919,27 +927,107 @@ class Import extends AbstractCollection
 	 * Update contents and flush import collection
 	 */
 	protected function updateContents () {
-	
-		$query = "typeId: '".$this->_typeId."','".$this->uniqueKeyField."': foo._id";
+
+		// get variation fields from content type
 		
-		$update = "\$set: {";
+		$variationFields = Manager::getService("ContentTypes")->getVariationFieldForCType($this->_typeId);
+
+		// 2 Map reduce : one for generic product and one for 
+				
+		$queryProduct = "typeId: '".$this->_typeId."','".$this->uniqueKeyField."': foo._id";
+		$updateProduct = "\$set: {";
 		
-		foreach ($this->_importAsField as $key => $value) {
+		$queryVariations = $queryProduct.",";
+
+		$updateVariation = "\$set: {";
+
+		$fieldsToUpdate = array();
+		$variationFieldsToUpdate = array();
 		
-			$update.= "live['fields']['".$value['name']."']: foo.".$value['name'].","; // live fields
-			$update.= "live['i18n']['".$this->_workingLanguage."']['fields']['".$value['name']."']: foo['".$value['name']."'],"; // i18n fields in working language
+		// Add system fields
+		
+		if ($this->_isProduct) {
+			
+			if ($this->_productOptions['textFieldIndex']!="") { // title
+				$updateProduct.= "'live.i18n.".$this->_workingLanguage.".fields.text' : foo['value']['text'],"; // live
+				$updateProduct.= "'workspace.i18n.".$this->_workingLanguage.".fields.text'"; // workspace
+			}
+			if ($this->_productOptions['summaryFieldIndex']!="") { // summary
+				$updateProduct.= "'live.i18n.".$this->_workingLanguage.".fields.summary' : foo['value']['summary'],"; // live
+				$updateProduct.= "'workspace.i18n.".$this->_workingLanguage.".fields.summary' : foo['value']['summary'],"; // workspace
+			}
+			if ($this->_productOptions['baseSkuFieldIndex']!="") { // base sku
+				$updateProduct.= "'productProperties.sku' : foo['value']['productProperties']['sku'],";
+			}
+			if ($this->_productOptions['basePriceFieldIndex']!="") { // base price
+				$updateProduct.= "'productProperties.basePrice' : foo['value']['productProperties']['basePrice'],";
+			}
+			if ($this->_productOptions['preparationDelayFieldIndex']!="") { // preparation delay
+				$updateProduct.= "'productProperties.preparationDelay' : foo['value']['productProperties']['preparationDelay'],";
+			}
+			/*
+			if ($this->_productOptions['priceFieldIndex']!="") { // variation price
+				$updateVariation.= "'productProperties.variations.$.price' : foo['value']['price'],";
+			}
+			if ($this->_productOptions['stockFieldIndex']!="") { // varitation stock 
+				$updateVariation.= "'productProperties.variations.$.stock' : foo['value']['stock'],";
+			}
+			if ($this->_productOptions['skuFieldIndex']!="") { // variation sku
+				$updateVariation.= "'productProperties.variations.$.sku' : foo['value']['sku'],";
+			}
+			*/
 		
 		}
 		
-		$update.="}";
+		// Add other fields
+		
+		foreach ($this->_importAsField as $key => $value) {
+		
+			$fieldName = $value['name'];
+			
+			if ($value['useAsVariation']) {
+				$queryVariations.= "'productProperties.variations.".$fieldName."' : foo['value']['productProperties']['".$fieldName."'],";
+			}
+			
+			if ($value['localizable']) { // localizable field is written in working language in i18n (live AND workspace)
+			
+				$fieldsToUpdate[] =  "'live.i18n.".$this->_workingLanguage.".fields.".$fieldName."'"; // live
+				$fieldsToUpdate[] =  "'workspace.i18n.".$this->_workingLanguage.".fields.".$fieldName."'"; // workspace
+			
+			} else { // non localizable field is written in fields (live AND workspace)
+				
+				if (!in_array($value['name'],$variationFields)) {
+					$fieldsToUpdate[] = "'live.fields.".$fieldName."'"; // live
+					$fieldsToUpdate[] = "'workspace.fields.".$fieldName."'"; // workspace
+				}
+				
+			}
+			
+			// Generic Product update
+			foreach($fieldsToUpdate as $fieldToUpdate) {
+				$updateProduct.= $fieldToUpdate.": foo['value']['".$fieldName."'],";
+			}
+			
+			// Variations update
+			foreach($variationFieldsToUpdate as $variationFieldToUpdate) {
+				$updateVariation.= $variationFieldToUpdate.": foo['value']['".$fieldName."'],";
+			}
+		}
+		
+		$updateProduct.="}";
+		$updateVariation.="}";
 		
 		$code = "var counter = 0;
 				db.ImportContents.find().snapshot().forEach(function(foo) {
-					db.Contents.findAndModify({query:{".$query."},update:{".$update."}});
+					db.Contents.findAndModify({query:{".$queryProduct."},update:{".$updateProduct."}});
+					foo.value.productProperties.variations.forEach(function(v) {
+						db.Contents.update(".$queryProduct.".productProperties.variations.Variation 1' : v['Variation 1'],'productProperties.variations.Variation 2' : v['Variation 2']},{\$set: { 'productProperties.variations.$.price' : v.price }});
+					});
 					counter++;
 				});
 				return counter;
 				";
+		var_dump($code);
 		$response = $this->_dataService->execute($code);
 
 		if ($response['ok']!=1) {
