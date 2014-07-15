@@ -94,17 +94,17 @@
         <tr>
             <th>{{ 'Blocks.OrderDetails.Table.ShippingTax'|fotrans }}</th>
             <td colspan="2"></td>
-            <td>{{ shippingTax }} €</td>
+            <td>{{ shippingTax|number_format(2) }} €</td>
         </tr>
         <tr>
-            <th>{{ 'Blocks.OrderDetails.Table.Taxes'|fotrans }}</th>
+            <th>{{ 'Blocks.OrderDetails.Table.ProductsTaxes'|fotrans }}</th>
             <td colspan="2"></td>
-            <td>{{ totalTaxedPrice -  totalPrice }} €</td>
+            <td>{{ (totalTaxedPrice -  totalPrice)|number_format(2) }} €</td>
         </tr>
         <tr>
             <th>{{ 'Blocks.OrderDetails.Table.TotalPrice'|fotrans }}</th>
             <td colspan="2"></td>
-            <td>{{ totalTaxedPrice + shippingTaxedPrice }} €</td>
+            <td>{{ (totalTaxedPrice + shippingTaxedPrice)|number_format(2) }} €</td>
         </tr>
     </tfoot>
 </table>
