@@ -49,7 +49,7 @@ class Shippers extends AbstractCollection
         $pipeline[]=array(
             '$match'=>array(
                 'rates.country'=>array(
-                    '$in'=>array($country,'*')
+                    '$in'=>array($country)
                 )
             )
         );
