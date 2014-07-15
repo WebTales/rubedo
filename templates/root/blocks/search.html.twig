@@ -6,14 +6,13 @@
 		<a class="brand">{% if total > 1 %}{{"Search.ThereAre"|fotrans}}{% else %}{{"Search.ThereIs"|fotrans}}{% endif %} <span class="badge badge-important">{{ total }}</span> {% if total > 1 %}{{"Search.Results"|fotrans}}{% else %}{{"Search.Result"|fotrans}}{% endif %}</a>
 		<ul class="nav pull-right">
 			<li class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#"> {% if orderby == "_score" or orderby == "" %}
-				{{"Search.Label.OrderByRelevance"|fotrans}}
-				{% endif %}
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 				{% if orderby == "lastUpdateTime" %}
-				{{"Search.Label.OrderByDate"|fotrans}}
-				{% endif %}
-				{% if orderby == "createUser.fullName" %}
-				{{"Search.Label.OrderByAuthor"|fotrans}}
+                    {{"Search.Label.OrderByDate"|fotrans}}
+                {% elseif orderby == "createUser.fullName" %}
+                    {{"Search.Label.OrderByAuthor"|fotrans}}
+                {% else %}
+                    {{"Search.Label.OrderByRelevance"|fotrans}}
 				{% endif %} <b class="caret"></b> </a>
 				<ul class="dropdown-menu">
 					{% if orderby != "_score" %}

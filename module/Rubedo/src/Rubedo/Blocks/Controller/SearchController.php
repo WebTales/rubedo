@@ -85,6 +85,9 @@ class SearchController extends AbstractController
         $query->init();
 
         $results = $query->search($params);
+        if (!empty($params['orderby'])) {
+            $results['orderby'] = &$params['orderby'];
+        }
         $results['searchParams'] = Json::encode($params, Json::TYPE_ARRAY);
         $results['currentSite'] = isset($siteId) ? $siteId : null;
         if (isset($params['block-config']['constrainToSite']) &&
