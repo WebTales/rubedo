@@ -15,8 +15,12 @@ jQuery(document).ready(function(e) {
             initialVariation=configData.variations[0];
         }
         if ('undefined' != typeof initialVariation.specialOffer && null != initialVariation.specialOffer) {
-            mainBox.find(".productpricetext").replaceWith('<h3><del style="color: #FF0000">'+initialVariation.price+" €"+'</del></h3>');
-            mainBox.find(".productspecialoffertext").text("  "+initialVariation.specialOffer + " €").css("display", "inline");
+            var styles = {
+                display : "block",
+                color : "#FF0000"
+            };
+            mainBox.find(".previousproductpricetext").text(initialVariation.price+" €").css(styles);
+            mainBox.find(".productpricetext").text(initialVariation.specialOffer + " €");
         } else {
             mainBox.find(".productpricetext").text(initialVariation.price+" €");
         }
@@ -121,7 +125,9 @@ function adaptToProductOptionsChange (productBox, changedIndex,configData) {
         var newVariation=newVariations[0];
         if ('undefined' != typeof newVariation.specialOffer && null != newVariation.specialOffer) {
             productBox.find(".productpricetext").text(newVariation.specialOffer + " €");
+            productBox.find(".previousproductpricetext").text(newVariation.price+" €");
         } else {
+            productBox.find(".previousproductpricetext").css("display", "none");
             productBox.find(".productpricetext").text(newVariation.price+" €");
         }
         productBox.find(".productbuybtn").attr("data-variationid",newVariation.id);
