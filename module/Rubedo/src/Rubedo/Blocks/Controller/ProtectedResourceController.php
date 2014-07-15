@@ -138,6 +138,8 @@ class ProtectedResourceController extends AbstractController
         );
         $twigVar['signature'] = Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Mail.signature") . ' ' . Manager::getService('Sites')->getHost($this->siteId);
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/protected-resource/mail-body.html.twig");
+        $config = Manager::getService('config');
+        $options = $config['rubedo_config'];
         $mailBody = Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
         
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/protected-resource/mail-body.plain.twig");
@@ -148,8 +150,9 @@ class ProtectedResourceController extends AbstractController
         $message = Manager::getService('MailingList')->getNewMessage($this->mailingListId);
         
         $message->setTo(array(
-            $this->email
+            $this->email => $this->email
         ));
+        $message->setFrom(array($options['fromEmailNotification'] => $options['fromEmailNotification']));
         $message->setSubject('[' . Manager::getService('Sites')->getHost($this->siteId) . '] ' . Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Mail.Subject"));
         
         $message->setBody($plainMailBody);
