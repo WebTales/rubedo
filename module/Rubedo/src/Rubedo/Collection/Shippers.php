@@ -31,7 +31,8 @@ class Shippers extends AbstractCollection
         parent::__construct();
     }
 
-    public function getApplicableShippers($country, $items){
+    public function getApplicableShippers ($country, $items)
+    {
         $pipeline=array();
         $pipeline[]=array(
             '$project'=>array(
@@ -73,6 +74,23 @@ class Shippers extends AbstractCollection
                 "success"=>false
             );
         }
+    }
 
+    /**
+     * Find by ID and merge current country at root of array
+     *
+     * @param $id
+     * @param $country
+     * @return array
+     */
+    public function findByIdAndWindApplicable ($id, $country)
+    {
+        $finded = $this->findById($id);
+        foreach ($finded['rates'] as $rate) {
+            if ($rate['country'] == $country) {
+                $finded = array_merge($finded, $rate);
+            }
+        }
+        return $finded;
     }
 }

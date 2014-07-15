@@ -388,7 +388,6 @@ class CheckoutController extends AbstractController
                 "html" => ""
             ));
         }
-
     }
 
     public function xhrGetSummaryAction()
@@ -430,7 +429,7 @@ class CheckoutController extends AbstractController
             $twigVars['paymentMeans'] = array();
             $twigVars['shippingMethod'] = $currentChoice;
             $twigVars['shippingComments'] = $comments;
-            $twigVars['shipper'] = Manager::getService("Shippers")->findById($currentChoice);
+            $twigVars['shipper'] = Manager::getService("Shippers")->findByIdAndWindApplicable($currentChoice, $currentUser['shippingAddress']['country']);
             foreach ($activePaymentMeans['data'] as $value) {
                 $twigVars['paymentMeans'][] = array(
                     "displayName" => $value['displayName'],
