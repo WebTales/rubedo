@@ -87,11 +87,6 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/externalMedia.json'
     ),
-    'flickrGallery' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\FlickrGallery',
-        'maxlifeTime' => 60,
-        'definitionFile' => $blocksPath . '/flickrGallery.json'
-    ),
     'geoSearchResults' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\GeoSearch',
         'maxlifeTime' => 60,
