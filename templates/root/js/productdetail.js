@@ -124,8 +124,12 @@ function adaptToProductOptionsChange (productBox, changedIndex,configData) {
         }
         var newVariation=newVariations[0];
         if ('undefined' != typeof newVariation.specialOffer && null != newVariation.specialOffer) {
+            var styles = {
+                display : "block",
+                color : "#FF0000"
+            };
             productBox.find(".productpricetext").text(newVariation.specialOffer + " €");
-            productBox.find(".previousproductpricetext").text(newVariation.price+" €");
+            productBox.find(".previousproductpricetext").text(newVariation.price+" €").css(styles);
         } else {
             productBox.find(".previousproductpricetext").css("display", "none");
             productBox.find(".productpricetext").text(newVariation.price+" €");
