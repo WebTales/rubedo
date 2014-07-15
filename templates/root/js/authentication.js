@@ -15,7 +15,7 @@ jQuery(document).ready(function(){
                     jQuery('#password', form).val('');
                     jQuery('#login', form).val('');
                     jQuery('#auth-modal', form).modal('hide');
-                    window.location.reload();
+                    window.location.replace(window.location.protocol+'//'+window.location.host+window.location.pathname);
                 }
             }
         });
@@ -82,7 +82,7 @@ function logout()
 		   async:false, 
 		   url: "/xhr-authentication/logout",
 		   success: function(){
-				window.location.reload(); 
+               window.location.replace(window.location.protocol+'//'+window.location.host+window.location.pathname);
 		   }
 		});
 }
