@@ -91,11 +91,9 @@
 			<form class="form-search" action="{{url({},true)}}">
 				<input type="text" class="input-medium search-query {%  if autoComplete %}typeahead{%  endif %}" autocomplete="off" name="query" size="10" value="{{ query }}" placeholder="{{"Search.Label.Search"|fotrans}}">
 			</form>
-		
 		{% for facet in facets %}
 
 			{% if facet._type == 'terms' and facet.terms|length > 0 %}
-                
     			{% if facet.id == 'type' %}
     			<p>
     				<i class="icon-file"></i> {{ "Search.Facets.Label.ContentType"|fotrans }}
@@ -118,7 +116,7 @@
     				{% for term in facet.terms %}
     				
     				<li>
-    					<a href="{{url({(facet.id) : term.term})}}">{{ term.label }} ({{ term.count }})</a>
+                        <a href="{{url({(facet.id) : term.term})}}">{{ term.label }} ({{ term.count }})</a>
     				</li>
     				
     				{% endfor %}
@@ -133,7 +131,11 @@
     				</label>
     				{% else %}
     				<li>
-    					<a href="{{url({(facet.id) : [term.term],'pager':0})}}">{{ term.label }} ({{ term.count }})</a>
+                        {% if term.label in ['CONTENT','USER','DAM'] %}
+                            <a href="{{url({(facet.id) : term.term,'pager':0})}}">{{ ('Search.Facets.Label.' ~ term.label) | fotrans}} ({{ term.count }})</a>
+                        {% else %}
+    					    <a href="{{url({(facet.id) : [term.term],'pager':0})}}">{{ term.label }} ({{ term.count }})</a>
+                        {% endif %}
     				</li>
     				{% endif %}
     				{% endif %}
