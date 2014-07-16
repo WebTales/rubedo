@@ -172,26 +172,24 @@ class Import extends AbstractCollection
     		$this->uniqueKeyIndex = $options['uniqueKeyIndex'];
     		$this->uniqueKeyField = $options['uniqueKeyField'];
     		$this->_importAsTaxo = array();
-    		$this->_target = '';
+    		$this->_target = '';		
     	}
-    	
-    	// Product options
-    	
-    	if ($this->_isProduct) {
-	    	$this->_productOptions = array(
-	    		'textFieldIndex' => $options['text'],
-	    		'summaryFieldIndex' => $options['summary'],
-	    		'baseSkuFieldIndex' => $options['baseSkuFieldIndex'],
-	    		'basePriceFieldIndex' => $options['basePriceFieldIndex'],
-	    		'skuFieldIndex' => $options['skuFieldIndex'],
-	    		'priceFieldIndex' => $options['priceFieldIndex'],
-	    		'stockFieldIndex' => $options['stockFieldIndex'],
-	    		'preparationDelayFieldIndex' => $options['preparationDelayFieldIndex']
-	    	);
+
+    	if ($this->_isProduct) { // Product options
+    		$this->_productOptions = array(
+    				'textFieldIndex' => $options['text'],
+    				'summaryFieldIndex' => $options['summary'],
+    				'baseSkuFieldIndex' => $options['baseSkuFieldIndex'],
+    				'basePriceFieldIndex' => $options['basePriceFieldIndex'],
+    				'skuFieldIndex' => $options['skuFieldIndex'],
+    				'priceFieldIndex' => $options['priceFieldIndex'],
+    				'stockFieldIndex' => $options['stockFieldIndex'],
+    				'preparationDelayFieldIndex' => $options['preparationDelayFieldIndex']
+    		);
     	} else {
     		$this->_productOptions = null;
     	}
-
+    	
     	// Get current user and time
     	
     	$currentUserService = Manager::getService('CurrentUser');
@@ -291,7 +289,7 @@ class Import extends AbstractCollection
     	));
     	$this->_dataService->addFilter($filter);
     	$this->_dataService->addToFieldList(array("col1"));
-    	var_dump($this->_dataService->read());
+    	//var_dump($this->_dataService->read());
     	
     }
     
@@ -1027,7 +1025,7 @@ class Import extends AbstractCollection
 				});
 				return counter;
 				";
-		var_dump($code);
+		//var_dump($code);
 		$response = $this->_dataService->execute($code);
 
 		if ($response['ok']!=1) {

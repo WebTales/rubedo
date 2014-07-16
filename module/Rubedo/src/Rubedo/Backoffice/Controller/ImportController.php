@@ -224,7 +224,6 @@ class ImportController extends DataAccessController
 			} else {
 				// receive params
 				$configs = Json::decode($this->params()->fromPost('configs', "[ ]"), Json::TYPE_ARRAY);
-				//var_dump($configs);
 				
 				// Get import mode : insert or update
 				$options['typeId'] = isset($configs['contentTypeId']) ? $configs['contentTypeId'] : null;
@@ -238,7 +237,7 @@ class ImportController extends DataAccessController
 				$options['isProduct'] = isset($configs['isProduct']) ? $configs['isProduct'] : false;
 				$options['vocabularies'] = array();
 				
-				// Get params for insert mode
+				// Params for insert mode
 				if ($options['importMode'] == "insert") {
 					$options['importAsField'] = Json::decode($this->params()->fromPost('inportAsField', "[ ]"), Json::TYPE_ARRAY);
 					$options['importAsFieldTranslation'] = Json::decode($this->params()->fromPost('inportAsFieldTranslation', "[ ]"), Json::TYPE_ARRAY);
@@ -246,9 +245,10 @@ class ImportController extends DataAccessController
 					$options['importAsTaxoTranslation'] = Json::decode($this->params()->fromPost('inportAsTaxoTranslation', "[ ]"), Json::TYPE_ARRAY);
 					$options['contentsNavTaxo'] = isset($configs['ContentsNavTaxo']) ? $configs['ContentsNavTaxo'] : "";
 					$options['contentsTarget'] = isset($configs['ContentsTarget']) ? $configs['ContentsTarget'] : "";
-				} else { // Get params for update mode
-					$options = array_merge($options,$configs);
 				}
+				
+				// Add configs
+				$options = array_merge($options,$configs);
 				
 				// INSERT MODE : create vocabularies and content type
 
