@@ -175,7 +175,7 @@ class Import extends AbstractCollection
     		$this->_target = '';		
     	}
 
-    	if ($this->_isProduct && $this->_isProduct!="false") { // Product options
+    	if ($this->_isProduct) { // Product options
     		$this->_productOptions = array(
     				// in insert mode, text index is a field
     				'textFieldIndex' => isset($options['text']) ? $options['text'] : '', 
@@ -191,7 +191,7 @@ class Import extends AbstractCollection
     	} else {
     		$this->_productOptions = null;
     	}
-    	
+
     	// Get current user and time
     	
     	$currentUserService = Manager::getService('CurrentUser');
@@ -459,7 +459,7 @@ class Import extends AbstractCollection
 		$mapKey = $this->_isProduct ? "this.col".$this->_productOptions['baseSkuFieldIndex'] : "this._id";
 
 		$mapCode.="emit(".$mapKey.", value);};";
-		
+
     	$map = new \MongoCode($mapCode);
     	
     	if (!$this->_isProduct) {
@@ -826,8 +826,9 @@ class Import extends AbstractCollection
 	
 	/**
 	 * Preprocessing Data in Import collection :
-	 * Transform the taxnonomy comma separated string into array 
-	 * Transform the localization comma separated lat,lon string into array       
+	 * Transform the taxononomy comma separated string into array 
+	 * Transform the localization comma separated lat,lon string into array
+	 * Transform prices with comma separtor to dot separator       
 	 */	
 	protected function preProcess () {
 			
@@ -844,6 +845,16 @@ class Import extends AbstractCollection
 			}
 		
 		}
+		/*
+		if ($this->_isProduct) {
+			if ($this->_productOptions['basePriceFieldIndex']!='') {
+				$code.= "e.col".$this->_productOptions['basePriceFieldIndex']."= e.col".$this->_productOptions['basePriceFieldIndex'].".map(parseFloat);";
+			}
+			if ($this->_productOptions['priceFieldIndex']!='') {			
+				$code.= "e.col".$this->_productOptions['priceFieldIndex']."= e.col".$this->_productOptions['priceFieldIndex'].".map(parseFloat);";
+			}
+		}
+		*/
 			
 		$code.= "db.Import.save(e);})";
 			
