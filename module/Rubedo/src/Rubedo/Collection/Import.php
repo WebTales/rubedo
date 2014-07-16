@@ -177,8 +177,10 @@ class Import extends AbstractCollection
 
     	if ($this->_isProduct) { // Product options
     		$this->_productOptions = array(
-    				'textFieldIndex' => $options['text'],
-    				'summaryFieldIndex' => $options['summary'],
+    				// in insert mode, text index is a field
+    				'textFieldIndex' => isset($options['text']) ? $options['text'] : '', 
+    				// in insert mode, summary is a field
+    				'summaryFieldIndex' => isset($options['summary']) ? $options['summary'] : '',
     				'baseSkuFieldIndex' => $options['baseSkuFieldIndex'],
     				'basePriceFieldIndex' => $options['basePriceFieldIndex'],
     				'skuFieldIndex' => $options['skuFieldIndex'],
