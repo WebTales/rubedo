@@ -175,7 +175,7 @@ class Import extends AbstractCollection
     		$this->_target = '';		
     	}
 
-    	if ($this->_isProduct) { // Product options
+    	if ($this->_isProduct && $this->_isProduct!="false") { // Product options
     		$this->_productOptions = array(
     				// in insert mode, text index is a field
     				'textFieldIndex' => isset($options['text']) ? $options['text'] : '', 
@@ -183,10 +183,10 @@ class Import extends AbstractCollection
     				'summaryFieldIndex' => isset($options['summary']) ? $options['summary'] : '',
     				'baseSkuFieldIndex' => $options['baseSkuFieldIndex'],
     				'basePriceFieldIndex' => $options['basePriceFieldIndex'],
+    				'preparationDelayFieldIndex' => $options['preparationDelayFieldIndex'],
     				'skuFieldIndex' => $options['skuFieldIndex'],
     				'priceFieldIndex' => $options['priceFieldIndex'],
-    				'stockFieldIndex' => $options['stockFieldIndex'],
-    				'preparationDelayFieldIndex' => $options['preparationDelayFieldIndex']
+    				'stockFieldIndex' => $options['stockFieldIndex']
     		);
     	} else {
     		$this->_productOptions = null;
@@ -936,13 +936,16 @@ class Import extends AbstractCollection
 				
 		$queryProduct = "typeId: '".$this->_typeId."','".$this->uniqueKeyField."': foo._id";
 		$updateProduct = "\$set: {";
-		
-		$queryVariations = $queryProduct.",";
-
-		$updateVariation = "\$set: {";
 
 		$fieldsToUpdate = array();
-		$variationFieldsToUpdate = array();
+
+		// Check if there is any variation price, stock or sku to update
+		
+		$variationToUpdate = $this->_productOptions['skuFieldIndex'] || $this->_productOptions['priceFieldIndex'] != "" || $this->_productOptions['stockFieldIndex'];
+		if ($variationToUpdate) {
+			$queryVariations = $queryProduct.",'productProperties.variations': {\$elemMatch: {";
+			$updateVariations = "\$set: {";
+		}
 		
 		// Add system fields
 		
@@ -964,19 +967,17 @@ class Import extends AbstractCollection
 			}
 			if ($this->_productOptions['preparationDelayFieldIndex']!="") { // preparation delay
 				$updateProduct.= "'productProperties.preparationDelay' : foo['value']['productProperties']['preparationDelay'],";
-			}
-			/*
-			if ($this->_productOptions['priceFieldIndex']!="") { // variation price
-				$updateVariation.= "'productProperties.variations.$.price' : foo['value']['price'],";
-			}
-			if ($this->_productOptions['stockFieldIndex']!="") { // varitation stock 
-				$updateVariation.= "'productProperties.variations.$.stock' : foo['value']['stock'],";
-			}
+			}		
 			if ($this->_productOptions['skuFieldIndex']!="") { // variation sku
-				$updateVariation.= "'productProperties.variations.$.sku' : foo['value']['sku'],";
+				$updateVariations.= "'productProperties.variations.\$.sku' : v['sku'],";
 			}
-			*/
-		
+			if ($this->_productOptions['priceFieldIndex']!="") { // variation price
+				$updateVariations.= "'productProperties.variations.\$.price' : v['price'],";
+			}				
+			if ($this->_productOptions['stockFieldIndex']!="") { // variation stock
+				$updateVariations.= "'productProperties.variations.\$.stock' : v['stock'],";
+			}					
+
 		}
 		
 		// Add other fields
@@ -985,8 +986,8 @@ class Import extends AbstractCollection
 		
 			$fieldName = $value['name'];
 			
-			if ($value['useAsVariation']) {
-				$queryVariations.= "'productProperties.variations.".$fieldName."' : foo['value']['productProperties']['".$fieldName."'],";
+			if ($variationToUpdate && $value['useAsVariation']) {
+				$queryVariations.= "'".$fieldName."': v['".$fieldName."'],";
 			}
 			
 			if ($value['localizable']) { // localizable field is written in working language in i18n (live AND workspace)
@@ -1003,31 +1004,24 @@ class Import extends AbstractCollection
 				
 			}
 			
-			// Generic Product update
-			foreach($fieldsToUpdate as $fieldToUpdate) {
-				$updateProduct.= $fieldToUpdate.": foo['value']['".$fieldName."'],";
-			}
-			
-			// Variations update
-			foreach($variationFieldsToUpdate as $variationFieldToUpdate) {
-				$updateVariation.= $variationFieldToUpdate.": foo['value']['".$fieldName."'],";
-			}
 		}
-		
+
 		$updateProduct.="}";
-		$updateVariation.="}";
-		
+		if ($variationToUpdate) {
+			$queryVariations.= "}}";
+			$updateVariations.="}";
+		}			
+					
 		$code = "var counter = 0;
 				db.ImportContents.find().snapshot().forEach(function(foo) {
-					db.Contents.findAndModify({query:{".$queryProduct."},update:{".$updateProduct."}});
-					foo.value.productProperties.variations.forEach(function(v) {
-						db.Contents.update(".$queryProduct.".productProperties.variations.Variation 1' : v['Variation 1'],'productProperties.variations.Variation 2' : v['Variation 2']},{\$set: { 'productProperties.variations.$.price' : v.price }});
-					});
-					counter++;
-				});
-				return counter;
-				";
-		//var_dump($code);
+					db.Contents.findAndModify({query:{".$queryProduct."},update:{".$updateProduct."}});";
+		if ($variationToUpdate) {
+			$code.= "foo.value.productProperties.variations.forEach(function(v) {
+						db.Contents.update({".$queryVariations."},{".$updateVariations."});
+					});";
+		}
+		$code.= "counter++;});return counter;";
+
 		$response = $this->_dataService->execute($code);
 
 		if ($response['ok']!=1) {
