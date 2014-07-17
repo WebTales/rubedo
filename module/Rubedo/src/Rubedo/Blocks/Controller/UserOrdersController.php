@@ -35,11 +35,11 @@ class UserOrdersController extends AbstractController
         $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
         if (!$currentUser) {
             $output['errorMessage'] = "Blocks.UserProfile.error.noUser";
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/userProfile/error.html.twig");
+            $template = "blocks/userProfile/error.html.twig";
             return $this->_sendResponse($output, $template);
         }
         $filter=Filter::factory()->addFilter(Filter::factory('Value')->setName('userId')->setValue($currentUser['id']));
-        $orders=Manager::getService("Orders")->getList($filter);
+        $orders = Manager::getService("Orders")->getList($filter, array(array('property' => 'createTime', 'direction' => 'desc')));
         $output['orders']=$orders['data'];
         $dateService=Manager::getService("Date");
         foreach($output['orders'] as &$value){
@@ -56,7 +56,7 @@ class UserOrdersController extends AbstractController
                 'pageId' => $output["orderDetailPage"]
             ), $urlOptions);
         }
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/userOrders.html.twig");
+        $template = 'blocks/userOrders.html.twig';
         $css = array();
         $js = array();
         return $this->_sendResponse($output, $template, $css, $js);
