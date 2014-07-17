@@ -6,7 +6,7 @@
         "jquery/timepicker": "0.3.2",
         "eternicode/bootstrap-datepicker": "~1.3",
         "sencha/extjs": "4.2.1",
-        "webtales/ckeditor": "dev-master",
+        "webtales/ckeditor": "2.2.0",
         "twitter/bootstrap": "v2.3.0",
         "thomaspark/bootswatch": "v2.3.0",
         "webtales/rubedo-backoffice-ui": "dev-next",
@@ -15,7 +15,7 @@
         "jschr/bootstrap-modal": "2.1",
         "WebTales/bsie": "1.4.0",
         "stowball/jQuery-rwdImageMaps": "1.0",
-        "webTales/bootstrap-less": "dev-master",
+        "webTales/bootstrap-less": "2.2.0",
         "fingerprintjs":"0.5.3"
     },
     "require-dev": {},
