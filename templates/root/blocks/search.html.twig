@@ -104,7 +104,12 @@
     			{% elseif facet.id == 'author' %}
     			<p>
     				<i class="icon-user"></i> {{ "Search.Facets.Label.Author"|fotrans }}
-    			</p>		
+    			</p>
+                {% elseif facet.id == 'objectType' %}
+                    <pre>test</pre>
+                    <p>
+                        <i class="icon-tags"></i> {{ "Search.Facets.Label.DataType"|fotrans }}
+                    </p>
     			{% else %}
     			<p>
     				<i class="icon-tags"></i> {{ facet.label }}
