@@ -1,5 +1,5 @@
 {% if cartItems is empty %}
-    <p class="text-center">Your cart is empty</p>
+    <p class="text-center">{{ 'Blocks.ShoppingCart.CartIsEmpty'|fotrans }}</p>
 {% else %}
 
 <table class="table table-condensed table-striped table-hover">
@@ -42,7 +42,7 @@
     </tbody>
 </table>
 <dl class="dl-horizontal pull-right">
-    <dt>Total :</dt>
+    <dt>{{ 'Blocks.ShoppingCart.Total'|fotrans }} :</dt>
     <dd> {{ totalAmount }} €</dd>
 </dl>
 <div class="clearfix"></div>
