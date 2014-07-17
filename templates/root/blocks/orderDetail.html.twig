@@ -3,7 +3,7 @@
     <h2 class="text-center">{{ 'Blocks.OrderDetails.OrderReview'|fotrans }}</h2>
     <div class="row-fluid">
         <div class="span8">
-            <h3>Order {{ order.orderNumber }}</h3>
+            <h3>{{ 'Blocks.OrderDetails.OrderNumber'|fotrans({'%order%':order.orderNumber }) }}</h3>
         </div>
         <div class="span4 text-right"><time>{{ order.createTime|date }}</time></div>
     </div>
@@ -118,7 +118,7 @@
             <li><strong>{{ 'Blocks.OrderDetails.Payment.VatEin' }}</strong> : {{ order.billingAddress.vatEin }}</li>
         {% endif %}
         {% if order.billDocument %}
-            <li><strong><a href="{{ mediaUrl(order.billDocument) }}" target="_blank">Order bill</a></strong></li>
+            <li><strong><a href="{{ mediaUrl(order.billDocument) }}" target="_blank">{{ 'Blocks.OrderDetails.OrderBill'|fotrans }}</a></strong></li>
         {% endif %}
     </ul>
 {% endblock %}
