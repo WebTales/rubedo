@@ -16,7 +16,7 @@
             <tr>
                 <td>{{ item.orderNumber }}</td>
                 <td>{{ item.hrDate }}</td>
-                <td>{{ item.finalPrice }} €</td>
+                <td>{{ item.finalPrice|number_format(2) }} €</td>
                 <td>{{ item.shipper.name }}</td>
                 <td>{{ item.paymentMeans }}</td>
                 <td>{{ item.status }}</td>
