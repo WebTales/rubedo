@@ -3,12 +3,12 @@
     <table class="table table-condensed table-striped table-hover">
         <thead>
         <tr>
-            <th>Order number</th>
-            <th>Date</th>
-            <th>Price</th>
-            <th>Shipper</th>
-            <th>Payment means</th>
-            <th>Status</th>
+            <th>{{ 'Blocks.UserOrders.OrderNumber'|fotrans }}</th>
+            <th>{{ 'Blocks.UserOrders.Date'|fotrans }}</th>
+            <th>{{ 'Blocks.UserOrders.Price'|fotrans }}</th>
+            <th>{{ 'Blocks.UserOrders.Shipper'|fotrans }}</th>
+            <th>{{ 'Blocks.UserOrders.PaymentMeans'|fotrans }}</th>
+            <th>{{ 'Blocks.UserOrders.Status'|fotrans }}</th>
         </tr>
         </thead>
         <tbody>
@@ -21,7 +21,7 @@
                 <td>{{ item.paymentMeans }}</td>
                 <td>{{ item.status }}</td>
                 {% if orderDetailPage %}
-                    <td><a href="{{ orderDetailPageUrl }}?order={{ item.orderNumber }}" ><button class="btn btn-primary"><i class="icon-search icon-chevron-right icon-white"></i> View detail</button></a></td>
+                    <td><a href="{{ orderDetailPageUrl }}?order={{ item.orderNumber }}" ><button class="btn btn-primary"><i class="icon-search icon-chevron-right icon-white"></i> {{ 'Blocks.UserOrders.ViewDetails'|fotrans }}</button></a></td>
                 {% endif %}
             </tr>
         {% endfor %}
