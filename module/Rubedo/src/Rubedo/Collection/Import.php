@@ -828,7 +828,7 @@ class Import extends AbstractCollection
 	 * Preprocessing Data in Import collection :
 	 * Transform the taxononomy comma separated string into array 
 	 * Transform the localization comma separated lat,lon string into array
-	 * Transform prices with comma separtor to dot separator       
+	 * Transform prices with comma separtor to dot separator, cast to float     
 	 */	
 	protected function preProcess () {
 			
@@ -843,21 +843,30 @@ class Import extends AbstractCollection
 			if (isset($field['cType']) && ($field['cType']=='localiserField')) {
 				$code.= "e.col".$field['csvIndex']."= e.col".$field['csvIndex'].".split(',').map(parseFloat);";
 			}
+			
+			if (isset($field['cType']) && (in_array($field['cType'], array('numberField', 'slider', 'ratingField' )))) {
+				$code.= "e.col".$field['csvIndex']."= parseInt(e.col".$field['csvIndex'].".replace(',', '.'));";
+			}
 		
 		}
-		/*
+
 		if ($this->_isProduct) {
 			if ($this->_productOptions['basePriceFieldIndex']!='') {
-				$code.= "e.col".$this->_productOptions['basePriceFieldIndex']."= e.col".$this->_productOptions['basePriceFieldIndex'].".map(parseFloat);";
+				$code.= "e.col".$this->_productOptions['basePriceFieldIndex']."= parseFloat(e.col".$this->_productOptions['basePriceFieldIndex'].".replace(',', '.'));";
 			}
 			if ($this->_productOptions['priceFieldIndex']!='') {			
-				$code.= "e.col".$this->_productOptions['priceFieldIndex']."= e.col".$this->_productOptions['priceFieldIndex'].".map(parseFloat);";
+				$code.= "e.col".$this->_productOptions['priceFieldIndex']."= parseFloat(e.col".$this->_productOptions['priceFieldIndex'].".replace(',', '.'));";
+			}
+			if ($this->_productOptions['stockFieldIndex']!='') {			
+				$code.= "e.col".$this->_productOptions['stockFieldIndex']."= parseInt(e.col".$this->_productOptions['stockFieldIndex'].".replace(',', '.'));";
+			}
+			if ($this->_productOptions['preparationDelayFieldIndex']!='') {
+				$code.= "e.col".$this->_productOptions['preparationDelayFieldIndex']."= parseInt(e.col".$this->_productOptions['preparationDelayFieldIndex'].".replace(',', '.'));";
 			}
 		}
-		*/
 			
 		$code.= "db.Import.save(e);})";
-			
+
 		$response = $this->_dataService->execute($code);
 		return $response;
 	}
@@ -944,8 +953,12 @@ class Import extends AbstractCollection
 		$variationFields = Manager::getService("ContentTypes")->getVariationFieldForCType($this->_typeId);
 
 		// 2 Map reduce : one for generic product and one for 
-				
-		$queryProduct = "typeId: '".$this->_typeId."','".$this->uniqueKeyField."': foo._id";
+
+		if ($this->uniqueKeyField != 'sku') {
+			$queryProduct = "typeId: '".$this->_typeId."','".$this->uniqueKeyField."': foo._id";
+		} else {
+			$queryProduct = "typeId: '".$this->_typeId."','productProperties.sku': foo._id";
+		}
 		$updateProduct = "\$set: {";
 
 		$fieldsToUpdate = array();
