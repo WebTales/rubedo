@@ -1,9 +1,9 @@
 {
-	"type":"User orders",
+	"type":"#ext-gen1444#",
 	"description":"",
     "isECommerce":true,
 	"configBasique":{
-		"title":"User orders",
+		"title":"#ext-gen1444#",
 		"bType":"userOrders",
 		"flex":1,
 		"champsConfig":{
@@ -14,7 +14,7 @@
                         {
                             "type":"Ext.ux.TreePicker",
                             "config":{
-                                "fieldLabel":"Order detail page",
+                                "fieldLabel":"#ext-gen1443#",
                                 "name":"orderDetailPage"
                             }
                         }
@@ -31,7 +31,7 @@
 
 
 	},
-	"category":"E-Commerce",
+	"category":"#ext-gen1431#",
 	"bType":"userOrders",
 	"id":"533187e7f05c1d8810000003"
 }

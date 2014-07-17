@@ -1,9 +1,9 @@
 {
-	"type":"Category",
+	"type":"#ext-gen1432#",
 	"description":"",
     "isECommerce":true,
 	"configBasique":{
-		"title":"Category",
+		"title":"#ext-gen1432#",
 		"bType":"category",
 		"flex":1,
 		"champsConfig":{
@@ -31,7 +31,7 @@
                         {
                             "type":"Ext.form.field.Number",
                             "config":{
-                                "fieldLabel":"Columns",
+                                "fieldLabel":"#ext-gen1114#",
                                 "name":"nbOfColumns",
                                 "allowDecimals":false,
                                 "editable":false,
@@ -42,7 +42,7 @@
                         {
                             "type":"Ext.form.field.Number",
                             "config":{
-                                "fieldLabel":"Image width",
+                                "fieldLabel":"#ext-gen1204#",
                                 "name":"imageWidth",
                                 "allowDecimals":false,
                                 "minValue":0
@@ -51,7 +51,7 @@
                         {
                             "type":"Ext.form.field.Number",
                             "config":{
-                                "fieldLabel":"Image height",
+                                "fieldLabel":"#ext-gen1205#",
                                 "name":"imageHeight",
                                 "allowDecimals":false,
                                 "minValue":0
@@ -60,7 +60,7 @@
                         {
                             "type":"Ext.form.field.Checkbox",
                             "config":{
-                                "fieldLabel":"Show level 2 categories",
+                                "fieldLabel":"#ext-gen1433#",
                                 "name":"showLevel2Categories",
                                 "inputValue":true
                             }
@@ -91,7 +91,7 @@
             "imageHeight":100
 		}
 	},
-	"category":"E-Commerce",
+	"category":"#ext-gen1431#",
 	"bType":"category",
 	"id":"52f4b823f05c1d801b000002"
 }

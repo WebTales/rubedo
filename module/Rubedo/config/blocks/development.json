@@ -1,8 +1,8 @@
 {
-    "type":"Development",
+    "type":"#ext-gen1445#",
     "description":"",
     "configBasique":{
-        "title":"Development",
+        "title":"#ext-gen1445#",
         "bType":"development",
         "flex":1,
         "champsConfig":{
@@ -13,7 +13,7 @@
                         {
                             "type":"Rubedo.view.ACEField",
                             "config":{
-                                "fieldLabel":"Twig code",
+                                "fieldLabel":"#ext-gen1446#",
                                 "name":"code",
                                 "twigMode":true
 
