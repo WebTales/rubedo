@@ -1,9 +1,9 @@
 {
-	"type":"Order detail",
+	"type":"#ext-gen1437#",
 	"description":"",
     "isECommerce":true,
 	"configBasique":{
-		"title":"Order detail",
+		"title":"#ext-gen1437#",
 		"bType":"orderDetail",
 		"flex":1,
 		"champsConfig":{
@@ -18,7 +18,7 @@
         }
 
 	},
-	"category":"E-Commerce",
+	"category":"#ext-gen1431#",
 	"bType":"orderDetail",
 	"id":"53319f17f05c1d2c1e000010"
 }

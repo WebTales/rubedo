@@ -1,9 +1,9 @@
 {
-	"type":"Checkout",
+	"type":"#ext-gen1434#",
 	"description":"",
     "isECommerce":true,
 	"configBasique":{
-		"title":"Checkout",
+		"title":"#ext-gen1434#",
 		"bType":"checkout",
 		"flex":1,
 		"champsConfig":{
@@ -29,7 +29,7 @@
                         {
                             "type":"Rubedo.view.DCEField",
                             "config":{
-                                "fieldLabel":"Sign-up text",
+                                "fieldLabel":"#ext-gen1435#",
                                 "name":"signupContentId",
                                 "allowedCT":"richText",
                                 "addOnly":true
@@ -37,7 +37,7 @@
                         },{
                             "type":"Ext.ux.TreePicker",
                             "config":{
-                                "fieldLabel":"Terms & Conditions page",
+                                "fieldLabel":"#ext-gen1436#",
                                 "name":"tCPage"
                             }
                         }
@@ -54,7 +54,7 @@
 
 
 	},
-	"category":"E-Commerce",
+	"category":"#ext-gen1431#",
 	"bType":"checkout",
 	"id":"53184e22f05c1d2810000001"
 }

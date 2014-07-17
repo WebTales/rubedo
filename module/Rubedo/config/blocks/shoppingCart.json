@@ -1,9 +1,9 @@
 {
-	"type":"Shopping Cart",
+	"type":"#ext-gen1438#",
 	"description":"",
     "isECommerce":true,
 	"configBasique":{
-		"title":"Shopping Cart",
+		"title":"#ext-gen1438#",
 		"bType":"shoppingCart",
 		"flex":1,
 		"champsConfig":{
@@ -14,14 +14,14 @@
                         {
                             "type":"Ext.ux.TreePicker",
                             "config":{
-                                "fieldLabel":"Cart detail page",
+                                "fieldLabel":"#ext-gen1439#",
                                 "name":"cartDetailPage"
                             }
                         },
                         {
                             "type":"Ext.ux.TreePicker",
                             "config":{
-                                "fieldLabel":"Checkout page",
+                                "fieldLabel":"#ext-gen1440#",
                                 "name":"checkoutPage"
                             }
                         },{
@@ -30,11 +30,11 @@
                             "autoStoreData":[
                                 {
                                     "value":"detail",
-                                    "label":"Detail"
+                                    "label":"#ext-gen1441#"
                                 },
                                 {
                                     "value":"button",
-                                    "label":"Button"
+                                    "label":"#ext-gen1442#"
                                 }
                             ],
                             "config":{
@@ -58,7 +58,7 @@
 
 
 	},
-	"category":"E-Commerce",
+	"category":"#ext-gen1431#",
 	"bType":"shoppingCart",
 	"id":"52fca239f05c1d7416000000"
 }

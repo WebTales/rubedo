@@ -71,7 +71,7 @@
                             },{
                             "type":"Ext.form.field.Checkbox",
                             "config":{
-                                "fieldLabel":"Activate Magic Query",
+                                "fieldLabel":"#ext-gen1447#",
                                 "name":"magicQuery",
                                 "inputValue":true
                             }
