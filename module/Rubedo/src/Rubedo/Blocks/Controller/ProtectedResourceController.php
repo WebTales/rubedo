@@ -66,6 +66,7 @@ class ProtectedResourceController extends AbstractController
      */
     public function xhrSubmitEmailAction ()
     {
+        $this->init();
         // Default mailing list
         $this->mailingListId = $this->params()->fromPost("mailing-list-id");
         if (! $this->mailingListId) {
@@ -167,7 +168,7 @@ class ProtectedResourceController extends AbstractController
         } else {
             $resultArray = array(
                 'success' => false,
-                'msg' => Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Message.EmailSent")
+                'msg' => Manager::getService("Translate")->translateInWorkingLanguage("Blocks.ProtectedRessource.Message.EmailFail")
             );
         }
         
