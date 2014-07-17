@@ -1,6 +1,6 @@
 {% extends "/block.html.twig" %}
 {% block mainContent %}
-    <h2>Checkout</h2>
+    <h2>{{ 'Label.Checkout'|fotrans }}</h2>
     <div class="progress checkout-progress">
         <div class="bar" id="checkoutmainprogress" style="width: 17%"></div>
     </div>
@@ -8,7 +8,7 @@
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
                 <a class="checkouteditlink" data-targetstep="1" onclick="setCheckoutStep(1);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
-                <h5>Step 1 : Checkout options</h5>
+                <h5>{{ 'Blocks.Checkout.Steps.CheckoutOptions'|fotrans }}</h5>
             </div>
             <div id="checkoutstep1" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
@@ -19,7 +19,7 @@
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
                 <a class="checkouteditlink" data-targetstep="2" onclick="setCheckoutStep(2);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
-                <h5>Step 2 : Contact information</h5>
+                <h5>{{ 'Blocks.Checkout.Steps.ContactInformations'|fotrans }}</h5>
             </div>
             <div id="checkoutstep2" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
@@ -30,7 +30,7 @@
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
                 <a class="checkouteditlink" data-targetstep="3" onclick="setCheckoutStep(3);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
-                <h5>Step 3 : Billing details </h5>
+                <h5>{{ 'Blocks.Checkout.Steps.BillingDetails'|fotrans }}</h5>
             </div>
             <div id="checkoutstep3" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
@@ -41,7 +41,7 @@
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
                 <a class="checkouteditlink" data-targetstep="4" onclick="setCheckoutStep(4);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
-                <h5>Step 4 : Shipping details</h5>
+                <h5>{{ 'Blocks.Checkout.Steps.ShippingDetails'|fotrans }}</h5>
             </div>
             <div id="checkoutstep4" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
@@ -52,7 +52,7 @@
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
                 <a class="checkouteditlink" data-targetstep="5" onclick="setCheckoutStep(5);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
-                <h5>Step 5 : Shipping method</h5>
+                <h5>{{ 'Blocks.Checkout.Steps.ShippingMethod'|fotrans }}</h5>
             </div>
             <div id="checkoutstep5" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">
@@ -63,7 +63,7 @@
         <div class="accordion-group checkout-group">
             <div class="accordion-heading checkout-heading">
                 <a class="checkouteditlink" data-targetstep="6" onclick="setCheckoutStep(6);return false;" href="#" style="display : none;"><i class="icon-pencil"></i></a>
-                <h5>Step 6 : Confirmation and payment</h5>
+                <h5>{{ 'Blocks.Checkout.Steps.ConfirmationPayment'|fotrans }}</h5>
             </div>
             <div id="checkoutstep6" data-parent="accordioncheckout" class="accordion-body collapse checkout-holder">
                 <div class="accordion-inner checkout-inner">

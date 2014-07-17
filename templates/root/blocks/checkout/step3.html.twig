@@ -4,46 +4,46 @@
     </div>
      <form method="post" class="form-horizontal" id="checkoutBillingAddressFrom">
          <div class="span12">
-             <h4 class="text-center">Billing address</h4>
+             <h4 class="text-center">{{ 'Blocks.Checkout.Step3.BillingAddress'|fotrans }}</h4>
              <div class="control-group">
-                 <label class="control-label" >VAT number / EIN </label>
+                 <label class="control-label" >{{ 'Blocks.Checkout.Label.VAT'|fotrans }}</label>
                  <div class="controls">
                      <input type="text" name="vatEin">
                  </div>
              </div>
              <div class="control-group">
-                 <label class="control-label" >Company /Organization </label>
+                 <label class="control-label" >{{ 'Blocks.Checkout.Label.Company'|fotrans }}</label>
                  <div class="controls">
                      <input type="text" name="company">
                  </div>
              </div>
              <div class="control-group">
-                 <label class="control-label" >Attention </label>
+                 <label class="control-label" >{{ 'Blocks.Checkout.Label.Attention'|fotrans }}</label>
                  <div class="controls">
                      <input type="text" name="attention">
                  </div>
              </div>
              <div class="control-group">
-                 <label class="control-label" >Address 1 *</label>
+                 <label class="control-label" >{{ 'Blocks.Checkout.Label.Address1'|fotrans }}</label>
                  <div class="controls">
                      <input type="text" name="address1" required>
                  </div>
              </div>
              <div class="control-group">
-                 <label class="control-label" >Address 2 </label>
+                 <label class="control-label" >{{ 'Blocks.Checkout.Label.Address2'|fotrans }}</label>
                  <div class="controls">
                      <input type="text" name="address2">
                  </div>
              </div>
              <div class="control-group">
-                 <label class="control-label" >City *</label>
+                 <label class="control-label" >{{ 'Blocks.Checkout.Label.City'|fotrans }}</label>
                  <div class="controls">
                      <input type="text" name="city" required>
                  </div>
              </div>
 
              <div class="control-group">
-                 <label class="control-label" >Country *</label>
+                 <label class="control-label" >{{ 'Blocks.Checkout.Label.Country'|fotrans }}</label>
                  <div class="controls">
                      <select name="country" required="">
                          {% for country in countries['data'] %}
@@ -53,20 +53,20 @@
                  </div>
              </div>
              <div class="control-group">
-                 <label class="control-label" >State / Province</label>
+                 <label class="control-label" >{{ 'Blocks.Checkout.Label.State'|fotrans }}</label>
                  <div class="controls">
                      <input type="text" name="regionState">
                  </div>
              </div>
              <div class="control-group">
-                 <label class="control-label" >Zip / Postal Code *</label>
+                 <label class="control-label" >{{ 'Blocks.Checkout.Label.Zipcode'|fotrans }}</label>
                  <div class="controls">
                      <input type="text" name="postCode" required>
                  </div>
              </div>
              <div class="form-actions">
-                 <button onclick="checkoutUpdateBillingAddress();return false;" class="btn btn-primary" >Save changes</button>
-                 <button class="btn btn-primary" id="chkStep3Continue" onclick="setCheckoutStep(4);return false;">Skip to next step</button>
+                 <button onclick="checkoutUpdateBillingAddress();return false;" class="btn btn-primary" >{{ 'Blocks.Checkout.Label.SaveChanges'|fotrans }}</button>
+                 <button class="btn btn-primary" id="chkStep3Continue" onclick="setCheckoutStep(4);return false;">{{ 'Blocks.Checkout.Label.SkipToNext'|fotrans }}</button>
              </div>
          </div>
     </form>

@@ -2,9 +2,7 @@
     <div class="row-fluid">
         <div class="span12">
             <div style="text-align:center">
-                <p>
-                    Currently logged in as {{currentUser.name}}
-                </p>
+                <p>{{ 'Blocks.Checkout.Step1.CurrentlyLogged'|fotrans({'%user%': currentUser.name}) }}</p>
                 <button onclick="checkoutLoggout();return false;" class="btn btn-primary">Log Out</button>
                 <button class="btn btn-primary" onclick="setCheckoutStep(2);return false;">Continue</button>
             </div>
@@ -13,14 +11,14 @@
 {% else %}
     <div class="row-fluid">
         <div class="span6">
-            <h4 class="text-center">Create an account</h4>
+            <h4 class="text-center">{{ 'Blocks.Checkout.Step1.CreateAccount'|fotrans }}</h4>
             <div class="editable" id="{{ introContentId }}_body">{{ introContentText|cleanHtml }}</div>
             <div style="text-align:center">
                 <button class="btn btn-primary" onclick="setCheckoutStep(2);return false;">Continue</button>
             </div>
         </div>
         <div class="span6">
-            <h4 class="text-center">Already have an account ?</h4>
+            <h4 class="text-center">{{ 'Blocks.Checkout.Step1.AlreadyHaveAccount'|fotrans }}</h4>
             <form class="form-horizontal">
                 <div class="control-group">
                     <label class="control-label" for="checkoutlogin">{{ "Blocks.Auth.Label.Login" | fotrans }} *</label>

@@ -73,13 +73,13 @@
         </tr>
     {% else %}
         <tr>
-            <td colspan="4">Your cart is empty</td>
+            <td colspan="4">{{ 'Blocks.Checkout.CartIsEmpty'|fotrans }}</td>
         </tr>
     {% endfor %}
     </tbody>
     <tfoot>
         <tr>
-            <th>Sub-total</th>
+            <th>{{ 'Blocks.Checkout.CheckoutSummary.SubTotal'|fotrans }}</th>
             <td colspan="2"></td>
             <td>{{ totalPrice }} €</td>
         </tr>
@@ -109,7 +109,7 @@
     </tfoot>
 </table>
 <div class="row-fluid">
-    <h4>Payment method</h4>
+    <h4>{{ 'Blocks.Checkout.CheckoutSummary.PaymentMethod'|fotrans }}</h4>
     <form method="post" class="form-horizontal" id="checkoutConfirm" >
         <input type="hidden" name="isConfirmOrderPost" value="Confirm">
         <input type="hidden" name="shippingMethod" value="{{ shippingMethod }}">
@@ -122,6 +122,6 @@
                 {{ pm.displayName }}
             </label>
         {% endfor %}
-        <button class="btn btn-primary" id="chkStep6Finish" type="submit">Confirm order</button>
+        <button class="btn btn-primary" id="chkStep6Finish" type="submit">{{ 'Blocks.Checkout.CheckoutSummary.ConfirmOrder'|fotrans }}</button>
     </form>
 </div>
