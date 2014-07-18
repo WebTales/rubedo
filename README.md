@@ -18,10 +18,10 @@ Installation
 ------------------------------------------------------------------------------------------
 ### PreRequisites
 * A full PHP 5.3.6+ stack (i.e. http://www.zend.com/products/server/)
-* MongoDB (http://www.mongodb.org) >= 2.2
+* MongoDB (http://www.mongodb.org) 2.4.x (issues reported on 2.6, will be fixed in the next version)
 * PHP MongoDB Driver >= 1.3.0
 * intl PHP extension (http://www.php.net/manual/intro.intl.php) which you should use anyway
-* ElasticSearch (http://www.elasticsearch.org), latest version compatible with Elastica PHP client, 0.90.2 at this moment (https://github.com/ruflin/Elastica/)
+* ElasticSearch (http://www.elasticsearch.org), latest version compatible with Elastica PHP client, 1.2.1 at this moment (https://github.com/ruflin/Elastica/)
 * Mapper Attachments Type for ElasticSearch (https://github.com/elasticsearch/elasticsearch-mapper-attachments) 
 * ICU Analysis plugin for ElasticSearch (https://github.com/elasticsearch/elasticsearch-analysis-icu)
 
@@ -30,7 +30,7 @@ Installation
 * Install preRequisites (Apache,PHP,DB,Search Engine)
 * Define a simple vHost with the *public* directory as documentRoot
 * Add an AllowOverride All on this documentRoot
-* Access the */install* URL and run the config wizard
+* Access the documentRoot URL automatically run the config wizard
 
 ### From Source Install Steps
 * Download Source from gitHub (https://github.com/WebTales/rubedo/tags)
@@ -39,7 +39,7 @@ Installation
 * Add an AllowOverride All on this documentRoot
 * If on Unix server : Inside project root, run `./rubedo.sh`
 * If on Windows server : Inside project root, run `rubedo`
-* Access the */install* URL and run the config wizard
+* Access the documentRoot URL automatically run the config wizard
 
 ### For Developpers
 * You'll need Git!
