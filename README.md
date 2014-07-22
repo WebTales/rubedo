@@ -1,6 +1,8 @@
 Rubedo
 ======
 
+*Warning* : This branch is not suitable for production or test and may content some problems, like authentication broken...
+
 An open source PHP CMS, based on Zend Framework &amp; MongoDB : http://www.rubedo-project.org/
 
 Copyright (c) 2013, WebTales (http://www.webtales.fr/).

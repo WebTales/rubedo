@@ -74,7 +74,11 @@ class Module
         $eventManager = $e->getApplication()->getEventManager();
         Events::setEventManager($eventManager);
 
-        $message = 'Running Rubedo for ' . $e->getRequest()->getUri();
+        if (method_exists($e->getRequest(), 'getUri')) {
+            $message = 'Running Rubedo for ' . $e->getRequest()->getUri();
+        } else {
+            $message = 'Running Rubedo from CLI';
+        }
         Manager::getService('Logger')->info($message);
 
         $moduleRouteListener = new ModuleRouteListener();
@@ -203,6 +207,13 @@ class Module
             Manager::getService('SecurityLogger'),
             'logAuthenticationEvent'
         ), 10);
+        $eventManager->getSharedManager()->attach('Zend\Mvc\Controller\AbstractActionController', 'dispatch', function($e) {
+            list($vendor, $namespace) = explode('\\', get_class($e->getTarget()));
+            $config          = $e->getApplication()->getServiceManager()->get('config');
+            if ($vendor == 'ZF' && $namespace == 'Apigility') {
+                $e->getTarget()->layout('layout/layout_apigility');
+            }
+        }, 100);
     }
 
     /**
@@ -272,8 +283,7 @@ class Module
 
         // check access
 
-        if ($controller) {
-
+        if ($controller && strpos($controller, 'ZF') === false) {
             list ($applicationName, $moduleName, $constant, $controllerName) = explode('\\', $controller);
             $controllerName = strtolower($controllerName);
             $moduleName = strtolower($moduleName);
@@ -469,9 +479,10 @@ class Module
         $routeMatches = $event->getRouteMatch();
         $routeMatches->setParam('controller', 'Rubedo\\Frontoffice\\Controller\\Error');
         $routeMatches->setParam('action', 'index');
-        $event->getRequest()
-            ->getQuery()
-            ->set('exception', $exception);
-        return;
+        if (method_exists($event->getRequest(), 'getQuery')) {
+            $event->getRequest()
+                ->getQuery()
+                ->set('exception', $exception);
+        }
     }
 }

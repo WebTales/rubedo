@@ -138,8 +138,8 @@ class CurrentUser implements ICurrentUser
         
         $serviceReader = Manager::getService('Users');
         
-        $user = $serviceReader->findById($sessionUser['id'], true);
-        
+//        $user = $serviceReader->findById($sessionUser['id'], true);
+        $user = array();
         return $user;
     }
 

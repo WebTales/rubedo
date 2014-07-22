@@ -57,7 +57,23 @@ if (file_exists(CONFIG_CACHE_DIR . '/extensions.array.php')) {
 // return configuration array. Similar to standard ZF2 app with an "extensions directory" and a list of modules from this directory
 return array(
     'modules' => array_merge(array(
-        'Rubedo'
+        'Rubedo',
+        'ZF\\DevelopmentMode',
+        'ZF\\Apigility',
+        'ZF\\Apigility\\Provider',
+        'ZF\\Apigility\\Documentation',
+        'AssetManager',
+        'ZF\\ApiProblem',
+        'ZF\\Configuration',
+        'ZF\\MvcAuth',
+        'ZF\\OAuth2',
+        'ZF\\Hal',
+        'ZF\\ContentNegotiation',
+        'ZF\\ContentValidation',
+        'ZF\\Rest',
+        'ZF\\Rpc',
+        'ZF\\Versioning',
+        'RubedoAPI'
     ), $extensionsArray),
     'module_listener_options' => array(
         'config_cache_enabled' => true,

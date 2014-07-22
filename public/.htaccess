@@ -9,7 +9,7 @@ RewriteEngine On
 #RewriteRule install$ - [F,L]
 #RewriteRule install/ - [F,L]
 
-RewriteCond %{REMOTE_ADDR} !^127.0.0.1 
+RewriteCond %{REMOTE_ADDR} !^127.0.0.1
 RewriteCond %{REMOTE_ADDR} !^::1
 RewriteRule ^queue$ - [F,L]
 
@@ -46,6 +46,7 @@ RewriteRule ^theme/.* /index.php [L]
 RewriteRule ^generate-image/.* /index.php [L]
 RewriteRule ^access-dam/.* /index.php [L]
 RewriteRule ^user-avatar/.* /index.php [L]
+RewriteRule ^zf-apigility.* /index.php [L]
 RewriteRule !\.(js|ico|txt|gif|jpg|png|css)$ /index.php [L]
 
 ####################################################################

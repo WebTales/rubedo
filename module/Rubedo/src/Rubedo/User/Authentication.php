@@ -31,7 +31,7 @@ use Rubedo\Services\Events;
  * @category Rubedo
  * @package Rubedo
  */
-class Authentication implements IAuthentication
+class Authentication extends \Zend\Authentication\AuthenticationService
 {
 
     const SUCCESS = 'rubedo_authentication_success';
@@ -61,32 +61,6 @@ class Authentication implements IAuthentication
         }
         
         return static::$zendAuth;
-    }
-
-    /**
-     * Authenticate the user and set the session
-     *
-     * @param $login It's
-     *            the login of the user
-     * @param $password It's
-     *            the password of the user
-     *            
-     * @return bool
-     */
-    public function authenticate($login, $password)
-    {
-        $authAdapter = new AuthAdapter($login, $password);
-        $result = $this->getZendAuth()->authenticate($authAdapter);
-        if (! $result->isValid()) {
-            Events::getEventManager()->trigger(self::FAIL, null, array(
-                'login' => $login,
-                'error' => $result->getMessages()
-            ));
-            Throw new \Rubedo\Exceptions\User(implode(' - ', $result->getMessages()));
-        }
-        Events::getEventManager()->trigger(self::SUCCESS);
-        Manager::getService('CurrentUser')->getToken();
-        return $result->isValid();
     }
 
     /**

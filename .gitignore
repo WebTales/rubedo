@@ -34,3 +34,5 @@ build
 /composer.phar
 /composer*.lock
 /composer.extensions.json
+
+config/development.config.php

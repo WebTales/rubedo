@@ -1,7 +1,7 @@
 {
 	"name": "webtales/rubedo",
 	"require": {
-		"php": ">=5.3.0",
+		"php": ">=5.4.0",
 		"ext-fileinfo": "*",
 		"ext-gd": "*",
 		"ext-mongo": ">=1.3.0",
@@ -11,30 +11,42 @@
 		"monolog/monolog": "~1.8",
 		"ruflin/Elastica": "1.2.*",
 		"ezyang/htmlpurifier": "~4.6",
-		"zendframework/zendframework": "~2.3",
+		"zendframework/zendframework": "dev-master",
 		"zendframework/zendservice-flickr":"dev-master",
 		"alb/oembed": "1.1.*",
 		"swiftmailer/swiftmailer": "~5.1",
 		"phing/phing": "~2.7",
 		"leafo/lessphp": "v0.4.0",
 		"mrclay/minify": "~2.2",
-		"zendframework/zendservice-recaptcha": "2.0.1"
+		"zendframework/zendservice-recaptcha": "2.0.1",
+        "zfcampus/zf-apigility": "~1.0",
+        "zfcampus/zf-apigility-documentation": "~1.0",
+        "zfcampus/zf-development-mode": "~2.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*",
 		"chriskite/phactory": "0.4.*",
 		"phpmd/phpmd": "1.4.*",
-		"squizlabs/php_codesniffer": "1.4.*"
+		"squizlabs/php_codesniffer": "1.4.*",
+        "zendframework/zftool": "dev-master",
+        "zendframework/zend-developer-tools": "dev-master",
+        "zfcampus/zf-apigility-admin": "~1.0",
+        "zfcampus/zf-apigility-welcome": "~1.0",
+        "zfcampus/zf-deploy": "~1.0"
 	},
 	"minimum-stability": "stable",
 	"config": {
 		"process-timeout": 600
 	},
 	"repositories": [
-		{
-			"type": "vcs",
-			"url": "git://github.com/WebTales/MongoFilters.git"
-		}
+        {
+            "type": "vcs",
+            "url": "git://github.com/WebTales/MongoFilters.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git://github.com/zendframework/zf2.git"
+        }
 	],
 	"autoload": {
         "classmap": ["module/Rubedo/src/Rubedo"]

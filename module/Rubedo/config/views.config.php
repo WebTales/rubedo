@@ -20,6 +20,7 @@ $blockViewPath = realpath(__DIR__ . '/../src/Rubedo/Blocks/views/scripts');
  */
 return array(
     'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
+    'layout/layout_apigility' => __DIR__ . '/../view/layout/layout_apigility.phtml',
     'layout/install' => $installViewPath . '/install-layout.phtml',
     'error/404' => __DIR__ . '/../view/error/404.phtml',
     'error/index' => __DIR__ . '/../view/error/index.phtml',
