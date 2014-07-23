@@ -1491,7 +1491,7 @@ class DataAccess implements IDataAccess
         if ($adapter === null) {
             return null;
         }
-        return $adapter->connected;
+        return $adapter->getConnections() != [];
     }
     /**
      * Performs aggregation on collection
