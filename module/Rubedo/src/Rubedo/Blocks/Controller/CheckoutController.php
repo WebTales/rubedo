@@ -275,7 +275,7 @@ class CheckoutController extends AbstractController
             }
             try {
                 /** @var \Rubedo\Interfaces\User\IAuthentication $authService */
-                $authService = Manager::getService('Authentication');
+                $authService = Manager::getService('AuthenticationService');
                 $authService->authenticate($newUser['login'], $newPassword);
             } catch (\Exception $e) {
                 return new JsonModel(array(

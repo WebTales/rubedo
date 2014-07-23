@@ -16,6 +16,7 @@
  * Construct the whole configuration from split configurations files.
  */
 $serviceMapArray = include (__DIR__ . '/services.config.php');
+$serviceAliasMapArray = include (__DIR__ . '/services.alias.config.php');
 $sharedService = include (__DIR__ . '/shared.services.config.php');
 $controllerArray = include (__DIR__ . '/controllers.config.php');
 $viewArray = include (__DIR__ . '/views.config.php');
@@ -62,7 +63,8 @@ $config = array(
         'factories' => array(
             'TwigViewStrategy' => 'Rubedo\\Templates\\Twig\\TwigStrategyFactory',
             'RawViewStrategy' => 'Rubedo\\Templates\\Raw\\RawStrategyFactory'
-        )
+        ),
+        'aliases' => $serviceAliasMapArray,
     ),
     'backoffice' => array(
         'extjs' => array(

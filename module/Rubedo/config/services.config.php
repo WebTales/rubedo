@@ -20,7 +20,7 @@ return array(
     'AppExtension' => 'Rubedo\\Backoffice\\Service\\AppExtension',
     'ApplicationLogger' => 'Rubedo\\Log\\ApplicationLogger',
     'ApplicationLog' => 'Rubedo\\Collection\\ApplicationLog',
-    'RubedoAuthentication' => 'Rubedo\\User\\Authentication',
+    'Rubedo\\User\\Authentication\\AuthenticationService' => 'Rubedo\\User\\Authentication\\AuthenticationService',
     'Blocks' => 'Rubedo\\Collection\\Blocks',
     'Cache' => 'Rubedo\\Collection\\Cache',
     'ContentTypes' => 'Rubedo\\Collection\\ContentTypes',

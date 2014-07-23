@@ -20,7 +20,6 @@ use Rubedo\Collection\AbstractCollection;
 use Rubedo\Collection\WorkflowAbstractCollection;
 use Rubedo\Mongo\DataAccess;
 use Rubedo\Services\Manager;
-use Rubedo\User\Authentication;
 use Zend\EventManager\EventInterface;
 
 /**
@@ -129,16 +128,16 @@ class ApplicationLogger extends Logger
             'type' => 'authentication',
             'event' => $e->getName(),
         );
-
+        $authService = Manager::getService('AuthenticationService');
         switch ($e->getName()) {
-            case Authentication::FAIL:
+            case $authService::FAIL:
                 $message = 'Failed authentication';
                 $params = $e->getParams();
                 $login = $params['login'];
                 $level = \Monolog\Logger::WARNING;
                 $context['error'] = $params['error'];
                 break;
-            case Authentication::SUCCESS:
+            case $authService::SUCCESS:
                 $message = 'Successful authentication';
                 $currentUser = Manager::getService('CurrentUser')->getCurrentUserSummary();
                 $login = $currentUser['login'];

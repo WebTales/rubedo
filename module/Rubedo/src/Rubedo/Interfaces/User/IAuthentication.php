@@ -39,7 +39,7 @@ interface IAuthentication
      *
      * @return bool
      */
-    public function authenticate($login, $password);
+    public function coreAuthenticate($login, $password);
 
     /**
      * Return the identity of the current user in session

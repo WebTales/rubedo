@@ -53,7 +53,7 @@ class CurrentUserController extends AbstractActionController
      */
     public function __construct()
     {
-        $this->_auth = Manager::getService('Authentication');
+        $this->_auth = Manager::getService('AuthenticationService');
         $this->_currentUserService = Manager::getService('CurrentUser');
     }
 

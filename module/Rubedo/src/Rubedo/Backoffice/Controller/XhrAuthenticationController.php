@@ -33,7 +33,7 @@ class XhrAuthenticationController extends AbstractActionController
     public function __construct()
     {
         // init the data access service
-        $this->_dataService = Manager::getService('Authentication');
+        $this->_dataService = Manager::getService('AuthenticationService');
     }
 
     /**
@@ -49,7 +49,7 @@ class XhrAuthenticationController extends AbstractActionController
             ->getManager()
             ->regenerateId(true);
         
-        $loginResult = $this->_dataService->authenticate($login, $password);
+        $loginResult = $this->_dataService->coreAuthenticate($login, $password);
         
         if ($loginResult) {
             $response['success'] = true;

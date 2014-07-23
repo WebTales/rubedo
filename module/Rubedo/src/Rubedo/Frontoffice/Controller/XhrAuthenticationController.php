@@ -48,7 +48,7 @@ class XhrAuthenticationController extends AbstractActionController
      */
     public function __construct()
     {
-        $this->_auth = Manager::getService('Authentication');
+        $this->_auth = Manager::getService('AuthenticationService');
         $this->translateService = Manager::getService('Translate');
     }
 
@@ -62,7 +62,7 @@ class XhrAuthenticationController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             if (! empty($login) && ! empty($password)) {
                 try {
-                    $this->_auth->authenticate($login, $password);
+                    $this->_auth->coreAuthenticate($login, $password);
                     $response['success'] = true;
                 } catch (\Exception $e) {
                     $response['success'] = false;

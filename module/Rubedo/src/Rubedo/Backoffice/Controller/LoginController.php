@@ -42,7 +42,7 @@ class LoginController extends AbstractExtLoaderController
      */
     public function __construct()
     {
-        $this->_auth = Manager::getService('Authentication');
+        $this->_auth = Manager::getService('AuthenticationService');
     }
 
     /**

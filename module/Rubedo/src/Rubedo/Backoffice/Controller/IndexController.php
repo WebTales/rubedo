@@ -35,9 +35,9 @@ class IndexController extends AbstractExtLoaderController
      */
     public function indexAction()
     {
-        $this->_auth = Manager::getService('Authentication');
+        $this->_auth = Manager::getService('AuthenticationService');
         
-        if (! $this->_auth->getIdentity()) {
+        if (! $this->_auth->hasIdentity()) {
             $redirectParams = array(
                 'action' => 'index',
                 'controller' => 'login'

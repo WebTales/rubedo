@@ -32,7 +32,7 @@ class ContentContributorController extends AbstractExtLoaderController
 
     public function indexAction ()
     {
-        $this->_auth = Manager::getService('Authentication');
+        $this->_auth = Manager::getService('AuthenticationService');
         
         if (! $this->_auth->getIdentity()) {
             return $this->redirect()->toUrl("/backoffice/login");

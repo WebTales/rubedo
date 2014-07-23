@@ -25,7 +25,7 @@ use Rubedo\Security\HtmlCleaner;
 use Rubedo\Services\Cache;
 use Rubedo\Services\Events;
 use Rubedo\Services\Manager;
-use Rubedo\User\Authentication;
+use Rubedo\User\Authentication\AuthenticationService as Authentication;
 use Zend\EventManager\EventManager;
 use Zend\Http\Response;
 use Zend\Mvc\ModuleRouteListener;

@@ -14,13 +14,13 @@
  * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-namespace Rubedo\User;
+namespace Rubedo\User\Authentication;
 
 use Rubedo\Interfaces\User\IAuthentication;
-use Zend\Authentication\AuthenticationService;
-use Rubedo\User\AuthAdapter;
-use Rubedo\Services\Manager;
 use Rubedo\Services\Events;
+use Rubedo\Services\Manager;
+use Rubedo\User\Authentication\Adapter\CoreAdapter;
+use Zend\Authentication\AuthenticationService as ZendAuthenticationService;
 
 /**
  * Current Authentication Service
@@ -31,21 +31,12 @@ use Rubedo\Services\Events;
  * @category Rubedo
  * @package Rubedo
  */
-class Authentication extends \Zend\Authentication\AuthenticationService
+class AuthenticationService extends ZendAuthenticationService implements IAuthentication
 {
 
     const SUCCESS = 'rubedo_authentication_success';
 
     const FAIL = 'rubedo_authentication_fail';
-
-    /**
-     * Authentication service of ZF
-     *
-     * @param
-     *            AuthenticationService
-     *            
-     */
-    protected static $zendAuth;
 
     protected static $_authLifetime = 60;
 
@@ -54,14 +45,6 @@ class Authentication extends \Zend\Authentication\AuthenticationService
      *
      * @return AuthenticationService
      */
-    protected function getZendAuth()
-    {
-        if (! isset(static::$zendAuth)) {
-            static::$zendAuth = new AuthenticationService();
-        }
-        
-        return static::$zendAuth;
-    }
 
     /**
      * Return the identity of the current user in session
@@ -73,7 +56,7 @@ class Authentication extends \Zend\Authentication\AuthenticationService
         $config = Manager::getService('Application')->getConfig();
         $cookieName = $config['session']['name'];
         if (isset($_COOKIE[$cookieName])) {
-            return $this->getZendAuth()->getIdentity();
+            return parent::getIdentity();
         } else {
             return null;
         }
@@ -90,7 +73,7 @@ class Authentication extends \Zend\Authentication\AuthenticationService
         $config = Manager::getService('Application')->getConfig();
         $cookieName = $config['session']['name'];
         if (isset($_COOKIE[$cookieName])) {
-            return $this->getZendAuth()->hasIdentity();
+            return parent::hasIdentity();
         } else {
             return false;
         }
@@ -103,7 +86,7 @@ class Authentication extends \Zend\Authentication\AuthenticationService
      */
     public function clearIdentity()
     {
-        $this->getZendAuth()->clearIdentity();
+        parent::clearIdentity();
         Manager::getService('Session')->getSessionObject()
             ->getManager()
             ->getStorage()
@@ -125,7 +108,7 @@ class Authentication extends \Zend\Authentication\AuthenticationService
      */
     public function forceReAuth($login, $password)
     {
-        $authAdapter = new AuthAdapter($login, $password);
+        $authAdapter = new CoreAdapter($login, $password);
         $result = $authAdapter->authenticate($authAdapter);
         return $result->isValid();
     }
@@ -152,7 +135,7 @@ class Authentication extends \Zend\Authentication\AuthenticationService
      */
     public static function getAuthLifetime()
     {
-        return Authentication::$_authLifetime;
+        return static::$_authLifetime;
     }
 
     /**
@@ -161,6 +144,31 @@ class Authentication extends \Zend\Authentication\AuthenticationService
      */
     public static function setAuthLifetime($_authLifetime)
     {
-        Authentication::$_authLifetime = $_authLifetime;
+        static::$_authLifetime = $_authLifetime;
+    }
+
+    /**
+     * Authenticate the user and set the session
+     *
+     * @param $login string login of user
+     * @param $password string password of the user
+     *
+     * @throws \Rubedo\Exceptions\User
+     * @return bool
+     */
+    public function coreAuthenticate($login, $password)
+    {
+        $authAdapter = new CoreAdapter($login, $password);
+        $result = parent::authenticate($authAdapter);
+        if (! $result->isValid()) {
+            Events::getEventManager()->trigger(self::FAIL, null, array(
+                'login' => $login,
+                'error' => $result->getMessages()
+            ));
+            Throw new \Rubedo\Exceptions\User(implode(' - ', $result->getMessages()));
+        }
+        Events::getEventManager()->trigger(self::SUCCESS);
+        Manager::getService('CurrentUser')->getToken();
+        return $result->isValid();
     }
 }

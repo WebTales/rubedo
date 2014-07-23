@@ -81,7 +81,7 @@ class CurrentUser implements ICurrentUser
             if ($this->isAuthenticated()) {               
                 $user = $this->_fetchCurrentUser();
                 if ($user === null) {
-                    Manager::getService('Authentication')->clearIdentity();
+                    Manager::getService('AuthenticationService')->clearIdentity();
                 }
                 
                 self::$_currentUser = $user;
@@ -122,7 +122,7 @@ class CurrentUser implements ICurrentUser
      */
     public function isAuthenticated ()
     {
-        $serviceAuth = Manager::getService('Authentication');
+        $serviceAuth = Manager::getService('AuthenticationService');
         return $serviceAuth->hasIdentity();
     }
 
@@ -133,13 +133,12 @@ class CurrentUser implements ICurrentUser
      */
     protected function _fetchCurrentUser ()
     {
-        $serviceAuth = Manager::getService('Authentication');
+        $serviceAuth = Manager::getService('AuthenticationService');
         $sessionUser = $serviceAuth->getIdentity();
         
         $serviceReader = Manager::getService('Users');
         
-//        $user = $serviceReader->findById($sessionUser['id'], true);
-        $user = array();
+        $user = $serviceReader->findById($sessionUser['id'], true);
         return $user;
     }
 
@@ -202,7 +201,7 @@ class CurrentUser implements ICurrentUser
     {
         $user = $this->getCurrentUser();
         
-        $serviceAuth = Manager::getService('Authentication');
+        $serviceAuth = Manager::getService('AuthenticationService');
         if ($serviceAuth->forceReAuth($user['login'], $oldPass)) {
             $serviceUser = Manager::getService('Users');
             return $serviceUser->changePassword($newPass, $user['version'], $user['id']);
