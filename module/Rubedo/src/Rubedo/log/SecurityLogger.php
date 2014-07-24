@@ -14,7 +14,7 @@
 namespace Rubedo\Log;
 
 use Rubedo\Services\Manager;
-use Rubedo\User\Authentication;
+use Rubedo\User\Authentication\AuthenticationService;
 use Zend\EventManager\EventInterface;
 
 
@@ -44,7 +44,7 @@ class SecurityLogger extends Logger
         );
 
         switch ($e->getName()) {
-            case Authentication::FAIL:
+            case AuthenticationService::FAIL:
                 $message = 'Failed authentication';
                 $params = $e->getParams();
                 $login = $params['login'];
