@@ -19,9 +19,9 @@
 		"leafo/lessphp": "v0.4.0",
 		"mrclay/minify": "~2.2",
 		"zendframework/zendservice-recaptcha": "2.0.1",
-        "zfcampus/zf-apigility": "~1.0",
-        "zfcampus/zf-apigility-documentation": "~1.0",
-        "zfcampus/zf-development-mode": "~2.0"
+        "zfcampus/zf-apigility": "dev-master",
+        "zfcampus/zf-apigility-documentation": "dev-master",
+        "zfcampus/zf-development-mode": "dev-master"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*",
@@ -30,9 +30,9 @@
 		"squizlabs/php_codesniffer": "1.4.*",
         "zendframework/zftool": "dev-master",
         "zendframework/zend-developer-tools": "dev-master",
-        "zfcampus/zf-apigility-admin": "~1.0",
-        "zfcampus/zf-apigility-welcome": "~1.0",
-        "zfcampus/zf-deploy": "~1.0"
+        "zfcampus/zf-apigility-admin": "dev-master",
+        "zfcampus/zf-apigility-welcome": "dev-master",
+        "zfcampus/zf-deploy": "dev-master"
 	},
 	"minimum-stability": "stable",
 	"config": {

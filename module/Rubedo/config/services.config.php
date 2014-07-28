@@ -96,4 +96,5 @@ return array(
     'ContentViewLog' => 'Rubedo\\Collection\\ContentViewLog',
     'UserRecommendations' => 'Rubedo\\Collection\\UserRecommendations',
     'ItemRecommendations' => 'Rubedo\\Collection\\ItemRecommendations',
+    'RubedoAPI\\Storage\\MongoStorage' => 'RubedoAPI\\Storage\\MongoStorage',
 );

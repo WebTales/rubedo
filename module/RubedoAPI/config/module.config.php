@@ -102,4 +102,24 @@ return array(
             ),
         ),
     ),
+    'zf-mvc-auth' => array(
+        'authorization' => array(
+            'RubedoAPI\\V1\\Rest\\ApplicationLog\\Controller' => array(
+                'entity' => array(
+                    'GET' => true,
+                    'POST' => false,
+                    'PATCH' => false,
+                    'PUT' => false,
+                    'DELETE' => false,
+                ),
+                'collection' => array(
+                    'GET' => false,
+                    'POST' => false,
+                    'PATCH' => false,
+                    'PUT' => false,
+                    'DELETE' => false,
+                ),
+            ),
+        ),
+    ),
 );

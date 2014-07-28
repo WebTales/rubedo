@@ -434,6 +434,10 @@ class DataAccess implements IDataAccess
         }
     }
 
+    public function getDbName() {
+        return $this->_dbName;
+    }
+
     /**
      * Getter of Mongo adapter : should only connect once for each mongoDB
      * server
