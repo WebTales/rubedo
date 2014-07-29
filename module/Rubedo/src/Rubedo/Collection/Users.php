@@ -357,6 +357,17 @@ class Users extends AbstractCollection implements IUsers
         return $result;
     }
 
+    public function findByLogin($login)
+    {
+        $filter = Filter::factory('Value')->setName('login')->setValue($login);
+        $result = $this->_dataService->findOne($filter);
+        if ($result) {
+            $result = $this->_addGroupsInfos($result);
+        }
+
+        return $result;
+    }
+
 
     public function getByType($typeId, $start = null, $limit = null)
     {
