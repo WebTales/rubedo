@@ -57,20 +57,23 @@ class MongoStorage extends MongoAdapter {
             $this->collection('access_token_table')->update(
                 array('access_token' => $access_token),
                 array('$set' => array(
-                    'client' => array_intersect_key($client, array_flip(array('login', 'id', 'email'))),
-                    'expires' => $expires,
-                    'user_id' => $user_id,
-                    'scope' => $scope
-                ))
+                        'client_id' => $client['id'],
+                        'client' => array_intersect_key($client, array_flip(array('login', 'id', 'email'))),
+                        'expires' => $expires,
+                        'user_id' => $user_id,
+                        'scope' => $scope,
+                    )
+                )
             );
         } else {
             $this->collection('access_token_table')->insert(
                 array(
                     'access_token' => $access_token,
+                    'client_id' => $client['id'],
                     'client' => array_intersect_key($client, array_flip(array('login', 'id', 'email'))),
                     'expires' => $expires,
                     'user_id' => $user_id,
-                    'scope' => $scope
+                    'scope' => $scope,
                 )
             );
         }
@@ -81,9 +84,7 @@ class MongoStorage extends MongoAdapter {
     /* ClientInterface */
     public function getClientDetails($client_id)
     {
-        //$result = $this->collection('client_table')->findOne(array('_id' => new \MongoId($client_id)));
-        //echo var_export($result);
-        exit();
+        $result = $this->usersService->findByLogin($client_id);
         return is_null($result) ? false : $result;
     }
 }
