@@ -58,22 +58,8 @@ if (file_exists(CONFIG_CACHE_DIR . '/extensions.array.php')) {
 return array(
     'modules' => array_merge(array(
         'Rubedo',
-        'ZF\\DevelopmentMode',
-        'ZF\\Apigility',
-        'ZF\\Apigility\\Provider',
-        'ZF\\Apigility\\Documentation',
-        'AssetManager',
-        'ZF\\ApiProblem',
-        'ZF\\Configuration',
-        'ZF\\MvcAuth',
-        'ZF\\OAuth2',
-        'ZF\\Hal',
-        'ZF\\ContentNegotiation',
-        'ZF\\ContentValidation',
-        'ZF\\Rest',
-        'ZF\\Rpc',
-        'ZF\\Versioning',
-        'RubedoAPI'
+        'RubedoAPI',
+        'ZendDeveloperTools'
     ), $extensionsArray),
     'module_listener_options' => array(
         'config_cache_enabled' => true,
@@ -85,7 +71,7 @@ return array(
             './extensions'
         ),
         'config_glob_paths' => array(
-            'config/autoload/{,*.}{global,local}.php'
+            'config/autoload/{,*.}{development,global,local}.php'
         )
     ),
     'phpSettings' => array(

@@ -1,9 +1,7 @@
 <?php
 namespace RubedoAPI;
 
-use ZF\Apigility\Provider\ApigilityProviderInterface;
-
-class Module implements ApigilityProviderInterface
+class Module
 {
     public function getConfig()
     {
@@ -13,9 +11,9 @@ class Module implements ApigilityProviderInterface
     public function getAutoloaderConfig()
     {
         return array(
-            'ZF\Apigility\Autoloader' => array(
+            'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
-                    __NAMESPACE__ => __DIR__,
+                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ),
             ),
         );
