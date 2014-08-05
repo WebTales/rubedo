@@ -18,7 +18,8 @@
         "webTales/bootstrap-less": "2.2.0",
         "fingerprintjs":"0.5.3",
         "angular/angular.js":"1.2.21",
-        "webtales/rubedo-frontoffice":"dev-master"
+        "webtales/rubedo-frontoffice":"dev-master",
+        "twbs/bootstrap":"v3.2.0"
     },
     "require-dev": {},
     "repositories": [
@@ -153,6 +154,9 @@
         },{
             "type": "vcs",
             "url": "git://github.com/WebTales/rubedo-frontoffice.git"
+        },{
+            "type": "vcs",
+            "url": "git://github.com/twbs/bootstrap.git"
         }
 
 
