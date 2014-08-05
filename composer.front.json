@@ -16,7 +16,9 @@
         "WebTales/bsie": "1.4.0",
         "stowball/jQuery-rwdImageMaps": "1.0",
         "webTales/bootstrap-less": "2.2.0",
-        "fingerprintjs":"0.5.3"
+        "fingerprintjs":"0.5.3",
+        "angular/angular.js":"1.2.21",
+        "webtales/rubedo-frontoffice":"dev-master"
     },
     "require-dev": {},
     "repositories": [
@@ -112,6 +114,17 @@
                 }
             }
         },
+        {
+            "type": "package",
+            "package": {
+                "name": "angular/angular.js",
+                "version": "1.2.21",
+                "dist": {
+                    "url": "https://code.angularjs.org/1.2.21/angular-1.2.21.zip",
+                    "type": "zip"
+                }
+            }
+        },
 
 
         {
@@ -137,7 +150,11 @@
         {
             "type": "vcs",
             "url": "git://github.com/WebTales/bootstrap-less.git"
+        },{
+            "type": "vcs",
+            "url": "git://github.com/WebTales/rubedo-frontoffice.git"
         }
+
 
     ],
     "minimum-stability": "dev",
