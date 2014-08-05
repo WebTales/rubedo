@@ -26,7 +26,7 @@
 		"chriskite/phactory": "0.4.*",
 		"phpmd/phpmd": "1.4.*",
 		"squizlabs/php_codesniffer": "1.4.*",
-        "zendframework/zftool": "dev-master",
+        "zendframework/zftool": "dev-master"
 	},
 	"minimum-stability": "stable",
 	"config": {
