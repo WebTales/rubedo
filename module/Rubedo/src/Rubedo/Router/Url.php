@@ -139,14 +139,14 @@ class Url implements IUrl
         $locale = null;
         $siteId = $site['id'];
         
-        $eventResult = Events::getEventManager()->trigger(self::URL_TO_PAGE_READ_CACHE_PRE, null, array(
-            'url' => $url,
-            'siteId' => $site['id']
-        ));
-        if ($eventResult->stopped()) {
-            $data = $eventResult->first();
-            return $data;
-        }
+        //$eventResult = Events::getEventManager()->trigger(self::URL_TO_PAGE_READ_CACHE_PRE, null, array(
+          //  'url' => $url,
+            //'siteId' => $site['id']
+        //));
+        //if ($eventResult->stopped()) {
+          //  $data = $eventResult->first();
+            //return $data;
+        //}
         
         $urlSegments = explode(self::URI_DELIMITER, trim($url, self::URI_DELIMITER));
         
@@ -227,7 +227,7 @@ class Url implements IUrl
             $result['content-id'] = $contentId;
         }
         $result = array_merge($result, $this->extraMatches);
-        Events::getEventManager()->trigger(self::URL_TO_PAGE_READ_CACHE_POST, null, $result);
+        //Events::getEventManager()->trigger(self::URL_TO_PAGE_READ_CACHE_POST, null, $result);
         unset($result['siteId']);
         unset($result['url']);
         return $result;
@@ -248,13 +248,13 @@ class Url implements IUrl
         if (self::$_disableNav) {
             return trim('#', self::URI_DELIMITER);
         }
-        $eventResult = Events::getEventManager()->trigger(self::PAGE_TO_URL_READ_CACHE_PRE, null, array(
-            'pageId' => $pageId,
-            'locale' => $locale
-        ));
-        if ($eventResult->stopped()) {
-            return $eventResult->first();
-        }
+       // $eventResult = Events::getEventManager()->trigger(self::PAGE_TO_URL_READ_CACHE_PRE, null, array(
+       //     'pageId' => $pageId,
+       //     'locale' => $locale
+       // ));
+        //if ($eventResult->stopped()) {
+         //   return $eventResult->first();
+        //}
         
         $url = '';
         if ($locale) {
@@ -310,7 +310,7 @@ class Url implements IUrl
             'siteId' => $siteId,
             'locale' => $locale
         );
-        $eventResult = Events::getEventManager()->trigger(self::PAGE_TO_URL_READ_CACHE_POST, null, $urlToCache);
+        //$eventResult = Events::getEventManager()->trigger(self::PAGE_TO_URL_READ_CACHE_POST, null, $urlToCache);
         
         return $url;
     }

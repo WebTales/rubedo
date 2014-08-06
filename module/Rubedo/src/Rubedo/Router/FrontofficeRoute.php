@@ -106,6 +106,7 @@ class FrontofficeRoute implements RouteInterface
         $params = array();
         $params['controller'] = 'Rubedo\\Frontoffice\\Controller\\Index';
         $params['action'] = 'index';
+
         $params = array_merge($params, $this->matchedParams);
         
         if (! isset($params['content-id'])) {

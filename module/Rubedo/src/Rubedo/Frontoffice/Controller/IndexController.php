@@ -22,6 +22,7 @@ use Rubedo\Content\Context;
 use Rubedo\Templates\Twig\TwigViewModel;
 use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
 
 /**
  * Front Office Defautl Controller
@@ -133,6 +134,17 @@ class IndexController extends AbstractActionController
         if (! $this->_pageId) {
             throw new \Rubedo\Exceptions\NotFound('No Page found', "Exception2");
         }
+        $this->viewData=array();
+        $viewModel = new ViewModel($this->viewData);
+        $viewModel->setTerminal(true);
+
+        return $viewModel;
+
+        /**
+         *  Old render strategy from here down
+         * @todo remove when certain it is no longer needed
+         */
+
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
         if ($this->_pageInfo===NULL){
             $wasFiltered1 = AbstractCollection::disableUserFilter();
