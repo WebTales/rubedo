@@ -282,8 +282,7 @@ class Module
         // @todo forward if no language initialized
 
         // check access
-
-        if ($controller && strpos($controller, 'ZF') === false) {
+        if ($controller && strpos($controller, 'RubedoApi') === false) {
             list ($applicationName, $moduleName, $constant, $controllerName) = explode('\\', $controller);
             $controllerName = strtolower($controllerName);
             $moduleName = strtolower($moduleName);
