@@ -2,7 +2,6 @@
 
 namespace RubedoAPI\Rest\V1;
 
-use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
 
 class PagesRessource extends AbstractRessource {

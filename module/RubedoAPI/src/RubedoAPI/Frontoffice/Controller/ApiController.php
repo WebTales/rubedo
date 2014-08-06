@@ -35,7 +35,7 @@ class ApiController extends AbstractActionController
         $ressource = 'RubedoAPI\\Rest\\' . mb_strtoupper($routes['version']) . '\\' . ucfirst($routes['ressource']) . 'Ressource';
         $ressourceObject = new $ressource();
         $params = $this->params()->fromQuery();
-        $result = $ressourceObject->{mb_strtolower($method)}($params);
+        $result = $ressourceObject->{mb_strtolower($method) . 'Action'}($params);
         return new JsonModel($result);
     }
 }
