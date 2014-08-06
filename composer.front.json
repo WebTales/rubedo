@@ -19,7 +19,9 @@
         "fingerprintjs":"0.5.3",
         "angular/angular.js":"1.2.21",
         "webtales/rubedo-frontoffice":"dev-master",
-        "twbs/bootstrap":"v3.2.0"
+        "twbs/bootstrap":"v3.2.0",
+        "lodash/lodash":"2.4.1",
+        "mgonto/restangular":"1.4.0"
     },
     "require-dev": {},
     "repositories": [
@@ -122,6 +124,28 @@
                 "version": "1.2.21",
                 "dist": {
                     "url": "https://code.angularjs.org/1.2.21/angular-1.2.21.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "lodash/lodash",
+                "version": "2.4.1",
+                "dist": {
+                    "url": "https://github.com/lodash/lodash/archive/2.4.1.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "mgonto/restangular",
+                "version": "1.4.0",
+                "dist": {
+                    "url": "https://github.com/mgonto/restangular/archive/1.4.0.zip",
                     "type": "zip"
                 }
             }
