@@ -2,6 +2,7 @@
 
 namespace RubedoAPI\Rest\V1;
 
+use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
 
 class PagesRessource extends AbstractRessource {
@@ -9,11 +10,20 @@ class PagesRessource extends AbstractRessource {
         $sitesServices = Manager::getService('Sites');
         $pagesServices = Manager::getService('Pages');
         $site = $sitesServices->findByHost($params['site']);
-        $page = $pagesServices->findByNameAndSite($params['route'], $site['id']);
+        $urlSegments = explode('/', trim($params['route'], '/'));
+        $lastMatchedNode = ['id' => 'root'];
+        foreach ($urlSegments as $value) {
+            $matchedNode = $pagesServices->matchSegment($value, $lastMatchedNode['id'], $site['id']);
+            if (null === $matchedNode) {
+                break;
+            } else {
+                $lastMatchedNode = $matchedNode;
+            }
+        }
         return [
             'success' => true,
             'site' => $this->outputSiteMask($site),
-            'page' => $this->outputPageMask($page),
+            'page' => $this->outputPageMask($lastMatchedNode),
         ];
     }
 
