@@ -5,7 +5,7 @@ namespace RubedoAPI\Rest\V1;
 use Rubedo\Services\Manager;
 
 class PagesRessource extends AbstractRessource {
-    public function get(&$params) {
+    public function getAction(&$params) {
         $sitesServices = Manager::getService('Sites');
         $pagesServices = Manager::getService('Pages');
         $site = $sitesServices->findByHost($params['site']);
