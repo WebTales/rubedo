@@ -14,6 +14,7 @@
 $boViewsPath = realpath(__DIR__ . '/../src/Rubedo/Backoffice/views/scripts');
 $installViewPath = realpath(__DIR__ . '/../src/Rubedo/Install/views/scripts');
 $blockViewPath = realpath(__DIR__ . '/../src/Rubedo/Blocks/views/scripts');
+$foViewsPath = realpath(__DIR__ . '/../src/Rubedo/Frontoffice/views/scripts');
 
 /**
  * Standard ZF2 views for Rubedo (when not using twig)
@@ -42,5 +43,6 @@ return array(
     'rubedo/install/controller/index/set-local-domains' => $installViewPath . '/index/set-local-domains.phtml',
     'rubedo/install/controller/index/set-mailer' => $installViewPath . '/index/set-mailer.phtml',
     'rubedo/install/controller/index/set-php-settings' => $installViewPath . '/index/set-php-settings.phtml',
-    'rubedo/contact/render-form' => $blockViewPath . '/contact/form.phtml'
+    'rubedo/contact/render-form' => $blockViewPath . '/contact/form.phtml',
+    'rubedo/index/index' => $foViewsPath . '/index/index.phtml'
 );
