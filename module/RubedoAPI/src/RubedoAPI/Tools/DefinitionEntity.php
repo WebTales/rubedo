@@ -69,14 +69,33 @@ class DefinitionEntity implements JsonSerializable{
     }
 
     /**
-     * @param $array
+     * @param $verb
+     * @param $function
+     * @return $this
+     * @internal param $array
      * @internal param array $verbList
      */
     public function editVerb($verb, $function)
     {
         $verb = strtoupper($verb);
         if(!array_key_exists($verb, $this->verbList)) {
-            $this->verbList[$verb] = (new VerbDefinitionEntity())->setVerb($verb);
+            $this->verbList[$verb] = (new VerbDefinitionEntity())
+                ->setVerb($verb)
+                ->addOutputFilter(
+                    (new FilterDefinitionEntity())
+                        ->setKey('success')
+                        ->setRequired()
+                        ->setDescription('Success of the query')
+                        ->setFilter('boolean')
+                )
+                ->addOutputFilter(
+                    (new FilterDefinitionEntity())
+                        ->setKey('message')
+                        ->setDescription('Informations about the query')
+                        ->setFilter('string')
+
+                )
+            ;
         }
         $function($this->verbList[$verb]);
         return $this;
