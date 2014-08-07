@@ -10,6 +10,7 @@ namespace RubedoAPI\Tools;
 
 
 use RubedoAPI\Exceptions\APIEntityException;
+use RubedoAPI\Exceptions\APIFilterException;
 use Zend\Stdlib\JsonSerializable;
 
 class VerbDefinitionEntity implements JsonSerializable {
@@ -79,6 +80,38 @@ class VerbDefinitionEntity implements JsonSerializable {
     public function getOutputFilters()
     {
         return $this->outputFilters;
+    }
+
+    public function filterInput($toFilter)
+    {
+        $filtered = [];
+        foreach ($this->getInputFilters() as $key => $filter) {
+            if (!($filter instanceof FilterDefinitionEntity))
+                throw new APIEntityException('Filter in VerbDefinition must be FilterDefinitionEntity', 500);
+            if ($filter->isRequired() && (!array_key_exists($key, $toFilter) || empty($toFilter[$key])))
+                throw new APIFilterException('"' . $key . '" is required', 500);
+            elseif (!array_key_exists($key, $toFilter))
+                continue;
+            $filtered[$key] = $filter->filter($key, $toFilter[$key]);
+
+        }
+        return $filtered;
+    }
+
+    public function filterOutput($toFilter)
+    {
+        $filtered = [];
+        foreach ($this->getOutputFilters() as $key => $filter) {
+            if (!($filter instanceof FilterDefinitionEntity))
+                throw new APIEntityException('Filter in VerbDefinition must be FilterDefinitionEntity', 500);
+            if ($filter->isRequired() && (!array_key_exists($key, $toFilter) || empty($toFilter[$key])))
+                throw new APIFilterException('"' . $key . '" must be back.', 500);
+            elseif (!array_key_exists($key, $toFilter))
+                continue;
+            $filtered[$key] = $filter->filter($key, $toFilter[$key]);
+
+        }
+        return $filtered;
     }
 
     /**

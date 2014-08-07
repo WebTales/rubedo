@@ -10,6 +10,7 @@ namespace RubedoAPI\Tools;
 
 
 use RubedoAPI\Exceptions\APIEntityException;
+use RubedoAPI\Exceptions\APIRequestException;
 use Zend\Stdlib\JsonSerializable;
 
 class DefinitionEntity implements JsonSerializable{
@@ -99,6 +100,15 @@ class DefinitionEntity implements JsonSerializable{
         }
         $function($this->verbList[$verb]);
         return $this;
+    }
+
+    public function getVerb($verb)
+    {
+        $verb = strtoupper($verb);
+        if(!array_key_exists($verb, $this->verbList)) {
+            throw new APIRequestException('Verb undefined', 404);
+        }
+        return $this->verbList[$verb];
     }
 
     function jsonSerialize() {

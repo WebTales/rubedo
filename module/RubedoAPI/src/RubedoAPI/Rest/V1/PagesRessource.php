@@ -3,9 +3,49 @@
 namespace RubedoAPI\Rest\V1;
 
 use Rubedo\Services\Manager;
+use RubedoAPI\Tools\FilterDefinitionEntity;
+use RubedoAPI\Tools\VerbDefinitionEntity;
 
 class PagesRessource extends AbstractRessource {
-    public function getAction(&$params) {
+    public function __construct()
+    {
+        parent::__construct();
+        $this
+            ->definition
+            ->setName('Pages')
+            ->setDescription('Deal with pages')
+            ->editVerb('get', function(VerbDefinitionEntity &$entity) {
+                $entity
+                    ->setDescription('Get a page and all blocks')
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('site')
+                            ->setRequired()
+                            ->setDescription('Host defined in Rubedo backoffice.')
+                            ->setFilter('url')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('route')
+                            ->setRequired()
+                            ->setDescription('Route for this page')
+                            ->setFilter('url')
+                    )
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('page')
+                            ->setDescription('Informations about the page')
+                    )
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('site')
+                            ->setDescription('Informations about the host')
+                    )
+                ;
+            })
+        ;
+    }
+    public function getAction($params) {
         $sitesServices = Manager::getService('Sites');
         $pagesServices = Manager::getService('Pages');
         $blocksServices = Manager::getService('Blocks');

@@ -30,12 +30,26 @@ class ApiController extends AbstractActionController
                 'message' => 'Method not exist',
             ]);
         }
+        try {
+            $routes = $this->params()->fromRoute();
+            $ressource = 'RubedoAPI\\Rest\\' . mb_strtoupper($routes['version']) . '\\' . ucfirst($routes['ressource']) . 'Ressource';
+            /** @var \RubedoAPI\Interfaces\IRessource $ressourceObject */
+            $ressourceObject = new $ressource();
 
-        $routes = $this->params()->fromRoute();
-        $ressource = 'RubedoAPI\\Rest\\' . mb_strtoupper($routes['version']) . '\\' . ucfirst($routes['ressource']) . 'Ressource';
-        $ressourceObject = new $ressource();
-        $params = $this->params()->fromQuery();
-        $result = $ressourceObject->{mb_strtolower($method) . 'Action'}($params);
+            $paramsBody = json_decode($this->getRequest()->getContent(), true);
+            if (empty($paramsBody))
+                $paramsBody = [];
+            $params = array_merge_recursive(
+                $this->params()->fromQuery(),
+                $paramsBody
+            );
+            $result = $ressourceObject->handler(mb_strtolower($method), $params);
+        } catch (\Exception $e) {
+            $result = [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
         return new JsonModel($result);
     }
 }
