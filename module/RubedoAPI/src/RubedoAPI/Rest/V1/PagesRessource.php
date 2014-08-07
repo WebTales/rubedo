@@ -8,6 +8,7 @@ class PagesRessource extends AbstractRessource {
     public function getAction(&$params) {
         $sitesServices = Manager::getService('Sites');
         $pagesServices = Manager::getService('Pages');
+        $blocksServices = Manager::getService('Blocks');
         $site = $sitesServices->findByHost($params['site']);
         $urlSegments = explode('/', trim($params['route'], '/'));
         $lastMatchedNode = ['id' => 'root'];
@@ -19,6 +20,7 @@ class PagesRessource extends AbstractRessource {
                 $lastMatchedNode = $matchedNode;
             }
         }
+        $lastMatchedNode['blocks'] = $blocksServices->getListByPage($lastMatchedNode['id'])['data'];
         return [
             'success' => true,
             'site' => $this->outputSiteMask($site),
