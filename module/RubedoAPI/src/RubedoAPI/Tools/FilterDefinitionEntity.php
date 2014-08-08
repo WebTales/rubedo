@@ -152,7 +152,8 @@ class FilterDefinitionEntity implements JsonSerializable {
 
     public function filter($key, $toFilter)
     {
-        if (empty($this->getFilter()))
+        $filter = $this->getFilter();
+        if (empty($filter))
             return $toFilter;
         $isArray = is_array($toFilter);
         if ($isArray && !$this->isMultivalued())
