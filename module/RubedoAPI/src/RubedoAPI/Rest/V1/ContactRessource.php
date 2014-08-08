@@ -69,13 +69,13 @@ class ContactRessource extends AbstractRessource {
         if (empty($mailingList['replyToName']))
             $mailerObject->setTo($mailingList['replyToAddress']);
         else
-            $mailerObject->setTo(array($mailingList['replyToAddress'] => $mailingList['replyToName']));
+            $mailerObject->setTo([$mailingList['replyToAddress'] => $mailingList['replyToName']]);
         $mailerObject->setFrom($params['from']);
         $mailerObject->setSubject($params['subject']);
         $mailerObject->setBody($this->buildEmail($params['fields']));
 
         // Send e-mail
-        $errors = array();
+        $errors = [];
         if($mailerService->sendMessage($mailerObject, $errors)) {
             return [
                 'success' => true,
@@ -91,7 +91,7 @@ class ContactRessource extends AbstractRessource {
 
     protected function buildEmail($fields)
     {
-        $lines = array();
+        $lines = [];
         foreach ($fields as $name => $content) {
             $lines[] = $name . ' : ' . $content;
         }

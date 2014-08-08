@@ -6,10 +6,26 @@ return [
             'api' => [
                 'type' => 'Segment',
                 'options' => [
-                    'route' => '/api/:version/:ressource',
+                    'route' => '/api/:version/:ressource[/:id]',
                     'defaults' => [
                         '__NAMESPACE__' => 'RubedoAPI\\Frontoffice\\Controller',
                         'controller' => 'Api',
+                        'action' => 'index',
+                    ],
+                    'constraints' => [
+                        'version' => 'v\d+',
+                    ],
+                ],
+                'may_terminate' => true,
+            ],
+            'authApi' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/api/:version/auth/:ressource',
+                    'defaults' => [
+                        '__NAMESPACE__' => 'RubedoAPI\\Frontoffice\\Controller',
+                        'controller' => 'Api',
+                        'middleNamespace' => 'Authentication',
                         'action' => 'index',
                     ],
                     'constraints' => [

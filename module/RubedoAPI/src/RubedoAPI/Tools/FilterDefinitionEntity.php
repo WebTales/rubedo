@@ -18,7 +18,7 @@ class FilterDefinitionEntity implements JsonSerializable {
     protected $required = false;
     protected $multivalued = false;
     protected $filter;
-    protected $optionsFilter = array();
+    protected $optionsFilter = [];
 
     /**
      * @return mixed
@@ -158,7 +158,7 @@ class FilterDefinitionEntity implements JsonSerializable {
         if ($isArray && !$this->isMultivalued())
             throw new APIFilterException('"' . $key . '" is not multivaluable.', 500);
         elseif ($isArray) {
-            $filtered = array();
+            $filtered = [];
             foreach ($toFilter as $key => $value) {
                 $filtered[filter_var($key, FILTER_SANITIZE_STRING)] = $this->filterElement($key, $value);
             }
