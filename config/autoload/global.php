@@ -1,7 +1,7 @@
 <?php
 return array(
     'zf-oauth2' => array(
-        'storage' => 'RubedoAPI\\Storage\\MongoStorage',
+        'storage' => 'RubedoAPI\\AuthStorage\\MongoAuthImplementation',
         'allow_implicit' => true,
     ),
 );

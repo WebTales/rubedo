@@ -58,8 +58,11 @@ if (file_exists(CONFIG_CACHE_DIR . '/extensions.array.php')) {
 return array(
     'modules' => array_merge(array(
         'Rubedo',
+        'ZendDeveloperTools',
+        'ZF\ApiProblem',
+        'ZF\ContentNegotiation',
+        'ZF\OAuth2',
         'RubedoAPI',
-        'ZendDeveloperTools'
     ), $extensionsArray),
     'module_listener_options' => array(
         'config_cache_enabled' => true,
