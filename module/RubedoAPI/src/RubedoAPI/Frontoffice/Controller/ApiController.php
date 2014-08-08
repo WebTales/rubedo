@@ -43,6 +43,7 @@ class ApiController extends AbstractActionController
                 $this->params()->fromQuery(),
                 $paramsBody
             );
+            $ressourceObject->setContext($this);
             $result = $ressourceObject->handler(mb_strtolower($method), $params);
         } catch (\Exception $e) {
             $result = [

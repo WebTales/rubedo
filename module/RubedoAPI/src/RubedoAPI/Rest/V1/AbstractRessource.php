@@ -16,6 +16,7 @@ use RubedoAPI\Tools\DefinitionEntity;
 
 abstract class AbstractRessource implements IRessource {
     protected $config = [];
+    protected $context;
     /**
      * @var \RubedoAPI\Tools\DefinitionEntity
      */
@@ -60,6 +61,22 @@ abstract class AbstractRessource implements IRessource {
                 $verbDefinition->filterInput($params)
             )
         );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param mixed $context
+     */
+    public function setContext($context)
+    {
+        $this->context = $context;
     }
 
 
