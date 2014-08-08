@@ -134,18 +134,10 @@ class IndexController extends AbstractActionController
         if (! $this->_pageId) {
             throw new \Rubedo\Exceptions\NotFound('No Page found', "Exception2");
         }
-        $this->viewData=array();
-        $viewModel = new ViewModel($this->viewData);
-        $viewModel->setTerminal(true);
 
-        return $viewModel;
-
-        /**
-         *  Old render strategy from here down
-         * @todo remove when certain it is no longer needed
-         */
 
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
+
         if ($this->_pageInfo===NULL){
             $wasFiltered1 = AbstractCollection::disableUserFilter();
             $attemptedPage = Manager::getService('Pages')->findById($this->_pageId);
@@ -194,11 +186,22 @@ class IndexController extends AbstractActionController
         if ($lang && ! $this->params('locale')) {
             return $this->redirect()->toUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $domain . '/' . $lang . $uri->getPath() . '?' . $uri->getQuery());
         }
-        
+
         if ($domain && !$this->_site['useBrowserLanguage']) {
             $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
         }
-        
+
+        $this->viewData=array();
+        $viewModel = new ViewModel($this->viewData);
+        $viewModel->setTerminal(true);
+
+        return $viewModel;
+
+        /**
+         *  Old render strategy from here down
+         * @todo remove when certain it is no longer needed
+         */
+
         // reload page in localization context
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId, true);
         if (! $this->_pageInfo) {
