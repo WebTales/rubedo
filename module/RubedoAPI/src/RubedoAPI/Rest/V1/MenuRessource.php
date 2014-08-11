@@ -57,7 +57,7 @@ class MenuRessource extends AbstractRessource {
         $rootPage = $this->pageService->findById($params['pageId']);
         $startLevel = 1;
         $levelOnePages = $this->_getPagesByLevel($rootPage['id'], $startLevel);
-        $menu = array_intersect_key($rootPage, array_flip(array('text', 'id')));
+        $menu = array_intersect_key($rootPage, array_flip(array('title', 'id')));
         $menu['url'] = $this->getContext()->url()->fromRoute('rewrite', array(
             'pageId' => $menu['id'],
             'locale' => $params['menuLocale']
@@ -71,7 +71,6 @@ class MenuRessource extends AbstractRessource {
             ), $urlOptions);
 
             $tempArray['title'] = $page['title'];
-            $tempArray['text'] = $page['text'];
             $tempArray['id'] = $page['id'];
             $levelTwoPages = $this->pageService->readChild($page['id'], $this->excludeFromMenuCondition);
 
@@ -86,7 +85,6 @@ class MenuRessource extends AbstractRessource {
                     ), $urlOptions);
 
                     $tempSubArray['title'] = $subPage['title'];
-                    $tempSubArray['text'] = $subPage['text'];
                     $tempSubArray['id'] = $subPage['id'];
                     $tempArray['pages'][] = $tempSubArray;
                 }
