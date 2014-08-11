@@ -2,6 +2,7 @@
 
 namespace RubedoAPI\Frontoffice\Controller;
 use Rubedo\Services\Manager;
+use RubedoAPI\Exceptions\APIAbstractException;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 
@@ -45,11 +46,18 @@ class ApiController extends AbstractActionController
             );
             $ressourceObject->setContext($this);
             $result = $ressourceObject->handler(mb_strtolower($method), $params);
+        } catch(APIAbstractException $e) {
+            $result = [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+            $this->getResponse()->setStatusCode($e->getHttpCode());
         } catch (\Exception $e) {
             $result = [
                 'success' => false,
                 'message' => $e->getMessage(),
             ];
+            $this->getResponse()->setStatusCode($e->getCode());
         }
         return new JsonModel($result);
     }

@@ -1,8 +1,7 @@
 <?php
 
 namespace RubedoAPI\Exceptions;
-use Rubedo\Exceptions\AbstractException;
 
-class APIEntityException extends AbstractException
+class APIEntityException extends APIAbstractException
 {
 }

@@ -3,6 +3,7 @@
 namespace RubedoAPI\Rest\V1;
 
 use Rubedo\Services\Manager;
+use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
@@ -27,8 +28,7 @@ class PagesRessource extends AbstractRessource {
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('route')
-                            ->setRequired()
-                            ->setDescription('Route for this page')
+                            ->setDescription('Route for this page, if not, use homepage')
                             ->setFilter('url')
                     )
                     ->addOutputFilter(
@@ -45,20 +45,30 @@ class PagesRessource extends AbstractRessource {
             })
         ;
     }
-    public function getAction($params) {
+    public function getAction($params)
+    {
         $sitesServices = Manager::getService('Sites');
         $pagesServices = Manager::getService('Pages');
         $blocksServices = Manager::getService('Blocks');
         $site = $sitesServices->findByHost($params['site']);
-        $urlSegments = explode('/', trim($params['route'], '/'));
-        $lastMatchedNode = ['id' => 'root'];
-        foreach ($urlSegments as $value) {
-            $matchedNode = $pagesServices->matchSegment($value, $lastMatchedNode['id'], $site['id']);
-            if (null === $matchedNode) {
-                break;
-            } else {
-                $lastMatchedNode = $matchedNode;
+        if ($site == null)
+            throw new APIEntityException('Site not found', 404);
+        if (empty($params['route'])) {
+            $lastMatchedNode = $pagesServices->findById($site['homePage']);
+        } else {
+            $urlSegments = explode('/', trim($params['route'], '/'));
+            $lastMatchedNode = ['id' => 'root'];
+            foreach ($urlSegments as $value) {
+                $matchedNode = $pagesServices->matchSegment($value, $lastMatchedNode['id'], $site['id']);
+                if (null === $matchedNode) {
+                    break;
+                } else {
+                    $lastMatchedNode = $matchedNode;
+                }
             }
+        }
+        if ($lastMatchedNode['id'] == 'root') {
+            throw new APIEntityException('Page not found', 404);
         }
         $lastMatchedNode['blocks'] = $blocksServices->getListByPage($lastMatchedNode['id'])['data'];
         return [
