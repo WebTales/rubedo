@@ -1,48 +1,32 @@
 <?php
-return [
-    'router' => [
-        'routes' => [
+return array(
+    'router' => array(
+        'routes' => array(
             // route for different frontoffice controllers
-            'api' => [
-                'type' => 'Segment',
-                'options' => [
-                    'route' => '/api/:version/:ressource[/:id]',
-                    'defaults' => [
-                        '__NAMESPACE__' => 'RubedoAPI\\Frontoffice\\Controller',
-                        'controller' => 'Api',
-                        'action' => 'index',
-                    ],
-                    'constraints' => [
+            'api' =>array (
+                'type' => 'RubedoAPI\\Router\\ApiRouter',
+                'options' => array (
+                    'route' => '/api/:version/',
+                    'defaults' =>
+                        array (
+                            '__NAMESPACE__' => 'RubedoAPI\\Frontoffice\\Controller',
+                            'controller' => 'Api',
+                            'action' => 'index',
+                        ),
+                    'constraints' => array(
                         'version' => 'v\d+',
-                    ],
-                ],
-                'may_terminate' => true,
-            ],
-            'authApi' => [
-                'type' => 'Segment',
-                'options' => [
-                    'route' => '/api/:version/auth/:ressource',
-                    'defaults' => [
-                        '__NAMESPACE__' => 'RubedoAPI\\Frontoffice\\Controller',
-                        'controller' => 'Api',
-                        'middleNamespace' => 'Authentication',
-                        'action' => 'index',
-                    ],
-                    'constraints' => [
-                        'version' => 'v\d+',
-                    ],
-                ],
-                'may_terminate' => true,
-            ],
-        ],
-    ],
-    'controllers' => [
-        'invokables' => [
+                    ),
+                ),
+            ),
+        ),
+    ),
+    'controllers' => array(
+        'invokables' => array(
             'RubedoAPI\\Frontoffice\\Controller\\Api' => 'RubedoAPI\\Frontoffice\\Controller\\ApiController',
-        ],
-    ],
-    'service_manager' => [
-        'invokables' => [
-        ],
-    ],
-];
+        ),
+    ),
+    'service_manager' => array(
+        'invokables' => array(
+        ),
+    ),
+);

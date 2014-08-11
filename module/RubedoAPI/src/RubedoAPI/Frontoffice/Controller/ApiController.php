@@ -33,13 +33,24 @@ class ApiController extends AbstractActionController
         }
         try {
             $routes = $this->params()->fromRoute();
-            $ressource = 'RubedoAPI\\Rest\\' . mb_strtoupper($routes['version']) . '\\' . ucfirst($routes['ressource']) . 'Ressource';
+            array_walk(
+                $routes['api'],
+                function (&$item, $key)
+                {
+                    $item = ucfirst($item);
+                }
+            );
+            $class = array_pop($routes['api']). 'Ressource';
+            $ressource = 'RubedoAPI\\Rest\\' . mb_strtoupper($routes['version']) . '\\';
+            if (!empty($routes['api']))
+                $ressource .= implode('\\', $routes['api']) . '\\';
+            $ressource .= $class ;
             /** @var \RubedoAPI\Interfaces\IRessource $ressourceObject */
             $ressourceObject = new $ressource();
 
             $paramsBody = json_decode($this->getRequest()->getContent(), true);
             if (empty($paramsBody))
-                $paramsBody = [];
+                $paramsBody = array();
             $params = array_merge_recursive(
                 $this->params()->fromQuery(),
                 $paramsBody
