@@ -5,6 +5,7 @@ namespace RubedoAPI\Rest\V1;
 use Rubedo\Services\Manager;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
+use WebTales\MongoFilters\Filter;
 
 class MenuRessource extends AbstractRessource {
     private $pageService;
@@ -28,6 +29,13 @@ class MenuRessource extends AbstractRessource {
                             ->setDescription('Id of the root page for the menu')
                             ->setFilter('\\MongoId')
                     )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('menuLocale')
+                            ->setRequired()
+                            ->setDescription('Locale for the menu')
+                            ->setFilter('string')
+                    )
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('menu')
@@ -41,19 +49,25 @@ class MenuRessource extends AbstractRessource {
     }
 
     public function getAction($params) {
-        $rootPage = $this->pageService->findById($params['pageId']);
-        $startLevel = 1;
-        $levelOnePages = $this->_getPagesByLevel($rootPage['id'], $startLevel);
-        $menu = array_intersect_key($rootPage, array_flip(array('text', 'id')));
+        $this->excludeFromMenuCondition = Filter::factory('Not')->setName('excludeFromMenu')->setValue(true);
         $urlOptions = array(
             'encode' => true,
             'reset' => true
         );
-        foreach ($levelOnePages as $page) {
+        $rootPage = $this->pageService->findById($params['pageId']);
+        $startLevel = 1;
+        $levelOnePages = $this->_getPagesByLevel($rootPage['id'], $startLevel);
+        $menu = array_intersect_key($rootPage, array_flip(array('text', 'id')));
+        $menu['url'] = $this->getContext()->url()->fromRoute('rewrite', array(
+            'pageId' => $menu['id'],
+            'locale' => $params['menuLocale']
+        ), $urlOptions);
+
+        foreach ($levelOnePages as &$page) {
             $tempArray = array();
             $tempArray['url'] = $this->getContext()->url()->fromRoute('rewrite', array(
                 'pageId' => $page['id'],
-                "locale" => 'fr'
+                'locale' => $params['menuLocale']
             ), $urlOptions);
 
             $tempArray['title'] = $page['title'];
@@ -68,7 +82,7 @@ class MenuRessource extends AbstractRessource {
                     $tempSubArray = array();
                     $tempSubArray['url'] = $this->getContext()->url()->fromRoute('rewrite', array(
                         'pageId' => $subPage['id'],
-                        "locale" => 'fr'
+                        "locale" => $params['menuLocale']
                     ), $urlOptions);
 
                     $tempSubArray['title'] = $subPage['title'];
