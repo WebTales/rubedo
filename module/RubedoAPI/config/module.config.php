@@ -6,16 +6,12 @@ return array(
             'api' =>array (
                 'type' => 'RubedoAPI\\Router\\ApiRouter',
                 'options' => array (
-                    'route' => '/api/:version/',
                     'defaults' =>
                         array (
                             '__NAMESPACE__' => 'RubedoAPI\\Frontoffice\\Controller',
                             'controller' => 'Api',
                             'action' => 'index',
                         ),
-                    'constraints' => array(
-                        'version' => 'v\d+',
-                    ),
                 ),
             ),
         ),

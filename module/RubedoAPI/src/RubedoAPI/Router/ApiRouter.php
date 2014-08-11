@@ -31,6 +31,8 @@ class ApiRouter implements RouteInterface
         //ensure that no url like /dam or /image can match, without complex queries.
         if (!method_exists($request, 'getUri'))
             return null;
+        if (!preg_match('#^/api/v\d+/.+#', $request->getUri()->getPath()))
+            return null;
         $segmentList = explode('/',trim($request->getUri()->getPath(),'/'));
         $params = array();
         $params['controller'] = 'RubedoApi\\Frontoffice\\Controller\\Api';
