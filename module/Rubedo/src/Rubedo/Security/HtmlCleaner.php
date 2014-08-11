@@ -49,7 +49,7 @@ class HtmlCleaner implements IHtmlCleaner
             'key' => $key
         ));
         if ($response->stopped()) {
-            return $response->first();
+            return $response->last();
         }
         $result = $this->internalClean($html);
         Events::getEventManager()->trigger(self::POST_HTMLCLEANER, null, array(

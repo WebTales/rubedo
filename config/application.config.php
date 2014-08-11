@@ -59,7 +59,7 @@ return array(
     'modules' => array_merge(array(
         'Rubedo',
         'RubedoAPI',
-        'ZendDeveloperTools'
+        'ZendDeveloperTools',
     ), $extensionsArray),
     'module_listener_options' => array(
         'config_cache_enabled' => true,
