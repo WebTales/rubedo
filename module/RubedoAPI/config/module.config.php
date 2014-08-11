@@ -34,11 +34,6 @@ return [
                 ],
                 'may_terminate' => true,
             ],
-            'oauth' => [
-                'options' => [
-                    'route'    => '/auth/oauth',
-                ],
-            ],
         ],
     ],
     'controllers' => [
@@ -48,7 +43,6 @@ return [
     ],
     'service_manager' => [
         'invokables' => [
-            'RubedoAPI\\AuthStorage\\MongoAuthImplementation' => 'RubedoAPI\\AuthStorage\\MongoAuthImplementation',
         ],
     ],
 ];
