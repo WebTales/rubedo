@@ -10,13 +10,21 @@ namespace RubedoAPI\Rest\V1;
 
 
 use Rubedo\Services\Manager;
+use RubedoAPI\Exceptions\APIControllerException;
 use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Interfaces\IRessource;
 use RubedoAPI\Tools\DefinitionEntity;
 
+/**
+ * Class AbstractRessource
+ * @package RubedoAPI\Rest\V1
+ * @method \RubedoAPI\Collection\UserTokens getUserTokensAPICollection() Return UserTokens collection
+ * @method \RubedoAPI\Services\Security\Authentication getAuthAPIService() Return Authentication service
+ */
 abstract class AbstractRessource implements IRessource {
     protected $config = [];
     protected $context;
+    protected $callCache = array();
     /**
      * @var \RubedoAPI\Tools\DefinitionEntity
      */
@@ -49,7 +57,6 @@ abstract class AbstractRessource implements IRessource {
 
     public function handler($method, $params)
     {
-
         if (!method_exists($this, $method . 'Action'))
             throw new APIRequestException('Verb not implemented', 500);
         if ($method == 'options')
@@ -80,4 +87,18 @@ abstract class AbstractRessource implements IRessource {
     }
 
 
+    public function __call($method, $arguments)
+    {
+        if (!isset($this->callCache[$method])) {
+            $matches = array();
+            if (preg_match('/^get(.+)APICollection$/', $method, $matches)) {
+                $this->callCache[$method] = Manager::getService('API\\Collection\\' . $matches[1]);
+            } elseif (preg_match('/^get(.+)APIService$/', $method, $matches)) {
+                $this->callCache[$method] = Manager::getService('API\\Services\\' . $matches[1]);
+            } else {
+                throw new APIControllerException('method "' . $method . " not found.", 500);
+            }
+        }
+        return $this->callCache[$method];
+    }
 }

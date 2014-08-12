@@ -44,7 +44,7 @@ class ApiController extends AbstractActionController
             $ressource = 'RubedoAPI\\Rest\\' . mb_strtoupper($routes['version']) . '\\';
             if (!empty($routes['api']))
                 $ressource .= implode('\\', $routes['api']) . '\\';
-            $ressource .= $class ;
+            $ressource .= $class;
             /** @var \RubedoAPI\Interfaces\IRessource $ressourceObject */
             $ressourceObject = new $ressource();
 
@@ -52,7 +52,9 @@ class ApiController extends AbstractActionController
             if (empty($paramsBody))
                 $paramsBody = array();
             $params = array_merge_recursive(
+                $this->getRequest()->getServer()->toArray(),
                 $this->params()->fromQuery(),
+                $this->params()->fromPost(),
                 $paramsBody
             );
             $ressourceObject->setContext($this);

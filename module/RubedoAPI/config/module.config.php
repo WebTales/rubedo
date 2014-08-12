@@ -23,6 +23,14 @@ return array(
     ),
     'service_manager' => array(
         'invokables' => array(
+            'RubedoAPI\\Collection\\UserTokens' => 'RubedoAPI\\Collection\\UserTokens',
+            'RubedoAPI\\Services\\Security\\Authentication' => 'RubedoAPI\\Services\\Security\\Authentication',
+            'RubedoAPI\\Services\\Security\\Token' => 'RubedoAPI\\Services\\Security\\Token',
+        ),
+        'aliases' => array (
+            'API\\Collection\\UserTokens' => 'RubedoAPI\\Collection\\UserTokens',
+            'API\\Services\\Auth' => 'RubedoAPI\\Services\\Security\\Authentication',
+            'API\\Services\\Token' => 'RubedoAPI\\Services\\Security\\Token',
         ),
     ),
 );
