@@ -1,7 +1,7 @@
 <?php
 
 namespace RubedoAPI\Frontoffice\Controller;
-use Rubedo\Services\Manager;
+
 use RubedoAPI\Exceptions\APIAbstractException;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
@@ -70,7 +70,7 @@ class ApiController extends AbstractActionController
                 'success' => false,
                 'message' => $e->getMessage(),
             ];
-            $this->getResponse()->setStatusCode($e->getCode());
+            $this->getResponse()->setStatusCode(500);
         }
         return new JsonModel($result);
     }
