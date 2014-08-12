@@ -3,6 +3,8 @@
 namespace RubedoAPI\Services\Router;
 
 use Rubedo\Services\Manager;
+use RubedoAPI\Exceptions\APIServiceException;
+
 
 class Url extends \Rubedo\Router\Url {
 
@@ -41,7 +43,7 @@ class Url extends \Rubedo\Router\Url {
             } elseif ($type == "canonical") {
                 $pageId = $this->_getDefaultSingleBySiteID($site['id']);
             } else {
-                throw new Server("You must specify a good type of URL : default or canonical", "Exception94");
+                throw new APIServiceException("You must specify a good type of URL : default or canonical", 500);
             }
         }
 
@@ -58,7 +60,7 @@ class Url extends \Rubedo\Router\Url {
                 // @todo refactor this
                 $pageUrl = $this->url($data, null, true);
             } else {
-                throw new Server("You must specify a good type of URL : default or canonical", "Exception94");
+                throw new APIServiceException("You must specify a good type of URL : default or canonical", 500);
             }
 
             if ($doNotAddSite) {

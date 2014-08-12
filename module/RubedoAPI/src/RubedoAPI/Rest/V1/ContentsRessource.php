@@ -5,6 +5,7 @@ namespace RubedoAPI\Rest\V1;
 use Rubedo\Services\Manager;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
+use RubedoAPI\Exceptions\APIEntityException;
 use WebTales\MongoFilters\Filter;
 
 /**
@@ -106,6 +107,10 @@ class ContentsRessource extends AbstractRessource {
 
         $filters = $queriesServices->getFilterArrayById($queryId);
 
+        if ($filters === false){
+            throw new APIEntityException('Query not found', 404);
+        }
+
         if ($filters !== false) {
             $queryType = $filters["queryType"];
             $query = $queriesServices->getQueryById($queryId);
@@ -167,7 +172,9 @@ class ContentsRessource extends AbstractRessource {
         $filters["sort"] = isset($filters["sort"]) ? $filters["sort"] : array();
         $contentArray = $this->contentsServices->getOnlineList($filters["filter"], $filters["sort"], $pageData['start'], $pageData['limit'],$ismagic);
         $contentArray['page'] = $pageData;
-        $contentArray['count'] = max(0, $contentArray['count'] - $pageData['start']);
+        if($contentArray['count']<$pageData['start']){
+            throw new APIEntityException('There is only '.$contentArray['count'].' contents. Start parameter must be inferior of this value', 404);
+        }
         return $contentArray;
     }
 
@@ -175,6 +182,12 @@ class ContentsRessource extends AbstractRessource {
     {
         $defaultLimit = isset($params['limit'])?$params['limit'] : 6;
         $defaultStart = isset($params['start'])?$params['start'] : 0;
+        if($defaultStart < 0){
+            throw new APIEntityException('Start paramater must be >= 0', 404);
+        }
+        if($defaultLimit < 1){
+            throw new APIEntityException('Limit paramater must be >= 1', 404);
+        }
         $pageData['start'] = $defaultStart;
         $pageData['limit'] = $defaultLimit;
         return $pageData;
