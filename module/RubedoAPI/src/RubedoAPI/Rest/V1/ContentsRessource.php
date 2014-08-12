@@ -7,6 +7,12 @@ use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 use WebTales\MongoFilters\Filter;
 
+/**
+ * Class AbstractRessource
+ * @package RubedoAPI\Rest\V1
+ * @method \RubedoAPI\Services\Router\Url getUrlAPIService() Return Authentication service
+ */
+
 class ContentsRessource extends AbstractRessource {
     private $contentsServices;
 
@@ -29,6 +35,26 @@ class ContentsRessource extends AbstractRessource {
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setKey('siteId')
+                            ->setRequired()
+                            ->setDescription('Id of the site')
+                            ->setFilter('\\MongoId')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('pageId')
+                            ->setRequired()
+                            ->setDescription('Id of the page')
+                            ->setFilter('\\MongoId')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('detailPageId')
+                            ->setDescription('Id of the linked page')
+                            ->setFilter('\\MongoId')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
                             ->setKey('lang')
                             ->setRequired()
                             ->setDescription('Locale')
@@ -37,18 +63,35 @@ class ContentsRessource extends AbstractRessource {
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('fields')
-                            ->setDescription('Fields')
+                            ->setDescription('Mask of fields')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('isMagic')
-                            ->setDescription('Locale')
+                            ->setDescription('Property is Magic query')
                             ->setFilter('boolean')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('start')
+                            ->setDescription('Item\'s index number to start')
+                            ->setFilter('int')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('limit')
+                            ->setDescription('How much contents to return')
+                            ->setFilter('int')
                     )
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('contents')
                             ->setDescription('List of contents')
+                    )
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('count')
+                            ->setDescription('Number of all contents')
                     )
                 ;
             })
@@ -57,7 +100,6 @@ class ContentsRessource extends AbstractRessource {
     public function getAction($params)
     {
         $this->contentsServices = Manager::getService('Contents');
-        $contentTypesServices = Manager::getService('ContentTypes');
         $queriesServices = Manager::getService('Queries');
 
         $queryId = $params['queryId'];
@@ -99,14 +141,23 @@ class ContentsRessource extends AbstractRessource {
         }
         return [
             'success' => true,
-            'contents' => $this->outputContentsMask($contentArray['data'])
+            'contents' => $this->outputContentsMask($contentArray['data'], $params),
+            'count' => $nbItems
         ];
     }
 
-    protected function outputContentsMask($contents, $fields = array('text','summary','image'))
+    protected function outputContentsMask($contents, $params)
     {
+        $fields = isset($params['fields'])?$params['fields'] : array('text','summary','image');
+        $urlService = $this->getUrlAPIService();
+        $page = Manager::getService('Pages')->findById($params['pageId']);
+        $site = Manager::getService('Sites')->findById($params['siteId']);
+        $mask = array('isProduct', 'productProperties', 'i18n', 'pageId', 'blockId', 'maskId');
         foreach ($contents as &$content){
             $content['fields'] = array_intersect_key($content['fields'], array_flip($fields));
+            $content['detailPageUrl'] = $urlService->displayUrlApi($content,'default', $site,
+                $page, $params['lang'], isset($params['detailPageId'])?$params['detailPageId']:null);
+            $content = array_diff_key($content, array_flip($mask));
         }
         return $contents;
     }
@@ -114,19 +165,18 @@ class ContentsRessource extends AbstractRessource {
     protected function getContentList($filters, $pageData, $ismagic = false)
     {
         $filters["sort"] = isset($filters["sort"]) ? $filters["sort"] : array();
-        $contentArray = $this->contentsServices->getOnlineList($filters["filter"], $filters["sort"], (($pageData['currentPage'] - 1) * $pageData['limit']) + $pageData['skip'], $pageData['limit'],$ismagic);
+        $contentArray = $this->contentsServices->getOnlineList($filters["filter"], $filters["sort"], $pageData['start'], $pageData['limit'],$ismagic);
         $contentArray['page'] = $pageData;
-        $contentArray['count'] = max(0, $contentArray['count'] - $pageData['skip']);
+        $contentArray['count'] = max(0, $contentArray['count'] - $pageData['start']);
         return $contentArray;
     }
 
     protected function setPaginationValues($params)
     {
-        $defaultLimit = 6;
-        $defaultSkip = 0;
-        $pageData['skip'] = $defaultSkip;
+        $defaultLimit = isset($params['limit'])?$params['limit'] : 6;
+        $defaultStart = isset($params['start'])?$params['start'] : 0;
+        $pageData['start'] = $defaultStart;
         $pageData['limit'] = $defaultLimit;
-        $pageData['currentPage'] = 1;
         return $pageData;
     }
 }

@@ -465,7 +465,7 @@ class Url implements IUrl
             $params['locale'] = AbstractLocalizableCollection::getWorkingLocale();
         }
         $uri = Manager::getService('Application')->getRequest()->getUri();
-        
+
         switch ($options['reset']) {
             case 'true':
                 break;
