@@ -45,6 +45,8 @@
 							{% include '/blocks/fields/external-media.html.twig' %}
 						{%elseif(cValue["cType"]=="checkboxfield")%}
 							{% include '/blocks/fields/checkbox.html.twig' %}
+                        {%elseif(cValue["cType"]=="checkbox")%}
+                            {% include '/blocks/fields/checkbox.html.twig' %}
 						{%elseif(cValue["cType"]=="checkboxgroup")%}
 							{% include '/blocks/fields/checkboxgroup.html.twig' %}
 						{%elseif(cValue["cType"]=="radiogroup")%}
