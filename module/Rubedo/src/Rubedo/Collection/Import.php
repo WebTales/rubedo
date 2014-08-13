@@ -205,10 +205,10 @@ class Import extends AbstractCollection
 
     	// Extract taxonomy to ImportTaxonomy collection
     	$this->extractTaxonomy();
-    	  	
+
     	// Processing Import data taxonomy and localisation fields
     	$this->preProcess ();
-
+    	
     	// Transform taxonomy terms into id
     	$this->turnTermsToId ();
     	
@@ -831,7 +831,25 @@ class Import extends AbstractCollection
 	 * Transform prices with comma separtor to dot separator, cast to float     
 	 */	
 	protected function preProcess () {
-			
+		
+		$code = "castToNumber = function(e, type) {
+			if (e=='') {
+				return null;
+			} else {
+				if (type == 'float') {
+					var = parseFloat(e.replace(',', '.'));
+				}
+				if (type == 'int') {
+					var = parseInt(e.replace(',', '.'));
+				}				
+				if (!isNaN(var)) {
+					return var;
+				} else {
+					return null;
+				}
+			}
+		};";
+		
 		$code = "db.Import.find().snapshot().forEach(function(e){";
 			
 		foreach($this->_importAsTaxo as $taxo) {
@@ -852,16 +870,16 @@ class Import extends AbstractCollection
 
 		if ($this->_isProduct) {
 			if ($this->_productOptions['basePriceFieldIndex']!='') {
-				$code.= "e.col".$this->_productOptions['basePriceFieldIndex']."= parseFloat(e.col".$this->_productOptions['basePriceFieldIndex'].".replace(',', '.'));";
+				$code.= "e.col".$this->_productOptions['basePriceFieldIndex']."= castToNumber(e.col".$this->_productOptions['basePriceFieldIndex'].",'float');";
 			}
 			if ($this->_productOptions['priceFieldIndex']!='') {			
-				$code.= "e.col".$this->_productOptions['priceFieldIndex']."= parseFloat(e.col".$this->_productOptions['priceFieldIndex'].".replace(',', '.'));";
+				$code.= "e.col".$this->_productOptions['priceFieldIndex']."= castToNumber(e.col".$this->_productOptions['priceFieldIndex'].",'float');";
 			}
 			if ($this->_productOptions['stockFieldIndex']!='') {			
-				$code.= "e.col".$this->_productOptions['stockFieldIndex']."= parseInt(e.col".$this->_productOptions['stockFieldIndex'].".replace(',', '.'));";
+				$code.= "e.col".$this->_productOptions['stockFieldIndex']."= castToNumber(e.col".$this->_productOptions['stockFieldIndex'].",'int');";
 			}
 			if ($this->_productOptions['preparationDelayFieldIndex']!='') {
-				$code.= "e.col".$this->_productOptions['preparationDelayFieldIndex']."= parseInt(e.col".$this->_productOptions['preparationDelayFieldIndex'].".replace(',', '.'));";
+				$code.= "e.col".$this->_productOptions['preparationDelayFieldIndex']."= castToNumber(e.col".$this->_productOptions['preparationDelayFieldIndex'].",'int');";
 			}
 		}
 			
