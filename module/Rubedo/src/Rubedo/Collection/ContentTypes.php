@@ -361,12 +361,17 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         $authorizedCtype = array(
             "text" => array(
                 "textfield",
-                "textareafield"
+                "textareafield",
+                "textarea"
             ),
             "number" => array(
                 "numberfield",
                 "slider",
                 "ratingField"
+            ),
+            "checkbox"=>array(
+                "checkboxfield",
+                "checkbox"
             )
         );
         /*
@@ -398,6 +403,8 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
                         $result = in_array($newField["cType"], $authorizedCtype["text"]);
                     } elseif (in_array($originalField["cType"], $authorizedCtype["number"])) {
                         $result = in_array($newField["cType"], $authorizedCtype["number"]);
+                    } elseif (in_array($originalField["cType"], $authorizedCtype["checkbox"])) {
+                        $result = in_array($newField["cType"], $authorizedCtype["checkbox"]);
                     } else {
                         $result = false;
                     }
