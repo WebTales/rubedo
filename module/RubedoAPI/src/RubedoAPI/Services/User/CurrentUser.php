@@ -20,22 +20,21 @@ class CurrentUser extends \Rubedo\User\CurrentUser {
     /** @var  \Rubedo\Interfaces\Collection\IUsers */
     protected $usersCollection;
 
-    public static function setCurrentUser($user)
-    {
-        static::$_currentUser = $user;
-        static::$_currentUserId = $user['id'];
-    }
-
     public function isAuthenticated ()
     {
         $accessToken = $this->getAccessToken();
-        return !empty($accessToken);
+        if (!empty($accessToken))
+            return true;
+        return parent::isAuthenticated();
     }
 
     protected function _fetchCurrentUser ()
     {
         $serviceReader = Manager::getService('Users');
-        return $serviceReader->findById($this->getAccessToken()['user']['id']);
+        $user = $serviceReader->findById($this->getAccessToken()['user']['id']);
+        if (!empty($user))
+            return $user;
+        return parent::_fetchCurrentUser();
     }
     protected function getAccessToken() {
         if (!isset(static::$token)) {
