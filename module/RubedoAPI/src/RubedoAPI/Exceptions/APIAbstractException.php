@@ -4,11 +4,13 @@ namespace RubedoAPI\Exceptions;
 
 abstract class APIAbstractException extends \Exception
 {
-    private $httpCode;
-    function __construct($message, $httpCode)
+    protected $transparent;
+    protected $httpCode;
+    function __construct($message, $httpCode, $transparent = false)
     {
         parent::__construct($message);
         $this->setHttpCode($httpCode);
+        $this->transparent = $transparent;
     }
 
     /**
@@ -27,4 +29,8 @@ abstract class APIAbstractException extends \Exception
         return $this->httpCode;
     }
 
+    public function isTransparent()
+    {
+        return (bool) $this->transparent;
+    }
 }

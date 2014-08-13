@@ -27,12 +27,16 @@ return array(
             'RubedoAPI\\Services\\Security\\Authentication' => 'RubedoAPI\\Services\\Security\\Authentication',
             'RubedoAPI\\Services\\Security\\Token' => 'RubedoAPI\\Services\\Security\\Token',
             'RubedoAPI\\Services\\Router\\Url' => 'RubedoAPI\\Services\\Router\\Url',
+            'RubedoAPI\\Services\\User\\CurrentUser' => 'RubedoAPI\\Services\\User\\CurrentUser',
         ),
         'aliases' => array (
             'API\\Collection\\UserTokens' => 'RubedoAPI\\Collection\\UserTokens',
             'API\\Services\\Auth' => 'RubedoAPI\\Services\\Security\\Authentication',
+            'AuthenticationService' => 'RubedoAPI\\Services\\Security\\Authentication',
             'API\\Services\\Token' => 'RubedoAPI\\Services\\Security\\Token',
             'API\\Services\\Url' => 'RubedoAPI\\Services\\Router\\Url',
+            'API\\Services\\CurrentUser' => 'RubedoAPI\\Services\\User\\CurrentUser',
+            'CurrentUser' => 'RubedoAPI\\Services\\User\\CurrentUser',
         ),
     ),
 );

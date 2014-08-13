@@ -6,6 +6,7 @@ use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIServiceException;
 
 class Token {
+    const LIFETIME = 3600;
     /**
      * @var \RubedoAPI\Collection\UserTokens
      */
@@ -27,7 +28,7 @@ class Token {
         $token = array(
             'access_token' => $this->newToken($userId),
             'refresh_token' => $this->newToken($userId),
-            'lifetime' => 3600,
+            'lifetime' => static::LIFETIME,
             'type' => 'bearer',
             'user' => array(
                 'id' => $userId

@@ -6,12 +6,10 @@ use Rubedo\Services\Manager;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 use RubedoAPI\Exceptions\APIEntityException;
-use WebTales\MongoFilters\Filter;
 
 /**
  * Class AbstractRessource
  * @package RubedoAPI\Rest\V1
- * @method \RubedoAPI\Services\Router\Url getUrlAPIService() Return Authentication service
  */
 
 class ContentsRessource extends AbstractRessource {

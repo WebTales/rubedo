@@ -18,7 +18,33 @@ class VerbDefinitionEntity implements JsonSerializable {
     protected $description;
     protected $outputFilters = [];
     protected $inputFilters = [];
+    protected $rights = array();
 
+    function __construct($verb) {
+        $this
+            ->setVerb($verb)
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Access token')
+                    ->setKey('access_token')
+                    ->setRename('identity')
+                    ->setFilter('\\RubedoAPI\\Entities\\API\\Identity')
+            )
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('success')
+                    ->setRequired()
+                    ->setDescription('Success of the query')
+                    ->setFilter('boolean')
+            )
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('message')
+                    ->setDescription('Informations about the query')
+                    ->setFilter('string')
+            )
+        ;
+    }
 
     /**
      * @return mixed
@@ -56,6 +82,41 @@ class VerbDefinitionEntity implements JsonSerializable {
         return $this;
     }
 
+    protected function hasIdentityRequired()
+    {
+        return $this->getInputFilter('access_token')->isRequired();
+    }
+
+    protected function identityRequired($has = true)
+    {
+        $this->editInputFilter('access_token', function(FilterDefinitionEntity &$filter) use ($has) {
+            $filter->setRequired($has);
+        });
+        return $this;
+    }
+
+    /**
+     * @param $right
+     * @return $this
+     * @internal param array $rights
+     */
+    public function addRight($right)
+    {
+        $this->rights[] = $right;
+        if (!$this->hasIdentityRequired())
+            $this->identityRequired();
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRights()
+    {
+        return $this->rights;
+    }
+
     /**
      * @return array
      */
@@ -65,12 +126,34 @@ class VerbDefinitionEntity implements JsonSerializable {
     }
 
     /**
+     * @param $key
+     * @return FilterDefinitionEntity
+     */
+    public function getInputFilter($key)
+    {
+        if (!isset($this->inputFilters[$key]))
+            return new FilterDefinitionEntity();
+        return $this->inputFilters[$key];
+    }
+
+    /**
      * @param \RubedoAPI\Tools\FilterDefinitionEntity $inputFilter
      * @return $this
      */
     public function addInputFilter(FilterDefinitionEntity $inputFilter)
     {
         $this->inputFilters[$inputFilter->getKey()] = $inputFilter;
+        return $this;
+    }
+
+    public function editInputFilter($key, $function)
+    {
+        if (!isset($this->inputFilters[$key])) {
+            $filter = (new FilterDefinitionEntity())->setKey($key);
+            $function($filter);
+            $this->addInputFilter($filter);
+        } else
+            $function($this->inputFilters[$key]);
         return $this;
     }
 
@@ -92,7 +175,7 @@ class VerbDefinitionEntity implements JsonSerializable {
                 throw new APIFilterException('"' . $key . '" is required', 500);
             elseif (!array_key_exists($key, $toFilter))
                 continue;
-            $filtered[$key] = $filter->filter($key, $toFilter[$key]);
+            $filtered[$filter->hasRename()?$filter->getRename():$key] = $filter->filter($key, $toFilter[$key]);
 
         }
         return $filtered;
@@ -121,6 +204,16 @@ class VerbDefinitionEntity implements JsonSerializable {
     public function addOutputFilter(FilterDefinitionEntity $outputFilter)
     {
         $this->outputFilters[$outputFilter->getKey()] = $outputFilter;
+        return $this;
+    }
+    public function editOutputFilter($key, $function)
+    {
+        if (!isset($this->outputFilters[$key])) {
+            $filter = (new FilterDefinitionEntity())->setKey($key);
+            $function($filter);
+            $this->addOutputFilter($filter);
+        } else
+            $function($this->outputFilters[$key]);
         return $this;
     }
 

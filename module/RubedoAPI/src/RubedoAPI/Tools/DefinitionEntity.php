@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: nainterceptor
- * Date: 06/08/14
- * Time: 16:34
- */
 
 namespace RubedoAPI\Tools;
 
@@ -80,23 +74,7 @@ class DefinitionEntity implements JsonSerializable{
     {
         $verb = strtoupper($verb);
         if(!array_key_exists($verb, $this->verbList)) {
-            $this->verbList[$verb] = (new VerbDefinitionEntity())
-                ->setVerb($verb)
-                ->addOutputFilter(
-                    (new FilterDefinitionEntity())
-                        ->setKey('success')
-                        ->setRequired()
-                        ->setDescription('Success of the query')
-                        ->setFilter('boolean')
-                )
-                ->addOutputFilter(
-                    (new FilterDefinitionEntity())
-                        ->setKey('message')
-                        ->setDescription('Informations about the query')
-                        ->setFilter('string')
-
-                )
-            ;
+            $this->verbList[$verb] = new VerbDefinitionEntity($verb) ;
         }
         $function($this->verbList[$verb]);
         return $this;

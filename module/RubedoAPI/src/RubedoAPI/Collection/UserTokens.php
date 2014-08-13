@@ -34,7 +34,20 @@ class UserTokens extends AbstractCollection
         $filter->setName('refresh_token')->setValue($refreshToken);
         $token = $this->_dataService->findOne($filter);
         if (empty($token))
-            throw new APIEntityException('Refresh token not found', 404);
+            throw new APIEntityException('Refresh token not found', 404, true);
+        return $token;
+    }
+
+    public function findOneByAccessToken($accessToken)
+    {
+        $filter = Filter::factory('Value');
+        $filter->setName('access_token')->setValue($accessToken);
+        $token = $this->_dataService->findOne($filter);
+        if (empty($token))
+            throw new APIEntityException('Access token not found', 404, true);
+        if (($token['lifetime'] + $token['createTime']) < time())
+            throw new APIEntityException('Access token is expired', 403, true);
+
         return $token;
     }
 }

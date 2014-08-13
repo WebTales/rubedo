@@ -27,7 +27,7 @@ return array(
     'Contents' => 'Rubedo\\Collection\\Contents',
     'CurrentLocalization' => 'Rubedo\\Internationalization\\Current',
     'CurrentTime' => 'Rubedo\\Time\\CurrentTime',
-    'CurrentUser' => 'Rubedo\\User\\CurrentUser',
+    'Rubedo\\User\\CurrentUser' => 'Rubedo\\User\\CurrentUser',
     'CustomThemes' => 'Rubedo\\Collection\\CustomThemes',
     'Dam' => 'Rubedo\\Collection\\Dam',
     'DamTypes' => 'Rubedo\\Collection\\DamTypes',

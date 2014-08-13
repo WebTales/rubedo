@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: nainterceptor
- * Date: 07/08/14
- * Time: 10:03
- */
 
 namespace RubedoAPI\Tools;
 
@@ -14,6 +8,7 @@ use Zend\Stdlib\JsonSerializable;
 
 class FilterDefinitionEntity implements JsonSerializable {
     protected $key;
+    protected $rename;
     protected $description;
     protected $required = false;
     protected $multivalued = false;
@@ -54,6 +49,32 @@ class FilterDefinitionEntity implements JsonSerializable {
     {
         $this->key = $key;
         return $this;
+    }
+
+    /**
+     * @param mixed $rename
+     * @return $this
+     */
+    public function setRename($rename)
+    {
+        $this->rename = $rename;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRename()
+    {
+        return $this->rename;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasRename()
+    {
+        return !empty($this->rename);
     }
 
     /**
@@ -145,7 +166,10 @@ class FilterDefinitionEntity implements JsonSerializable {
                 $var = new $objToTest($value);
                 return $var;
             } catch (\Exception $e) {
-                throw new APIFilterException('Can\'t try "' . $this->getFilter() . '" var', 500);
+                if (!(method_exists($e, 'isTransparent') && $e->isTransparent()))
+                    throw new APIFilterException('Can\'t try "' . $this->getFilter() . '" var', 500);
+                else
+                    throw $e;
             }
         }
     }

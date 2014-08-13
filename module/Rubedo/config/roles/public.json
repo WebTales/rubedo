@@ -55,7 +55,6 @@
         "execute.controller.credittransfer.index.payment",
         "execute.controller.credittransfer.success.payment",
         "execute.controller.credittransfer.cancel.payment",
-        "execute.controller.credittransfer.ipn.payment",
-        "execute.controller.applicationlog.*"
+        "execute.controller.credittransfer.ipn.payment"
  	]
 }
