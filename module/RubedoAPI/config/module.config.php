@@ -28,6 +28,7 @@ return array(
             'RubedoAPI\\Services\\Security\\Token' => 'RubedoAPI\\Services\\Security\\Token',
             'RubedoAPI\\Services\\Router\\Url' => 'RubedoAPI\\Services\\Router\\Url',
             'RubedoAPI\\Services\\User\\CurrentUser' => 'RubedoAPI\\Services\\User\\CurrentUser',
+            'RubedoAPI\\Services\\Internationalization\\Current' => 'RubedoAPI\\Services\\Internationalization\\Current',
         ),
         'aliases' => array (
             'API\\Collection\\UserTokens' => 'RubedoAPI\\Collection\\UserTokens',
@@ -36,6 +37,8 @@ return array(
             'API\\Services\\Token' => 'RubedoAPI\\Services\\Security\\Token',
             'API\\Services\\Url' => 'RubedoAPI\\Services\\Router\\Url',
             'API\\Services\\CurrentUser' => 'RubedoAPI\\Services\\User\\CurrentUser',
+            'API\\Services\\CurrentLocalization' => 'RubedoAPI\\Services\\Internationalization\\Current',
+            'CurrentLocalization' => 'RubedoAPI\\Services\\Internationalization\\Current',
             'CurrentUser' => 'RubedoAPI\\Services\\User\\CurrentUser',
         ),
     ),

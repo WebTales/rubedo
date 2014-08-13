@@ -6,7 +6,7 @@ abstract class APIAbstractException extends \Exception
 {
     protected $transparent;
     protected $httpCode;
-    function __construct($message, $httpCode, $transparent = false)
+    function __construct($message, $httpCode = 500, $transparent = false)
     {
         parent::__construct($message);
         $this->setHttpCode($httpCode);

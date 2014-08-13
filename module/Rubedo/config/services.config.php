@@ -25,7 +25,7 @@ return array(
     'Cache' => 'Rubedo\\Collection\\Cache',
     'ContentTypes' => 'Rubedo\\Collection\\ContentTypes',
     'Contents' => 'Rubedo\\Collection\\Contents',
-    'CurrentLocalization' => 'Rubedo\\Internationalization\\Current',
+    'Rubedo\\Internationalization\\Current' => 'Rubedo\\Internationalization\\Current',
     'CurrentTime' => 'Rubedo\\Time\\CurrentTime',
     'Rubedo\\User\\CurrentUser' => 'Rubedo\\User\\CurrentUser',
     'CustomThemes' => 'Rubedo\\Collection\\CustomThemes',

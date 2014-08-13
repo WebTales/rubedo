@@ -8,6 +8,7 @@
 
 namespace RubedoAPI\Rest\V1;
 
+use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Interfaces\IRessource;
 use RubedoAPI\Tools\DefinitionEntity;
@@ -47,10 +48,12 @@ abstract class AbstractRessource implements IRessource {
         if ($method == 'options')
             return $this->optionsAction();
         $verbDefinition = $this->getDefinition()->getVerb($method);
+        $params = $verbDefinition->filterInput($params);
+        $this->getCurrentLocalizationAPIService()->injectLocalization($params);
 
         return $verbDefinition->filterOutput(
             $this->{$method . 'Action'}(
-                $verbDefinition->filterInput($params)
+                $params
             )
         );
     }

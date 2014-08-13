@@ -54,13 +54,6 @@ class ContentsRessource extends AbstractRessource {
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('lang')
-                            ->setRequired()
-                            ->setDescription('Locale')
-                            ->setFilter('string')
-                    )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
                             ->setKey('fields')
                             ->setDescription('Mask of fields')
                     )
@@ -159,7 +152,7 @@ class ContentsRessource extends AbstractRessource {
         foreach ($contents as &$content){
             $content['fields'] = array_intersect_key($content['fields'], array_flip($fields));
             $content['detailPageUrl'] = $urlService->displayUrlApi($content,'default', $site,
-                $page, $params['lang'], isset($params['detailPageId'])?$params['detailPageId']:null);
+                $page, $params['lang']->getLocale(), isset($params['detailPageId'])?$params['detailPageId']:null);
             $content = array_diff_key($content, array_flip($mask));
         }
         return $contents;

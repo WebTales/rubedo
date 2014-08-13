@@ -11,8 +11,9 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @package RubedoAPI\Traits
  * @method \RubedoAPI\Collection\UserTokens getUserTokensAPICollection() Return UserTokens collection
  * @method \RubedoAPI\Services\Security\Authentication getAuthAPIService() Return Authentication service
- * @method \RubedoAPI\Services\Router\Url getUrlAPIService() Return Authentication service
- * @method \RubedoAPI\Services\User\CurrentUser getCurrentUserAPIService() Return Authentication service
+ * @method \RubedoAPI\Services\Router\Url getUrlAPIService() Return Router URL service
+ * @method \RubedoAPI\Services\User\CurrentUser getCurrentUserAPIService() Return current User service
+ * @method \RubedoAPI\Services\Internationalization\Current getCurrentLocalizationAPIService() Return current localization service
  */
 trait LazyServiceManager {
     protected $callCache = array();

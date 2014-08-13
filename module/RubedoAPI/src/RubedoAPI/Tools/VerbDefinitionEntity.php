@@ -11,6 +11,7 @@ namespace RubedoAPI\Tools;
 
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIFilterException;
+use RubedoAPI\Exceptions\APIRequestException;
 use Zend\Stdlib\JsonSerializable;
 
 class VerbDefinitionEntity implements JsonSerializable {
@@ -29,6 +30,12 @@ class VerbDefinitionEntity implements JsonSerializable {
                     ->setKey('access_token')
                     ->setRename('identity')
                     ->setFilter('\\RubedoAPI\\Entities\\API\\Identity')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Locale')
+                    ->setKey('lang')
+                    ->setFilter('\\RubedoAPI\\Entities\\API\\Language')
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
@@ -183,6 +190,8 @@ class VerbDefinitionEntity implements JsonSerializable {
 
     public function filterOutput($toFilter)
     {
+        if (!isset($toFilter) || !is_array($toFilter))
+            throw new APIRequestException('Each action must be return an array.', 500);
         $filtered = [];
         foreach ($this->getOutputFilters() as $key => $filter) {
             if (!($filter instanceof FilterDefinitionEntity))
