@@ -1010,7 +1010,7 @@ class Import extends AbstractCollection
 		
 			$fieldName = $value['name'];
 			
-			if ($variationToUpdate && $value['useAsVariation']) {
+			if ($variationToUpdate && isset($value['useAsVariation']) && $value['useAsVariation']) {
 				$queryVariations.= "'".$fieldName."': v['".$fieldName."'],";
 			}
 			
