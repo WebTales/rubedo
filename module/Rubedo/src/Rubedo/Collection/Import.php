@@ -1016,14 +1016,14 @@ class Import extends AbstractCollection
 			
 			if ($value['localizable']) { // localizable field is written in working language in i18n (live AND workspace)
 			
-				$fieldsToUpdate[] =  "'live.i18n.".$this->_workingLanguage.".fields.".$fieldName."'"; // live
-				$fieldsToUpdate[] =  "'workspace.i18n.".$this->_workingLanguage.".fields.".$fieldName."'"; // workspace
+				$updateProduct.= "'live.i18n.".$this->_workingLanguage.".fields.".$fieldName."' : foo['value']['".$fieldName."'],"; // live
+				$updateProduct.= "'workspace.i18n.".$this->_workingLanguage.".fields.".$fieldName."' : foo['value']['".$fieldName."'],"; // workspace
 			
 			} else { // non localizable field is written in fields (live AND workspace)
 				
 				if (!in_array($value['name'],$variationFields)) {
-					$fieldsToUpdate[] = "'live.fields.".$fieldName."'"; // live
-					$fieldsToUpdate[] = "'workspace.fields.".$fieldName."'"; // workspace
+					$updateProduct.= "'live.fields.".$fieldName."' : foo['value']['".$fieldName."'],"; // live
+					$updateProduct.= "'workspace.fields.".$fieldName."' : foo['value']['".$fieldName."'],"; // workspace
 				}
 				
 			}
