@@ -19,9 +19,9 @@ http://www.gnu.org/licenses/gpl.html
 Installation
 ------------------------------------------------------------------------------------------
 ### PreRequisites
-* A full PHP 5.3.6+ stack (i.e. http://www.zend.com/products/server/)
+* A full PHP 5.4+ stack (i.e. http://www.zend.com/products/server/)
 * MongoDB (http://www.mongodb.org) 2.4.x (issues reported on 2.6, will be fixed in the next version)
-* PHP MongoDB Driver >= 1.3.0
+* PHP MongoDB Driver >= 1.4.0
 * intl PHP extension (http://www.php.net/manual/intro.intl.php) which you should use anyway
 * ElasticSearch (http://www.elasticsearch.org), latest version compatible with Elastica PHP client, 1.2.1 at this moment (https://github.com/ruflin/Elastica/)
 * Mapper Attachments Type for ElasticSearch (https://github.com/elasticsearch/elasticsearch-mapper-attachments) 
