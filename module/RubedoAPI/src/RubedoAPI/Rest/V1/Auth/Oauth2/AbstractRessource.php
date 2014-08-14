@@ -21,12 +21,10 @@ use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
 /**
- * Class GenerateRessource
- * auth/oauth2/generate
- *
+ * Abstract class AbstractRessource
  * @package RubedoAPI\Rest\V1\Auth\Oauth2
  */
-class GenerateRessource extends AbstractRessource
+abstract class AbstractRessource extends \RubedoAPI\Rest\V1\AbstractRessource
 {
     /**
      * { @inheritdoc }
@@ -35,39 +33,35 @@ class GenerateRessource extends AbstractRessource
     {
         parent::__construct();
         $this->definition
-            ->setName('Generate token')
-            ->setDescription('')
             ->editVerb('post', function (VerbDefinitionEntity &$entity) {
                 $entity
-                    ->setDescription('')
-                    ->addInputFilter(
+                    ->addOutputFilter(
                         (new FilterDefinitionEntity())
-                            ->setDescription('User to log in')
-                            ->setKey('PHP_AUTH_USER')
-                            ->setRequired()
-
-                    )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setDescription('Password for the user')
-                            ->setKey('PHP_AUTH_PW')
+                            ->setKey('token')
                             ->setRequired()
                     );
             });
     }
 
     /**
-     * Post to auth/oauth2/generate
+     * Filter token from database
      *
-     * @param $params
+     * @param $token
      * @return array
      */
-    function postAction($params)
+    protected function subTokenFilter(&$token)
     {
-        $output = array('success' => true);
-        $response = $this->getAuthAPIService()->APIAuth($params['PHP_AUTH_USER'], $params['PHP_AUTH_PW']);
-        $output['token'] = $this->subTokenFilter($response['token']);
-        $output['token']['user'] = $this->subUserFilter($response['user']);
-        return $output;
+        return array_intersect_key($token, array_flip(array('access_token', 'refresh_token', 'lifetime', 'createTime')));
+    }
+
+    /**
+     * Filter user from database
+     *
+     * @param $user
+     * @return array
+     */
+    protected function subUserFilter(&$user)
+    {
+        return array_intersect_key($user, array_flip(array('id', 'login')));
     }
 }

@@ -29,12 +29,22 @@ use RubedoAPI\Tools\VerbDefinitionEntity;
 class ContentsRessource extends AbstractRessource
 {
 
+    /**
+     * { @inheritdoc }
+     */
     public function __construct()
     {
         parent::__construct();
         $this->define();
     }
 
+    /**
+     * Get to contents
+     *
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function getAction($params)
     {
 
@@ -86,6 +96,13 @@ class ContentsRessource extends AbstractRessource
         ];
     }
 
+    /**
+     * Filter contents
+     *
+     * @param $contents
+     * @param $params
+     * @return mixed
+     */
     protected function outputContentsMask($contents, $params)
     {
         $fields = isset($params['fields']) ? $params['fields'] : array('text', 'summary', 'image');
@@ -102,6 +119,15 @@ class ContentsRessource extends AbstractRessource
         return $contents;
     }
 
+    /**
+     * Get content list
+     *
+     * @param $filters
+     * @param $pageData
+     * @param bool $ismagic
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     protected function getContentList($filters, $pageData, $ismagic = false)
     {
         $filters["sort"] = isset($filters["sort"]) ? $filters["sort"] : array();
@@ -113,6 +139,13 @@ class ContentsRessource extends AbstractRessource
         return $contentArray;
     }
 
+    /**
+     * Set pagination value
+     *
+     * @param $params
+     * @return mixed
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     protected function setPaginationValues($params)
     {
         $defaultLimit = isset($params['limit']) ? $params['limit'] : 6;
@@ -128,6 +161,15 @@ class ContentsRessource extends AbstractRessource
         return $pageData;
     }
 
+    /**
+     * Get to contents/{id}
+     *
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     * @throws \RubedoAPI\Exceptions\APIRequestException
+     */
     public function getEntityAction($id, $params)
     {
         $content = $this->getContentsCollection()->findById($id, true, false);
@@ -186,6 +228,9 @@ class ContentsRessource extends AbstractRessource
         ];
     }
 
+    /**
+     * Define the ressource
+     */
     protected function define()
     {
         $this
@@ -204,6 +249,11 @@ class ContentsRessource extends AbstractRessource
             });
     }
 
+    /**
+     * Define get action
+     *
+     * @param VerbDefinitionEntity $definition
+     */
     protected function defineGet(VerbDefinitionEntity &$definition)
     {
         $definition
@@ -270,6 +320,11 @@ class ContentsRessource extends AbstractRessource
             );
     }
 
+    /**
+     * Define get entity
+     *
+     * @param VerbDefinitionEntity $definition
+     */
     protected function defineEntityGet(VerbDefinitionEntity &$definition)
     {
         $definition

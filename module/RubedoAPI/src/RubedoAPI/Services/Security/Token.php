@@ -19,26 +19,27 @@ namespace RubedoAPI\Services\Security;
 
 use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIServiceException;
+use RubedoAPI\Traits\LazyServiceManager;
 
+/**
+ * Class Token
+ * @package RubedoAPI\Services\Security
+ */
 class Token
 {
+    use LazyServiceManager;
+    /**
+     * token lifetime
+     */
     const LIFETIME = 3600;
-    /**
-     * @var \RubedoAPI\Collection\UserTokens
-     */
-    protected $userTokensCollection;
 
     /**
-     * @var \Rubedo\Interfaces\Security\IHash
+     * Generate Bearer token
+     *
+     * @param $userId
+     * @return mixed
+     * @throws \RubedoAPI\Exceptions\APIServiceException
      */
-    protected $tokenService;
-
-    function __construct()
-    {
-        $this->userTokensCollection = Manager::getService('API\\Collection\\UserTokens');
-        $this->tokenService = Manager::getService('Hash');
-    }
-
     function generateBearerToken($userId)
     {
 
@@ -51,14 +52,20 @@ class Token
                 'id' => $userId
             ),
         );
-        $creation = $this->userTokensCollection->create($token);
+        $creation = $this->getUserTokensAPICollection()->create($token);
         if (!$creation['success'])
             throw new APIServiceException('Can\'t create the bearer token', 500);
         return $creation['data'];
     }
 
+    /**
+     * Generate token with random string and userid (to reduce collisions)
+     *
+     * @param $userId
+     * @return String
+     */
     protected function newToken($userId)
     {
-        return $this->tokenService->hashString($this->tokenService->generateRandomString(), $userId);
+        return $this->getHashService()->hashString($this->getHashService()->generateRandomString(), $userId);
     }
 }

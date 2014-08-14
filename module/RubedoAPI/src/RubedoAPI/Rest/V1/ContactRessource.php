@@ -23,8 +23,15 @@ use RubedoAPI\Exceptions\APIControllerException;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
+/**
+ * Class ContactRessource
+ * @package RubedoAPI\Rest\V1
+ */
 class ContactRessource extends AbstractRessource
 {
+    /**
+     * { @inheritdoc }
+     */
     function __construct()
     {
         parent::__construct();
@@ -67,6 +74,13 @@ class ContactRessource extends AbstractRessource
             });
     }
 
+    /**
+     * Post to contact
+     *
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIControllerException
+     */
     public function postAction($params)
     {
         /** @var \Rubedo\Interfaces\Collection\IMailingList $mailingListsService */
@@ -102,6 +116,13 @@ class ContactRessource extends AbstractRessource
         }
     }
 
+    /**
+     *
+     * Build email corpus from fields array
+     *
+     * @param $fields
+     * @return string
+     */
     protected function buildEmail($fields)
     {
         $lines = [];

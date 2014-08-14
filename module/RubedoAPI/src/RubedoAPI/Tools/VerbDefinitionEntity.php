@@ -23,14 +23,37 @@ use RubedoAPI\Exceptions\APIFilterException;
 use RubedoAPI\Exceptions\APIRequestException;
 use Zend\Stdlib\JsonSerializable;
 
+/**
+ * Class VerbDefinitionEntity
+ * @package RubedoAPI\Tools
+ */
 class VerbDefinitionEntity implements JsonSerializable
 {
+    /**
+     * @var string
+     */
     protected $verb;
+    /**
+     * @var string
+     */
     protected $description;
+    /**
+     * @var array
+     */
     protected $outputFilters = [];
+    /**
+     * @var array
+     */
     protected $inputFilters = [];
+    /**
+     * @var array
+     */
     protected $rights = array();
 
+    /**
+     * Construct default verb definition
+     * @param $verb
+     */
     function __construct($verb)
     {
         $this
@@ -64,6 +87,8 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get description
+     *
      * @return mixed
      */
     public function getDescription()
@@ -72,6 +97,8 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Set description
+     *
      * @param mixed $description
      * @return $this
      */
@@ -82,6 +109,8 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get verb
+     *
      * @return mixed
      */
     public function getVerb()
@@ -90,6 +119,8 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Set verb
+     *
      * @param mixed $verb
      * @return $this
      */
@@ -99,11 +130,22 @@ class VerbDefinitionEntity implements JsonSerializable
         return $this;
     }
 
+    /**
+     * Helper : Check if identity is required
+     *
+     * @return bool
+     */
     protected function hasIdentityRequired()
     {
         return $this->getInputFilter('access_token')->isRequired();
     }
 
+    /**
+     * Helper : Require identity
+     *
+     * @param bool $has
+     * @return $this
+     */
     protected function identityRequired($has = true)
     {
         $this->editInputFilter('access_token', function (FilterDefinitionEntity &$filter) use ($has) {
@@ -113,6 +155,8 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Add a right
+     *
      * @param $right
      * @return $this
      * @internal param array $rights
@@ -127,6 +171,8 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get all rights
+     *
      * @return array
      */
     public function getRights()
@@ -135,6 +181,8 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get input filters list
+     *
      * @return array
      */
     public function getInputFilters()
@@ -143,6 +191,8 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get input filter
+     *
      * @param $key
      * @return FilterDefinitionEntity
      */
@@ -154,6 +204,8 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Add input filter
+     *
      * @param \RubedoAPI\Tools\FilterDefinitionEntity $inputFilter
      * @return $this
      */
@@ -163,6 +215,13 @@ class VerbDefinitionEntity implements JsonSerializable
         return $this;
     }
 
+    /**
+     * Edit input filter
+     *
+     * @param $key
+     * @param $function
+     * @return $this
+     */
     public function editInputFilter($key, $function)
     {
         if (!isset($this->inputFilters[$key])) {
@@ -175,6 +234,8 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get output filters list
+     *
      * @return array
      */
     public function getOutputFilters()
@@ -182,6 +243,14 @@ class VerbDefinitionEntity implements JsonSerializable
         return $this->outputFilters;
     }
 
+    /**
+     * Filter input
+     *
+     * @param $toFilter
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     * @throws \RubedoAPI\Exceptions\APIFilterException
+     */
     public function filterInput($toFilter)
     {
         $filtered = [];
@@ -198,6 +267,15 @@ class VerbDefinitionEntity implements JsonSerializable
         return $filtered;
     }
 
+    /**
+     * Filter output
+     *
+     * @param $toFilter
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIRequestException
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     * @throws \RubedoAPI\Exceptions\APIFilterException
+     */
     public function filterOutput($toFilter)
     {
         if (!isset($toFilter) || !is_array($toFilter))
@@ -217,6 +295,8 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Add output filter
+     *
      * @param \RubedoAPI\Tools\FilterDefinitionEntity $outputFilter
      * @return $this
      */
@@ -226,6 +306,13 @@ class VerbDefinitionEntity implements JsonSerializable
         return $this;
     }
 
+    /**
+     * Edit output filter
+     *
+     * @param $key
+     * @param $function
+     * @return $this
+     */
     public function editOutputFilter($key, $function)
     {
         if (!isset($this->outputFilters[$key])) {
@@ -237,6 +324,13 @@ class VerbDefinitionEntity implements JsonSerializable
         return $this;
     }
 
+    /**
+     * Get filters serialized
+     *
+     * @param array $filterArray
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     protected function getFiltersSerialized(array $filterArray)
     {
         $filters = [];
@@ -248,16 +342,31 @@ class VerbDefinitionEntity implements JsonSerializable
         return $filters;
     }
 
+    /**
+     * Helper : Get output filters serialized
+     *
+     * @return array
+     */
     protected function getOutputFiltersSerialized()
     {
         return $this->getFiltersSerialized($this->getOutputFilters());
     }
 
+    /**
+     * Helper : Get input filters serialized
+     *
+     * @return array
+     */
     protected function getInputFiltersSerialized()
     {
         return $this->getFiltersSerialized($this->getInputFilters());
     }
 
+    /**
+     * Return jsonserializable array
+     *
+     * @return array
+     */
     function jsonSerialize()
     {
         return [

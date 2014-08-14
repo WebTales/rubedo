@@ -24,6 +24,10 @@ use Rubedo\User\Authentication\AuthenticationService;
 use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 
+/**
+ * Class Authentication
+ * @package RubedoAPI\Services\Security
+ */
 class Authentication extends AuthenticationService
 {
     /** @var  \RubedoAPI\Services\Security\Token */
@@ -33,6 +37,12 @@ class Authentication extends AuthenticationService
     /** @var \Rubedo\Interfaces\Collection\IUsers */
     protected $usersCollection;
 
+    /**
+     * Legacy
+     *
+     * @param \Zend\Authentication\Storage\StorageInterface $storage
+     * @param \Zend\Authentication\Adapter\AdapterInterface $adapter
+     */
     function __construct(\Zend\Authentication\Storage\StorageInterface $storage = null, \Zend\Authentication\Adapter\AdapterInterface $adapter = null)
     {
         parent::__construct($storage, $adapter);
@@ -42,6 +52,14 @@ class Authentication extends AuthenticationService
 
     }
 
+    /**
+     * Authentication with login/password to generate token
+     *
+     * @param $login
+     * @param $password
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIAuthException
+     */
     public function APIAuth($login, $password)
     {
         $authAdapter = new CoreAdapter($login, $password);
@@ -63,6 +81,13 @@ class Authentication extends AuthenticationService
         );
     }
 
+    /**
+     * Generate new token from refresh token
+     *
+     * @param $refreshToken
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function APIRefreshAuth($refreshToken)
     {
         $oldToken = $this->userTokenCollection->findOneByRefreshToken($refreshToken);

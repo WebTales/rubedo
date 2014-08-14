@@ -17,7 +17,12 @@
 
 namespace RubedoAPI\Exceptions;
 
+/**
+ * Class APIRequestException
+ * When the API fail due to request problem, like bad parameters
+ *
+ * @package RubedoAPI\Exceptions
+ */
 class APIRequestException extends APIAbstractException
 {
-
 }

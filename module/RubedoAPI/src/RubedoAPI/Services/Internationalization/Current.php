@@ -21,8 +21,18 @@ use Rubedo\Collection\AbstractLocalizableCollection;
 use RubedoAPI\Entities\API\Language;
 use RubedoAPI\Exceptions\APIServiceException;
 
+/**
+ * Class Current
+ * @package RubedoAPI\Services\Internationalization
+ */
 class Current extends \Rubedo\Internationalization\Current
 {
+    /**
+     * Inject localization in low level class
+     *
+     * @param $params
+     * @throws \RubedoAPI\Exceptions\APIServiceException
+     */
     public function injectLocalization($params)
     {
         if (!isset($params['lang'])) {

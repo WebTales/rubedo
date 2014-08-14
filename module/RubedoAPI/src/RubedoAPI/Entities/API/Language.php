@@ -20,11 +20,32 @@ namespace RubedoAPI\Entities\API;
 
 use RubedoAPI\Exceptions\APIEntityException;
 
+/**
+ * Class Language
+ * @package RubedoAPI\Entities\API
+ */
 class Language
 {
+    /**
+     * The locale
+     *
+     * @var string
+     */
     protected $locale;
+
+    /**
+     * Locale to fallback if locale is missing
+     *
+     * @var string
+     */
     protected $fallback;
 
+    /**
+     * Construct and check the language param, must be "en" or "en|en" where the second code is the fallback
+     *
+     * @param $languageString
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     function __construct($languageString)
     {
         $lengthString = strlen($languageString);
@@ -41,7 +62,9 @@ class Language
     }
 
     /**
-     * @return mixed
+     * Return fallback
+     *
+     * @return string|null
      */
     public function getFallback()
     {
@@ -49,13 +72,20 @@ class Language
     }
 
     /**
-     * @return mixed
+     * Return locale
+     *
+     * @return string|null
      */
     public function getLocale()
     {
         return $this->locale;
     }
 
+    /**
+     * Return true if fallback is defined
+     *
+     * @return bool
+     */
     public function hasFallback()
     {
         return isset($this->fallback);

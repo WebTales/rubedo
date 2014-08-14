@@ -21,6 +21,10 @@ namespace RubedoAPI\Services\User;
 use Rubedo\Services\Manager;
 use RubedoAPI\Traits\LazyServiceManager;
 
+/**
+ * Class CurrentUser
+ * @package RubedoAPI\Services\User
+ */
 class CurrentUser extends \Rubedo\User\CurrentUser
 {
     use LazyServiceManager;
@@ -31,6 +35,11 @@ class CurrentUser extends \Rubedo\User\CurrentUser
     /** @var  \Rubedo\Interfaces\Collection\IUsers */
     protected $usersCollection;
 
+    /**
+     * Check if access token exist
+     *
+     * @return bool
+     */
     public function isAuthenticated()
     {
         $accessToken = $this->getAccessToken();
@@ -39,6 +48,11 @@ class CurrentUser extends \Rubedo\User\CurrentUser
         return parent::isAuthenticated();
     }
 
+    /**
+     * Retrieve the current user
+     *
+     * @return array
+     */
     protected function _fetchCurrentUser()
     {
         $serviceReader = Manager::getService('Users');
@@ -48,6 +62,11 @@ class CurrentUser extends \Rubedo\User\CurrentUser
         return parent::_fetchCurrentUser();
     }
 
+    /**
+     * Retrieve access_token
+     *
+     * @return array|null
+     */
     protected function getAccessToken()
     {
         if (!isset(static::$token)) {
@@ -60,6 +79,11 @@ class CurrentUser extends \Rubedo\User\CurrentUser
         return static::$token;
     }
 
+    /**
+     * Lazy load current user
+     *
+     * @return array
+     */
     public function getCurrentUser()
     {
         if (!isset(static::$_currentUser)) {

@@ -20,8 +20,15 @@ namespace RubedoAPI\Rest\V1\Auth;
 use RubedoAPI\Rest\V1\AbstractRessource;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
+/**
+ * Class Oauth2Ressource
+ * @package RubedoAPI\Rest\V1\Auth
+ */
 class Oauth2Ressource extends AbstractRessource
 {
+    /**
+     * { @inheritdoc }
+     */
     public function __construct()
     {
         parent::__construct();
@@ -29,10 +36,7 @@ class Oauth2Ressource extends AbstractRessource
             ->definition
             ->setName('Oauth2 authentication')
             ->setDescription('Login by oauth2')
-            ->editVerb('post', function (VerbDefinitionEntity &$entity) {
-                $entity
-                    ->setDescription('foo');
-            });;
+        ;
     }
 
 }

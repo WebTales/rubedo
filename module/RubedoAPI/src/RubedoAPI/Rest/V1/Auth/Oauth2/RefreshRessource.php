@@ -17,12 +17,20 @@
 
 namespace RubedoAPI\Rest\V1\Auth\Oauth2;
 
-use RubedoAPI\Rest\V1\AbstractRessource;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
+/**
+ * Class RefreshRessource
+ * auth/oauth2/refresh
+ *
+ * @package RubedoAPI\Rest\V1\Auth\Oauth2
+ */
 class RefreshRessource extends AbstractRessource
 {
+    /**
+     * { @inheritdoc }
+     */
     function __construct()
     {
         parent::__construct();
@@ -37,14 +45,16 @@ class RefreshRessource extends AbstractRessource
                             ->setKey('refresh_token')
                             ->setRequired()
                     )
-                    ->addOutputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setKey('token')
-                            ->setRequired()
-                    );
+                ;
             });
     }
 
+    /**
+     * Post to auth/oauth2/refresh
+     *
+     * @param $params
+     * @return array
+     */
     function postAction($params)
     {
         $output = array('success' => true);
@@ -52,16 +62,5 @@ class RefreshRessource extends AbstractRessource
         $output['token'] = $this->subTokenFilter($response['token']);
         $output['token']['user'] = $this->subUserFilter($response['user']);
         return $output;
-    }
-
-    //todo refactor in FilterDefinitionEntity
-    protected function subTokenFilter(&$token)
-    {
-        return array_intersect_key($token, array_flip(array('access_token', 'refresh_token', 'lifetime', 'createTime')));
-    }
-
-    protected function subUserFilter(&$user)
-    {
-        return array_intersect_key($user, array_flip(array('id', 'login')));
     }
 }

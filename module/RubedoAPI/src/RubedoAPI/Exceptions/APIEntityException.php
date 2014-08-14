@@ -17,6 +17,12 @@
 
 namespace RubedoAPI\Exceptions;
 
+/**
+ * Class APIEntityException
+ * When the API fail due to entity problem, like document not found...
+ *
+ * @package RubedoAPI\Exceptions
+ */
 class APIEntityException extends APIAbstractException
 {
 }

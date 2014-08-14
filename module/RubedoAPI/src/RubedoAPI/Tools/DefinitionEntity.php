@@ -22,13 +22,28 @@ use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
 use Zend\Stdlib\JsonSerializable;
 
+/**
+ * Class DefinitionEntity
+ * @package RubedoAPI\Tools
+ */
 class DefinitionEntity implements JsonSerializable
 {
+    /**
+     * @var string
+     */
     protected $name;
+    /**
+     * @var string
+     */
     protected $description;
+    /**
+     * @var array
+     */
     protected $verbList = [];
 
     /**
+     * Get description
+     *
      * @return mixed
      */
     public function getDescription()
@@ -37,6 +52,8 @@ class DefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Set description
+     *
      * @param mixed $description
      * @return $this
      */
@@ -47,6 +64,8 @@ class DefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get name
+     *
      * @return mixed
      */
     public function getName()
@@ -55,6 +74,8 @@ class DefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Set name
+     *
      * @param mixed $name
      * @return $this
      */
@@ -65,6 +86,8 @@ class DefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get verbs for this definition, serialized
+     *
      * @throws \RubedoAPI\Exceptions\APIEntityException
      * @return array
      */
@@ -80,6 +103,8 @@ class DefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Edit a verb, with a closure
+     *
      * @param $verb
      * @param $function
      * @return $this
@@ -96,6 +121,13 @@ class DefinitionEntity implements JsonSerializable
         return $this;
     }
 
+    /**
+     * Get a verb definition
+     *
+     * @param $verb
+     * @return mixed
+     * @throws \RubedoAPI\Exceptions\APIRequestException
+     */
     public function getVerb($verb)
     {
         $verb = strtoupper($verb);
@@ -105,6 +137,11 @@ class DefinitionEntity implements JsonSerializable
         return $this->verbList[$verb];
     }
 
+    /**
+     * Return jsonserializable array
+     *
+     * @return array
+     */
     function jsonSerialize()
     {
         return [

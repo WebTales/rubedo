@@ -22,8 +22,15 @@ use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
+/**
+ * Class PagesRessource
+ * @package RubedoAPI\Rest\V1
+ */
 class PagesRessource extends AbstractRessource
 {
+    /**
+     * { @inheritdoc }
+     */
     public function __construct()
     {
         parent::__construct();
@@ -60,6 +67,13 @@ class PagesRessource extends AbstractRessource
             });
     }
 
+    /**
+     * Get from pages
+     *
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function getAction($params)
     {
         $sitesServices = Manager::getService('Sites');
@@ -93,6 +107,12 @@ class PagesRessource extends AbstractRessource
         ];
     }
 
+    /**
+     * Filter site with mask
+     *
+     * @param $output
+     * @return array
+     */
     protected function outputSiteMask($output)
     {
         $output['host'] = $output['text'];
@@ -100,6 +120,12 @@ class PagesRessource extends AbstractRessource
         return array_intersect_key($output, array_flip($mask));
     }
 
+    /**
+     * Filter page with mask
+     *
+     * @param $output
+     * @return mixed
+     */
     protected function outputPageMask($output)
     {
         return $output;

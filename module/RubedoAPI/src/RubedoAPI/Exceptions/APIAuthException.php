@@ -17,6 +17,12 @@
 
 namespace RubedoAPI\Exceptions;
 
+/**
+ * Class APIAuthException
+ * When the API fail due to authentication problem
+ *
+ * @package RubedoAPI\Exceptions
+ */
 class APIAuthException extends APIAbstractException
 {
 }

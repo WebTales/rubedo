@@ -19,16 +19,27 @@ namespace RubedoAPI\Entities\API;
 
 use RubedoAPI\Traits\LazyServiceManager;
 
+/**
+ * Class Identity
+ * @package RubedoAPI\Entities\API
+ */
 class Identity
 {
     use LazyServiceManager;
 
+    /**
+     * Filter legacy
+     *
+     * @param string $access_token the access token
+     */
     function __construct($access_token)
     {
 
     }
 
     /**
+     * Return the token
+     *
      * @return mixed
      */
     public function getToken()
@@ -38,6 +49,8 @@ class Identity
     }
 
     /**
+     * Return current user
+     *
      * @throws \RubedoAPI\Exceptions\APIEntityException
      * @return array
      */

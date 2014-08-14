@@ -17,8 +17,15 @@
 
 namespace RubedoAPI\Rest\V1;
 
+/**
+ * Class AuthRessource
+ * @package RubedoAPI\Rest\V1
+ */
 class AuthRessource extends AbstractRessource
 {
+    /**
+     * { @inheritdoc }
+     */
     public function __construct()
     {
         parent::__construct();
@@ -28,11 +35,22 @@ class AuthRessource extends AbstractRessource
             ->setDescription('Login in the Rubedo API');
     }
 
+    /**
+     * Custom options to provide authentication means
+     * { @inheritdoc }
+     *
+     * @return array
+     */
     public function optionsAction()
     {
         return array_merge(parent::optionsAction(), $this->getAuthMeans());
     }
 
+    /**
+     * return authentication means and API uri
+     *
+     * @return array
+     */
     protected function getAuthMeans()
     {
         return [

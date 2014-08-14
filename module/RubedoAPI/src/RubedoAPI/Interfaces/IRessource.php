@@ -17,12 +17,38 @@
 
 namespace RubedoAPI\Interfaces;
 
-
+/**
+ * Interface IRessource
+ * Define ressource methods called by external class
+ *
+ * @package RubedoAPI\Interfaces
+ */
 interface IRessource
 {
+    /**
+     * Called by entry point to route on the correct action
+     *
+     * @param $method
+     * @param $params
+     * @return mixed
+     */
     public function handler($method, $params);
 
+    /**
+     * Called by entry point to route on the correct action, with ID (entity case)
+     *
+     * @param $id
+     * @param $method
+     * @param $params
+     * @return mixed
+     */
     public function handlerEntity($id, $method, $params);
 
+    /**
+     * Save current controller ($this)
+     *
+     * @param $controller
+     * @return mixed
+     */
     public function setContext($controller);
 } 

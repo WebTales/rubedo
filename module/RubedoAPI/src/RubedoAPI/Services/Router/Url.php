@@ -21,9 +21,25 @@ use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIServiceException;
 
 
+/**
+ * Class Url
+ * @package RubedoAPI\Services\Router
+ */
 class Url extends \Rubedo\Router\Url
 {
 
+    /**
+     * return URL from API
+     *
+     * @param $content
+     * @param string $type
+     * @param $site
+     * @param $page
+     * @param $locale
+     * @param null $defaultPage
+     * @return string
+     * @throws \RubedoAPI\Exceptions\APIServiceException
+     */
     public function displayUrlApi($content, $type = "default", $site, $page, $locale, $defaultPage = null)
     {
         $pageValid = false;

@@ -21,14 +21,28 @@ use Rubedo\Collection\AbstractCollection;
 use RubedoAPI\Exceptions\APIEntityException;
 use WebTales\MongoFilters\Filter;
 
+/**
+ * Class UserTokens
+ * @package RubedoAPI\Collection
+ */
 class UserTokens extends AbstractCollection
 {
+    /**
+     * Complete collection properties
+     */
     public function __construct()
     {
         $this->_collectionName = 'UserTokens';
         parent::__construct();
     }
 
+    /**
+     * Find user token from refresh token
+     *
+     * @param string $refreshToken the refresh token
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function findOneByRefreshToken($refreshToken)
     {
         $filter = Filter::factory('Value');
@@ -39,6 +53,13 @@ class UserTokens extends AbstractCollection
         return $token;
     }
 
+    /**
+     * Find user token from access token
+     *
+     * @param string $accessToken the access token
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function findOneByAccessToken($accessToken)
     {
         $filter = Filter::factory('Value');

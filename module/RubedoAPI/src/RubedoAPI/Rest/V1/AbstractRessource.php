@@ -30,6 +30,10 @@ abstract class AbstractRessource implements IRessource
 {
     use LazyServiceManager;
 
+    /**
+     * Context from entry point
+     * @var \RubedoAPI\Frontoffice\Controller\ApiController
+     */
     protected $context;
 
     /**
@@ -42,22 +46,41 @@ abstract class AbstractRessource implements IRessource
      */
     protected $entityDefinition;
 
+    /**
+     * Define the behavior of the ressource
+     */
     function __construct()
     {
         $this->definition = new DefinitionEntity();
         $this->entityDefinition = new DefinitionEntity();
     }
 
+    /**
+     * Options request
+     *
+     * @return array
+     */
     public function optionsAction()
     {
         return $this->definition->jsonSerialize();
     }
 
+    /**
+     * Options request to entity
+     *
+     * @return array
+     */
     public function optionsEntityAction()
     {
         return $this->entityDefinition->jsonSerialize();
     }
 
+    /**
+     * Return the definition for ressource
+     *
+     * @return DefinitionEntity
+     * @throws \RubedoAPI\Exceptions\APIRequestException
+     */
     public function getDefinition()
     {
         if (!isset($this->definition))
@@ -65,6 +88,12 @@ abstract class AbstractRessource implements IRessource
         return $this->definition;
     }
 
+    /**
+     * Return the definition for entity ressource
+     *
+     * @return DefinitionEntity
+     * @throws \RubedoAPI\Exceptions\APIRequestException
+     */
     public function getEntityDefinition()
     {
         if (!isset($this->entityDefinition))
@@ -72,6 +101,15 @@ abstract class AbstractRessource implements IRessource
         return $this->entityDefinition;
     }
 
+    /**
+     * Handle the correct action
+     *
+     * @todo refactor with handleEntity
+     * @param $method
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIRequestException
+     */
     public function handler($method, $params)
     {
         if (!method_exists($this, $method . 'Action'))
@@ -89,6 +127,16 @@ abstract class AbstractRessource implements IRessource
         );
     }
 
+    /**
+     * Handle the correct action for entity
+     *
+     * @todo refactor with handle
+     * @param $id
+     * @param $method
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIRequestException
+     */
     public function handlerEntity($id, $method, $params)
     {
         if (!method_exists($this, $method . 'EntityAction'))
@@ -108,6 +156,8 @@ abstract class AbstractRessource implements IRessource
     }
 
     /**
+     * return the controller context
+     *
      * @return mixed
      */
     public function getContext()
@@ -116,10 +166,14 @@ abstract class AbstractRessource implements IRessource
     }
 
     /**
+     * set the controller context
+     *
      * @param mixed $context
+     * @return $this
      */
     public function setContext($context)
     {
         $this->context = $context;
+        return $this;
     }
 }

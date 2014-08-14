@@ -23,8 +23,15 @@ use RubedoAPI\Rest\V1\AbstractRessource;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
+/**
+ * Class ShippersRessource
+ * @package RubedoAPI\Rest\V1\Ecommerce
+ */
 class ShippersRessource extends AbstractRessource
 {
+    /**
+     * { @inheritdoc }
+     */
     public function __construct()
     {
         parent::__construct();
@@ -49,6 +56,8 @@ class ShippersRessource extends AbstractRessource
     }
 
     /**
+     * Get to ecommerce/shippers
+     *
      * @param $params
      * @throws \RubedoAPI\Exceptions\APIEntityException
      * @return array

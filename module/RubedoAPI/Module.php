@@ -17,13 +17,28 @@
 
 namespace RubedoAPI;
 
+/**
+ * Define RubedoAPI module
+ *
+ * @package RubedoAPI
+ */
 class Module
 {
+    /**
+     * Return RubedoAPI configuration
+     *
+     * @return array
+     */
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
     }
 
+    /**
+     * Return autoloader configuration
+     *
+     * @return array
+     */
     public function getAutoloaderConfig()
     {
         return array(

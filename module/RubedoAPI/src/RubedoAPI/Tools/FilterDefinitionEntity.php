@@ -21,17 +21,44 @@ namespace RubedoAPI\Tools;
 use RubedoAPI\Exceptions\APIFilterException;
 use Zend\Stdlib\JsonSerializable;
 
+/**
+ * Class FilterDefinitionEntity
+ * @package RubedoAPI\Tools
+ */
 class FilterDefinitionEntity implements JsonSerializable
 {
+    /**
+     * @var string
+     */
     protected $key;
+    /**
+     * @var string
+     */
     protected $rename;
+    /**
+     * @var string
+     */
     protected $description;
+    /**
+     * @var bool
+     */
     protected $required = false;
+    /**
+     * @var bool
+     */
     protected $multivalued = false;
+    /**
+     * @var string
+     */
     protected $filter;
-    protected $optionsFilter = [];
+    /**
+     * @var array
+     */
+    protected $optionsFilter = array();
 
     /**
+     * Get description
+     *
      * @return mixed
      */
     public function getDescription()
@@ -40,6 +67,8 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Set description
+     *
      * @param mixed $description
      * @return $this
      */
@@ -50,6 +79,8 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get key
+     *
      * @return mixed
      */
     public function getKey()
@@ -58,6 +89,8 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Set key
+     *
      * @param mixed $key
      * @return $this
      */
@@ -68,6 +101,8 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Set rename
+     *
      * @param mixed $rename
      * @return $this
      */
@@ -78,6 +113,8 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get rename
+     *
      * @return mixed
      */
     public function getRename()
@@ -86,6 +123,8 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Return true if rename is not empty
+     *
      * @return boolean
      */
     public function hasRename()
@@ -94,7 +133,9 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * Return required boolean
+     *
+     * @return boolean
      */
     public function isRequired()
     {
@@ -102,7 +143,9 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
-     * @param mixed $required
+     * Set required
+     *
+     * @param boolean $required
      * @return $this
      */
     public function setRequired($required = true)
@@ -112,7 +155,9 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * Return true if this is a multivalued filter
+     *
+     * @return boolean
      */
     public function isMultivalued()
     {
@@ -120,6 +165,8 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Set multivalued
+     *
      * @param mixed $multivalued
      * @return $this
      */
@@ -131,6 +178,8 @@ class FilterDefinitionEntity implements JsonSerializable
 
 
     /**
+     * Get options for filter
+     *
      * @return mixed
      */
     public function getOptionsFilter()
@@ -139,6 +188,8 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Set options for filter
+     *
      * @param mixed $optionsFilter
      * @return $this
      */
@@ -149,6 +200,8 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get filter
+     *
      * @return mixed
      */
     public function getFilter()
@@ -157,6 +210,8 @@ class FilterDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Set filter
+     *
      * @param mixed $filter
      * @return $this
      */
@@ -166,6 +221,15 @@ class FilterDefinitionEntity implements JsonSerializable
         return $this;
     }
 
+    /**
+     * Filter an value, key is used in throws
+     *
+     * @param $key
+     * @param $value
+     * @return mixed
+     * @throws \RubedoAPI\Exceptions\APIFilterException
+     * @throws \Exception
+     */
     protected function filterElement($key, $value)
     {
         $filterId = filter_id($this->getFilter());
@@ -189,6 +253,14 @@ class FilterDefinitionEntity implements JsonSerializable
         }
     }
 
+    /**
+     * Filter the list
+     *
+     * @param $key
+     * @param $toFilter
+     * @return array|mixed
+     * @throws \RubedoAPI\Exceptions\APIFilterException
+     */
     public function filter($key, $toFilter)
     {
         $filter = $this->getFilter();
@@ -208,6 +280,11 @@ class FilterDefinitionEntity implements JsonSerializable
         return $filtered;
     }
 
+    /**
+     * Return jsonserializable array
+     *
+     * @return array
+     */
     function jsonSerialize()
     {
         $array = [

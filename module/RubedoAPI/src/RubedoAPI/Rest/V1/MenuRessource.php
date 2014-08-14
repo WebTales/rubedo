@@ -22,12 +22,24 @@ use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 use WebTales\MongoFilters\Filter;
 
+/**
+ * Class MenuRessource
+ * @package RubedoAPI\Rest\V1
+ */
 class MenuRessource extends AbstractRessource
 {
+    /**
+     * @var static
+     */
     private $pageService;
+
     private $rootline;
+
     private $excludeFromMenuCondition;
 
+    /**
+     * { @inheritdoc }
+     */
     public function __construct()
     {
         parent::__construct();
@@ -62,6 +74,12 @@ class MenuRessource extends AbstractRessource
         $this->urlService = Manager::getService('Url');
     }
 
+    /**
+     * Get from /menu
+     *
+     * @param $params
+     * @return array
+     */
     public function getAction($params)
     {
         $this->excludeFromMenuCondition = Filter::factory('Not')->setName('excludeFromMenu')->setValue(true);
@@ -113,6 +131,14 @@ class MenuRessource extends AbstractRessource
         ];
     }
 
+    /**
+     * Get pages by level
+     *
+     * @param $rootPage
+     * @param $targetLevel
+     * @param int $currentLevel
+     * @return array
+     */
     protected function _getPagesByLevel($rootPage, $targetLevel, $currentLevel = 1)
     {
         $pages = $this->pageService->readChild($rootPage, $this->excludeFromMenuCondition);

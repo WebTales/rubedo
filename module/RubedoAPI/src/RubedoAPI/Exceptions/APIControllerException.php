@@ -17,6 +17,12 @@
 
 namespace RubedoAPI\Exceptions;
 
+/**
+ * Class APIControllerException
+ * When the API fail due to controller problem
+ *
+ * @package RubedoAPI\Exceptions
+ */
 class APIControllerException extends APIAbstractException
 {
 }

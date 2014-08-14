@@ -17,7 +17,12 @@
 
 namespace RubedoAPI\Exceptions;
 
+/**
+ * Class APIFilterException
+ * When the API fail due to filter problem like string not valid
+ *
+ * @package RubedoAPI\Exceptions
+ */
 class APIFilterException extends APIAbstractException
 {
-
 }

@@ -21,13 +21,32 @@ use Zend\Mvc\Router\Http\RouteInterface;
 use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\Stdlib\RequestInterface;
 
+/**
+ * Class ApiRouter
+ * Used in route configuration
+ *
+ * @package RubedoAPI\Router
+ */
 class ApiRouter implements RouteInterface
 {
+    /**
+     * Assemble URL from params for route of ApiRouter type
+     *
+     * @internal currently not used
+     * @todo implement
+     * @param array $params
+     * @param array $options
+     */
     public function assemble(array $params = array(), array $options = array())
     {
-        //todo: implement this
     }
 
+    /**
+     * Match request to API and call the API controller entry point
+     *
+     * @param RequestInterface $request
+     * @return null|RouteMatch
+     */
     public function match(RequestInterface $request)
     {
         //ensure that no url like /dam or /image can match, without complex queries.
@@ -52,11 +71,22 @@ class ApiRouter implements RouteInterface
         return $match;
     }
 
+    /**
+     * Legacy
+     *
+     * @param array $options
+     * @return static
+     */
     public static function factory($options = array())
     {
         return new static();
     }
 
+    /**
+     * Legacy
+     *
+     * @return mixed
+     */
     public function getAssembledParams()
     {
         return $this->assembledParams;

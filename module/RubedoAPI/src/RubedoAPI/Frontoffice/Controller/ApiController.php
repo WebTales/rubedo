@@ -23,18 +23,17 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 
 /**
- * Front Office Defautl Controller
+ * Class ApiController
  *
- * Invoked when calling front office URL
- *
- * @author jbourdin
- * @category Rubedo
- * @package Rubedo
+ * @package RubedoAPI\Frontoffice\Controller
  */
 class ApiController extends AbstractActionController
 {
     /**
-     * Main Action : render the Front Office view
+     * Entry point for API
+     *
+     * @internal Check if the ressource exist (with namespace), and call handler.
+     * @return JsonModel
      */
     public function indexAction()
     {

@@ -17,6 +17,13 @@
 
 namespace RubedoAPI\Exceptions;
 
+
+/**
+ * Class APIServiceException
+ * When the API fail due to service problem, like service manager fail
+ *
+ * @package RubedoAPI\Exceptions
+ */
 class APIServiceException extends APIAbstractException
 {
 }
