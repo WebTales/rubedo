@@ -17,7 +17,6 @@
 
 namespace RubedoAPI\Router;
 
-use Rubedo\Services\Manager;
 use Zend\Mvc\Router\Http\RouteInterface;
 use Zend\Mvc\Router\Http\RouteMatch;
 use Zend\Stdlib\RequestInterface;
@@ -36,17 +35,18 @@ class ApiRouter implements RouteInterface
             return null;
         if (!preg_match('#^/api/v\d+/.+#', $request->getUri()->getPath()))
             return null;
-        $segmentList = explode('/',trim($request->getUri()->getPath(),'/'));
+        $segmentList = explode('/', trim($request->getUri()->getPath(), '/'));
         $params = array();
         $params['controller'] = 'RubedoApi\\Frontoffice\\Controller\\Api';
         $params['action'] = 'index';
         $params['version'] = $segmentList[1];
         unset($segmentList[0], $segmentList[1]);
-        $params['api'] = &$segmentList;
+        $params['api'] = & $segmentList;
         try {
-            $params['id'] = new \MongoID($segmentList[count($segmentList)+1]); //last element, index start at 2
-            unset ($segmentList[count($segmentList)+1]);
-        } catch(\Exception $e) {}
+            $params['id'] = new \MongoID($segmentList[count($segmentList) + 1]); //last element, index start at 2
+            unset ($segmentList[count($segmentList) + 1]);
+        } catch (\Exception $e) {
+        }
         $match = new RouteMatch($params);
 
         return $match;

@@ -23,14 +23,16 @@ use RubedoAPI\Exceptions\APIFilterException;
 use RubedoAPI\Exceptions\APIRequestException;
 use Zend\Stdlib\JsonSerializable;
 
-class VerbDefinitionEntity implements JsonSerializable {
+class VerbDefinitionEntity implements JsonSerializable
+{
     protected $verb;
     protected $description;
     protected $outputFilters = [];
     protected $inputFilters = [];
     protected $rights = array();
 
-    function __construct($verb) {
+    function __construct($verb)
+    {
         $this
             ->setVerb($verb)
             ->addInputFilter(
@@ -58,8 +60,7 @@ class VerbDefinitionEntity implements JsonSerializable {
                     ->setKey('message')
                     ->setDescription('Informations about the query')
                     ->setFilter('string')
-            )
-        ;
+            );
     }
 
     /**
@@ -105,7 +106,7 @@ class VerbDefinitionEntity implements JsonSerializable {
 
     protected function identityRequired($has = true)
     {
-        $this->editInputFilter('access_token', function(FilterDefinitionEntity &$filter) use ($has) {
+        $this->editInputFilter('access_token', function (FilterDefinitionEntity &$filter) use ($has) {
             $filter->setRequired($has);
         });
         return $this;
@@ -191,7 +192,7 @@ class VerbDefinitionEntity implements JsonSerializable {
                 throw new APIFilterException('"' . $key . '" is required', 500);
             elseif (!array_key_exists($key, $toFilter))
                 continue;
-            $filtered[$filter->hasRename()?$filter->getRename():$key] = $filter->filter($key, $toFilter[$key]);
+            $filtered[$filter->hasRename() ? $filter->getRename() : $key] = $filter->filter($key, $toFilter[$key]);
 
         }
         return $filtered;
@@ -224,6 +225,7 @@ class VerbDefinitionEntity implements JsonSerializable {
         $this->outputFilters[$outputFilter->getKey()] = $outputFilter;
         return $this;
     }
+
     public function editOutputFilter($key, $function)
     {
         if (!isset($this->outputFilters[$key])) {
@@ -256,7 +258,8 @@ class VerbDefinitionEntity implements JsonSerializable {
         return $this->getFiltersSerialized($this->getInputFilters());
     }
 
-    function jsonSerialize() {
+    function jsonSerialize()
+    {
         return [
             'verb' => $this->getVerb(),
             'description' => $this->getDescription(),

@@ -22,7 +22,8 @@ use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
-class PagesRessource extends AbstractRessource {
+class PagesRessource extends AbstractRessource
+{
     public function __construct()
     {
         parent::__construct();
@@ -30,7 +31,7 @@ class PagesRessource extends AbstractRessource {
             ->definition
             ->setName('Pages')
             ->setDescription('Deal with pages')
-            ->editVerb('get', function(VerbDefinitionEntity &$entity) {
+            ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $entity
                     ->setDescription('Get a page and all blocks')
                     ->addInputFilter(
@@ -55,11 +56,10 @@ class PagesRessource extends AbstractRessource {
                         (new FilterDefinitionEntity())
                             ->setKey('site')
                             ->setDescription('Informations about the host')
-                    )
-                ;
-            })
-        ;
+                    );
+            });
     }
+
     public function getAction($params)
     {
         $sitesServices = Manager::getService('Sites');

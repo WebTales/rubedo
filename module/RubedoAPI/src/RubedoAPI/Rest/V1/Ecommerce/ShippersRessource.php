@@ -23,7 +23,8 @@ use RubedoAPI\Rest\V1\AbstractRessource;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
-class ShippersRessource extends AbstractRessource {
+class ShippersRessource extends AbstractRessource
+{
     public function __construct()
     {
         parent::__construct();
@@ -31,23 +32,20 @@ class ShippersRessource extends AbstractRessource {
             ->definition
             ->setName('Shippers')
             ->setDescription('Deal with Shippers')
-            ->editVerb('get', function(VerbDefinitionEntity &$entity) {
+            ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $entity
                     ->setDescription('Get a page and all blocks')
-                    ->editInputFilter('access_token', function(FilterDefinitionEntity &$filter) {
+                    ->editInputFilter('access_token', function (FilterDefinitionEntity &$filter) {
                         $filter
-                            ->setRequired()
-                        ;
+                            ->setRequired();
                     })
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('Shippers')
                             ->setKey('shippers')
                             ->setRequired()
-                    )
-                ;
-            })
-        ;
+                    );
+            });
     }
 
     /**

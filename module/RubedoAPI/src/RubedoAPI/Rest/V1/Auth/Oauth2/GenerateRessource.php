@@ -17,19 +17,19 @@
 
 namespace RubedoAPI\Rest\V1\Auth\Oauth2;
 
-use Rubedo\Services\Manager;
 use RubedoAPI\Rest\V1\AbstractRessource;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
-class GenerateRessource extends AbstractRessource {
+class GenerateRessource extends AbstractRessource
+{
     function __construct()
     {
         parent::__construct();
         $this->definition
             ->setName('Generate token')
             ->setDescription('')
-            ->editVerb('post', function(VerbDefinitionEntity &$entity) {
+            ->editVerb('post', function (VerbDefinitionEntity &$entity) {
                 $entity
                     ->setDescription('')
                     ->addInputFilter(
@@ -49,10 +49,8 @@ class GenerateRessource extends AbstractRessource {
                         (new FilterDefinitionEntity())
                             ->setKey('token')
                             ->setRequired()
-                    )
-                ;
-            })
-        ;
+                    );
+            });
     }
 
     function postAction($params)
@@ -69,6 +67,7 @@ class GenerateRessource extends AbstractRessource {
     {
         return array_intersect_key($token, array_flip(array('access_token', 'refresh_token', 'lifetime', 'createTime')));
     }
+
     protected function subUserFilter(&$user)
     {
         return array_intersect_key($user, array_flip(array('id', 'login')));

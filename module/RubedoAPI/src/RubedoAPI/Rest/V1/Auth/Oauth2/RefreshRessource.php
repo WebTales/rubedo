@@ -21,14 +21,15 @@ use RubedoAPI\Rest\V1\AbstractRessource;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
-class RefreshRessource extends AbstractRessource {
+class RefreshRessource extends AbstractRessource
+{
     function __construct()
     {
         parent::__construct();
         $this->definition
             ->setName('Refresh Oauth2 token')
             ->setDescription('')
-            ->editVerb('post', function(VerbDefinitionEntity &$entity){
+            ->editVerb('post', function (VerbDefinitionEntity &$entity) {
                 $entity
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
@@ -40,10 +41,8 @@ class RefreshRessource extends AbstractRessource {
                         (new FilterDefinitionEntity())
                             ->setKey('token')
                             ->setRequired()
-                    )
-                ;
-            })
-        ;
+                    );
+            });
     }
 
     function postAction($params)
@@ -60,6 +59,7 @@ class RefreshRessource extends AbstractRessource {
     {
         return array_intersect_key($token, array_flip(array('access_token', 'refresh_token', 'lifetime', 'createTime')));
     }
+
     protected function subUserFilter(&$user)
     {
         return array_intersect_key($user, array_flip(array('id', 'login')));

@@ -21,7 +21,8 @@ namespace RubedoAPI\Tools;
 use RubedoAPI\Exceptions\APIFilterException;
 use Zend\Stdlib\JsonSerializable;
 
-class FilterDefinitionEntity implements JsonSerializable {
+class FilterDefinitionEntity implements JsonSerializable
+{
     protected $key;
     protected $rename;
     protected $description;
@@ -106,7 +107,7 @@ class FilterDefinitionEntity implements JsonSerializable {
      */
     public function setRequired($required = true)
     {
-        $this->required = (boolean) $required;
+        $this->required = (boolean)$required;
         return $this;
     }
 
@@ -127,7 +128,6 @@ class FilterDefinitionEntity implements JsonSerializable {
         $this->multivalued = $multivalued;
         return $this;
     }
-
 
 
     /**
@@ -208,7 +208,8 @@ class FilterDefinitionEntity implements JsonSerializable {
         return $filtered;
     }
 
-    function jsonSerialize() {
+    function jsonSerialize()
+    {
         $array = [
             'description' => $this->getDescription(),
         ];
@@ -220,7 +221,7 @@ class FilterDefinitionEntity implements JsonSerializable {
         if ($this->isMultivalued())
             $options[] = 'multivalued';
         if (!empty($options))
-            $array['options'] = &$options;
+            $array['options'] = & $options;
         return $array;
     }
 }

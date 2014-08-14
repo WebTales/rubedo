@@ -24,7 +24,8 @@ use Rubedo\User\Authentication\AuthenticationService;
 use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 
-class Authentication extends AuthenticationService {
+class Authentication extends AuthenticationService
+{
     /** @var  \RubedoAPI\Services\Security\Token */
     protected $tokenService;
     /** @var  \RubedoAPI\Collection\UserTokens */
@@ -32,7 +33,8 @@ class Authentication extends AuthenticationService {
     /** @var \Rubedo\Interfaces\Collection\IUsers */
     protected $usersCollection;
 
-    function __construct(\Zend\Authentication\Storage\StorageInterface $storage = null, \Zend\Authentication\Adapter\AdapterInterface $adapter = null) {
+    function __construct(\Zend\Authentication\Storage\StorageInterface $storage = null, \Zend\Authentication\Adapter\AdapterInterface $adapter = null)
+    {
         parent::__construct($storage, $adapter);
         $this->tokenService = Manager::getService('API\\Services\\Token');
         $this->userTokenCollection = Manager::getService('API\\Collection\\UserTokens');
@@ -60,6 +62,7 @@ class Authentication extends AuthenticationService {
             'user' => $identity,
         );
     }
+
     public function APIRefreshAuth($refreshToken)
     {
         $oldToken = $this->userTokenCollection->findOneByRefreshToken($refreshToken);

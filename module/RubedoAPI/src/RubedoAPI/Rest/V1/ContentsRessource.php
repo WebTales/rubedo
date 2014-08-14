@@ -17,17 +17,17 @@
 
 namespace RubedoAPI\Rest\V1;
 
+use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
-use RubedoAPI\Exceptions\APIEntityException;
 
 /**
  * Class AbstractRessource
  * @package RubedoAPI\Rest\V1
  */
-
-class ContentsRessource extends AbstractRessource {
+class ContentsRessource extends AbstractRessource
+{
 
     public function __construct()
     {
@@ -38,11 +38,11 @@ class ContentsRessource extends AbstractRessource {
     public function getAction($params)
     {
 
-        $queryId = &$params['queryId'];
+        $queryId = & $params['queryId'];
 
         $filters = $this->getQueriesCollection()->getFilterArrayById($queryId);
 
-        if ($filters === false){
+        if ($filters === false) {
             throw new APIEntityException('Query not found', 404);
         }
 
@@ -88,15 +88,15 @@ class ContentsRessource extends AbstractRessource {
 
     protected function outputContentsMask($contents, $params)
     {
-        $fields = isset($params['fields'])?$params['fields'] : array('text','summary','image');
+        $fields = isset($params['fields']) ? $params['fields'] : array('text', 'summary', 'image');
         $urlService = $this->getUrlAPIService();
         $page = $this->getPagesCollection()->findById($params['pageId']);
         $site = $this->getSitesCollection()->findById($params['siteId']);
         $mask = array('isProduct', 'productProperties', 'i18n', 'pageId', 'blockId', 'maskId');
-        foreach ($contents as &$content){
+        foreach ($contents as &$content) {
             $content['fields'] = array_intersect_key($content['fields'], array_flip($fields));
-            $content['detailPageUrl'] = $urlService->displayUrlApi($content,'default', $site,
-                $page, $params['lang']->getLocale(), isset($params['detailPageId'])?$params['detailPageId']:null);
+            $content['detailPageUrl'] = $urlService->displayUrlApi($content, 'default', $site,
+                $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? $params['detailPageId'] : null);
             $content = array_diff_key($content, array_flip($mask));
         }
         return $contents;
@@ -105,22 +105,22 @@ class ContentsRessource extends AbstractRessource {
     protected function getContentList($filters, $pageData, $ismagic = false)
     {
         $filters["sort"] = isset($filters["sort"]) ? $filters["sort"] : array();
-        $contentArray = $this->getContentsCollection()->getOnlineList($filters["filter"], $filters["sort"], $pageData['start'], $pageData['limit'],$ismagic);
+        $contentArray = $this->getContentsCollection()->getOnlineList($filters["filter"], $filters["sort"], $pageData['start'], $pageData['limit'], $ismagic);
         $contentArray['page'] = $pageData;
-        if($contentArray['count']<$pageData['start']){
-            throw new APIEntityException('There is only '.$contentArray['count'].' contents. Start parameter must be inferior of this value', 404);
+        if ($contentArray['count'] < $pageData['start']) {
+            throw new APIEntityException('There is only ' . $contentArray['count'] . ' contents. Start parameter must be inferior of this value', 404);
         }
         return $contentArray;
     }
 
     protected function setPaginationValues($params)
     {
-        $defaultLimit = isset($params['limit'])?$params['limit'] : 6;
-        $defaultStart = isset($params['start'])?$params['start'] : 0;
-        if($defaultStart < 0){
+        $defaultLimit = isset($params['limit']) ? $params['limit'] : 6;
+        $defaultStart = isset($params['start']) ? $params['start'] : 0;
+        if ($defaultStart < 0) {
             throw new APIEntityException('Start paramater must be >= 0', 404);
         }
-        if($defaultLimit < 1){
+        if ($defaultLimit < 1) {
             throw new APIEntityException('Limit paramater must be >= 1', 404);
         }
         $pageData['start'] = $defaultStart;
@@ -192,18 +192,16 @@ class ContentsRessource extends AbstractRessource {
             ->definition
             ->setName('Contents')
             ->setDescription('Deal with contents')
-            ->editVerb('get', function(VerbDefinitionEntity &$definition) {
+            ->editVerb('get', function (VerbDefinitionEntity &$definition) {
                 $this->defineGet($definition);
-            })
-        ;
+            });
         $this
             ->entityDefinition
             ->setName('Content')
             ->setDescription('Works on single content')
-            ->editVerb('get', function(VerbDefinitionEntity &$definition) {
+            ->editVerb('get', function (VerbDefinitionEntity &$definition) {
                 $this->defineEntityGet($definition);
-            })
-        ;
+            });
     }
 
     protected function defineGet(VerbDefinitionEntity &$definition)
@@ -269,8 +267,7 @@ class ContentsRessource extends AbstractRessource {
                 (new FilterDefinitionEntity())
                     ->setKey('count')
                     ->setDescription('Number of all contents')
-            )
-        ;
+            );
     }
 
     protected function defineEntityGet(VerbDefinitionEntity &$definition)
@@ -287,7 +284,6 @@ class ContentsRessource extends AbstractRessource {
                     ->setDescription('The content')
                     ->setKey('content')
                     ->setRequired()
-            )
-        ;
+            );
     }
 }

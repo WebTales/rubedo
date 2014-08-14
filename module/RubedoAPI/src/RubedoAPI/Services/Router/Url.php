@@ -21,9 +21,10 @@ use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIServiceException;
 
 
-class Url extends \Rubedo\Router\Url {
+class Url extends \Rubedo\Router\Url
+{
 
-    public function displayUrlApi($content, $type = "default", $site , $page , $locale, $defaultPage = null)
+    public function displayUrlApi($content, $type = "default", $site, $page, $locale, $defaultPage = null)
     {
         $pageValid = false;
 
@@ -50,7 +51,7 @@ class Url extends \Rubedo\Router\Url {
                     $pageId = $page['id'];
                     if (isset($page['maskId'])) {
                         $mask = Manager::getService('Masks')->findById($page['maskId']);
-                        if (! isset($mask['mainColumnId']) || empty($mask['mainColumnId'])) {
+                        if (!isset($mask['mainColumnId']) || empty($mask['mainColumnId'])) {
                             $pageId = $this->_getDefaultSingleBySiteID($site['id']);
                         }
                     }

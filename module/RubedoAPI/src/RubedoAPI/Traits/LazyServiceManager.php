@@ -36,8 +36,10 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @method \Rubedo\Interfaces\Collection\ISites getSitesCollection() Return current localization service
  * @method \Rubedo\Interfaces\Collection\IQueries getQueriesCollection() Return current localization service
  */
-trait LazyServiceManager {
+trait LazyServiceManager
+{
     protected $callCache = array();
+
     public function __call($method, $arguments)
     {
         if (!isset($this->callCache[$method])) {

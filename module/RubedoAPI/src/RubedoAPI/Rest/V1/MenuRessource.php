@@ -22,7 +22,8 @@ use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 use WebTales\MongoFilters\Filter;
 
-class MenuRessource extends AbstractRessource {
+class MenuRessource extends AbstractRessource
+{
     private $pageService;
     private $rootline;
     private $excludeFromMenuCondition;
@@ -34,7 +35,7 @@ class MenuRessource extends AbstractRessource {
             ->definition
             ->setName('Menu')
             ->setDescription('Deal with menu')
-            ->editVerb('get', function(VerbDefinitionEntity &$entity) {
+            ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $entity
                     ->setDescription('Get a menu tree from id')
                     ->addInputFilter(
@@ -55,15 +56,14 @@ class MenuRessource extends AbstractRessource {
                         (new FilterDefinitionEntity())
                             ->setKey('menu')
                             ->setDescription('The recursive menu')
-                    )
-                ;
-            })
-        ;
+                    );
+            });
         $this->pageService = Manager::getService('Pages');
         $this->urlService = Manager::getService('Url');
     }
 
-    public function getAction($params) {
+    public function getAction($params)
+    {
         $this->excludeFromMenuCondition = Filter::factory('Not')->setName('excludeFromMenu')->setValue(true);
         $urlOptions = array(
             'encode' => true,

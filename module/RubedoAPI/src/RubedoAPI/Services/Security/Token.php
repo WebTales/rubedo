@@ -20,7 +20,8 @@ namespace RubedoAPI\Services\Security;
 use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIServiceException;
 
-class Token {
+class Token
+{
     const LIFETIME = 3600;
     /**
      * @var \RubedoAPI\Collection\UserTokens
@@ -31,6 +32,7 @@ class Token {
      * @var \Rubedo\Interfaces\Security\IHash
      */
     protected $tokenService;
+
     function __construct()
     {
         $this->userTokensCollection = Manager::getService('API\\Collection\\UserTokens');

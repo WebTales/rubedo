@@ -21,6 +21,7 @@ abstract class APIAbstractException extends \Exception
 {
     protected $transparent;
     protected $httpCode;
+
     function __construct($message, $httpCode = 500, $transparent = false)
     {
         parent::__construct($message);
@@ -46,6 +47,6 @@ abstract class APIAbstractException extends \Exception
 
     public function isTransparent()
     {
-        return (bool) $this->transparent;
+        return (bool)$this->transparent;
     }
 }

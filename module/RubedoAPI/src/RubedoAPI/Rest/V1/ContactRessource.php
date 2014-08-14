@@ -23,7 +23,8 @@ use RubedoAPI\Exceptions\APIControllerException;
 use RubedoAPI\Tools\FilterDefinitionEntity;
 use RubedoAPI\Tools\VerbDefinitionEntity;
 
-class ContactRessource extends AbstractRessource {
+class ContactRessource extends AbstractRessource
+{
     function __construct()
     {
         parent::__construct();
@@ -31,7 +32,7 @@ class ContactRessource extends AbstractRessource {
             ->definition
             ->setName('Contact')
             ->setDescription('Send an email to contact')
-            ->editVerb('post', function(VerbDefinitionEntity &$entity) {
+            ->editVerb('post', function (VerbDefinitionEntity &$entity) {
                 $entity
                     ->setDescription('Send an email')
                     ->addInputFilter(
@@ -62,10 +63,8 @@ class ContactRessource extends AbstractRessource {
                             ->setRequired()
                             ->setDescription('Subject is required')
                             ->setFilter('string')
-                    )
-                ;
-            })
-        ;
+                    );
+            });
     }
 
     public function postAction($params)
@@ -90,7 +89,7 @@ class ContactRessource extends AbstractRessource {
 
         // Send e-mail
         $errors = [];
-        if($mailerService->sendMessage($mailerObject, $errors)) {
+        if ($mailerService->sendMessage($mailerObject, $errors)) {
             return [
                 'success' => true,
             ];

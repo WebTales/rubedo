@@ -17,7 +17,6 @@
 
 namespace RubedoAPI\Rest\V1;
 
-use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Interfaces\IRessource;
 use RubedoAPI\Tools\DefinitionEntity;
@@ -27,8 +26,10 @@ use RubedoAPI\Traits\LazyServiceManager;
  * Class AbstractRessource
  * @package RubedoAPI\Rest\V1
  */
-abstract class AbstractRessource implements IRessource {
+abstract class AbstractRessource implements IRessource
+{
     use LazyServiceManager;
+
     protected $context;
 
     /**
@@ -63,6 +64,7 @@ abstract class AbstractRessource implements IRessource {
             throw new APIRequestException('Definition is empty', 405);
         return $this->definition;
     }
+
     public function getEntityDefinition()
     {
         if (!isset($this->entityDefinition))
@@ -87,7 +89,8 @@ abstract class AbstractRessource implements IRessource {
         );
     }
 
-    public function handlerEntity($id, $method, $params) {
+    public function handlerEntity($id, $method, $params)
+    {
         if (!method_exists($this, $method . 'EntityAction'))
             throw new APIRequestException('Verb not implemented for an entity', 405);
         if ($method == 'options')

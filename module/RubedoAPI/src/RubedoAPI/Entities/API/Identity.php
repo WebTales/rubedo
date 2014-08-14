@@ -19,10 +19,12 @@ namespace RubedoAPI\Entities\API;
 
 use RubedoAPI\Traits\LazyServiceManager;
 
-class Identity {
+class Identity
+{
     use LazyServiceManager;
 
-    function __construct($access_token) {
+    function __construct($access_token)
+    {
 
     }
 

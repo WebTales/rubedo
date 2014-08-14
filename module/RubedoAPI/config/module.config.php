@@ -19,11 +19,11 @@ return array(
     'router' => array(
         'routes' => array(
             // route for different frontoffice controllers
-            'api' =>array (
+            'api' => array(
                 'type' => 'RubedoAPI\\Router\\ApiRouter',
-                'options' => array (
+                'options' => array(
                     'defaults' =>
-                        array (
+                        array(
                             '__NAMESPACE__' => 'RubedoAPI\\Frontoffice\\Controller',
                             'controller' => 'Api',
                             'action' => 'index',
@@ -46,7 +46,7 @@ return array(
             'RubedoAPI\\Services\\User\\CurrentUser' => 'RubedoAPI\\Services\\User\\CurrentUser',
             'RubedoAPI\\Services\\Internationalization\\Current' => 'RubedoAPI\\Services\\Internationalization\\Current',
         ),
-        'aliases' => array (
+        'aliases' => array(
             'API\\Collection\\UserTokens' => 'RubedoAPI\\Collection\\UserTokens',
             'API\\Services\\Auth' => 'RubedoAPI\\Services\\Security\\Authentication',
             'AuthenticationService' => 'RubedoAPI\\Services\\Security\\Authentication',

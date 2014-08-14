@@ -20,7 +20,8 @@ namespace RubedoAPI\Entities\API;
 
 use RubedoAPI\Exceptions\APIEntityException;
 
-class Language {
+class Language
+{
     protected $locale;
     protected $fallback;
 

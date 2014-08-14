@@ -21,15 +21,17 @@ namespace RubedoAPI\Services\User;
 use Rubedo\Services\Manager;
 use RubedoAPI\Traits\LazyServiceManager;
 
-class CurrentUser extends \Rubedo\User\CurrentUser {
+class CurrentUser extends \Rubedo\User\CurrentUser
+{
     use LazyServiceManager;
+
     /** @var  array */
     static public $token;
 
     /** @var  \Rubedo\Interfaces\Collection\IUsers */
     protected $usersCollection;
 
-    public function isAuthenticated ()
+    public function isAuthenticated()
     {
         $accessToken = $this->getAccessToken();
         if (!empty($accessToken))
@@ -37,7 +39,7 @@ class CurrentUser extends \Rubedo\User\CurrentUser {
         return parent::isAuthenticated();
     }
 
-    protected function _fetchCurrentUser ()
+    protected function _fetchCurrentUser()
     {
         $serviceReader = Manager::getService('Users');
         $user = $serviceReader->findById($this->getAccessToken()['user']['id']);
@@ -45,7 +47,9 @@ class CurrentUser extends \Rubedo\User\CurrentUser {
             return $user;
         return parent::_fetchCurrentUser();
     }
-    protected function getAccessToken() {
+
+    protected function getAccessToken()
+    {
         if (!isset(static::$token)) {
             $queryArray = Manager::getService('Application')->getRequest()->getQuery()->toArray();
             if (!isset($queryArray['access_token'])) return null;
@@ -56,9 +60,9 @@ class CurrentUser extends \Rubedo\User\CurrentUser {
         return static::$token;
     }
 
-    public function getCurrentUser ()
+    public function getCurrentUser()
     {
-        if (! isset(static::$_currentUser)) {
+        if (!isset(static::$_currentUser)) {
             if ($this->isAuthenticated()) {
                 $user = $this->_fetchCurrentUser();
 

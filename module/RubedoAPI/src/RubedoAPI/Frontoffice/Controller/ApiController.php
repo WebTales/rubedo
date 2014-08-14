@@ -51,12 +51,11 @@ class ApiController extends AbstractActionController
             $routes = $this->params()->fromRoute();
             array_walk(
                 $routes['api'],
-                function (&$item, $key)
-                {
+                function (&$item, $key) {
                     $item = ucfirst($item);
                 }
             );
-            $class = array_pop($routes['api']). 'Ressource';
+            $class = array_pop($routes['api']) . 'Ressource';
             $ressource = 'RubedoAPI\\Rest\\' . mb_strtoupper($routes['version']) . '\\';
             if (!empty($routes['api']))
                 $ressource .= implode('\\', $routes['api']) . '\\';
@@ -80,7 +79,7 @@ class ApiController extends AbstractActionController
             if (isset($routes['id']))
                 return new JsonModel($ressourceObject->handlerEntity($routes['id'], mb_strtolower($method), $params));
             return new JsonModel($ressourceObject->handler(mb_strtolower($method), $params));
-        } catch(APIAbstractException $e) {
+        } catch (APIAbstractException $e) {
             $this->getResponse()->setStatusCode($e->getHttpCode());
             return new JsonModel(
                 array(
