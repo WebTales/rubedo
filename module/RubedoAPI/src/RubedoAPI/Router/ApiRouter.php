@@ -39,8 +39,11 @@ class ApiRouter implements RouteInterface
         $params['action'] = 'index';
         $params['version'] = $segmentList[1];
         unset($segmentList[0], $segmentList[1]);
-        $params['api'] = $segmentList;
-
+        $params['api'] = &$segmentList;
+        try {
+            $params['id'] = new \MongoID($segmentList[count($segmentList)+1]); //last element, index start at 2
+            unset ($segmentList[count($segmentList)+1]);
+        } catch(\Exception $e) {}
         $match = new RouteMatch($params);
 
         return $match;

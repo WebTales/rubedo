@@ -84,7 +84,7 @@ class DefinitionEntity implements JsonSerializable{
     {
         $verb = strtoupper($verb);
         if(!array_key_exists($verb, $this->verbList)) {
-            throw new APIRequestException('Verb undefined', 404);
+            throw new APIRequestException('Verb undefined', 405);
         }
         return $this->verbList[$verb];
     }

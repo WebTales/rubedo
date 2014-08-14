@@ -24,7 +24,7 @@ class Language {
         }
         if (5 == $lengthString) {
             $this->locale = substr($languageString, 0, 2);
-            $this->fallback = substr($languageString, -1, 2);
+            $this->fallback = substr($languageString, -2, 2);
             return;
         }
         throw new APIEntityException('Language value is not compliant', 400);

@@ -11,5 +11,6 @@ namespace RubedoAPI\Interfaces;
 
 interface IRessource {
     public function handler($method, $params);
+    public function handlerEntity($id, $method, $params);
     public function setContext($controller);
 } 

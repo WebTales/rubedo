@@ -3,6 +3,7 @@
 namespace RubedoAPI\Frontoffice\Controller;
 
 use RubedoAPI\Exceptions\APIAbstractException;
+use RubedoAPI\Exceptions\APIRequestException;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 
@@ -46,6 +47,9 @@ class ApiController extends AbstractActionController
                 $ressource .= implode('\\', $routes['api']) . '\\';
             $ressource .= $class;
             /** @var \RubedoAPI\Interfaces\IRessource $ressourceObject */
+            if (!class_exists($ressource)) {
+                throw new APIRequestException('Ressource not exist', 404);
+            }
             $ressourceObject = new $ressource();
 
             $paramsBody = json_decode($this->getRequest()->getContent(), true);
@@ -58,20 +62,25 @@ class ApiController extends AbstractActionController
                 $paramsBody
             );
             $ressourceObject->setContext($this);
-            $result = $ressourceObject->handler(mb_strtolower($method), $params);
+            if (isset($routes['id']))
+                return new JsonModel($ressourceObject->handlerEntity($routes['id'], mb_strtolower($method), $params));
+            return new JsonModel($ressourceObject->handler(mb_strtolower($method), $params));
         } catch(APIAbstractException $e) {
-            $result = [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
             $this->getResponse()->setStatusCode($e->getHttpCode());
+            return new JsonModel(
+                array(
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                )
+            );
         } catch (\Exception $e) {
-            $result = [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
             $this->getResponse()->setStatusCode(500);
+            return new JsonModel(
+                array(
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                )
+            );
         }
-        return new JsonModel($result);
     }
 }
