@@ -208,7 +208,7 @@ class Import extends AbstractCollection
 
     	// Processing Import data taxonomy and localisation fields
     	$this->preProcess ();
-    	
+
     	// Transform taxonomy terms into id
     	$this->turnTermsToId ();
     	
@@ -232,7 +232,7 @@ class Import extends AbstractCollection
     		$response = $this->updateContents();
 
     	}
-    	
+
     	return $response;
     	
     }
@@ -828,29 +828,34 @@ class Import extends AbstractCollection
 	 * Preprocessing Data in Import collection :
 	 * Transform the taxononomy comma separated string into array 
 	 * Transform the localization comma separated lat,lon string into array
-	 * Transform prices with comma separtor to dot separator, cast to float     
+	 * Transform prices with comma separtor to dot separator, cast to float 
+	 * Cast stock and prep delay to int    
 	 */	
 	protected function preProcess () {
 		
-		$code = "castToNumber = function(e, type) {
+		$code = "var castToNumber = function(e, type) {
 			if (e=='') {
 				return null;
 			} else {
-				if (type == 'float') {
-					var = parseFloat(e.replace(',', '.'));
+				switch (type) {
+				case 'float':
+					var response = parseFloat(e.replace(',', '.'));
+					break;
+				case 'int':
+					var response = parseInt(e.replace(',', '.'));
+					break;
+				default:
+					var response = null;
 				}
-				if (type == 'int') {
-					var = parseInt(e.replace(',', '.'));
-				}				
-				if (!isNaN(var)) {
-					return var;
+				if (!isNaN(response)) {
+					return response;
 				} else {
 					return null;
 				}
 			}
 		};";
 		
-		$code = "db.Import.find().snapshot().forEach(function(e){";
+		$code.= "db.Import.find().snapshot().forEach(function(e){";
 			
 		foreach($this->_importAsTaxo as $taxo) {
 			$code.= "e.col".$taxo['csvIndex']." = e.col".$taxo['csvIndex'].".split(',');";
@@ -859,11 +864,11 @@ class Import extends AbstractCollection
 		foreach ($this->_importAsField as $field) {
 				
 			if (isset($field['cType']) && ($field['cType']=='localiserField')) {
-				$code.= "e.col".$field['csvIndex']."= e.col".$field['csvIndex'].".split(',').map(parseFloat);";
+				$code.= "e.col".$field['csvIndex']."= castToNumber(e.col".$field['csvIndex'].",'float');";
 			}
 			
 			if (isset($field['cType']) && (in_array($field['cType'], array('numberField', 'slider', 'ratingField' )))) {
-				$code.= "e.col".$field['csvIndex']."= parseInt(e.col".$field['csvIndex'].".replace(',', '.'));";
+				$code.= "e.col".$field['csvIndex']."= castToNumber(e.col".$field['csvIndex'].",'int');";
 			}
 		
 		}
@@ -970,7 +975,7 @@ class Import extends AbstractCollection
 		
 		$variationFields = Manager::getService("ContentTypes")->getVariationFieldForCType($this->_typeId);
 
-		// 2 Map reduce : one for generic product and one for 
+		// 2 Map reduce : one for generic product and one for variations
 
 		if ($this->uniqueKeyField != 'sku') {
 			$queryProduct = "typeId: '".$this->_typeId."','".$this->uniqueKeyField."': foo._id";
