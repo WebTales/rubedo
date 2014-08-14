@@ -18,7 +18,6 @@
 namespace RubedoAPI\Rest\V1\Auth;
 
 use RubedoAPI\Rest\V1\AbstractRessource;
-use RubedoAPI\Tools\VerbDefinitionEntity;
 
 /**
  * Class Oauth2Ressource
@@ -35,8 +34,7 @@ class Oauth2Ressource extends AbstractRessource
         $this
             ->definition
             ->setName('Oauth2 authentication')
-            ->setDescription('Login by oauth2')
-        ;
+            ->setDescription('Login by oauth2');
     }
 
 }

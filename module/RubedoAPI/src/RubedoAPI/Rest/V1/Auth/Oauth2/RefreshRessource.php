@@ -44,8 +44,7 @@ class RefreshRessource extends AbstractRessource
                             ->setDescription('Create new token from refresh token')
                             ->setKey('refresh_token')
                             ->setRequired()
-                    )
-                ;
+                    );
             });
     }
 

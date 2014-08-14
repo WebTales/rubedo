@@ -17,7 +17,6 @@
 
 namespace RubedoAPI\Services\Security;
 
-use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIServiceException;
 use RubedoAPI\Traits\LazyServiceManager;
 
@@ -28,6 +27,7 @@ use RubedoAPI\Traits\LazyServiceManager;
 class Token
 {
     use LazyServiceManager;
+
     /**
      * token lifetime
      */
