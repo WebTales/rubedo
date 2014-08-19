@@ -14,6 +14,9 @@
     <script src="/components/angular/angular.js/angular.js"></script>
     <script src="/components/angular/angular.js/angular-route.js"></script>
     <script src="/components/angular/angular.js/angular-cookies.js"></script>
+    <?php if ($this->activateMagic) { ?>
+        <script src="components/fingerprintjs/fingerprint.js"></script>
+    <?php } ?>
     <!--frontoffice scripts-->
     <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>
     <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoBlocks/rubedoBlocks.js"></script>

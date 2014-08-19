@@ -190,8 +190,10 @@ class IndexController extends AbstractActionController
         if ($domain && !$this->_site['useBrowserLanguage']) {
             $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
         }
-
-        $this->viewData=array();
+        $config=Manager::getService("config");
+        $this->viewData=array(
+            'activateMagic'=>(isset($config['rubedo_config']['activateMagic'])&&($config['rubedo_config']['activateMagic']=="1")) ? true : false
+        );
         $viewModel = new ViewModel($this->viewData);
         $viewModel->setTerminal(true);
 
