@@ -103,7 +103,40 @@
 							}
 						}
 					]
-				}
+				},
+                {
+                    "categorie":"Infinite Scroll",
+                    "champs":[
+                        {
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Infinite Scroll",
+                                "name":"infiniteScroll",
+                                "inputValue":false
+                            }
+                        },
+                        {
+                            "type":"Ext.form.field.Number",
+                            "config":{
+                                "fieldLabel":"Scroll Threshold",
+                                "name":"scrollThreshold",
+                                "allowDecimals":false,
+                                "minValue":50,
+                                "value":300
+                            }
+                        },
+                        {
+                            "type":"Ext.form.field.Number",
+                            "config":{
+                                "fieldLabel":"Time Threshold",
+                                "allowDecimals":false,
+                                "name":"timeThreshold",
+                                "minValue":50,
+                                "value":200
+                            }
+                        }
+                    ]
+                }
 			],
 			"avance":[
 				{
@@ -125,7 +158,10 @@
 			"showOnlyTitle":false,
             "summaryHeight":80,
             "showPager":true,
-            "filterByUser":false
+            "filterByUser":false,
+            "timeThreshold": 200,
+            "scrollThreshold": 300,
+            "infiniteScroll": false
 		}
 	},
 	"category":"#ext-gen1068#",
