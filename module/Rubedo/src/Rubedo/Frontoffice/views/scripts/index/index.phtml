@@ -18,6 +18,8 @@
     <script src="/components/jquery/htmlClean/jquery.htmlClean.min.js"></script>
     <?php if ($this->activateMagic) { ?>
         <script src="/components/fingerprintjs/fingerprint.js"></script>
+    <?php } if ($this->angularLocale) { ?>
+        <script src="/components/angular/angular.js/i18n/angular-locale_<?php echo $this->angularLocale; ?>.js"></script>
     <?php } ?>
     <!--frontoffice scripts-->
     <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>

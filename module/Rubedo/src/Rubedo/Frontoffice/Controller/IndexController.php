@@ -192,7 +192,8 @@ class IndexController extends AbstractActionController
         }
         $config=Manager::getService("config");
         $this->viewData=array(
-            'activateMagic'=>(isset($config['rubedo_config']['activateMagic'])&&($config['rubedo_config']['activateMagic']=="1")) ? true : false
+            'activateMagic'=>(isset($config['rubedo_config']['activateMagic'])&&($config['rubedo_config']['activateMagic']=="1")) ? true : false,
+            'angularLocale'=>$lang
         );
         $viewModel = new ViewModel($this->viewData);
         $viewModel->setTerminal(true);
