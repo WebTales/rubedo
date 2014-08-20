@@ -19,7 +19,9 @@
         "fingerprintjs":"0.5.3",
         "angular/angular.js":"1.2.21",
         "webtales/rubedo-frontoffice":"dev-master",
-        "twbs/bootstrap":"v3.2.0"
+        "twbs/bootstrap":"v3.2.0",
+        "angular/lrInfiniteScroll.js":"1.0.0",
+        "jquery/htmlClean":"1.4.0"
     },
     "require-dev": {},
     "repositories": [
@@ -126,9 +128,28 @@
                 }
             }
         },
-
-
-
+        {
+            "type": "package",
+            "package": {
+                "name": "angular/lrInfiniteScroll.js",
+                "version": "1.0.0",
+                "dist": {
+                    "url": "https://github.com/lorenzofox3/lrInfiniteScroll/archive/master.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "jquery/htmlClean",
+                "version": "1.4.0",
+                "dist": {
+                    "url": "https://jquery-clean.googlecode.com/files/jQuery.htmlClean_1.4.0.zip",
+                    "type": "zip"
+                }
+            }
+        },
         {
             "type": "vcs",
             "url": "git://github.com/WebTales/rubedo-backoffice-ui.git"

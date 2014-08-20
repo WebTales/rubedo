@@ -13,8 +13,17 @@
     <script src="/components/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/components/angular/angular.js/angular.js"></script>
     <script src="/components/angular/angular.js/angular-route.js"></script>
+    <script src="/components/angular/angular.js/angular-cookies.js"></script>
+    <script src="/components/angular/lrInfiniteScroll.js/lrInfiniteScroll.js"></script>
+    <script src="/components/jquery/htmlClean/jquery.htmlClean.min.js"></script>
+    <?php if ($this->activateMagic) { ?>
+        <script src="/components/fingerprintjs/fingerprint.js"></script>
+    <?php } if ($this->angularLocale) { ?>
+        <script src="/components/angular/angular.js/i18n/angular-locale_<?php echo $this->angularLocale; ?>.js"></script>
+    <?php } ?>
     <!--frontoffice scripts-->
     <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>
+    <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoFields/rubedoFields.js"></script>
     <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoBlocks/rubedoBlocks.js"></script>
     <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedo/rubedo.js"></script>
     <!--base href for angular routing-->
