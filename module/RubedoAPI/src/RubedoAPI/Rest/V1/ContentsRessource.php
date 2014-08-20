@@ -292,6 +292,11 @@ class ContentsRessource extends AbstractRessource
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
+                    ->setKey('dateFieldName')
+                    ->setDescription('Name of the date field')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
                     ->setKey('isMagic')
                     ->setDescription('Property is Magic query')
                     ->setFilter('boolean')
