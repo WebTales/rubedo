@@ -19,8 +19,8 @@ namespace RubedoAPI\Rest\V1;
 
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
-use RubedoAPI\Tools\FilterDefinitionEntity;
-use RubedoAPI\Tools\VerbDefinitionEntity;
+use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
+use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 
 /**
  * Class AbstractRessource

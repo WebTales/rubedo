@@ -20,8 +20,8 @@ namespace RubedoAPI\Rest\V1;
 
 use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIControllerException;
-use RubedoAPI\Tools\FilterDefinitionEntity;
-use RubedoAPI\Tools\VerbDefinitionEntity;
+use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
+use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 
 /**
  * Class ContactRessource

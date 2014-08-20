@@ -19,7 +19,7 @@ namespace RubedoAPI\Rest\V1;
 
 use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Interfaces\IRessource;
-use RubedoAPI\Tools\DefinitionEntity;
+use RubedoAPI\Entities\API\Definition\DefinitionEntity;
 use RubedoAPI\Traits\LazyServiceManager;
 
 /**
@@ -37,12 +37,12 @@ abstract class AbstractRessource implements IRessource
     protected $context;
 
     /**
-     * @var \RubedoAPI\Tools\DefinitionEntity
+     * @var \RubedoAPI\Entities\API\Definition\DefinitionEntity
      */
     protected $definition;
 
     /**
-     * @var \RubedoAPI\Tools\DefinitionEntity
+     * @var \RubedoAPI\Entities\API\Definition\DefinitionEntity
      */
     protected $entityDefinition;
 

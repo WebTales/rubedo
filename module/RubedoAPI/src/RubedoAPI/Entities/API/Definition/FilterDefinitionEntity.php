@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-namespace RubedoAPI\Tools;
+namespace RubedoAPI\Entities\API\Definition;
 
 
 use RubedoAPI\Exceptions\APIFilterException;
@@ -23,7 +23,7 @@ use Zend\Stdlib\JsonSerializable;
 
 /**
  * Class FilterDefinitionEntity
- * @package RubedoAPI\Tools
+ * @package RubedoAPI\Entities\API\Definition
  */
 class FilterDefinitionEntity implements JsonSerializable
 {

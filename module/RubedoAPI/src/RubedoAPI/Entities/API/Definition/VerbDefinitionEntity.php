@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-namespace RubedoAPI\Tools;
+namespace RubedoAPI\Entities\API\Definition;
 
 
 use RubedoAPI\Exceptions\APIEntityException;
@@ -25,7 +25,7 @@ use Zend\Stdlib\JsonSerializable;
 
 /**
  * Class VerbDefinitionEntity
- * @package RubedoAPI\Tools
+ * @package RubedoAPI\Entities\API\Definition
  */
 class VerbDefinitionEntity implements JsonSerializable
 {
@@ -206,7 +206,7 @@ class VerbDefinitionEntity implements JsonSerializable
     /**
      * Add input filter
      *
-     * @param \RubedoAPI\Tools\FilterDefinitionEntity $inputFilter
+     * @param \RubedoAPI\Entities\API\Definition\FilterDefinitionEntity $inputFilter
      * @return $this
      */
     public function addInputFilter(FilterDefinitionEntity $inputFilter)
@@ -297,7 +297,7 @@ class VerbDefinitionEntity implements JsonSerializable
     /**
      * Add output filter
      *
-     * @param \RubedoAPI\Tools\FilterDefinitionEntity $outputFilter
+     * @param \RubedoAPI\Entities\API\Definition\FilterDefinitionEntity $outputFilter
      * @return $this
      */
     public function addOutputFilter(FilterDefinitionEntity $outputFilter)
