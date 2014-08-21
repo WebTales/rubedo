@@ -123,7 +123,7 @@ class XhrAuthenticationController extends AbstractActionController
         try {
             $params = $blockController->xhrRecoverPassword($params);
             $output['success'] = true;
-            $output['msg'] = 'Blocks.Auth.Email.SentAuto';
+            $output['msg'] = 'Blocks.Auth.EmailHasBeenSent';
             if (!isset($params['user'])) {
                 $output['success'] = false;
                 $output['msg'] = 'Blocks.Auth.Xhr.SendToken.UserNotExist';
