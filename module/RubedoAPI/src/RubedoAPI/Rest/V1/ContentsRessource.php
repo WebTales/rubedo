@@ -21,6 +21,8 @@ use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
+use WebTales\MongoFilters\Filter;
+
 
 /**
  * Class AbstractRessource
@@ -51,6 +53,50 @@ class ContentsRessource extends AbstractRessource
         $queryId = & $params['queryId'];
 
         $filters = $this->getQueriesCollection()->getFilterArrayById($queryId);
+
+        if (isset($params['date']) && isset($params['dateFieldName'])){
+            $dateArray = getdate($params['date']);
+            $mounth = $dateArray['mon'];
+            $year = $dateArray['year'];
+            $date = new \DateTime();
+            $date->setDate($year,$mounth,1);
+            $date->setTime(0,0,0);
+            $timestamp = (string) $date->getTimestamp();
+            if ($mounth < 12){
+                $date->setDate($year, $mounth + 1, 1);
+            } else {
+                $date->setDate($year + 1, 1, 1);
+            }
+            $nextMonthTimeStamp = (string) $date->getTimestamp();
+
+            $eventStartInCurrentlyMonth = Filter::factory('And')
+                ->addFilter(Filter::factory('OperatorTovalue')->setName('fields.'.$params['dateFieldName'])
+                    ->setOperator('$gte')
+                    ->setValue($timestamp))
+                ->addFilter(Filter::factory('OperatorTovalue')->setName('fields.'.$params['dateFieldName'])
+                    ->setOperator('$lt')
+                    ->setValue($nextMonthTimeStamp));
+
+            if(isset($params['endDateFieldName'])){
+                $eventStartingBeforeCurrenltyMonth = Filter::factory('And')
+                    ->addFilter(Filter::factory('OperatorTovalue')
+                        ->setName('fields.'.$params['dateFieldName'])
+                        ->setOperator('$lt')
+                        ->setValue($timestamp))
+                ->addFilter(Filter::factory('OperatorTovalue')
+                    ->setName('fields.'.$params['endDateFieldName'])
+                    ->setOperator('$gte')
+                    ->setValue($timestamp));
+
+                $eventsInMonth = Filter::factory('Or')
+                    ->addFilter($eventStartingBeforeCurrenltyMonth)
+                    ->addFilter($eventStartInCurrentlyMonth);
+            } else {
+                $eventsInMonth = $eventStartInCurrentlyMonth;
+            }
+            $filters['filter']->addFilter($eventsInMonth);
+        }
+
 
         if ($filters === false) {
             throw new APIEntityException('Query not found', 404);
@@ -293,7 +339,17 @@ class ContentsRessource extends AbstractRessource
             ->addInputFilter(
                 (new FilterDefinitionEntity())
                     ->setKey('dateFieldName')
-                    ->setDescription('Name of the date field')
+                    ->setDescription('Name of the date field for the query')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('date')
+                    ->setDescription('Date filter for the query')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('endDateFieldName')
+                    ->setDescription('Name of the end date field for the query')
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())

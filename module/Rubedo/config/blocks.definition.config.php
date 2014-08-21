@@ -172,11 +172,6 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/siteMap.json'
     ),
-    'twig' => array(
-        'controller' => 'Rubedo\\Blocks\\Controller\\Twig',
-        'maxlifeTime' => 86400,
-        'definitionFile' => $blocksPath . '/twig.json'
-    ),
     'twitter' => array(
         'controller' => 'Rubedo\\Blocks\\Controller\\Twitter',
         'maxlifeTime' => 60,
