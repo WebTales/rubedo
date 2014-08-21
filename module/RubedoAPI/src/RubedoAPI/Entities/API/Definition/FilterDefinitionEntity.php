@@ -224,24 +224,28 @@ class FilterDefinitionEntity implements JsonSerializable
     /**
      * Filter an value, key is used in throws
      *
-     * @param $key
      * @param $value
-     * @return mixed
      * @throws \RubedoAPI\Exceptions\APIFilterException
      * @throws \Exception
+     * @internal param $key
+     * @return mixed
      */
-    protected function filterElement($key, $value)
+    protected function filterElement($value)
     {
         $filterId = filter_id($this->getFilter());
         if ($filterId !== false) {
             $filtered = filter_var($value, $filterId, $this->getOptionsFilter());
-            if ($filtered === false) {
-                throw new APIFilterException('Filter "' . $key . '" failed', 500);
+
+            if ($filterId !== FILTER_VALIDATE_BOOLEAN && $filtered === false) {
+                throw new APIFilterException('Filter "' . $this->getKey() . '" failed', 500);
             }
             return $filtered;
         } else {
             try {
                 $objToTest = $this->getFilter();
+                if (!class_exists($objToTest)) {
+                    throw new APIFilterException('Filter "' . $this->getKey() . '" failed (class not exist)', 500);
+                }
                 $var = new $objToTest($value);
                 return $var;
             } catch (\Exception $e) {
@@ -256,26 +260,26 @@ class FilterDefinitionEntity implements JsonSerializable
     /**
      * Filter the list
      *
-     * @param $key
      * @param $toFilter
-     * @return array|mixed
      * @throws \RubedoAPI\Exceptions\APIFilterException
+     * @internal param $key
+     * @return array|mixed
      */
-    public function filter($key, $toFilter)
+    public function filter($toFilter)
     {
         $filter = $this->getFilter();
         if (empty($filter))
             return $toFilter;
         $isArray = is_array($toFilter);
         if ($isArray && !$this->isMultivalued())
-            throw new APIFilterException('"' . $key . '" is not multivaluable.', 500);
+            throw new APIFilterException('"' . $this->getKey() . '" is not multivaluable.', 500);
         elseif ($isArray) {
             $filtered = [];
             foreach ($toFilter as $key => $value) {
-                $filtered[filter_var($key, FILTER_SANITIZE_STRING)] = $this->filterElement($key, $value);
+                $filtered[filter_var($key, FILTER_SANITIZE_STRING)] = $this->filterElement($value);
             }
         } else {
-            $filtered = $this->filterElement($key, $toFilter);
+            $filtered = $this->filterElement($toFilter);
         }
         return $filtered;
     }

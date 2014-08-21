@@ -274,7 +274,7 @@ class VerbDefinitionEntity implements JsonSerializable
                 throw new APIFilterException('"' . $key . '" is required', 500);
             elseif (!array_key_exists($key, $toFilter))
                 continue;
-            $filtered[$filter->hasRename() ? $filter->getRename() : $key] = $filter->filter($key, $toFilter[$key]);
+            $filtered[$filter->hasRename() ? $filter->getRename() : $key] = $filter->filter($toFilter[$key]);
 
         }
         return $filtered;
@@ -301,7 +301,7 @@ class VerbDefinitionEntity implements JsonSerializable
                 throw new APIFilterException('"' . $key . '" must be back.', 500);
             elseif (!array_key_exists($key, $toFilter))
                 continue;
-            $filtered[$key] = $filter->filter($key, $toFilter[$key]);
+            $filtered[$key] = $filter->filter($toFilter[$key]);
 
         }
         return $filtered;
