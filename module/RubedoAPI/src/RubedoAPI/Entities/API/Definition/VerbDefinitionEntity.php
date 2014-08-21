@@ -204,6 +204,19 @@ class VerbDefinitionEntity implements JsonSerializable
     }
 
     /**
+     * Get output filter
+     *
+     * @param $key
+     * @return FilterDefinitionEntity
+     */
+    public function getOutputFilter($key)
+    {
+        if (!isset($this->outputFilters[$key]))
+            return new FilterDefinitionEntity();
+        return $this->outputFilters[$key];
+    }
+
+    /**
      * Add input filter
      *
      * @param \RubedoAPI\Entities\API\Definition\FilterDefinitionEntity $inputFilter
