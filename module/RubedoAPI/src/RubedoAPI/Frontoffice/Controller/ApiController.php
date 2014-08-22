@@ -37,15 +37,6 @@ class ApiController extends AbstractActionController
      */
     public function indexAction()
     {
-        $method = null;
-        if (method_exists($this->getRequest(), 'getMethod')) {
-            $method = $this->getRequest()->getMethod();
-        } else {
-            return new JsonModel([
-                'success' => false,
-                'message' => 'Method not exist',
-            ]);
-        }
         try {
             $routes = $this->params()->fromRoute();
             array_walk(
@@ -72,14 +63,26 @@ class ApiController extends AbstractActionController
                 list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
             $params = array_merge_recursive(
                 $this->getRequest()->getServer()->toArray(),
+                $routes,
                 $this->params()->fromQuery(),
                 $this->params()->fromPost(),
                 $paramsBody
             );
             $ressourceObject->setContext($this);
+            $method = null;
+            if (isset($routes['method'])) {
+                $method = mb_strtolower($routes['method']);
+            } elseif (method_exists($this->getRequest(), 'getMethod')) {
+                $method = mb_strtolower($this->getRequest()->getMethod());
+            } else {
+                return new JsonModel([
+                    'success' => false,
+                    'message' => 'Method not exist',
+                ]);
+            }
             if (isset($routes['id']))
-                return new JsonModel($ressourceObject->handlerEntity($routes['id'], mb_strtolower($method), $params));
-            return new JsonModel($ressourceObject->handler(mb_strtolower($method), $params));
+                return new JsonModel($ressourceObject->handlerEntity($routes['id'], $method, $params));
+            return new JsonModel($ressourceObject->handler($method, $params));
         } catch (APIAbstractException $e) {
             $this->getResponse()->setStatusCode($e->getHttpCode());
             return new JsonModel(

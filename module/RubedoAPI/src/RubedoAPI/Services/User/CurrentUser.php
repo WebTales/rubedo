@@ -72,11 +72,21 @@ class CurrentUser extends \Rubedo\User\CurrentUser
         if (!isset(static::$token)) {
             $queryArray = Manager::getService('Application')->getRequest()->getQuery()->toArray();
             if (!isset($queryArray['access_token'])) return null;
-            $accessToken = $this->getUserTokensAPICollection()->findOneByAccessToken($queryArray['access_token']);
-            if (empty($accessToken)) return null;
-            return static::$token = $accessToken;
+            $this->setAccessToken($queryArray['access_token']);
         }
         return static::$token;
+    }
+
+    /**
+     * Hack to refresh user
+     *
+     * @param $access_token
+     */
+    public function setAccessToken($access_token)
+    {
+        static::$token = $this->getUserTokensAPICollection()->findOneByAccessToken($access_token);
+        static::$_currentUser = null;
+        static::$_currentUserId = null;
     }
 
     /**

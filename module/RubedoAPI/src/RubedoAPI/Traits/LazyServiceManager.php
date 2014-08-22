@@ -37,6 +37,8 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @method \Rubedo\Interfaces\Collection\IQueries getQueriesCollection() Return current localization service
  * @method \Rubedo\Interfaces\Security\IHash getHashService() Return current localization service
  * @method \Zend\Mvc\Application getApplicationService() Return current application
+ * @method \Rubedo\Interfaces\Collection\IUsers getUsersCollection() Return Users collection
+ * @method \Rubedo\Interfaces\Security\IAcl getAclService() Return ACL service
  */
 trait LazyServiceManager
 {

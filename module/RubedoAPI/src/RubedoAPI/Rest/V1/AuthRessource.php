@@ -16,6 +16,8 @@
  */
 
 namespace RubedoAPI\Rest\V1;
+use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
+use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 
 /**
  * Class AuthRessource
@@ -32,7 +34,23 @@ class AuthRessource extends AbstractRessource
         $this
             ->definition
             ->setName('Authentication')
-            ->setDescription('Login in the Rubedo API');
+            ->setDescription('Login in the Rubedo API')
+            ->editVerb('get', function (VerbDefinitionEntity &$entity) {
+                $entity
+                    ->identityRequired()
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setDescription('Can I access to Backoffice ?')
+                            ->setKey('boAccess')
+                    )
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setDescription('Can I edit ?')
+                            ->setKey('canEdit')
+                    )
+                ;
+
+            });
     }
 
     /**
@@ -46,6 +64,21 @@ class AuthRessource extends AbstractRessource
         return array_merge(parent::optionsAction(), $this->getAuthMeans());
     }
 
+    /**
+     * Return Rights for front
+     *
+     * @param $params
+     * @return array
+     */
+    public function getAction($params)
+    {
+
+        return array(
+            'success' => true,
+            'boAccess' => $this->getAclService()->hasAccess('ui.backoffice'),
+            'canEdit' => $this->getAclService()->hasAccess('write.frontoffice.contents'),
+        );
+    }
     /**
      * return authentication means and API uri
      *
