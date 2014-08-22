@@ -55,19 +55,24 @@ class ContentsRessource extends AbstractRessource
         $filters = $this->getQueriesCollection()->getFilterArrayById($queryId);
 
         if (isset($params['date']) && isset($params['dateFieldName'])){
-            $dateArray = getdate($params['date']);
-            $mounth = $dateArray['mon'];
-            $year = $dateArray['year'];
-            $date = new \DateTime();
-            $date->setDate($year,$mounth,1);
-            $date->setTime(0,0,0);
-            $timestamp = (string) $date->getTimestamp();
-            if ($mounth < 12){
-                $date->setDate($year, $mounth + 1, 1);
+            if(isset($params['endDate'])){
+                $timestamp = $params['date'];
+                $nextMonthTimeStamp = $params['endDate'];
             } else {
-                $date->setDate($year + 1, 1, 1);
+                $dateArray = getdate($params['date']);
+                $mounth = $dateArray['mon'];
+                $year = $dateArray['year'];
+                $date = new \DateTime();
+                $date->setDate($year,$mounth,1);
+                $date->setTime(0,0,0);
+                $timestamp = (string) $date->getTimestamp();
+                if ($mounth < 12){
+                    $date->setDate($year, $mounth + 1, 1);
+                } else {
+                    $date->setDate($year + 1, 1, 1);
+                }
+                $nextMonthTimeStamp = (string) $date->getTimestamp();
             }
-            $nextMonthTimeStamp = (string) $date->getTimestamp();
 
             $eventStartInCurrentlyMonth = Filter::factory('And')
                 ->addFilter(Filter::factory('OperatorTovalue')->setName('fields.'.$params['dateFieldName'])
@@ -343,13 +348,18 @@ class ContentsRessource extends AbstractRessource
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
+                    ->setKey('endDateFieldName')
+                    ->setDescription('Name of the endDate field for the query')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
                     ->setKey('date')
                     ->setDescription('Date filter for the query')
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
-                    ->setKey('endDateFieldName')
-                    ->setDescription('Name of the end date field for the query')
+                    ->setKey('endDate')
+                    ->setDescription('endDate filter for the query')
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
