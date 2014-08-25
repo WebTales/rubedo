@@ -7,51 +7,7 @@
 		"flex":1,
 		"champsConfig":{
 			"simple":[
-				{
-					"categorie":"#ext-gen1072#",
-					"champs":[
-						{
-							"type":"Ext.ux.TreePicker",
-							"config":{
-								"fieldLabel":"#ext-gen1073#",
-								"name":"singlePage"
-							}
-						},
-						{
-							"type":"Ext.form.field.Number",
-							"config":{
-								"fieldLabel":"#ext-gen1089#",
-								"name":"imageWidth",
-								"allowDecimals":false,
-								"minValue":0
-							}
-						},
-						{
-							"type":"Ext.form.field.Number",
-							"config":{
-								"fieldLabel":"#ext-gen1090#",
-								"name":"imageHeight",
-								"allowDecimals":false,
-								"minValue":0
-							}
-						},
-						{
-							"type":"Ext.form.field.ComboBox",
-							"config":{
-								"fieldLabel":"#ext-gen1091#",
-								"name":"mode",
-								"editable":false,
-								"forceSelection":true,
-								"queryMode":"local",
-								"store":[
-									"boxed",
-									"crop",
-									"morph"
-								]
-							}
-						}
-					]
-				},
+
 				{
 					"categorie":"#ext-gen1068#",
 					"champs":[
@@ -61,7 +17,14 @@
 								"fieldLabel":"#ext-gen1093#",
 								"name":"query"
 							}
-						},{
+						},
+                        {
+                            "type":"Ext.ux.TreePicker",
+                            "config":{
+                                "fieldLabel":"#ext-gen1073#",
+                                "name":"singlePage"
+                            }
+                        },{
                                 "type": "Ext.form.field.Text",
                                 "config": {
                                     "fieldLabel": "#ext-gen1405#",
@@ -75,54 +38,122 @@
                                 "name":"magicQuery",
                                 "inputValue":true
                             }
+                        },{
+                            "type":"Ext.form.field.Number",
+                            "config":{
+                                "fieldLabel":"#ext-gen1095#",
+                                "name":"pageSize",
+                                "allowDecimals":false,
+                                "minValue":0
+                            }
+                        },
+                        {
+                            "type":"Ext.form.field.Number",
+                            "config":{
+                                "fieldLabel":"#ext-gen1096#",
+                                "allowDecimals":false,
+                                "name":"resultsSkip",
+                                "minValue":1
+                            }
                         }
 					]
 				},
 				{
-					"categorie":"#ext-gen1094#",
+					"categorie":"Display options",
 					"champs":[
-						{
-							"type":"Ext.form.field.Number",
-							"config":{
-								"fieldLabel":"#ext-gen1095#",
-								"name":"pageSize",
-								"allowDecimals":false,
-								"minValue":0
-							}
-						},
-						{
-							"type":"Ext.form.field.Number",
-							"config":{
-								"fieldLabel":"#ext-gen1096#",
-								"allowDecimals":false,
-								"name":"resultsSkip",
-								"minValue":1
-							}
-						},
+
 						{
 							"type":"Ext.form.field.Checkbox",
 							"config":{
-								"fieldLabel":"#ext-gen1097#",
+								"fieldLabel":"Show paging",
 								"name":"showPager",
 								"inputValue":true
 							}
-						}
+						},{
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Show paging numbers",
+                                "name":"showPagingNumbers",
+                                "inputValue":true
+                            }
+                        },{
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Show navigation",
+                                "name":"showNavigation",
+                                "inputValue":true
+                            }
+                        },{
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Show caption",
+                                "name":"showCaption",
+                                "inputValue":true
+                            }
+                        },{
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Show summary",
+                                "name":"showSummary",
+                                "inputValue":true
+                            }
+                        },{
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Autoplay",
+                                "name":"autoPlay",
+                                "inputValue":true
+                            }
+                        },{
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Stop on hover",
+                                "name":"stopOnHover",
+                                "inputValue":true
+                            }
+                        },{
+                            "type":"Ext.form.field.Number",
+                            "config":{
+                                "fieldLabel":"#ext-gen1090#",
+                                "name":"imageHeight",
+                                "allowDecimals":false,
+                                "minValue":0
+                            }
+                        },
+                        {
+                            "type":"Ext.form.field.ComboBox",
+                            "config":{
+                                "fieldLabel":"Image resize mode",
+                                "name":"imageResizeMode",
+                                "editable":false,
+                                "forceSelection":true,
+                                "queryMode":"local",
+                                "store":[
+                                    "boxed",
+                                    "crop",
+                                    "morph"
+                                ]
+                            }
+                        }
 					]
 				}
 			],
 			"avance":[
-				{
-					"categorie":"#ext-gen1072#",
-					"champs":[
-						{
-							"type":"Ext.form.field.Text",
-							"config":{
-								"fieldLabel":"#ext-gen1082#",
-								"name":"displayType"
-							}
-						}
-					]
-				}
+                {
+                    "categorie":"Template",
+                    "champs":[
+                        {
+                            "type":"Rubedo.view.ACEField",
+                            "config":{
+                                "fieldLabel":"Custom template",
+                                "name":"customTemplate",
+                                "defaultTemplateUrl":"carousel.html",
+                                "twigMode":false
+
+                            }
+                        }
+                    ]
+                }
 			]
 		},
 		"configBloc":{
