@@ -39,6 +39,7 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @method \Zend\Mvc\Application getApplicationService() Return current application
  * @method \Rubedo\Interfaces\Collection\IUsers getUsersCollection() Return Users collection
  * @method \Rubedo\Interfaces\Security\IAcl getAclService() Return ACL service
+ * @method \RubedoAPI\Services\Security\Token getTokenAPIService() Return ACL service
  */
 trait LazyServiceManager
 {

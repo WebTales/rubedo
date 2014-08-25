@@ -23,6 +23,7 @@ use Rubedo\User\Authentication\Adapter\CoreAdapter;
 use Rubedo\User\Authentication\AuthenticationService;
 use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
+use RubedoAPI\Traits\LazyServiceManager;
 
 /**
  * Class Authentication
@@ -30,27 +31,7 @@ use RubedoAPI\Exceptions\APIEntityException;
  */
 class Authentication extends AuthenticationService
 {
-    /** @var  \RubedoAPI\Services\Security\Token */
-    protected $tokenService;
-    /** @var  \RubedoAPI\Collection\UserTokens */
-    protected $userTokenCollection;
-    /** @var \Rubedo\Interfaces\Collection\IUsers */
-    protected $usersCollection;
-
-    /**
-     * Legacy
-     *
-     * @param \Zend\Authentication\Storage\StorageInterface $storage
-     * @param \Zend\Authentication\Adapter\AdapterInterface $adapter
-     */
-    function __construct(\Zend\Authentication\Storage\StorageInterface $storage = null, \Zend\Authentication\Adapter\AdapterInterface $adapter = null)
-    {
-        parent::__construct($storage, $adapter);
-        $this->tokenService = Manager::getService('API\\Services\\Token');
-        $this->userTokenCollection = Manager::getService('API\\Collection\\UserTokens');
-        $this->usersCollection = Manager::getService('Users');
-
-    }
+    use LazyServiceManager;
 
     /**
      * Authentication with login/password to generate token
@@ -72,9 +53,9 @@ class Authentication extends AuthenticationService
             throw new APIAuthException('Bad credentials', 401);
         }
         Events::getEventManager()->trigger(self::SUCCESS);
-        Manager::getService('CurrentUser')->getToken();
+        $this->getCurrentUserAPIService()->getToken();
         $identity = $result->getIdentity();
-        $myToken = $this->tokenService->generateBearerToken($identity['id']);
+        $myToken = $this->getTokenAPIService()->generateBearerToken($identity['id']);
         return array(
             'token' => $myToken,
             'user' => $identity,
@@ -90,12 +71,12 @@ class Authentication extends AuthenticationService
      */
     public function APIRefreshAuth($refreshToken)
     {
-        $oldToken = $this->userTokenCollection->findOneByRefreshToken($refreshToken);
-        $user = $this->usersCollection->findById($oldToken['user']['id']);
+        $oldToken = $this->getUserTokensAPICollection()->findOneByRefreshToken($refreshToken);
+        $user = $this->getUsersCollection()->findById($oldToken['user']['id']);
         if (empty($user))
             throw new APIEntityException('User not found', 404);
-        $myToken = $this->tokenService->generateBearerToken($oldToken['user']['id']);
-        $this->userTokenCollection->destroy($oldToken);
+        $myToken = $this->getTokenAPIService()->generateBearerToken($oldToken['user']['id']);
+        $this->getUserTokensAPICollection()->destroy($oldToken);
         return array(
             'token' => $myToken,
             'user' => $user,
