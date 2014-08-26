@@ -112,6 +112,12 @@ class SearchRessource extends AbstractRessource
         $query->init();
         $results = $query->search($params, 'dam');
 
+        foreach ($results['data'] as $key => $value) {
+            $results['data'][$key]['fileSize'] = $this->humanfilesize($value['fileSize']);
+            $urlService = $this->getUrlAPIService();
+            $results['data'][$key]['url'] = $urlService->mediaUrl($results['data'][$key]['id']);
+        }
+
         return [
             'success' => true,
             'media' => $results,
@@ -119,4 +125,20 @@ class SearchRessource extends AbstractRessource
         ];
     }
 
+    protected function humanfilesize ($bytes, $decimals = 0)
+    {
+        $size = array(
+            'B',
+            'kB',
+            'MB',
+            'GB',
+            'TB',
+            'PB',
+            'EB',
+            'ZB',
+            'YB'
+        );
+        $factor = floor((strlen($bytes[0]) - 1) / 3);
+        return sprintf("%.{$decimals}f", $bytes[0] / pow(1024, $factor)) . @$size[$factor];
+    }
 }
