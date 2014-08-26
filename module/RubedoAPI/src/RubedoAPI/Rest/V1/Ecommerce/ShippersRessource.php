@@ -65,7 +65,7 @@ class ShippersRessource extends AbstractRessource
     public function getAction($params)
     {
         $user = $params['identity']->getUser();
-        if (!isset($user['shippingAddresse']) || !isset($user['shippingAddresse']['country']))
+        if (!isset($user['shippingAddress']) || !isset($user['shippingAddress']['country']))
             throw new APIEntityException('User\'s country is mandatory');
 
         $items = 0;
@@ -74,6 +74,7 @@ class ShippersRessource extends AbstractRessource
         foreach ($myCart as $value) {
             $items = $items + $value['amount'];
         }
+
         $myShippers = Manager::getService("Shippers")->getApplicableShippers($user['shippingAddress']['country'], $items);
         if (empty($myShippers))
             throw new APIEntityException('No shippers', 404);

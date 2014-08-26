@@ -135,7 +135,7 @@ class VerbDefinitionEntity implements JsonSerializable
      *
      * @return bool
      */
-    protected function hasIdentityRequired()
+    public function hasIdentityRequired()
     {
         return $this->getInputFilter('access_token')->isRequired();
     }
