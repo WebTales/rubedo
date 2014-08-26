@@ -38,7 +38,7 @@ class CurrentTest extends \PHPUnit_Framework_TestCase {
     {
         $lang = new Language('fr');
         $this->currentLocalization->injectLocalization(array('lang' => $lang));
-        $this->assertEquals('all', AbstractLocalizableCollection::getLocalizationStrategy());
+        $this->assertEquals('onlyOne', AbstractLocalizableCollection::getLocalizationStrategy());
         $this->assertEquals(null, AbstractLocalizableCollection::getFallbackLocale());
 
         $this->assertEquals('fr', AbstractLocalizableCollection::getWorkingLocale());
