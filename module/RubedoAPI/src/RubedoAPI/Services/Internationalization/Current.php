@@ -46,6 +46,8 @@ class Current extends \Rubedo\Internationalization\Current
         if ($lang->hasFallback()) {
             AbstractLocalizableCollection::setLocalizationStrategy('fallback');
             AbstractLocalizableCollection::setFallbackLocale($lang->getFallback());
+        } else {
+            AbstractLocalizableCollection::setLocalizationStrategy('onlyOne');
         }
 
         AbstractLocalizableCollection::setWorkingLocale($lang->getLocale());
