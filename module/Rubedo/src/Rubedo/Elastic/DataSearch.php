@@ -892,13 +892,18 @@ class DataSearch extends DataAbstract implements IDataSearch {
 				$elasticaQuery->addFacet ( $elasticaFacetField );
 			}
 		}
-		
-		// Add pagination
-		if (is_numeric ( $this->_params ['pagesize'] )) {
-			$elasticaQuery->setSize ( $this->_params ['pagesize'] );
-			$elasticaQuery->setFrom ( $this->_params ['pager'] * $this->_params ['pagesize'] );
-		}
-		
+
+        if (isset($this->_params['start'])&&isset($this->_params['limit'])){
+            $elasticaQuery->setSize ( $this->_params ['limit'] );
+            $elasticaQuery->setFrom ( $this->_params ['start'] );
+        } else {
+            // Add pagination
+            if (is_numeric ( $this->_params ['pagesize'] )) {
+                $elasticaQuery->setSize ( $this->_params ['pagesize'] );
+                $elasticaQuery->setFrom ( $this->_params ['pager'] * $this->_params ['pagesize'] );
+            }
+        }
+
 		// add sort
 		$elasticaQuery->setSort ( array (
 				$this->_params ['orderby'] => array( 'order' => strtolower ( $this->_params ['orderbyDirection'] ), "ignore_unmapped" => true )

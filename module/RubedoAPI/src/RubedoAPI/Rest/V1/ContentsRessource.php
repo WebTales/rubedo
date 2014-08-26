@@ -25,7 +25,7 @@ use WebTales\MongoFilters\Filter;
 
 
 /**
- * Class AbstractRessource
+ * Class ContentsRessource
  * @package RubedoAPI\Rest\V1
  */
 class ContentsRessource extends AbstractRessource
