@@ -40,13 +40,8 @@ class AuthRessource extends AbstractRessource
                     ->identityRequired()
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
-                            ->setDescription('Can I access to Backoffice ?')
-                            ->setKey('boAccess')
-                    )
-                    ->addOutputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setDescription('Can I edit ?')
-                            ->setKey('canEdit')
+                            ->setDescription('My rights')
+                            ->setKey('rights')
                     )
                 ;
 
@@ -75,8 +70,10 @@ class AuthRessource extends AbstractRessource
 
         return array(
             'success' => true,
-            'boAccess' => $this->getAclService()->hasAccess('ui.backoffice'),
-            'canEdit' => $this->getAclService()->hasAccess('write.frontoffice.contents'),
+            'rights' => array(
+                'boAccess' => $this->getAclService()->hasAccess('ui.backoffice'),
+                'canEdit' => $this->getAclService()->hasAccess('write.frontoffice.contents'),
+            ),
         );
     }
     /**

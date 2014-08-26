@@ -52,16 +52,6 @@ class GenerateRessource extends AbstractRessource
                             ->setDescription('Password for the user')
                             ->setKey('PHP_AUTH_PW')
                             ->setRequired()
-                    )
-                    ->addOutputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setDescription('Can I access to Backoffice ?')
-                            ->setKey('boAccess')
-                    )
-                    ->addOutputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setDescription('Can I edit ?')
-                            ->setKey('canEdit')
                     );
             });
     }
@@ -77,7 +67,7 @@ class GenerateRessource extends AbstractRessource
         $output = array('success' => true);
         $response = $this->getAuthAPIService()->APIAuth($params['PHP_AUTH_USER'], $params['PHP_AUTH_PW']);
         $request = $this->getApplicationService()->getRequest();
-        $query = $request->getQuery();//->getQuery()->toArray();
+        $query = $request->getQuery();
         $request->setQuery($query);
         $output['token'] = $this->subTokenFilter($response['token']);
         $output['token']['user'] = $this->subUserFilter($response['user']);
@@ -88,7 +78,7 @@ class GenerateRessource extends AbstractRessource
         //Hack Refresh currentUser
         $this->getCurrentUserAPIService()->setAccessToken($output['token']['access_token']);
         $rightsSubRequest = $this->getContext()->forward()->dispatch('RubedoAPI\\Frontoffice\\Controller\\Api', $route);
-        $output = array_merge($rightsSubRequest->getVariables(), $output);
+        $output['token']['user']['rights'] = $rightsSubRequest->getVariables()['rights'];
         return $output;
     }
 }
