@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title ng-bind-template="{{rubedo.current.page.text}}"></title>
     <!--css-->
+    <link rel="stylesheet" href="/components/jtrussell/angular-snap.js-bower/angular-snap.min.css">
     <link rel="stylesheet" href="/components/twbs/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/components/webtales/rubedo-frontoffice/css/rubedo.css">
     <link href='/components/jquery/fullcalendar/fullcalendar.css' rel='stylesheet' />
     <link href='/components/jquery/fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
     <link rel="stylesheet" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.theme.css">
+    <link rel="stylesheet" href="/components/vitalets/angular-xeditable/dist/css/xeditable.css">
     <!--library scripts-->
     <script src="/components/jquery/jquery/jquery-1.11.1.min.js"></script>
     <script src="/components/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -26,6 +28,9 @@
     <script src='/components/jquery/fullcalendar/lang/en-gb.js'></script>
     <script src='/components/jquery/fullcalendar/lang/fr.js'></script>
     <script src='/components/OwlFonk/OwlCarousel/owl-carousel/owl.carousel.min.js'></script>
+    <script src='/components/jakiestfu/Snap.js/snap.min.js'></script>
+    <script src='/components/jtrussell/angular-snap.js-bower/angular-snap.min.js'></script>
+    <script src='/components/vitalets/angular-xeditable/dist/js/xeditable.min.js'></script>
     <?php if ($this->activateMagic) { ?>
         <script src="/components/fingerprintjs/fingerprint.js"></script>
     <?php } if ($this->angularLocale) { ?>
@@ -40,6 +45,16 @@
     <base href="/">
 </head>
 <body>
-<div ng-view></div>
+    <snap-drawer ng-if="rubedo.current.user.rights.canEdit" class="rubedo-admin-drawer">
+        <ng-include src="'/components/webtales/rubedo-frontoffice/templates/admin/admin.html'"></ng-include>
+    </snap-drawer>
+    <snap-content snap-options="rubedo.snapOpts" class="rubedo-page-holder">
+        <button ng-if="rubedo.current.user.rights.canEdit" ng-click="rubedo.toggleAdminPanel()" class="btn btn-default rubedo-admin-btn">
+            <img alt="Admin" title="Admin" src="/components/webtales/rubedo-frontoffice/img/salamander.png">
+        </button>
+        <div ng-view></div>
+    </snap-content>
+    <ng-include src="'/components/webtales/rubedo-frontoffice/templates/modals.html'"></ng-include>
+
 </body>
 </html>
