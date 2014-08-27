@@ -47,6 +47,9 @@
         <ng-include src="'/components/webtales/rubedo-frontoffice/templates/admin/admin.html'"></ng-include>
     </snap-drawer>
     <snap-content snap-options="rubedo.snapOpts" class="rubedo-page-holder">
+        <button ng-if="rubedo.current.user.rights.canEdit" ng-click="rubedo.toggleAdminPanel()" class="btn btn-default rubedo-admin-btn">
+            <img alt="Admin" title="Admin" src="/components/webtales/rubedo-frontoffice/img/salamander.png">
+        </button>
         <div ng-view></div>
     </snap-content>
     <ng-include src="'/components/webtales/rubedo-frontoffice/templates/modals.html'"></ng-include>
