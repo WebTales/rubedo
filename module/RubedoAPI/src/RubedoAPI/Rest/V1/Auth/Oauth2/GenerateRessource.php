@@ -66,13 +66,10 @@ class GenerateRessource extends AbstractRessource
     {
         $output = array('success' => true);
         $response = $this->getAuthAPIService()->APIAuth($params['PHP_AUTH_USER'], $params['PHP_AUTH_PW']);
-        $request = $this->getApplicationService()->getRequest();
-        $query = $request->getQuery();
-        $request->setQuery($query);
         $output['token'] = $this->subTokenFilter($response['token']);
         $output['token']['user'] = $this->subUserFilter($response['user']);
         $route = $this->getContext()->params()->fromRoute();
-        $route['api'] = array(2 => 'auth');
+        $route['api'] = array('auth');
         $route['method'] = 'GET';
         $route['access_token'] = $output['token']['access_token'];
         //Hack Refresh currentUser
