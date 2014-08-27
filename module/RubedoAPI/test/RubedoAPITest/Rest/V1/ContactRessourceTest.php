@@ -5,15 +5,30 @@ namespace RubedoAPITest\Rest\V1;
 use Rubedo\Services\Manager;
 use RubedoAPI\Rest\V1\ContactRessource;
 
+class SwiftObjectToMock extends \Swift_Message {
+    function __construct()
+    {
+
+    }
+}
+
 class ContactRessourceTest extends \PHPUnit_Framework_TestCase {
     /**
      * @var \RubedoAPI\Rest\V1\ContactRessource
      */
     protected $ressource;
+    protected $mockMailingList;
+    protected $mockMailer;
+    protected $mockMailerObject;
 
     function setUp()
     {
         $this->ressource = new ContactRessource();
+        $this->mockMailingList = $this->getMock('Rubedo\Collection\MailingList');
+        $this->mockMailer = $this->getMock('Rubedo\Mail\Mailer');
+        $this->mockMailerObject = $this->getMock('RubedoAPITest\Rest\V1\SwiftObjectToMock');
+        Manager::setMockService('MailingList', $this->mockMailingList);
+        Manager::setMockService('Mailer', $this->mockMailer);
         parent::setUp();
     }
 
@@ -26,5 +41,84 @@ class ContactRessourceTest extends \PHPUnit_Framework_TestCase {
     public function testDefinition()
     {
         $this->assertNotNull($this->ressource->getDefinition()->getVerb('post'));
+    }
+
+    /**
+     * @expectedException \RubedoAPI\Exceptions\APIControllerException
+     */
+    public function testPostActionMailingListEmpty()
+    {
+        $this->mockMailingList
+            ->expects($this->once())
+            ->method('findById')
+            ->will($this->returnValue(array()));
+        $this->ressource->postAction(
+            array(
+                'mailingListId' => 'mailingListId',
+            )
+        );
+    }
+
+    public function testPostAction()
+    {
+        $this->mockMailerObject
+            ->expects($this->once())
+            ->method('setTo')
+            ->will(
+                $this->returnValue(null)
+            );
+        $this->mockMailerObject
+            ->expects($this->once())
+            ->method('setFrom')
+            ->will(
+                $this->returnValue(null)
+            );
+        $this->mockMailerObject
+            ->expects($this->once())
+            ->method('setSubject')
+            ->will(
+                $this->returnValue(null)
+            );
+        $this->mockMailerObject
+            ->expects($this->once())
+            ->method('setBody')
+            ->will(
+                $this->returnValue(null)
+            );
+        $this->mockMailer
+            ->expects($this->once())
+            ->method('getNewMessage')
+            ->will(
+                $this->returnValue(
+                    $this->mockMailerObject
+                )
+            );
+        $this->mockMailingList
+            ->expects($this->once())
+            ->method('findById')
+            ->will(
+                $this->returnValue(
+                    array(
+                        'replyToAddress' => 'foo@localhost.localdomain',
+                    )
+                )
+            );
+        $this->mockMailer
+            ->expects($this->once())
+            ->method('sendMessage')
+            ->will(
+                $this->returnValue(true)
+            );
+        $postResult = $this->ressource->postAction(
+            array(
+                'mailingListId' => 'mailingListId',
+                'from' => 'From',
+                'subject' => 'Subject',
+                'fields' => array(
+                    'toto' => 'Toto',
+                ),
+            )
+        );
+        $this->assertArrayHasKey('success', $postResult);
     }
 } 
