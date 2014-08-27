@@ -62,7 +62,7 @@ class RefreshRessource extends AbstractRessource
         $output['token']['user'] = $this->subUserFilter($response['user']);
         $this->getCurrentUserAPIService()->setAccessToken($output['token']['access_token']);
         $route = $this->getContext()->params()->fromRoute();
-        $route['api'] = array(2 => 'auth');
+        $route['api'] = array('auth');
         $route['method'] = 'GET';
         $route['access_token'] = $output['token']['access_token'];
         $rightsSubRequest = $this->getContext()->forward()->dispatch('RubedoAPI\\Frontoffice\\Controller\\Api', $route);
