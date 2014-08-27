@@ -17,21 +17,21 @@
 
 namespace RubedoAPI\Rest\V1\Media;
 
-use Rubedo\Services\Manager;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
-use RubedoAPI\Rest\V1\AbstractRessource;
+use RubedoAPI\Rest\V1\SearchRessource as GlobalSearch;
 use Zend\Json\Json;
 
 /**
  * Class SearchRessource
  * @package RubedoAPI\Rest\V1\Media
  */
-class SearchRessource extends AbstractRessource
+class SearchRessource extends GlobalSearch
 {
     public function __construct()
     {
         parent::__construct();
+        $this->searchOption = 'dam';
         $this
             ->definition
             ->setName('Media')
@@ -41,88 +41,34 @@ class SearchRessource extends AbstractRessource
                     ->setDescription('Get a list of media using Elastic Search')
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('sort')
-                            ->setDescription('Sort parameter, must be \'asc\' or \'desc\'')
-                    )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
                             ->setKey('facets')
                             ->setDescription('Json array facets')
-                    )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setKey('siteId')
-                            ->setDescription('Id of the site')
-                            ->setFilter('\\MongoId')
-                    )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setKey('constrainToSite')
-                            ->setDescription('Property to constrain to the site given with siteId')
-                            ->setFilter('boolean')
-                    )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setKey('start')
-                            ->setDescription('Item\'s index number to start')
-                            ->setFilter('int')
-                    )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setKey('limit')
-                            ->setDescription('How much contents to return')
-                            ->setFilter('int')
-                    )
-                    ->addOutputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setKey('media')
-                            ->setDescription('List of media')
-                    )
-                    ->addOutputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setKey('count')
-                            ->setDescription('Number of all media')
                     );
             });
     }
 
-    public function getAction($queryParams)
+    protected function setFacetsParams(&$params, $queryParams)
     {
-        $params = array(
-            'orderByDirection' => isset($queryParams['sort']) ? $queryParams['sort'] : 'asc',
-            'limit' => isset($queryParams['limit']) ? $queryParams['limit'] : 25,
-            'start' => isset($queryParams['start']) ? $queryParams['start'] : 0,
-        );
-
-        if (isset($queryParams['constrainToSite']) && isset($queryParams['siteId'])) {
-            $params['navigation'][] = $queryParams['siteId'];
-        }
-
+        $facetsToHide = array();
         if (isset($queryParams['facets'])) {
             $predefParamsArray = Json::decode($queryParams['facets'], Json::TYPE_ARRAY);
             if (is_array($predefParamsArray)) {
                 foreach ($predefParamsArray as $key => $value) {
                     $params[$key] = $value;
+                    $facetsToHide[] = $key;
                 }
             }
         }
+        return $facetsToHide;
+    }
 
-        \Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
-        $query = Manager::getService('ElasticDataSearch');
-        $query->init();
-        $results = $query->search($params, 'dam');
-
+    protected function injectDataInResults(&$results)
+    {
         foreach ($results['data'] as $key => $value) {
             $results['data'][$key]['fileSize'] = $this->humanfilesize($value['fileSize']);
             $urlService = $this->getUrlAPIService();
             $results['data'][$key]['url'] = $urlService->mediaUrl($results['data'][$key]['id']);
         }
-
-        return [
-            'success' => true,
-            'media' => $results,
-            'count' => $results['total']
-        ];
     }
 
     protected function humanfilesize ($bytes, $decimals = 0)
