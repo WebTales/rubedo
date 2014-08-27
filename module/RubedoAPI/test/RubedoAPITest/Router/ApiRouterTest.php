@@ -20,13 +20,15 @@ namespace RubedoAPITest\Router;
 use RubedoAPI\Router\ApiRouter;
 use Zend\Http\PhpEnvironment\Request;
 
-class ApiRouterTest extends \PHPUnit_Framework_TestCase {
+class ApiRouterTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var \RubedoAPI\Router\ApiRouter
      */
     protected $router;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->router = new ApiRouter();
     }
 

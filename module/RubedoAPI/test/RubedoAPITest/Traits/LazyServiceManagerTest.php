@@ -20,8 +20,10 @@ namespace RubedoAPITest\Traits;
 use Rubedo\Services\Manager;
 use RubedoAPI\Traits\LazyServiceManager;
 
-class LazyServiceManagerTest extends \PHPUnit_Framework_TestCase {
+class LazyServiceManagerTest extends \PHPUnit_Framework_TestCase
+{
     use LazyServiceManager;
+
     public function tearDown()
     {
         Manager::resetMocks();
@@ -31,6 +33,7 @@ class LazyServiceManagerTest extends \PHPUnit_Framework_TestCase {
     {
         parent::setUp();
     }
+
     /**
      * @expectedException \Zend\ServiceManager\Exception\ServiceNotFoundException
      */

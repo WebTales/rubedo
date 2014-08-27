@@ -20,9 +20,12 @@ namespace RubedoAPITest\Collection;
 use Rubedo\Services\Manager;
 use RubedoAPI\Collection\UserTokens;
 
-class ExtendedUserTokens extends UserTokens {}
+class ExtendedUserTokens extends UserTokens
+{
+}
 
-class UserTokensTest extends \PHPUnit_Framework_TestCase {
+class UserTokensTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @var ExtendedUserTokens
@@ -50,7 +53,8 @@ class UserTokensTest extends \PHPUnit_Framework_TestCase {
         $this->userTokens = new ExtendedUserTokens();
     }
 
-    public function testExtends() {
+    public function testExtends()
+    {
         $this->assertInstanceOf('\Rubedo\Collection\AbstractCollection', $this->userTokens);
     }
 

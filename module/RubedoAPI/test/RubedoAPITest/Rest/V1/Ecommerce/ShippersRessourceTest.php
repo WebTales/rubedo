@@ -22,7 +22,8 @@ use Rubedo\Services\Manager;
 use RubedoAPI\Entities\API\Identity;
 use RubedoAPI\Rest\V1\Ecommerce\ShippersRessource;
 
-class ShippersRessourceTest extends \PHPUnit_Framework_TestCase {
+class ShippersRessourceTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @var \RubedoAPI\Rest\V1\Ecommerce\ShippersRessource

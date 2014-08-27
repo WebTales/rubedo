@@ -16,7 +16,8 @@
  */
 
 namespace RubedoAPI\Rest\V1;
-class Foo extends AbstractRessource {
+class Foo extends AbstractRessource
+{
     function __construct()
     {
         echo 'MY FOO';
@@ -31,7 +32,8 @@ use Zend\Http\PhpEnvironment\Request;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\RouteMatch;
 
-class ApiControllerTest extends \PHPUnit_Framework_TestCase {
+class ApiControllerTest extends \PHPUnit_Framework_TestCase
+{
     protected $controller;
     protected $request;
     protected $response;
@@ -46,7 +48,8 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $this->routeMatch();
     }
 
-    private function routeMatch(array $array = array()) {
+    private function routeMatch(array $array = array())
+    {
         $array = array_merge(array(
             'controller' => 'RubedoApi\\Frontoffice\\Controller\\Api',
             'action' => 'index',

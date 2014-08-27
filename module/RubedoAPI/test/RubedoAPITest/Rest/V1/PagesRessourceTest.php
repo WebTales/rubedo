@@ -20,7 +20,8 @@ namespace RubedoAPITest\Rest\V1;
 use Rubedo\Services\Manager;
 use RubedoAPI\Rest\V1\PagesRessource;
 
-class PagesRessourceTest extends \PHPUnit_Framework_TestCase {
+class PagesRessourceTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var \RubedoAPI\Rest\V1\PagesRessource
      */

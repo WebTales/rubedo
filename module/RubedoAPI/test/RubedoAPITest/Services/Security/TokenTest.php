@@ -19,13 +19,16 @@ namespace RubedoAPITest\Services\Security;
 
 use RubedoAPI\Services\Security\Token;
 
-class ExtendedSecurityToken extends Token {
-    public function newToken($userId) {
+class ExtendedSecurityToken extends Token
+{
+    public function newToken($userId)
+    {
         return parent::newToken($userId);
     }
 }
 
-class TokenTest extends \PHPUnit_Framework_TestCase {
+class TokenTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var ExtendedSecurityToken
      */
@@ -36,6 +39,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase {
         $this->tokenService = new ExtendedSecurityToken();
         parent::setUp();
     }
+
     public function testNewToken()
     {
         $this->assertNotEquals($this->tokenService->newToken('foo'), $this->tokenService->newToken('foo'));

@@ -18,10 +18,11 @@
 namespace RubedoAPITest\Services\Internationalization;
 
 use Rubedo\Collection\AbstractLocalizableCollection;
-use RubedoAPI\Services\Internationalization\Current;
 use RubedoAPI\Entities\API\Language;
+use RubedoAPI\Services\Internationalization\Current;
 
-class CurrentTest extends \PHPUnit_Framework_TestCase {
+class CurrentTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var \RubedoAPI\Services\Internationalization\Current
      */

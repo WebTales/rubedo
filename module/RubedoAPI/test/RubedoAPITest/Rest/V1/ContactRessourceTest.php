@@ -20,14 +20,16 @@ namespace RubedoAPITest\Rest\V1;
 use Rubedo\Services\Manager;
 use RubedoAPI\Rest\V1\ContactRessource;
 
-class SwiftObjectToMock extends \Swift_Message {
+class SwiftObjectToMock extends \Swift_Message
+{
     function __construct()
     {
 
     }
 }
 
-class ContactRessourceTest extends \PHPUnit_Framework_TestCase {
+class ContactRessourceTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var \RubedoAPI\Rest\V1\ContactRessource
      */

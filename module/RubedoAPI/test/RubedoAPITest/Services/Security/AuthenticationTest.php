@@ -20,7 +20,8 @@ namespace RubedoAPITest\Services\Security;
 use Rubedo\Services\Manager;
 use RubedoAPI\Services\Security\Authentication;
 
-class AuthenticationTest extends \PHPUnit_Framework_TestCase {
+class AuthenticationTest extends \PHPUnit_Framework_TestCase
+{
     protected $mockDataAccessService;
     /**
      * @var \RubedoAPI\Services\Security\Authentication

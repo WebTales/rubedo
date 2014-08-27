@@ -19,7 +19,8 @@ namespace RubedoAPITest\Entities\API;
 
 use RubedoAPI\Entities\API\Language;
 
-class LanguageTest extends \PHPUnit_Framework_TestCase {
+class LanguageTest extends \PHPUnit_Framework_TestCase
+{
 
     public function testConstructWithFallback()
     {

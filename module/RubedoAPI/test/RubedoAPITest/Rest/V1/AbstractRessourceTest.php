@@ -18,11 +18,15 @@
 namespace RubedoAPITest\Rest\V1;
 
 
-class ExtendedAbstractRessource extends \RubedoAPI\Rest\V1\AbstractRessource {
+class ExtendedAbstractRessource extends \RubedoAPI\Rest\V1\AbstractRessource
+{
 
-};
+}
 
-class AbstractRessourceTest extends \PHPUnit_Framework_TestCase {
+;
+
+class AbstractRessourceTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var ExtendedAbstractRessource
      */
@@ -44,11 +48,12 @@ class AbstractRessourceTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('RubedoAPI\Entities\API\Definition\DefinitionEntity', $this->ressource->getEntityDefinition());
     }
 
-    function class_uses_deep($class, $autoload = true) {
+    function class_uses_deep($class, $autoload = true)
+    {
         $traits = [];
         do {
             $traits = array_merge(class_uses($class, $autoload), $traits);
-        } while($class = get_parent_class($class));
+        } while ($class = get_parent_class($class));
         foreach ($traits as $trait => $same) {
             $traits = array_merge(class_uses($trait, $autoload), $traits);
         }

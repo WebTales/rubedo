@@ -20,11 +20,13 @@ namespace RubedoAPITest\Entities\API\Definition;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 
-class ExtendedVerbDefinitionEntity extends VerbDefinitionEntity {
+class ExtendedVerbDefinitionEntity extends VerbDefinitionEntity
+{
     public function hasIdentityRequired()
     {
         return parent::hasIdentityRequired();
     }
+
     public function identityRequired($bool = true)
     {
         parent::identityRequired($bool);
@@ -32,11 +34,13 @@ class ExtendedVerbDefinitionEntity extends VerbDefinitionEntity {
     }
 }
 
-class VerbDefinitionEntityTest extends \PHPUnit_Framework_TestCase {
+class VerbDefinitionEntityTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var ExtendedVerbDefinitionEntity
      */
     public $verbDefinitionEntity;
+
     public function setUp()
     {
         $this->verbDefinitionEntity = new ExtendedVerbDefinitionEntity('foo');
@@ -107,20 +111,20 @@ class VerbDefinitionEntityTest extends \PHPUnit_Framework_TestCase {
     {
         $filter = new FilterDefinitionEntity();
         $filter
-            ->setKey('foo')
-            ;
+            ->setKey('foo');
         $this->verbDefinitionEntity->addInputFilter($filter);
         $this->verbDefinitionEntity->addOutputFilter($filter);
         $this->assertArrayHasKey('foo', $this->verbDefinitionEntity->getInputFilters());
         $this->assertArrayHasKey('foo', $this->verbDefinitionEntity->getOutputFilters());
     }
 
-    public function testEditFilter() {
+    public function testEditFilter()
+    {
         $newFilter = new FilterDefinitionEntity();
         $newFilter->setKey('foo');
         $this->verbDefinitionEntity->addInputFilter($newFilter);
         $this->assertEquals(false, $this->verbDefinitionEntity->getInputFilter('foo')->isRequired());
-        $this->verbDefinitionEntity->editInputFilter('foo', function(FilterDefinitionEntity &$filter) {
+        $this->verbDefinitionEntity->editInputFilter('foo', function (FilterDefinitionEntity &$filter) {
             $filter->setRequired();
         });
         $this->assertEquals(true, $this->verbDefinitionEntity->getInputFilter('foo')->isRequired());
@@ -130,7 +134,7 @@ class VerbDefinitionEntityTest extends \PHPUnit_Framework_TestCase {
         $newFilter->setKey('foo');
         $this->verbDefinitionEntity->addOutputFilter($newFilter);
         $this->assertEquals(false, $this->verbDefinitionEntity->getOutputFilter('foo')->isRequired());
-        $this->verbDefinitionEntity->editOutputFilter('foo', function(FilterDefinitionEntity &$filter) {
+        $this->verbDefinitionEntity->editOutputFilter('foo', function (FilterDefinitionEntity &$filter) {
             $filter->setRequired();
         });
         $this->assertEquals(true, $this->verbDefinitionEntity->getOutputFilter('foo')->isRequired());
@@ -146,13 +150,11 @@ class VerbDefinitionEntityTest extends \PHPUnit_Framework_TestCase {
         $filterBoolean = new FilterDefinitionEntity();
         $filterBoolean
             ->setKey('boolean')
-            ->setFilter('boolean')
-        ;
+            ->setFilter('boolean');
         $filterString = new FilterDefinitionEntity();
         $filterString
             ->setKey('string')
-            ->setFilter('string')
-        ;
+            ->setFilter('string');
         $this->verbDefinitionEntity->addInputFilter($filterBoolean);
         $this->verbDefinitionEntity->addOutputFilter($filterBoolean);
 

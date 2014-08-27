@@ -19,9 +19,12 @@ namespace RubedoAPITest\Entities\API\Definition;
 
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 
-class ExtendedFilterDefinition extends FilterDefinitionEntity {}
+class ExtendedFilterDefinition extends FilterDefinitionEntity
+{
+}
 
-class FilterDefinitionEntityTest extends \PHPUnit_Framework_TestCase {
+class FilterDefinitionEntityTest extends \PHPUnit_Framework_TestCase
+{
     /** @var  ExtendedFilterDefinition */
     public $filterDefinition;
 
@@ -115,8 +118,7 @@ class FilterDefinitionEntityTest extends \PHPUnit_Framework_TestCase {
         $this->filterDefinition
             ->setFilter('string')
             ->setMultivalued()
-            ->setRequired()
-        ;
+            ->setRequired();
         $array = $this->filterDefinition->jsonSerialize();
         $this->assertArrayHasKey('description', $array);
         $this->assertArrayHasKey('filter', $array);

@@ -19,12 +19,16 @@ namespace RubedoAPITest\Services\Router;
 
 use Rubedo\Services\Manager;
 
-class Url extends \RubedoAPI\Services\Router\Url {
-    public function url(array $urlOptions = array(), $name = NULL, $reset = false, $encode = true) {
+class Url extends \RubedoAPI\Services\Router\Url
+{
+    public function url(array $urlOptions = array(), $name = NULL, $reset = false, $encode = true)
+    {
         return 'bar';
     }
 }
-class UrlTest extends \PHPUnit_Framework_TestCase {
+
+class UrlTest extends \PHPUnit_Framework_TestCase
+{
     protected $mockPageContentService;
     protected $mockSitesService;
     protected $mockPagesService;
@@ -45,6 +49,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase {
         Manager::setMockService('Route', $this->mockRouterService);
         parent::setUp();
     }
+
     public function tearDown()
     {
         Manager::resetMocks();

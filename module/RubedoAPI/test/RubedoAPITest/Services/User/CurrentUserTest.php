@@ -19,7 +19,8 @@ namespace RubedoAPITest\Services\User;
 
 use RubedoAPI\Services\User\CurrentUser;
 
-class CurrentUserTest extends \PHPUnit_Framework_TestCase {
+class CurrentUserTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var CurrentUser
      */

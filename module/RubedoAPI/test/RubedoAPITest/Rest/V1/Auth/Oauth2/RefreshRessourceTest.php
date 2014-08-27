@@ -22,11 +22,13 @@ use RubedoAPI\Frontoffice\Controller\ApiController;
 use RubedoAPI\Rest\V1\Auth\Oauth2\RefreshRessource;
 
 if (!class_exists('RubedoAPITest\Rest\V1\Auth\Oauth2\TrustAPIController')) {
-    class TrustAPIController extends ApiController {
+    class TrustAPIController extends ApiController
+    {
         function params()
         {
             return false;
         }
+
         function forward()
         {
             return true;
@@ -35,13 +37,16 @@ if (!class_exists('RubedoAPITest\Rest\V1\Auth\Oauth2\TrustAPIController')) {
 }
 
 if (!class_exists('RubedoAPITest\Rest\V1\Auth\Oauth2\Forward')) {
-    class Forward extends \Zend\Mvc\Controller\Plugin\Forward {
+    class Forward extends \Zend\Mvc\Controller\Plugin\Forward
+    {
         public function __construct()
-        {}
+        {
+        }
     }
 }
 
-class RefreshRessourceTest extends \PHPUnit_Framework_TestCase {
+class RefreshRessourceTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var \RubedoAPI\Rest\V1\Auth\Oauth2\RefreshRessource
      */

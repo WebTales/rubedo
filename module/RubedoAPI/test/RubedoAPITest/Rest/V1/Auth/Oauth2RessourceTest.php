@@ -20,7 +20,8 @@ namespace RubedoAPITest\Rest\V1\Auth;
 use Rubedo\Services\Manager;
 use RubedoAPI\Rest\V1\Auth\Oauth2Ressource;
 
-class Oauth2RessourceTest extends \PHPUnit_Framework_TestCase {
+class Oauth2RessourceTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @var \RubedoAPI\Rest\V1\Auth\Oauth2Ressource
      */

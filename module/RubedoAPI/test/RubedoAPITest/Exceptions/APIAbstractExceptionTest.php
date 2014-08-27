@@ -19,9 +19,12 @@ namespace RubedoAPITest\Exceptions;
 
 use RubedoAPI\Exceptions\APIAbstractException;
 
-class ExtendedAPIAbstractException extends APIAbstractException {}
+class ExtendedAPIAbstractException extends APIAbstractException
+{
+}
 
-class APIAbstractExceptionTest extends \PHPUnit_Framework_TestCase {
+class APIAbstractExceptionTest extends \PHPUnit_Framework_TestCase
+{
 
     public function testConstruct()
     {

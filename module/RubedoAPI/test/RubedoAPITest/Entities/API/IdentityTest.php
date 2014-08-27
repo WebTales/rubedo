@@ -19,7 +19,8 @@ namespace RubedoAPITest\Entities\API;
 
 use RubedoAPI\Entities\API\Identity;
 
-class IdentityTest extends \PHPUnit_Framework_TestCase {
+class IdentityTest extends \PHPUnit_Framework_TestCase
+{
 
     public function testRetrieveApplicationFromLazyLoader()
     {
