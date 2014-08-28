@@ -17,11 +17,13 @@
 
 namespace RubedoAPI\Rest\V1;
 
+use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use WebTales\MongoFilters\Filter;
+use Zend\Json\Json;
 
 
 /**
@@ -145,6 +147,72 @@ class ContentsRessource extends AbstractRessource
             'contents' => $this->outputContentsMask($contentArray['data'], $params),
             'count' => $nbItems
         ];
+    }
+
+    /**
+     * Add the new content
+     *
+     * @param $params
+     * @throws \RubedoAPI\Exceptions\APIAuthException
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     * @return array
+     */
+    public function postAction($params)
+    {
+        $data = &$params['content'];
+        if (empty($data['typeId'])) {
+            throw new APIEntityException('typeId data is missing.', 400);
+        }
+
+        $type = $this->getContentTypesCollection()->findById($data['typeId']);
+        if (empty($type)) {
+            throw new APIEntityException('ContentType not found.', 404);
+        }
+
+        $this->filterFields($type, $data['fields']);
+        foreach ($data['i18n'] as $i18nLocale => &$localizedData) {
+            $this->filterFields($type, $localizedData['fields']);
+            if (!isset($localizedData['locale'])) {
+                $localizedData['locale'] = $i18nLocale;
+            }
+        }
+        if (!isset($data['status'])) {
+            $data['status'] = 'published';
+        }
+
+        if (!isset($data['target'])) {
+            $data['target'] = array();
+        }
+
+        if (!isset($data['nativeLanguage'])) {
+            $data['nativeLanguage'] = $params['lang']->getLocale();
+        }
+
+        if (!$this->getAclService()->hasAccess('write.ui.contents.' . $data['status'])) {
+            throw new APIAuthException('You have no suffisants rights', 403);
+        }
+
+        return $this->getContentsCollection()->create($data, array(), false);
+    }
+
+    /**
+     * Remove fields if not in content type
+     *
+     * @param $type
+     * @param $fields
+     */
+    protected function filterFields($type, &$fields)
+    {
+        $existingFields = array();
+        foreach ($type['fields'] as $field) {
+            $existingFields[] = $field['config']['name'];
+        }
+
+        foreach ($fields as $key => $value) {
+            if (!in_array($key, $existingFields)) {
+                unset ($fields[$key]);
+            }
+        }
     }
 
     /**
@@ -290,6 +358,9 @@ class ContentsRessource extends AbstractRessource
             ->setDescription('Deal with contents')
             ->editVerb('get', function (VerbDefinitionEntity &$definition) {
                 $this->defineGet($definition);
+            })
+            ->editVerb('post', function (VerbDefinitionEntity &$definition) {
+                $this->definePost($definition);
             });
         $this
             ->entityDefinition
@@ -389,6 +460,23 @@ class ContentsRessource extends AbstractRessource
                     ->setKey('count')
                     ->setDescription('Number of all contents')
             );
+    }
+
+    /**
+     * Define post
+     *
+     * @param VerbDefinitionEntity $definition
+     */
+    protected function definePost(VerbDefinitionEntity &$definition) {
+        $definition
+            ->setDescription('Post a new content')
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('The content to post')
+                    ->setKey('content')
+                    ->setMultivalued()
+            )
+            ->identityRequired();
     }
 
     /**
