@@ -280,6 +280,37 @@ class ContentsRessource extends AbstractRessource
         return $pageData;
     }
 
+    public function patchEntityAction($id, $params)
+    {
+        $content = $this->getContentsCollection()->findById($id, true, false);
+        if (empty($content)) {
+            throw new APIEntityException('Content not found', 404);
+        }
+        $data = &$params['content'];
+        $type = $this->getContentTypesCollection()->findById(empty($data['typeId'])?$content['typeId']:$data['typeId']);
+        if (empty($type)) {
+            throw new APIEntityException('ContentType not found.', 404);
+        }
+
+        if (isset($data['fields'])) {
+            $this->filterFields($type, $data['fields']);
+        }
+        if (isset($data['i18n'])) {
+            foreach ($data['i18n'] as &$localizedData) {
+                if (isset($localizedData['fields'])) {
+                    $this->filterFields($type, $localizedData['fields']);
+                }
+            }
+        }
+
+        if (isset($data['status']) && !$this->getAclService()->hasAccess('write.ui.contents.' . $data['status'])) {
+            throw new APIAuthException('You have no suffisants rights', 403);
+        }
+
+        $content = array_merge_recursive($content, $data);
+
+        return $this->getContentsCollection()->update($content, array());
+    }
     /**
      * Get to contents/{id}
      *
@@ -368,6 +399,9 @@ class ContentsRessource extends AbstractRessource
             ->setDescription('Works on single content')
             ->editVerb('get', function (VerbDefinitionEntity &$definition) {
                 $this->defineEntityGet($definition);
+            })
+            ->editVerb('patch', function (VerbDefinitionEntity &$definition) {
+                $this->defineEntityPatch($definition);
             });
     }
 
@@ -494,6 +528,23 @@ class ContentsRessource extends AbstractRessource
                     ->setKey('fields')
             )
             ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('The content')
+                    ->setKey('content')
+                    ->setRequired()
+            );
+    }
+
+    /**
+     * Define get entity
+     *
+     * @param VerbDefinitionEntity $definition
+     */
+    protected function defineEntityPatch(VerbDefinitionEntity &$definition)
+    {
+        $definition
+            ->setDescription('Patch a content')
+            ->addInputFilter(
                 (new FilterDefinitionEntity())
                     ->setDescription('The content')
                     ->setKey('content')
