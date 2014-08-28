@@ -169,13 +169,13 @@ class SearchRessource extends AbstractRessource
     {
         $blockConfigArray = array('displayMode', 'displayedFacets');
         $searchParamsArray = array('orderBy', 'orderbyDirection','query','objectType','type','damType','userType','author',
-        'userName','lastUpdateTime');
+        'userName','lastUpdateTime','start','limit');
         $params = array(
             'limit' => 25,
             'start' => 0
         );
         foreach ($queryParams as $keyQueryParams => $param) {
-            if($keyQueryParams == 'constrainToSite' && $param){
+            if($keyQueryParams == 'constrainToSite' && $param && isset($queryParams['siteId'])){
                 $params['navigation'][] = $queryParams['siteId'];
             } else if($keyQueryParams == 'predefinedFacets') {
                 $this->parsePrefedinedFacets($params, $queryParams);
