@@ -26,7 +26,8 @@
         "OwlFonk/OwlCarousel":"1.3.2",
         "jtrussell/angular-snap.js-bower":"v1.5.4",
         "jakiestfu/Snap.js":"1.9.3",
-        "vitalets/angular-xeditable":"0.1.8"
+        "vitalets/angular-xeditable":"0.1.8",
+        "esvit/ng-ckeditor":"v0.2.1"
     },
     "require-dev": {},
     "repositories": [
@@ -204,6 +205,17 @@
                 "version": "0.1.8",
                 "dist": {
                     "url": "https://github.com/vitalets/angular-xeditable/archive/0.1.8.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "esvit/ng-ckeditor",
+                "version": "v0.2.1",
+                "dist": {
+                    "url": "https://github.com/esvit/ng-ckeditor/archive/v0.2.1.zip",
                     "type": "zip"
                 }
             }
