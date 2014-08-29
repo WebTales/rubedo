@@ -38,28 +38,8 @@ class SearchRessource extends GlobalSearch
             ->setDescription('Deal with media')
             ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $entity
-                    ->setDescription('Get a list of media using Elastic Search')
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setKey('facets')
-                            ->setDescription('Json array facets')
-                    );
+                    ->setDescription('Get a list of media using Elastic Search');
             });
-    }
-
-    protected function setFacetsParams(&$params, $queryParams)
-    {
-        $facetsToHide = array();
-        if (isset($queryParams['facets'])) {
-            $predefParamsArray = Json::decode($queryParams['facets'], Json::TYPE_ARRAY);
-            if (is_array($predefParamsArray)) {
-                foreach ($predefParamsArray as $key => $value) {
-                    $params[$key] = $value;
-                    $facetsToHide[] = $key;
-                }
-            }
-        }
-        return $facetsToHide;
     }
 
     protected function injectDataInResults(&$results)

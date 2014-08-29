@@ -45,13 +45,48 @@ class SearchRessource extends AbstractRessource
                     ->setDescription('Get a list of media using Elastic Search')
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('sort')
+                            ->setKey('orderbyDirection')
                             ->setDescription('Sort parameter, must be \'asc\' or \'desc\'')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('orderBy')
-                            ->setDescription('OrderBy parameter')
+                            ->setKey('orderby')
+                            ->setDescription('Orderby parameter')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('type')
+                            ->setDescription('Content Type array')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('damType')
+                            ->setDescription('Dam Type array')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('objectType')
+                            ->setDescription('object Type array')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('userType')
+                            ->setDescription('user Type array')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('author')
+                            ->setDescription('author')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('userName')
+                            ->setDescription('userName')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('lastUpdateTime')
+                            ->setDescription('lastUpdateTime')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
@@ -62,6 +97,16 @@ class SearchRessource extends AbstractRessource
                         (new FilterDefinitionEntity())
                             ->setKey('predefinedFacets')
                             ->setDescription('Json array facets')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('displayedFacets')
+                            ->setDescription('Json array displayed facets')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('displayMode')
+                            ->setDescription('Display Mode')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
@@ -103,14 +148,12 @@ class SearchRessource extends AbstractRessource
     public function getAction($queryParams)
     {
         $params = $this->initParams($queryParams);
-        $facetsToHide = $this->setFacetsParams($params, $queryParams);
 
         \Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
         $query = Manager::getService('ElasticDataSearch');
         $query->init();
 
         $results = $query->search($params, $this->searchOption);
-        $results['facetsToHide'] = $facetsToHide;
 
         $this->injectDataInResults($results);
 
@@ -124,46 +167,35 @@ class SearchRessource extends AbstractRessource
 
     protected function initParams($queryParams)
     {
+        $blockConfigArray = array('displayMode', 'displayedFacets');
+        $searchParamsArray = array('orderBy', 'orderbyDirection','query','objectType','type','damType','userType','author',
+        'userName','lastUpdateTime','start','limit');
         $params = array(
-            'limit' => isset($queryParams['limit']) ? $queryParams['limit'] : 25,
-            'start' => isset($queryParams['start']) ? $queryParams['start'] : 0,
+            'limit' => 25,
+            'start' => 0
         );
-
-        if (isset($queryParams['orderBy'])) {
-            $params['orderBy'] = $queryParams['orderBy'];
-        }
-
-        if (isset($queryParams['sort'])) {
-            $params['orderByDirection'] = $queryParams['sort'];
-        }
-
-        if (isset($queryParams['constrainToSite']) && $queryParams['constrainToSite'] && isset($queryParams['siteId'])) {
-            $params['navigation'][] = $queryParams['siteId'];
-        }
-
-        return $params;
-
-    }
-
-    protected function setFacetsParams(&$params, $queryParams)
-    {
-        $facetsToHide = array();
-        if (isset($queryParams['predefinedFacets'])) {
-            $predefParamsArray = Json::decode(
-                $queryParams['predefinedFacets'],
-                Json::TYPE_ARRAY);
-            if (is_array($predefParamsArray)) {
-                foreach ($predefParamsArray as $key => $value) {
-                    if ($key != 'query') {
-                        $params[$key][] = $value;
-                    } else {
-                        $params[$key] = $value;
-                    }
-                    $facetsToHide[] = $value;
-                }
+        foreach ($queryParams as $keyQueryParams => $param) {
+            if($keyQueryParams == 'constrainToSite' && $param && isset($queryParams['siteId'])){
+                $params['navigation'][] = $queryParams['siteId'];
+            } else if($keyQueryParams == 'predefinedFacets') {
+                $this->parsePrefedinedFacets($params, $queryParams);
+            } else if (in_array($keyQueryParams, $blockConfigArray)){
+                $params['block-config'][$keyQueryParams] = $param;
+            } else if (in_array($keyQueryParams, $searchParamsArray)){
+                $params[$keyQueryParams] = $param;
             }
         }
-        return $facetsToHide;
+        return $params;
+    }
+
+    protected function parsePrefedinedFacets(&$params, $queryParams)
+    {
+        $predefParamsArray = Json::decode($queryParams['predefinedFacets'], Json::TYPE_ARRAY);
+        if (is_array($predefParamsArray)) {
+            foreach ($predefParamsArray as $key => $value) {
+                $params[$key] = $value;
+            }
+        }
     }
 
     protected function injectDataInResults(&$results)
