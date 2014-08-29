@@ -30,8 +30,9 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @method \RubedoAPI\Services\User\CurrentUser getCurrentUserAPIService() Return current User service
  * @method \RubedoAPI\Services\Internationalization\Current getCurrentLocalizationAPIService() Return current localization service
  * @method \Rubedo\Interfaces\Collection\IContents getContentsCollection() Return current localization service
- * @method \Rubedo\Interfaces\Collection\IContentTypes getContentTypesCollection() Return current localization service
- * @method \Rubedo\Interfaces\Collection\ITaxonomy getTaxonomyCollection() Return current localization service
+ * @method \Rubedo\Interfaces\Collection\IContentTypes getContentTypesCollection() Return ContentTypes collection
+ * @method \Rubedo\Interfaces\Collection\IDamTypes getDamTypesCollection() Return Damtypes collection
+ * @method \Rubedo\Interfaces\Collection\ITaxonomy getTaxonomyCollection() Return Taxonomy collection
  * @method \Rubedo\Interfaces\Collection\IPages getPagesCollection() Return current localization service
  * @method \Rubedo\Interfaces\Collection\ISites getSitesCollection() Return current localization service
  * @method \Rubedo\Interfaces\Collection\IQueries getQueriesCollection() Return current localization service
