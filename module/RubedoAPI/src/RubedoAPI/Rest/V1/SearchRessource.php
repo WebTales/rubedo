@@ -181,7 +181,7 @@ class SearchRessource extends AbstractRessource
         );
         foreach ($queryParams as $keyQueryParams => $param) {
             if($keyQueryParams == 'constrainToSite' && $param && isset($queryParams['siteId'])){
-                $params['navigation'][] = $queryParams['siteId'];
+                $params['navigation'][] = (string) $queryParams['siteId'];
             } else if($keyQueryParams == 'predefinedFacets') {
                 $this->parsePrefedinedFacets($params, $queryParams);
             } else if (in_array($keyQueryParams, $blockConfigArray)){
