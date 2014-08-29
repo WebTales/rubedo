@@ -85,6 +85,11 @@ class SearchRessource extends AbstractRessource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setKey('taxonomies')
+                            ->setDescription('Taxonomies Array')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
                             ->setKey('lastUpdateTime')
                             ->setDescription('lastUpdateTime')
                     )
@@ -183,6 +188,11 @@ class SearchRessource extends AbstractRessource
                 $params['block-config'][$keyQueryParams] = $param;
             } else if (in_array($keyQueryParams, $searchParamsArray)){
                 $params[$keyQueryParams] = $param;
+            } else if($keyQueryParams == 'taxonomies'){
+                $taxonomies = JSON::decode($param);
+                foreach($taxonomies as $taxonomy => $verbs){
+                    $params[$taxonomy] = $verbs;
+                }
             }
         }
         return $params;
