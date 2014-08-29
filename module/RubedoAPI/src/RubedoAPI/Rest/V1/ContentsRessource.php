@@ -17,6 +17,7 @@
 
 namespace RubedoAPI\Rest\V1;
 
+use Rubedo\Collection\AbstractLocalizableCollection;
 use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
@@ -280,9 +281,19 @@ class ContentsRessource extends AbstractRessource
         return $pageData;
     }
 
+    /**
+     * Patch a content
+     *
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIAuthException
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function patchEntityAction($id, $params)
     {
-        $content = $this->getContentsCollection()->findById($id, true, false);
+        AbstractLocalizableCollection::setIncludeI18n(true);
+        $content = $this->getContentsCollection()->findById($id, false, false);
         if (empty($content)) {
             throw new APIEntityException('Content not found', 404);
         }
@@ -307,10 +318,10 @@ class ContentsRessource extends AbstractRessource
             throw new APIAuthException('You have no suffisants rights', 403);
         }
 
-        $content = array_merge_recursive($content, $data);
-
+        $content = array_replace_recursive($content, $data);
         return $this->getContentsCollection()->update($content, array());
     }
+
     /**
      * Get to contents/{id}
      *
