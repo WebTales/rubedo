@@ -17,7 +17,7 @@
         "stowball/jQuery-rwdImageMaps": "1.0",
         "webTales/bootstrap-less": "2.2.0",
         "fingerprintjs":"0.5.3",
-        "angular/angular.js":"1.2.21",
+        "angular/angular.js":"1.2.23",
         "webtales/rubedo-frontoffice":"dev-master",
         "twbs/bootstrap":"v3.2.0",
         "angular/lrInfiniteScroll.js":"1.0.0",
@@ -127,9 +127,9 @@
             "type": "package",
             "package": {
                 "name": "angular/angular.js",
-                "version": "1.2.21",
+                "version": "1.2.23",
                 "dist": {
-                    "url": "https://code.angularjs.org/1.2.21/angular-1.2.21.zip",
+                    "url": "https://code.angularjs.org/1.2.23/angular-1.2.23.zip",
                     "type": "zip"
                 }
             }
