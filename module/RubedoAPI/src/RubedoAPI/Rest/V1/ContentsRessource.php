@@ -171,13 +171,24 @@ class ContentsRessource extends AbstractRessource
             throw new APIEntityException('ContentType not found.', 404);
         }
 
-        $this->filterFields($type, $data['fields']);
-        foreach ($data['i18n'] as $i18nLocale => &$localizedData) {
-            $this->filterFields($type, $localizedData['fields']);
-            if (!isset($localizedData['locale'])) {
-                $localizedData['locale'] = $i18nLocale;
+        foreach ($data['fields'] as $fieldName => $fieldValue) {
+            if (in_array($fieldName, $this->toExtractFromFields)) {
+                $data[$fieldName] = $fieldValue;
             }
         }
+
+        if (!isset($data['i18n'])) {
+            $data['i18n'] = array();
+        }
+
+        if (!isset($data['i18n'][$params['lang']->getLocale()])) {
+            $data['i18n'][$params['lang']->getLocale()] = array();
+        }
+
+        $data['i18n'][$params['lang']->getLocale()]['fields'] = $this->localizableFields($type, $data['fields']);
+
+        $data['fields'] = $this->filterFields($type, $data['fields']);
+
         if (!isset($data['status'])) {
             $data['status'] = 'published';
         }
