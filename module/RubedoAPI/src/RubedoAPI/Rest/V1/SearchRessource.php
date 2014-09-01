@@ -202,6 +202,11 @@ class SearchRessource extends AbstractRessource
     {
         $predefParamsArray = Json::decode($queryParams['predefinedFacets'], Json::TYPE_ARRAY);
         if (is_array($predefParamsArray)) {
+            if(isset($predefParamsArray['query'])&&isset($queryParams['query'])&&$predefParamsArray['query']!=$queryParams['query']){
+                $inter = $predefParamsArray['query'].' '.$queryParams['query'];
+                $predefParamsArray['query'] = $inter;
+                $queryParams['query'] = $inter;
+            }
             foreach ($predefParamsArray as $key => $value) {
                 $params[$key] = $value;
             }
