@@ -41,6 +41,7 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @method \Rubedo\Interfaces\Collection\IUsers getUsersCollection() Return Users collection
  * @method \Rubedo\Interfaces\Security\IAcl getAclService() Return ACL service
  * @method \RubedoAPI\Services\Security\Token getTokenAPIService() Return ACL service
+ * @method \Rubedo\Collection\MailingList getMailingListCollection() Return MLists collection
  */
 trait LazyServiceManager
 {
