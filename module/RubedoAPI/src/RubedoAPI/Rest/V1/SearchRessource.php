@@ -85,6 +85,11 @@ class SearchRessource extends AbstractRessource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setKey('taxonomies')
+                            ->setDescription('Taxonomies Array')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
                             ->setKey('lastUpdateTime')
                             ->setDescription('lastUpdateTime')
                     )
@@ -176,13 +181,18 @@ class SearchRessource extends AbstractRessource
         );
         foreach ($queryParams as $keyQueryParams => $param) {
             if($keyQueryParams == 'constrainToSite' && $param && isset($queryParams['siteId'])){
-                $params['navigation'][] = $queryParams['siteId'];
+                $params['navigation'][] = (string) $queryParams['siteId'];
             } else if($keyQueryParams == 'predefinedFacets') {
                 $this->parsePrefedinedFacets($params, $queryParams);
             } else if (in_array($keyQueryParams, $blockConfigArray)){
                 $params['block-config'][$keyQueryParams] = $param;
             } else if (in_array($keyQueryParams, $searchParamsArray)){
                 $params[$keyQueryParams] = $param;
+            } else if($keyQueryParams == 'taxonomies'){
+                $taxonomies = JSON::decode($param);
+                foreach($taxonomies as $taxonomy => $verbs){
+                    $params[$taxonomy] = $verbs;
+                }
             }
         }
         return $params;

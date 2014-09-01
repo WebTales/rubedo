@@ -20,7 +20,6 @@ namespace RubedoAPI\Rest\V1\Media;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Rest\V1\SearchRessource as GlobalSearch;
-use Zend\Json\Json;
 
 /**
  * Class SearchRessource
