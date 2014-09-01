@@ -32,6 +32,8 @@ use WebTales\MongoFilters\Filter;
  */
 class ContentsRessource extends AbstractRessource
 {
+    protected $toExtractFromFields = array('text');
+    protected $otherLocalizableFields = array('text', 'summary');
 
     /**
      * { @inheritdoc }
@@ -201,20 +203,43 @@ class ContentsRessource extends AbstractRessource
      * @param $type
      * @param $fields
      */
-    protected function filterFields($type, &$fields)
+    protected function filterFields($type, $fields)
     {
         $existingFields = array();
         foreach ($type['fields'] as $field) {
-            $existingFields[] = $field['config']['name'];
+            if (!($field['config']['localizable'] || in_array($field['config']['name'], $this->otherLocalizableFields))) {
+                $existingFields[] = $field['config']['name'];
+            }
         }
-
         foreach ($fields as $key => $value) {
             if (!in_array($key, $existingFields)) {
                 unset ($fields[$key]);
             }
         }
+        return $fields;
     }
 
+    /**
+     * Return localizable fields if not in content type
+     *
+     * @param $type
+     * @param $fields
+     */
+    protected function localizableFields($type, $fields)
+    {
+        $existingFields = array();
+        foreach ($type['fields'] as $field) {
+            if ($field['config']['localizable']) {
+                $existingFields[] = $field['config']['name'];
+            }
+        }
+        foreach ($fields as $key => $value) {
+            if (!(in_array($key, $existingFields) || in_array($key, $this->otherLocalizableFields))) {
+                unset ($fields[$key]);
+            }
+        }
+        return $fields;
+    }
     /**
      * Filter contents
      *
@@ -303,14 +328,21 @@ class ContentsRessource extends AbstractRessource
         }
 
         if (isset($data['fields'])) {
-            $this->filterFields($type, $data['fields']);
-        }
-        if (isset($data['i18n'])) {
-            foreach ($data['i18n'] as &$localizedData) {
-                if (isset($localizedData['fields'])) {
-                    $this->filterFields($type, $localizedData['fields']);
+            if ($content['nativeLanguage'] === $params['lang']->getLocale()) {
+                foreach ($data['fields'] as $fieldName => $fieldValue) {
+                    if (in_array($fieldName, $this->toExtractFromFields)) {
+                        $data[$fieldName] = $fieldValue;
+                    }
                 }
             }
+            if (!isset($data['i18n'])) {
+                $data['i18n'] = array();
+            }
+            if (!isset($data['i18n'][$params['lang']->getLocale()])) {
+                $data['i18n'][$params['lang']->getLocale()] = array();
+            }
+            $data['i18n'][$params['lang']->getLocale()]['fields'] = $this->localizableFields($type, $data['fields']);
+            $data['fields'] = $this->filterFields($type, $data['fields']);
         }
 
         if (isset($data['status']) && !$this->getAclService()->hasAccess('write.ui.contents.' . $data['status'])) {
@@ -318,7 +350,7 @@ class ContentsRessource extends AbstractRessource
         }
 
         $content = array_replace_recursive($content, $data);
-        return $this->getContentsCollection()->update($content, array());
+        return $this->getContentsCollection()->update($content, array(), false);
     }
 
     /**
