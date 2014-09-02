@@ -28,6 +28,53 @@ class UsersRessource extends AbstractRessource {
         $this->define();
     }
 
+    public function getEntityAction($id) {
+        $user = $this->getUsersCollection()->findById($id);
+        if (empty($user)) {
+            throw new APIEntityException('User not found', 404);
+        }
+        $user = array_intersect_key(
+            $user,
+            array_flip(
+                array(
+                    'name',
+                    'groups',
+                    'fields',
+                    'taxonomy',
+                    'language',
+                    'workingLanguage',
+                    'id',
+                    'readOnly',
+                    'typeId',
+                )
+            )
+        );
+        $userType = $this->getUserTypesCollection()->findById($user['typeId']);
+        if (empty($userType)) {
+            throw new APIEntityException('Usertype not found', 404);
+        }
+
+        $userType = array_intersect_key(
+            $userType,
+            array_flip(
+                array(
+                    'UTType',
+                    'fields',
+                    'layouts',
+                    'type',
+                    'signUpType',
+                )
+            )
+        );
+
+        $user['type'] = &$userType;
+
+        return array(
+            'success' => true,
+            'user' => $user,
+        );
+    }
+
     public function postAction($params) {
         $userType = $this->getUserTypesCollection()->findById($params['usertype']);
         if (empty($userType))
@@ -111,13 +158,20 @@ class UsersRessource extends AbstractRessource {
             'success' => true,
         );
     }
+
     protected function define()
     {
         $this->definition
             ->setName('Users')
-            ->setDescription('')
+            ->setDescription('Deal with users')
             ->editVerb('post', function (VerbDefinitionEntity &$verbDef) {
                $this->definePost($verbDef);
+            });
+        $this->entityDefinition
+            ->setName('User')
+            ->setDescription('Deal with a user')
+            ->editVerb('get', function (VerbDefinitionEntity &$verbDef) {
+                $this->defineGetEntity($verbDef);
             });
     }
 
@@ -163,6 +217,18 @@ class UsersRessource extends AbstractRessource {
                 (new FilterDefinitionEntity())
                     ->setDescription('Fields')
                     ->setKey('fields')
+            );
+    }
+
+    protected function defineGetEntity(VerbDefinitionEntity $verbDef)
+    {
+        $verbDef
+            ->setDescription('Get informations about a user')
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Users')
+                    ->setKey('user')
+                    ->setRequired()
             );
     }
 }
