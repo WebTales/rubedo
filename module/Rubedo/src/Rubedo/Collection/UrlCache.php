@@ -93,6 +93,9 @@ class UrlCache extends AbstractCollection
 
     public function findByPageId($pageId, $locale)
     {
+        if ($pageId instanceof \MongoId) {
+            $pageId = (string) $pageId;
+        }
         if ($this->noDbConnection) {
             return null;
         }

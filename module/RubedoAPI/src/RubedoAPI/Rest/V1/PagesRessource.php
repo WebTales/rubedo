@@ -65,6 +65,22 @@ class PagesRessource extends AbstractRessource
                             ->setDescription('Informations about the host')
                     );
             });
+        $this
+            ->entityDefinition
+            ->setName('Pages entity')
+            ->setDescription('Deal with pages entity')
+            ->editVerb('get', function (VerbDefinitionEntity &$entity){
+                $entity
+                    ->setDescription('Get URL from pageId')
+
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setDescription('Url')
+                            ->setKey('url')
+                            ->setFilter('string')
+                            ->setRequired()
+                    );
+            });
     }
 
     /**
@@ -105,6 +121,21 @@ class PagesRessource extends AbstractRessource
             'site' => $this->outputSiteMask($site),
             'page' => $this->outputPageMask($lastMatchedNode),
         ];
+    }
+
+    public function getEntityAction($id, $params) {
+        $urlOptions = array(
+            'encode' => true,
+            'reset' => true,
+        );
+        $url = $this->getContext()->url()->fromRoute('rewrite', array(
+            'pageId' => $id,
+            'locale' => $params['lang']->getLocale(),
+        ), $urlOptions);
+        return array(
+            'success' => true,
+            'url' => $url,
+        );
     }
 
     /**
