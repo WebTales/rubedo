@@ -17,7 +17,15 @@
     <!--library scripts-->
     <script src="/components/jquery/jquery/jquery-1.11.1.min.js"></script>
     <script src="/components/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!--[if lte IE 9]>
+    <script src="/components/webtales/rubedo-frontoffice/legacyFixes/angular.js"></script>
+    <script src="/components/webtales/rubedo-frontoffice/legacyFixes/history.js"></script>
+    <![endif]-->
+
+    <![if !lte IE 9]>
     <script src="/components/angular/angular.js/angular.js"></script>
+    <![endif]>
+
     <script src="/components/angular/angular.js/angular-route.js"></script>
     <script src="/components/angular/angular.js/angular-cookies.js"></script>
     <script src="/components/angular/lrInfiniteScroll.js/lrInfiniteScroll.js"></script>
