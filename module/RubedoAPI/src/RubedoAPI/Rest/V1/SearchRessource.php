@@ -215,6 +215,11 @@ class SearchRessource extends AbstractRessource
 
     protected function injectDataInResults(&$results)
     {
-
+        foreach ($results['data'] as $key => $value) {
+            if($value['objectType'] == "dam"){
+                $urlService = $this->getUrlAPIService();
+                $results['data'][$key]['url'] = $urlService->mediaUrl($results['data'][$key]['id']);
+            }
+        }
     }
 }
