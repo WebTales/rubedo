@@ -597,6 +597,7 @@ class ContentsRessource extends AbstractRessource
     {
         $definition
             ->setDescription('Patch a content')
+            ->identityRequired()
             ->addInputFilter(
                 (new FilterDefinitionEntity())
                     ->setDescription('The content')

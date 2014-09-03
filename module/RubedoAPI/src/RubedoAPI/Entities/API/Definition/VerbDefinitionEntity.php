@@ -270,7 +270,7 @@ class VerbDefinitionEntity implements JsonSerializable
         foreach ($this->getInputFilters() as $key => $filter) {
             if (!($filter instanceof FilterDefinitionEntity))
                 throw new APIEntityException('Filter in VerbDefinition must be FilterDefinitionEntity', 500);
-            if ($filter->isRequired() && (!array_key_exists($key, $toFilter) || empty($toFilter[$key])))
+            if ($filter->isRequired() && !array_key_exists($key, $toFilter))
                 throw new APIFilterException('"' . $key . '" is required', 500);
             elseif (!array_key_exists($key, $toFilter))
                 continue;
@@ -297,7 +297,7 @@ class VerbDefinitionEntity implements JsonSerializable
         foreach ($this->getOutputFilters() as $key => $filter) {
             if (!($filter instanceof FilterDefinitionEntity))
                 throw new APIEntityException('Filter in VerbDefinition must be FilterDefinitionEntity', 500);
-            if ($filter->isRequired() && (!array_key_exists($key, $toFilter) || empty($toFilter[$key])))
+            if ($filter->isRequired() && !array_key_exists($key, $toFilter))
                 throw new APIFilterException('"' . $key . '" must be back.', 500);
             elseif (!array_key_exists($key, $toFilter))
                 continue;

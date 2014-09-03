@@ -17,11 +17,15 @@
 
 namespace RubedoAPI\Rest\V1;
 
+use MongoId;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
+use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 
 class UsersRessource extends AbstractRessource {
+    protected $toExtractFromFields = array('name', 'text', 'login', 'email', 'password');
+
     public function __construct()
     {
         parent::__construct();
@@ -73,6 +77,37 @@ class UsersRessource extends AbstractRessource {
             'success' => true,
             'user' => $user,
         );
+    }
+
+    public function patchEntityAction($id, $params)
+    {
+        $user = $this->getUsersCollection()->findById($id);
+        if (empty($user)) {
+            throw new APIEntityException('User not found', 404);
+        }
+        $data = &$params['user'];
+        $type = $this->getUserTypesCollection()->findById(empty($data['typeId'])?$user['typeId']:$data['typeId']);
+        if (empty($type)) {
+            throw new APIEntityException('UserType not found.', 404);
+        }
+        if (
+            (isset($data['status']) && !$this->getAclService()->hasAccess('write.ui.users.' . $data['status']))
+            || ($this->getCurrentUserAPIService()->getCurrentUser() != $user)
+        ) {
+            throw new APIAuthException('You have no suffisants rights', 403);
+        }
+        if (isset($data['fields'])) {
+            foreach ($data['fields'] as $fieldName => $fieldValue) {
+                if (in_array($fieldName, $this->toExtractFromFields)) {
+                    $data[$fieldName] = $fieldValue;
+                }
+            }
+            $data['fields'] = $this->filterFields($type, $data['fields']);
+        }
+        $user = array_replace_recursive($user, $data);
+        $updateResult = $this->getUsersCollection()->update($user);
+        $updateResult['message'] = &$updateResult['msg'];
+        return $updateResult;
     }
 
     public function postAction($params) {
@@ -159,6 +194,26 @@ class UsersRessource extends AbstractRessource {
         );
     }
 
+    /**
+     * Remove fields if not in content type
+     *
+     * @param $type
+     * @param $fields
+     */
+    protected function filterFields($type, $fields)
+    {
+        $existingFields = array();
+        foreach ($type['fields'] as $field) {
+            $existingFields[] = $field['config']['name'];
+        }
+        foreach ($fields as $key => $value) {
+            if (!in_array($key, $existingFields)) {
+                unset ($fields[$key]);
+            }
+        }
+        return $fields;
+    }
+
     protected function define()
     {
         $this->definition
@@ -172,6 +227,9 @@ class UsersRessource extends AbstractRessource {
             ->setDescription('Deal with a user')
             ->editVerb('get', function (VerbDefinitionEntity &$verbDef) {
                 $this->defineGetEntity($verbDef);
+            })
+            ->editVerb('patch', function (VerbDefinitionEntity &$verbDef) {
+                $this->definePatchEntity($verbDef);
             });
     }
 
@@ -220,7 +278,7 @@ class UsersRessource extends AbstractRessource {
             );
     }
 
-    protected function defineGetEntity(VerbDefinitionEntity $verbDef)
+    protected function defineGetEntity(VerbDefinitionEntity &$verbDef)
     {
         $verbDef
             ->setDescription('Get informations about a user')
@@ -229,6 +287,17 @@ class UsersRessource extends AbstractRessource {
                     ->setDescription('Users')
                     ->setKey('user')
                     ->setRequired()
+            );
+    }
+
+    protected function definePatchEntity(VerbDefinitionEntity &$verbDef)
+    {
+        $verbDef
+            ->setDescription('Edit informations about a user')
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('User data')
+                    ->setKey('user')
             );
     }
 }
