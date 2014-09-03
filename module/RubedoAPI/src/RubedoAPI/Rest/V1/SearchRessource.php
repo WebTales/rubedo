@@ -173,7 +173,7 @@ class SearchRessource extends AbstractRessource
     protected function initParams($queryParams)
     {
         $blockConfigArray = array('displayMode', 'displayedFacets');
-        $searchParamsArray = array('orderBy', 'orderbyDirection','query','objectType','type','damType','userType','author',
+        $searchParamsArray = array('orderby', 'orderbyDirection','query','objectType','type','damType','userType','author',
         'userName','lastUpdateTime','start','limit');
         $params = array(
             'limit' => 25,

@@ -1,6 +1,18 @@
 <!DOCTYPE html>
-<html ng-app="rubedo" ng-controller="RubedoController as rubedo">
+<html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="rubedo" ng-controller="RubedoController as rubedo">
 <head>
+    <!--[if lte IE 8]>
+    <script>
+        document.createElement('ng-include');
+        document.createElement('ng-repeat');
+        document.createElement('ng-view');
+        document.createElement('rubedo-block');
+        document.createElement('rubedo-field');
+        document.createElement('rubedo-notification');
+        document.createElement('snap-drawer');
+        document.createElement('snap-content');
+    </script>
+    <![endif]-->
     <meta charset="UTF-8">
     <!--mobile meta-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,10 +26,19 @@
     <link rel="stylesheet" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.theme.css">
     <link rel="stylesheet" href="/components/vitalets/angular-xeditable/dist/css/xeditable.css">
+    <!--[if lte IE 8]>
+    <script src="/components/webtales/rubedo-frontoffice/legacyFixes/respond.js"></script>
+    <![endif]-->
     <!--library scripts-->
     <script src="/components/jquery/jquery/jquery-1.11.1.min.js"></script>
     <script src="/components/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!--[if lte IE 9]>
+    <script src="/components/webtales/rubedo-frontoffice/legacyFixes/angular.js"></script>
+    <script src="/components/webtales/rubedo-frontoffice/legacyFixes/history.js"></script>
+    <![endif]-->
+    <![if !lte IE 9]>
     <script src="/components/angular/angular.js/angular.js"></script>
+    <![endif]>
     <script src="/components/angular/angular.js/angular-route.js"></script>
     <script src="/components/angular/angular.js/angular-cookies.js"></script>
     <script src="/components/angular/lrInfiniteScroll.js/lrInfiniteScroll.js"></script>
