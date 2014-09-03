@@ -115,9 +115,6 @@ class UsersRessource extends AbstractRessource {
         if (empty($userType))
             throw new APIEntityException('Usertype not exist', 404);
         $user = array();
-        $user['name'] = $params['name'];
-        $user['email'] = $params['email'];
-        $user['login'] = $params['email'];
         $user['typeId'] = $userType['id'];
         $user['defaultGroup'] = $userType['defaultGroup'];
         $user['groups'] = array($userType['defaultGroup']);
@@ -132,6 +129,9 @@ class UsersRessource extends AbstractRessource {
         }
 
         foreach ($fields as $fieldName => &$fieldValue) {
+            if (in_array($fieldName, $this->toExtractFromFields)) {
+                $user[$fieldName] = $fieldValue;
+            }
             if (!in_array($fieldName, $existingFields)) {
                 unset ($fields[$fieldName]);
             }
@@ -239,30 +239,10 @@ class UsersRessource extends AbstractRessource {
             ->setDescription('Create a user')
             ->addInputFilter(
                 (new FilterDefinitionEntity())
-                    ->setDescription('Name')
-                    ->setKey('name')
-                    ->setFilter('string')
-                    ->setRequired()
-            )
-            ->addInputFilter(
-                (new FilterDefinitionEntity())
-                    ->setDescription('Email')
-                    ->setKey('email')
-                    ->setFilter('validate_email')
-                    ->setRequired()
-            )
-            ->addInputFilter(
-                (new FilterDefinitionEntity())
-                    ->setDescription('Password')
-                    ->setKey('password')
-            )
-            ->addInputFilter(
-                (new FilterDefinitionEntity())
                     ->setDescription('Current URL')
                     ->setKey('currentUrl')
                     ->setFilter('validate_url')
                     ->setRequired()
-
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
