@@ -25,6 +25,7 @@ use RubedoAPI\Exceptions\APIEntityException;
 
 class UsersRessource extends AbstractRessource {
     protected $toExtractFromFields = array('name', 'login', 'email', 'password');
+    protected $toInjectIntoFields = array('name', 'email');
 
     public function __construct()
     {
@@ -37,11 +38,13 @@ class UsersRessource extends AbstractRessource {
         if (empty($user)) {
             throw new APIEntityException('User not found', 404);
         }
+        foreach ($this->toInjectIntoFields as $fieldToInject) {
+            $user['fields'][$fieldToInject] = $user[$fieldToInject];
+        }
         $user = array_intersect_key(
             $user,
             array_flip(
                 array(
-                    'name',
                     'groups',
                     'fields',
                     'taxonomy',
