@@ -24,7 +24,7 @@ use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 
 class UsersRessource extends AbstractRessource {
-    protected $toExtractFromFields = array('name', 'text', 'login', 'email', 'password');
+    protected $toExtractFromFields = array('name', 'login', 'email', 'password');
 
     public function __construct()
     {
@@ -90,22 +90,32 @@ class UsersRessource extends AbstractRessource {
         if (empty($type)) {
             throw new APIEntityException('UserType not found.', 404);
         }
-        if (
-            (isset($data['status']) && !$this->getAclService()->hasAccess('write.ui.users.' . $data['status']))
-            || ($this->getCurrentUserAPIService()->getCurrentUser() != $user)
-        ) {
+        if ($this->getCurrentUserAPIService()->getCurrentUser()['id'] != $user['id']) {
             throw new APIAuthException('You have no suffisants rights', 403);
         }
         if (isset($data['fields'])) {
-            foreach ($data['fields'] as $fieldName => $fieldValue) {
+            $existingFields = array();
+            foreach ($type['fields'] as $userTypeField) {
+                $existingFields[] = $userTypeField['config']['name'];
+            }
+            foreach ($data['fields'] as $fieldName => &$fieldValue) {
                 if (in_array($fieldName, $this->toExtractFromFields)) {
                     $data[$fieldName] = $fieldValue;
+                }
+                if (!in_array($fieldName, $existingFields)) {
+                    unset ($data['fields'][$fieldName]);
                 }
             }
             $data['fields'] = $this->filterFields($type, $data['fields']);
         }
         $user = array_replace_recursive($user, $data);
         $updateResult = $this->getUsersCollection()->update($user);
+        if (!empty($data['password'])) {
+            $passwordChanged = $this->getUsersCollection()->changePassword($data['password'], $updateResult['data']['version'], $updateResult['data']['id']);
+            if (!$passwordChanged) {
+                throw new APIEntityException('Can\'t set password');
+            }
+        }
         $updateResult['message'] = &$updateResult['msg'];
         return $updateResult;
     }
@@ -152,8 +162,8 @@ class UsersRessource extends AbstractRessource {
             return $createdUser;
         }
 
-        if (!empty($params['password'])) {
-            $passwordChanged = $this->getUsersCollection()->changePassword($params['password'], $createdUser['data']['version'], $createdUser['data']['id']);
+        if (!empty($user['password'])) {
+            $passwordChanged = $this->getUsersCollection()->changePassword($user['password'], $createdUser['data']['version'], $createdUser['data']['id']);
             if (!$passwordChanged) {
                 throw new APIEntityException('Can\'t set password');
             }
