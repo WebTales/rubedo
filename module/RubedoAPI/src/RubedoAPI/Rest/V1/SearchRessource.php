@@ -242,5 +242,37 @@ class SearchRessource extends AbstractRessource
                     break;
             }
         }
+        $this->injectOperatorsInActiveFacets($results, $params);
+    }
+    protected function injectOperatorsInActiveFacets(&$results,$params)
+    {
+        if ($params['displayedFacets']=="['all']"){
+            $taxonomyService = Manager::getService("Taxonomy");
+            foreach($results['activeFacets'] as $key => $activeFacet){
+                switch($activeFacet['id']){
+                    case 'objectType':
+                        $results['activeFacets'][$key]['operator'] = 'and';
+                        break;
+                    case 'type':
+                        $results['activeFacets'][$key]['operator'] = 'and';
+                        break;
+                    default:
+                        $taxonomy = $taxonomyService->findById($activeFacet['id']);
+                        $results['activeFacets'][$key]['operator'] = isset($taxonomy['facetOperator']) ? strtolower(
+                            $taxonomy['facetOperator']) : 'and';
+                        break;
+                }
+            }
+
+        } else {
+            $displayedFacets = Json::decode($params['displayedFacets'], Json::TYPE_ARRAY);
+            $operatorByActiveFacet = array();
+            foreach($displayedFacets as $displayedFacet){
+                $operatorByActiveFacet[$displayedFacet['name']] = strtolower($displayedFacet['operator']);
+            }
+            foreach($results['activeFacets'] as $key => $activeFacet){
+                $results['activeFacets'][$key]['operator'] = $operatorByActiveFacet[$activeFacet['id']];
+            }
+        }
     }
 }
