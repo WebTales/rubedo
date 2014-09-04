@@ -76,7 +76,6 @@ class Authentication extends AuthenticationService
         if (empty($user))
             throw new APIEntityException('User not found', 404);
         $myToken = $this->getTokenAPIService()->generateBearerToken($oldToken['user']['id']);
-        $this->getUserTokensAPICollection()->destroy($oldToken);
         return array(
             'token' => $myToken,
             'user' => $user,
