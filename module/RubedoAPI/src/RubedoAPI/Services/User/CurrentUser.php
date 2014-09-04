@@ -71,8 +71,13 @@ class CurrentUser extends \Rubedo\User\CurrentUser
     {
         if (!isset(static::$token)) {
             $queryArray = Manager::getService('Application')->getRequest()->getQuery()->toArray();
-            if (!isset($queryArray['access_token'])) return null;
-            $this->setAccessToken($queryArray['access_token']);
+            if (isset($queryArray['access_token'])) {
+                $this->setAccessToken($queryArray['access_token']);
+            } elseif (isset($_COOKIE['accessToken'])) {
+                $this->setAccessToken($_COOKIE['accessToken']);
+            } else {
+                return null;
+            }
         }
         return static::$token;
     }

@@ -53,14 +53,11 @@ class AuthenticationService extends ZendAuthenticationService implements IAuthen
      */
     public function getIdentity()
     {
-        $config = Manager::getService('Application')->getConfig();
-        $cookieName = $config['session']['name'];
-        if (isset($_COOKIE[$cookieName])) {
+        if (isset($_COOKIE['accessToken'])) {
             return parent::getIdentity();
         } else {
             return null;
         }
-        
     }
 
     /**
