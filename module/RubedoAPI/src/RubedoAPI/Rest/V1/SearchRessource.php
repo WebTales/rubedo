@@ -45,6 +45,20 @@ class SearchRessource extends AbstractRessource
                     ->setDescription('Get a list of media using Elastic Search')
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setKey('siteId')
+                            ->setRequired()
+                            ->setDescription('Id of the site')
+                            ->setFilter('\\MongoId')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('pageId')
+                            ->setRequired()
+                            ->setDescription('Id of the page')
+                            ->setFilter('\\MongoId')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
                             ->setKey('orderbyDirection')
                             ->setDescription('Sort parameter, must be \'asc\' or \'desc\'')
                     )
@@ -160,7 +174,7 @@ class SearchRessource extends AbstractRessource
 
         $results = $query->search($params, $this->searchOption);
 
-        $this->injectDataInResults($results);
+        $this->injectDataInResults($results, $queryParams);
 
         return [
             'success' => true,
@@ -213,12 +227,19 @@ class SearchRessource extends AbstractRessource
         }
     }
 
-    protected function injectDataInResults(&$results)
+    protected function injectDataInResults(&$results, $params)
     {
         foreach ($results['data'] as $key => $value) {
-            if($value['objectType'] == "dam"){
-                $urlService = $this->getUrlAPIService();
-                $results['data'][$key]['url'] = $urlService->mediaUrl($results['data'][$key]['id']);
+            switch ($value['objectType']) {
+                case 'dam':
+                    $results['data'][$key]['url'] = $this->getUrlAPIService()->mediaUrl($results['data'][$key]['id']);
+                    break;
+                case 'content':
+                    $page = $this->getPagesCollection()->findById($params['pageId']);
+                    $site = $this->getSitesCollection()->findById($params['siteId']);
+                    $results['data'][$key]['url'] = $this->getUrlAPIService()->displayUrlApi($results['data'][$key], 'default', $site,
+                        $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string) $params['detailPageId'] : null);
+                    break;
             }
         }
     }
