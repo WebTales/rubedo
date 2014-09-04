@@ -27,7 +27,9 @@
         "jtrussell/angular-snap.js-bower":"v1.5.4",
         "jakiestfu/Snap.js":"1.9.3",
         "vitalets/angular-xeditable":"0.1.8",
-        "esvit/ng-ckeditor":"v0.2.1"
+        "esvit/ng-ckeditor":"v0.2.1",
+        "lodash/lodash":"2.4.1",
+        "angular-ui/angular-google-maps":"1.2.1"
     },
     "require-dev": {},
     "repositories": [
@@ -216,6 +218,28 @@
                 "version": "v0.2.1",
                 "dist": {
                     "url": "https://github.com/esvit/ng-ckeditor/archive/v0.2.1.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "lodash/lodash",
+                "version": "2.4.1",
+                "dist": {
+                    "url": "https://github.com/lodash/lodash/archive/2.4.1.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "angular-ui/angular-google-maps",
+                "version": "1.2.1",
+                "dist": {
+                    "url": "https://github.com/angular-ui/angular-google-maps/archive/1.2.1.zip",
                     "type": "zip"
                 }
             }
