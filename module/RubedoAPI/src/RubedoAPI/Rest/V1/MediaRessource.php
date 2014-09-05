@@ -47,18 +47,49 @@ class MediaRessource extends AbstractRessource
         if (empty($type)) {
             throw new APIEntityException('Type not exist', 404);
         }
-        $nativeLanguage = $params['lang'];
+        $nativeLanguage = $params['lang']->getLocale();
         $media = $this->getMediaFromExtractedFields($params['fields']);
         $media['fields'] = $this->filterFields($params['fields'], $type);
         $media['typeId'] = $type['id'];
         $media['directory'] = empty($params['directory'])?'notFiled':$params['directory'];
         $media['mainFileType'] = $type['mainFileType'];
         $media['taxonomy'] = empty($params['taxonomy'])?null:Json::decode($params['taxonomy'], Json::TYPE_ARRAY);
+        $media['nativeLanguage'] = $nativeLanguage;
+        $media['i18n'] = array();
+//        $media['writeWorkspace'] = $media['fields']['writeWorkspace'] = array();
+//        $media['target'] = $media['fields']['target'] = array();
+        $media['i18n'][$nativeLanguage] = array(
+            'fields' => $media['fields'],
+        );
+        $media['Content-Type'] = null;
+        $media['originalFileId'] = $this->uploadFile($params['file'], $media['Content-Type']);
 
+        $returnArray = $this->getDamCollection()->create($media);
+        if (!$returnArray['success']) {
+            throw new APIEntityException('Media not created', 500);
+        }
         return array(
             'success' => true,
-            'media' => $params,
+            'media' => $returnArray['data'],
         );
+    }
+
+    private function uploadFile($file, &$mimeType)
+    {
+        $mimeType = mime_content_type($file['tmp_name']);
+        $fileToCreate = array(
+            'serverFilename' => $file['tmp_name'],
+            'text' => $file['name'],
+            'filename' => $file['name'],
+            'Content-Type' => isset($mimeType) ? $mimeType : $file['type'],
+            'mainFileType' => $file
+        );
+        $result = $this->getFilesCollection()->create($fileToCreate);
+        if (! $result['success']) {
+            throw new APIEntityException('Failed to create file', 500);
+        }
+        return $result['data']['id'];
+
     }
 
     protected function getMediaFromExtractedFields($fields)
@@ -81,9 +112,9 @@ class MediaRessource extends AbstractRessource
     protected function filterFields($fields, $type)
     {
         $existingFields = $this->toExtractFromFields;
-
-        var_dump($fields); exit;
-//        foreach ($type[])
+        foreach ($type['fields'] as $fieldType) {
+            $existingFields[] = $fieldType['config']['name'];
+        }
         foreach($fields as $fieldName => &$fieldValue) {
             if (!in_array($fieldName, $existingFields)) {
                 unset($fields[$fieldName]);
@@ -96,6 +127,7 @@ class MediaRessource extends AbstractRessource
     public function getEntityAction($id)
     {
         $media = $this->getDamCollection()->findById($id);
+        $media['url'] = $this->getUrlAPIService()->mediaUrl($media['id']);
         return array(
             'success' => true,
             'media' => $media
@@ -161,7 +193,6 @@ class MediaRessource extends AbstractRessource
                 (new FilterDefinitionEntity())
                     ->setDescription('Taxonomies for the media')
                     ->setKey('taxonomy')
-                    ->setRequired()
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())

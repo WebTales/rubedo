@@ -47,7 +47,8 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @method \Rubedo\Interfaces\Templates\IFrontOfficeTemplates getFrontOfficeTemplatesService() Return FrontOfficeTemplates service
  * @method \Rubedo\Interfaces\Internationalization\ITranslate getTranslateService() Return FrontOfficeTemplates service
  * @method \Rubedo\Interfaces\Mail\IMailer getMailerService() return Mailer service
- * @method \Rubedo\Interfaces\Collection\IDam getDamCollection() return Mailer service
+ * @method \Rubedo\Interfaces\Collection\IDam getDamCollection() return DAM collection
+ * @method \Rubedo\Interfaces\Collection\IFiles getFilesCollection() return Files collection
  */
 trait LazyServiceManager
 {
