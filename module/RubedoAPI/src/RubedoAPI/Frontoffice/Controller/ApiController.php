@@ -66,6 +66,7 @@ class ApiController extends AbstractActionController
                 $routes,
                 $this->params()->fromQuery(),
                 $this->params()->fromPost(),
+                $this->params()->fromFiles(),
                 $paramsBody
             );
             $ressourceObject->setContext($this);
