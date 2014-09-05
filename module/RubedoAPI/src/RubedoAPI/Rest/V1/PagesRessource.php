@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2014 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
@@ -79,6 +79,12 @@ class PagesRessource extends AbstractRessource
                             ->setKey('url')
                             ->setFilter('string')
                             ->setRequired()
+                    )
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setDescription('title')
+                            ->setKey('title')
+                            ->setRequired()
                     );
             });
     }
@@ -124,6 +130,7 @@ class PagesRessource extends AbstractRessource
     }
 
     public function getEntityAction($id, $params) {
+        $page = $this->getPagesCollection()->findById($id);
         $urlOptions = array(
             'encode' => true,
             'reset' => true,
@@ -135,6 +142,7 @@ class PagesRessource extends AbstractRessource
         return array(
             'success' => true,
             'url' => $url,
+            'title' => $page['title'],
         );
     }
 
