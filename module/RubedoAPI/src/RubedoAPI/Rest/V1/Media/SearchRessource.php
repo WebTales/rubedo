@@ -41,7 +41,7 @@ class SearchRessource extends GlobalSearch
             });
     }
 
-    protected function injectDataInResults(&$results)
+    protected function injectDataInResults(&$results, $params)
     {
         foreach ($results['data'] as $key => $value) {
             $results['data'][$key]['fileSize'] = $this->humanfilesize($value['fileSize']);
