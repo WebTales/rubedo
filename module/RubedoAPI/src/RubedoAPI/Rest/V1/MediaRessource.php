@@ -16,6 +16,7 @@
  */
 
 namespace RubedoAPI\Rest\V1;
+use Rubedo\Collection\AbstractLocalizableCollection;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Exceptions\APIEntityException;
@@ -47,6 +48,9 @@ class MediaRessource extends AbstractRessource
         if (empty($type)) {
             throw new APIEntityException('Type not exist', 404);
         }
+        if(!isset($params['fields'])) {
+            $params['fields'] = array();
+        }
         $nativeLanguage = $params['lang']->getLocale();
         $media = $this->getMediaFromExtractedFields($params['fields']);
         $media['fields'] = $this->filterFields($params['fields'], $type);
@@ -56,14 +60,12 @@ class MediaRessource extends AbstractRessource
         $media['taxonomy'] = empty($params['taxonomy'])?null:Json::decode($params['taxonomy'], Json::TYPE_ARRAY);
         $media['nativeLanguage'] = $nativeLanguage;
         $media['i18n'] = array();
-//        $media['writeWorkspace'] = $media['fields']['writeWorkspace'] = array();
-//        $media['target'] = $media['fields']['target'] = array();
-        $media['i18n'][$nativeLanguage] = array(
-            'fields' => $media['fields'],
-        );
+        $media['i18n'][$nativeLanguage] = array();
+        $media['i18n'][$nativeLanguage]['fields'] = $media['fields'];
         $media['Content-Type'] = null;
         $media['originalFileId'] = $this->uploadFile($params['file'], $media['Content-Type']);
 
+        AbstractLocalizableCollection::setIncludeI18n(true);
         $returnArray = $this->getDamCollection()->create($media);
         if (!$returnArray['success']) {
             throw new APIEntityException('Media not created', 500);
