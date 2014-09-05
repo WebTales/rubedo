@@ -110,10 +110,13 @@ Ext.define('Connector.view.Viewport', {
                                         method:"POST",
                                         success: function(form, action) {
                                             if(action.result.success){
-                                                Ext.util.Cookies.set("accessToken",action.result.token.access_token);
-                                                Ext.util.Cookies.set("refreshToken",action.result.token.refresh_token);
+                                                    var expirationDate=action.result.token.createTime+action.result.token.lifetime;
+                                                    expirationDate=new Date(expirationDate*1000);
+                                                    Ext.util.Cookies.set("accessToken",action.result.token.access_token,expirationDate);
+                                                    Ext.util.Cookies.set("refreshToken",action.result.token.refresh_token,expirationDate);
+                                                    window.location.href="/backoffice";
                                             }
-                                            window.location.reload();
+
                                         },
                                         failure: function(form, action) {
                                                 var reason=Ext.JSON.decode(action.response.responseText).message;
