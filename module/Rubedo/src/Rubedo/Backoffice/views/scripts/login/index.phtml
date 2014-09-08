@@ -113,7 +113,7 @@ Ext.define('Connector.view.Viewport', {
                                                     var expirationDate=action.result.token.createTime+action.result.token.lifetime;
                                                     expirationDate=new Date(expirationDate*1000);
                                                     Ext.util.Cookies.set("accessToken",action.result.token.access_token,expirationDate);
-                                                    Ext.util.Cookies.set("refreshToken",action.result.token.refresh_token,expirationDate);
+                                                    Ext.util.Cookies.set("refreshToken",action.result.token.refresh_token);
                                                     window.location.href="/backoffice";
                                             }
 
