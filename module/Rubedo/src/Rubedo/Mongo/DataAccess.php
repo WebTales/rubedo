@@ -37,6 +37,8 @@ use Zend\EventManager\EventInterface;
 class DataAccess implements IDataAccess
 {
 
+    const POST_COMMAND = 'rubedo_dataaccess_command_post';
+    const POST_EXECUTE = 'rubedo_dataaccess_execute_post';
     /**
      * Default value of the connection string
      *
@@ -282,6 +284,15 @@ class DataAccess implements IDataAccess
                     'Collection' => $target->collection->getName(),
                     'Function' => $target->function,
                     'Query' => isset($target->args[0]) ? $target->args[0] : 'undefined',
+                ));
+                break;
+            case 'command':
+            case 'execute':
+                $logger = Manager::getService('Logger');
+                $logger->addRecord($level, ucfirst($target->function) . " Request on database", array(
+                    'Function' => $target->function,
+                    'Args' => $target->args,
+                    'Result' => $target->result,
                 ));
                 break;
             default:
@@ -1538,27 +1549,31 @@ class DataAccess implements IDataAccess
     	$return = $this->_collection->insert($obj, $options);
     	return $return;
     }
+
     /**
      * Execute a mongo command
      *
+     * @param $params
      * @return array
      */
     public function command ($params)
     {
     	$return = $this->_dbName->command($params);
-    	
+        Events::getEventManager()->trigger(self::POST_COMMAND, $this, array('data' => array('return' => $return, 'params' => $params)));
     	return $return;
     }
-    
+
     /**
      * Execute a javascript code on the mongo database
      *
+     * @param $code
+     * @param array $args
      * @return array
      */
     public function execute ($code, $args = array())
     {
     	$return = $this->_dbName->command(array('$eval' => $code, 'args' => $args));
-    	 
+        Events::getEventManager()->trigger(self::POST_EXECUTE, $this, array('data' => array('return' => $return, 'code' => $code, 'args' => $args)));
     	return $return;
     }
 

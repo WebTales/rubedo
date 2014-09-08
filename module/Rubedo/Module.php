@@ -20,6 +20,7 @@ use Rubedo\Collection\SessionData;
 use Rubedo\Collection\WorkflowAbstractCollection;
 use Rubedo\Exceptions\Access as AccessException;
 use Rubedo\Exceptions\JsonExceptionStrategy;
+use Rubedo\Mongo\DataAccess;
 use Rubedo\Router\Url;
 use Rubedo\Security\HtmlCleaner;
 use Rubedo\Services\Cache;
@@ -181,6 +182,14 @@ class Module
         ), array(
             Manager::getService('ApplicationLogger'),
             'logCollectionEvent'
+        ), 1);
+
+        $eventManager->attach(array(
+            DataAccess::POST_COMMAND,
+            DataAccess::POST_EXECUTE,
+        ), array(
+            Manager::getService('ApplicationLogger'),
+            'logDataAccessEvent'
         ), 1);
 
         $wasFiltered = AbstractCollection::disableUserFilter();

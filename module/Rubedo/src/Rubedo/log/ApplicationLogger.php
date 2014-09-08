@@ -112,6 +112,37 @@ class ApplicationLogger extends Logger
         $this->info($action . ' on ' . $collection . ' by ' . $userSummary['fullName'], $context);
     }
 
+    public function logDataAccessEvent(EventInterface $e)
+    {
+        $params = $e->getParams();
+
+        $userSummary = Manager::getService('CurrentUser')->getCurrentUserSummary();
+        if (!$userSummary['fullName']) {
+            // do not log anonymous writing
+            return;
+        }
+        switch ($e->getName()) {
+            case DataAccess::POST_COMMAND:
+                $action = 'Command';
+                break;
+            case DataAccess::POST_EXECUTE:
+                $action = 'Execute';
+                break;
+            default:
+                $action = $e->getName();
+                break;
+        }
+        $context = array(
+            'type' => 'dataAccess',
+            'user' => $userSummary,
+            'event' => $e->getName()
+        );
+        if (isset($params['data'])) {
+            $context['data'] = $params['data'];
+        }
+        $this->info($action . ' by ' . $userSummary['fullName'], $context);
+    }
+
     /**
      * Listener to log when authentification is trigger.
      *
