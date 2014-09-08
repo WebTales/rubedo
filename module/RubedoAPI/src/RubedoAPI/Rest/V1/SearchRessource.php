@@ -109,6 +109,12 @@ class SearchRessource extends AbstractRessource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setKey('detailPageId')
+                            ->setDescription('Id of the linked page')
+                            ->setFilter('\\MongoId')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
                             ->setKey('query')
                             ->setDescription('query parameter')
                     )
@@ -271,7 +277,11 @@ class SearchRessource extends AbstractRessource
                 $operatorByActiveFacet[$displayedFacet['name']] = strtolower($displayedFacet['operator']);
             }
             foreach($results['activeFacets'] as $key => $activeFacet){
-                $results['activeFacets'][$key]['operator'] = $operatorByActiveFacet[$activeFacet['id']];
+                if($activeFacet['id']=='query'){
+                    $results['activeFacets'][$key]['operator'] = 'and';
+                } else {
+                    $results['activeFacets'][$key]['operator'] = $operatorByActiveFacet[$activeFacet['id']];
+                }
             }
         }
     }
