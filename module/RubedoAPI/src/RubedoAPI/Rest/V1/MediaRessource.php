@@ -136,6 +136,53 @@ class MediaRessource extends AbstractRessource
         );
     }
 
+    public function patchEntityAction($id, $params)
+    {
+        AbstractLocalizableCollection::setIncludeI18n(true);
+        $media = $this->getDamCollection()->findById($id);
+        $type = $this->getDamTypesCollection()->findById($media['typeId']);
+        if (empty($type)) {
+            throw new APIEntityException('Type no longer exist', 404);
+        }
+        $locale = $params['lang']->getLocale();
+        if(isset($params['fields'])) {
+            $fields = $this->filterFields($params['fields'], $type);
+            if ($locale === $media['nativeLanguage']) {
+                $media['fields'] = array_replace_recursive($media['fields'], $fields);
+                $media = array_replace_recursive($media, $this->getMediaFromExtractedFields($params['fields']));
+            }
+            if (!isset($media['i18n'])) {
+                $media['i18n'] = array();
+            }
+            if (!isset($media['i18n'][$locale])) {
+                $media['i18n'][$locale] = array();
+            }
+            if (isset($media['i18n'][$locale]['fields'])) {
+                $media['i18n'][$locale]['fields'] = array_replace_recursive($media['i18n'][$locale]['fields'], $fields);
+            } else {
+                $media['i18n'][$locale]['fields'] = $fields;
+            }
+        }
+        if (isset($params['file'])) {
+            $media['Content-Type'] = null;
+            $media['originalFileId'] = $this->uploadFile($params['file'], $media['Content-Type']);
+        }
+        if (isset($params['directory'])) {
+            $media['directory'] = empty($params['directory'])?'notFiled':$params['directory'];
+        }
+        if (isset($params['taxonomy'])) {
+            $media['taxonomy'] = empty($params['taxonomy'])?null:Json::decode($params['taxonomy'], Json::TYPE_ARRAY);
+        }
+
+        $returnArray = $this->getDamCollection()->update($media);
+        if (!$returnArray['success']) {
+            throw new APIEntityException('Media not updated', 500);
+        }
+        return array(
+            'success' => true,
+        );
+    }
+
     protected function getMediaMeans()
     {
         return [
@@ -160,6 +207,9 @@ class MediaRessource extends AbstractRessource
             ->setDescription('Deal with a media')
             ->editVerb('get', function(VerbDefinitionEntity &$verbDef) {
                 $this->defineGetEntity($verbDef);
+            })
+            ->editVerb('patch', function(VerbDefinitionEntity &$verbDef) {
+                $this->definePatchEntity($verbDef);
             });
     }
 
@@ -213,6 +263,32 @@ class MediaRessource extends AbstractRessource
                     ->setDescription('Media')
                     ->setKey('media')
                     ->setRequired()
+            );
+    }
+
+    protected function definePatchEntity(VerbDefinitionEntity $verbDef)
+    {
+        $verbDef
+            ->setDescription('Patch a media')
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('File')
+                    ->setKey('file')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Directory')
+                    ->setKey('directory')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Fields for the media')
+                    ->setKey('fields')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Taxonomies for the media')
+                    ->setKey('taxonomy')
             );
     }
 }
