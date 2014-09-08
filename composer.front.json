@@ -29,7 +29,8 @@
         "vitalets/angular-xeditable":"0.1.8",
         "esvit/ng-ckeditor":"v0.2.1",
         "lodash/lodash":"2.4.1",
-        "angular-ui/angular-google-maps":"1.2.1"
+        "angular-ui/angular-google-maps":"1.2.1",
+        "ivpusic/angular-cookie":"v4.0.2"
     },
     "require-dev": {},
     "repositories": [
@@ -240,6 +241,17 @@
                 "version": "1.2.1",
                 "dist": {
                     "url": "https://github.com/angular-ui/angular-google-maps/archive/1.2.1.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "ivpusic/angular-cookie",
+                "version": "v4.0.2",
+                "dist": {
+                    "url": "https://github.com/ivpusic/angular-cookie/archive/v4.0.2.zip",
                     "type": "zip"
                 }
             }
