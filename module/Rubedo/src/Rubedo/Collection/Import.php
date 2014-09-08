@@ -601,17 +601,15 @@ class Import extends AbstractCollection
     	foreach ($this->_importAsField as $key => $value) {
     		$mapCode.= "'".$value['name']."' : this.col".$value['csvIndex'].",";
     	}
- 	 
     	if ($this->_isProduct) {
-    		//$mapCode.=",isProduct:true,";
-    		if ($this->_productOptions['textFieldIndex']!="") $mapCode.="text: this.col".$this->_productOptions['textFieldIndex'].",";
-    		if ($this->_productOptions['summaryFieldIndex']!="") $mapCode.="summary: this.col".$this->_productOptions['summaryFieldIndex'].",";
-    		if ($this->_productOptions['baseSkuFieldIndex']!="") $mapCode.="baseSku: this.col".$this->_productOptions['baseSkuFieldIndex'].",";
-    		if ($this->_productOptions['basePriceFieldIndex']!="") $mapCode.="basePrice: this.col".$this->_productOptions['basePriceFieldIndex'].",";
-    		if ($this->_productOptions['preparationDelayFieldIndex']!="") $mapCode.="preparationDelay: this.col".$this->_productOptions['preparationDelayFieldIndex'].",";
-    		if ($this->_productOptions['priceFieldIndex']!="") $mapCode.="price: this.col".$this->_productOptions['priceFieldIndex'].",";
-    		if ($this->_productOptions['stockFieldIndex']!="") $mapCode.="stock: this.col".$this->_productOptions['stockFieldIndex'].",";
-    		if ($this->_productOptions['skuFieldIndex']!="") $mapCode.="sku: this.col".$this->_productOptions['skuFieldIndex'];
+    		if (is_integer($this->_productOptions['textFieldIndex'])) $mapCode.="text: this.col".$this->_productOptions['textFieldIndex'].",";
+    		if (is_integer($this->_productOptions['summaryFieldIndex'])) $mapCode.="summary: this.col".$this->_productOptions['summaryFieldIndex'].",";
+    		if (is_integer($this->_productOptions['baseSkuFieldIndex'])) $mapCode.="baseSku: this.col".$this->_productOptions['baseSkuFieldIndex'].",";
+    		if (is_integer($this->_productOptions['basePriceFieldIndex'])) $mapCode.="basePrice: this.col".$this->_productOptions['basePriceFieldIndex'].",";
+    		if (is_integer($this->_productOptions['preparationDelayFieldIndex'])) $mapCode.="preparationDelay: this.col".$this->_productOptions['preparationDelayFieldIndex'].",";
+    		if (is_integer($this->_productOptions['priceFieldIndex'])) $mapCode.="price: this.col".$this->_productOptions['priceFieldIndex'].",";
+    		if (is_integer($this->_productOptions['stockFieldIndex'])) $mapCode.="stock: this.col".$this->_productOptions['stockFieldIndex'].",";
+    		if (is_integer($this->_productOptions['skuFieldIndex'])) $mapCode.="sku: this.col".$this->_productOptions['skuFieldIndex'];
     				
     	}
     
@@ -679,7 +677,7 @@ class Import extends AbstractCollection
     	}
 
     	$reduce = new \MongoCode($reduceCode);
-    	 
+
     	// global JavaScript variables passed to map, reduce and finalize functions
     	$scope = array(
     			"currentTime" => $this->currentTime,
@@ -874,16 +872,16 @@ class Import extends AbstractCollection
 		}
 
 		if ($this->_isProduct) {
-			if ($this->_productOptions['basePriceFieldIndex']!='') {
+			if (is_integer($this->_productOptions['basePriceFieldIndex'])) {
 				$code.= "e.col".$this->_productOptions['basePriceFieldIndex']."= castToNumber(e.col".$this->_productOptions['basePriceFieldIndex'].",'float');";
 			}
-			if ($this->_productOptions['priceFieldIndex']!='') {			
+			if (is_integer($this->_productOptions['priceFieldIndex'])) {			
 				$code.= "e.col".$this->_productOptions['priceFieldIndex']."= castToNumber(e.col".$this->_productOptions['priceFieldIndex'].",'float');";
 			}
-			if ($this->_productOptions['stockFieldIndex']!='') {			
+			if (is_integer($this->_productOptions['stockFieldIndex'])) {			
 				$code.= "e.col".$this->_productOptions['stockFieldIndex']."= castToNumber(e.col".$this->_productOptions['stockFieldIndex'].",'int');";
 			}
-			if ($this->_productOptions['preparationDelayFieldIndex']!='') {
+			if (is_integer($this->_productOptions['preparationDelayFieldIndex'])) {
 				$code.= "e.col".$this->_productOptions['preparationDelayFieldIndex']."= castToNumber(e.col".$this->_productOptions['preparationDelayFieldIndex'].",'int');";
 			}
 		}
@@ -988,7 +986,7 @@ class Import extends AbstractCollection
 
 		// Check if there is any variation price, stock or sku to update
 		
-		$variationToUpdate = $this->_productOptions['skuFieldIndex'] || $this->_productOptions['priceFieldIndex'] != "" || $this->_productOptions['stockFieldIndex'];
+		$variationToUpdate = is_integer($this->_productOptions['skuFieldIndex']) || is_integer($this->_productOptions['priceFieldIndex']) || is_integer($this->_productOptions['stockFieldIndex']);
 		if ($variationToUpdate) {
 			$queryVariations = $queryProduct.",'productProperties.variations': {\$elemMatch: {";
 			$updateVariations = "\$set: {";
@@ -998,37 +996,37 @@ class Import extends AbstractCollection
 		
 		if ($this->_isProduct) {
 			
-			if ($this->_productOptions['textFieldIndex']!="") { // title
+			if (is_integer($this->_productOptions['textFieldIndex'])) { // title
+				$updateProduct.= "'text' : foo['value']['text'],"; // live
 				$updateProduct.= "'live.i18n.".$this->_workingLanguage.".fields.text' : foo['value']['text'],"; // live
-				$updateProduct.= "'workspace.i18n.".$this->_workingLanguage.".fields.text'"; // workspace
+				$updateProduct.= "'workspace.i18n.".$this->_workingLanguage.".fields.text' : foo['value']['text'],"; // workspace
 			}
-			if ($this->_productOptions['summaryFieldIndex']!="") { // summary
+			if (is_integer($this->_productOptions['summaryFieldIndex'])) { // summary
 				$updateProduct.= "'live.i18n.".$this->_workingLanguage.".fields.summary' : foo['value']['summary'],"; // live
 				$updateProduct.= "'workspace.i18n.".$this->_workingLanguage.".fields.summary' : foo['value']['summary'],"; // workspace
 			}
-			if ($this->_productOptions['baseSkuFieldIndex']!="") { // base sku
+			if (is_integer($this->_productOptions['baseSkuFieldIndex'])) { // base sku
 				$updateProduct.= "'productProperties.sku' : foo['value']['productProperties']['sku'],";
 			}
-			if ($this->_productOptions['basePriceFieldIndex']!="") { // base price
+			if (is_integer($this->_productOptions['basePriceFieldIndex'])) { // base price
 				$updateProduct.= "'productProperties.basePrice' : foo['value']['productProperties']['basePrice'],";
 			}
-			if ($this->_productOptions['preparationDelayFieldIndex']!="") { // preparation delay
+			if (is_integer($this->_productOptions['preparationDelayFieldIndex'])) { // preparation delay
 				$updateProduct.= "'productProperties.preparationDelay' : foo['value']['productProperties']['preparationDelay'],";
 			}		
-			if ($this->_productOptions['skuFieldIndex']!="") { // variation sku
+			if (is_integer($this->_productOptions['skuFieldIndex'])) { // variation sku
 				$updateVariations.= "'productProperties.variations.\$.sku' : v['sku'],";
 			}
-			if ($this->_productOptions['priceFieldIndex']!="") { // variation price
+			if (is_integer($this->_productOptions['priceFieldIndex'])) { // variation price
 				$updateVariations.= "'productProperties.variations.\$.price' : v['price'],";
 			}				
-			if ($this->_productOptions['stockFieldIndex']!="") { // variation stock
+			if (is_integer($this->_productOptions['stockFieldIndex'])) { // variation stock
 				$updateVariations.= "'productProperties.variations.\$.stock' : v['stock'],";
 			}					
 
 		}
 		
 		// Add other fields
-		
 		foreach ($this->_importAsField as $key => $value) {
 		
 			$fieldName = $value['name'];
