@@ -51,6 +51,7 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @method \Rubedo\Interfaces\Collection\IDam getDamCollection() return DAM collection
  * @method \Rubedo\Interfaces\Collection\IFiles getFilesCollection() return Files collection
  * @method \Rubedo\Interfaces\Collection\ITinyUrl getTinyUrlCollection() return TinyUrl collection
+ * @method \Rubedo\Interfaces\Elastic\IDataSearch getElasticDataSearchService() return DataSearch service
  */
 trait LazyServiceManager
 {

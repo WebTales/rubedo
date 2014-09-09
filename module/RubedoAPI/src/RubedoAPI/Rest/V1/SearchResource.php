@@ -174,8 +174,8 @@ class SearchResource extends AbstractResource
     {
         $params = $this->initParams($queryParams);
 
-        \Rubedo\Elastic\DataSearch::setIsFrontEnd(true);
-        $query = Manager::getService('ElasticDataSearch');
+        $query = $this->getElasticDataSearchService();
+        $query::setIsFrontEnd(true);
         $query->init();
 
         $results = $query->search($params, $this->searchOption);
