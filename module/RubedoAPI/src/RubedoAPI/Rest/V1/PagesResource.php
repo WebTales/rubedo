@@ -21,6 +21,7 @@ use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
+use Zend\Json\Json;
 
 /**
  * Class PagesResource
@@ -58,6 +59,11 @@ class PagesResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setKey('page')
                             ->setDescription('Informations about the page')
+                    )
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('breadcrumb')
+                            ->setDescription('Breadcrumb')
                     )
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
@@ -102,6 +108,8 @@ class PagesResource extends AbstractResource
         $pagesServices = Manager::getService('Pages');
         $blocksServices = Manager::getService('Blocks');
         $site = $sitesServices->findByHost($params['site']);
+        $pages =  array();
+        $url = '';
         if ($site == null)
             throw new APIEntityException('Site not found', 404);
         if (empty($params['route'])) {
@@ -109,11 +117,18 @@ class PagesResource extends AbstractResource
         } else {
             $urlSegments = explode('/', trim($params['route'], '/'));
             $lastMatchedNode = ['id' => 'root'];
-            foreach ($urlSegments as $value) {
+            foreach ($urlSegments as $key => $value) {
                 $matchedNode = $pagesServices->matchSegment($value, $lastMatchedNode['id'], $site['id']);
                 if (null === $matchedNode) {
                     break;
                 } else {
+                    if($key == 0){
+                        $getUrl = $this->getEntityAction($matchedNode['id'],$params);
+                        $url = $getUrl['url'];
+                    } else {
+                        $url = $url . '/' .$value;
+                    }
+                    $pages[]=array('title'=>$matchedNode['text'], 'url'=>$url);
                     $lastMatchedNode = $matchedNode;
                 }
             }
@@ -126,6 +141,7 @@ class PagesResource extends AbstractResource
             'success' => true,
             'site' => $this->outputSiteMask($site),
             'page' => $this->outputPageMask($lastMatchedNode),
+            'breadcrumb' => $pages,
         ];
     }
 
