@@ -17,10 +17,8 @@
 
 namespace RubedoAPI\Rest\V1;
 
-use Rubedo\Services\Manager;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
-use RubedoAPI\Rest\V1\AbstractResource;
 use Zend\Json\Json;
 
 
@@ -255,7 +253,7 @@ class SearchResource extends AbstractResource
     protected function injectOperatorsInActiveFacets(&$results,$params)
     {
         if ($params['displayedFacets']=="['all']"){
-            $taxonomyService = Manager::getService("Taxonomy");
+            $taxonomyService = $this->getTaxonomyCollection();
             foreach($results['activeFacets'] as $key => $activeFacet){
                 switch($activeFacet['id']){
                     case 'objectType':
