@@ -197,7 +197,7 @@ class AuthenticationController extends AbstractController
         $output['enforceHTTPS'] = in_array('HTTPS', $output['site']['protocol']) ? true : false;
         $output['currentUser'] = $currentUser;
         $output['profilePage'] = isset($output['block-config']['profilePage']) ? $output['block-config']['profilePage'] : false;
-        if ($output["profilePage"]) {
+        if ($output["profilePage"] && Manager::getService('CurrentUser')->isAuthenticated()) {
             $urlOptions = array(
                 'encode' => true,
                 'reset' => true
