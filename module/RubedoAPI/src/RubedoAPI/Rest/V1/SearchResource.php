@@ -248,7 +248,9 @@ class SearchResource extends AbstractResource
                     break;
             }
         }
-        $this->injectOperatorsInActiveFacets($results, $params);
+        if (isset($params['displayedFacets'])) {
+            $this->injectOperatorsInActiveFacets($results, $params);
+        }
     }
     protected function injectOperatorsInActiveFacets(&$results,$params)
     {

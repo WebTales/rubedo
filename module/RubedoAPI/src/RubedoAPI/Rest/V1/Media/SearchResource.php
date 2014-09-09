@@ -17,7 +17,6 @@
 
 namespace RubedoAPI\Rest\V1\Media;
 
-use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Rest\V1\SearchResource as GlobalSearch;
 
