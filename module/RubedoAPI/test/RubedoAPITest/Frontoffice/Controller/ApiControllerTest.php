@@ -16,7 +16,7 @@
  */
 
 namespace RubedoAPI\Rest\V1;
-class Foo extends AbstractRessource
+class Foo extends AbstractResource
 {
     function __construct()
     {
@@ -60,7 +60,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    function testIndexActionRessourceNotExist()
+    function testIndexActionResourceNotExist()
     {
         $this->routeMatch(array(
             'api' => array('TestEntryPoint', 'Foo'),

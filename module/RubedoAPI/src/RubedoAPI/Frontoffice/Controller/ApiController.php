@@ -32,7 +32,7 @@ class ApiController extends AbstractActionController
     /**
      * Entry point for API
      *
-     * @internal Check if the ressource exist (with namespace), and call handler.
+     * @internal Check if the resource exist (with namespace), and call handler.
      * @return JsonModel
      */
     public function indexAction()
@@ -45,16 +45,16 @@ class ApiController extends AbstractActionController
                     $item = ucfirst($item);
                 }
             );
-            $class = array_pop($routes['api']) . 'Ressource';
-            $ressource = 'RubedoAPI\\Rest\\' . mb_strtoupper($routes['version']) . '\\';
+            $class = array_pop($routes['api']) . 'Resource';
+            $resource = 'RubedoAPI\\Rest\\' . mb_strtoupper($routes['version']) . '\\';
             if (!empty($routes['api']))
-                $ressource .= implode('\\', $routes['api']) . '\\';
-            $ressource .= $class;
-            /** @var \RubedoAPI\Interfaces\IRessource $ressourceObject */
-            if (!class_exists($ressource)) {
-                throw new APIRequestException('Ressource not exist', 404);
+                $resource .= implode('\\', $routes['api']) . '\\';
+            $resource .= $class;
+            /** @var \RubedoAPI\Interfaces\IResource $resourceObject */
+            if (!class_exists($resource)) {
+                throw new APIRequestException('Resource not exist', 404);
             }
-            $ressourceObject = new $ressource();
+            $resourceObject = new $resource();
 
             $paramsBody = json_decode($this->getRequest()->getContent(), true);
             if (empty($paramsBody))
@@ -69,7 +69,7 @@ class ApiController extends AbstractActionController
                 $this->params()->fromFiles(),
                 $paramsBody
             );
-            $ressourceObject->setContext($this);
+            $resourceObject->setContext($this);
             $method = null;
             if (isset($routes['method'])) {
                 $method = mb_strtolower($routes['method']);
@@ -82,8 +82,8 @@ class ApiController extends AbstractActionController
                 ]);
             }
             if (isset($routes['id']))
-                return new JsonModel($ressourceObject->handlerEntity($routes['id'], $method, $params));
-            return new JsonModel($ressourceObject->handler($method, $params));
+                return new JsonModel($resourceObject->handlerEntity($routes['id'], $method, $params));
+            return new JsonModel($resourceObject->handler($method, $params));
         } catch (APIAbstractException $e) {
             $this->getResponse()->setStatusCode($e->getHttpCode());
             return new JsonModel(
