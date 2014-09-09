@@ -91,7 +91,7 @@
                             "config":{
                                 "fieldLabel":"Custom template",
                                 "name":"customTemplate",
-                                "defaultTemplateUrl":"navigation.html",
+                                "defaultTemplateUrl":"blocks/navigation.html",
                                 "twigMode":false
 
                             }
