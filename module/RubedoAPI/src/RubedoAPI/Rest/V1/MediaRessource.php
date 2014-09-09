@@ -136,7 +136,7 @@ class MediaRessource extends AbstractRessource
         );
     }
 
-    public function patchEntityAction($id, $params)
+    public function postEntityAction($id, $params)
     {
         AbstractLocalizableCollection::setIncludeI18n(true);
         $media = $this->getDamCollection()->findById($id);
@@ -208,8 +208,8 @@ class MediaRessource extends AbstractRessource
             ->editVerb('get', function(VerbDefinitionEntity &$verbDef) {
                 $this->defineGetEntity($verbDef);
             })
-            ->editVerb('patch', function(VerbDefinitionEntity &$verbDef) {
-                $this->definePatchEntity($verbDef);
+            ->editVerb('post', function(VerbDefinitionEntity &$verbDef) {
+                $this->definePostEntity($verbDef);
             });
     }
 
@@ -266,7 +266,7 @@ class MediaRessource extends AbstractRessource
             );
     }
 
-    protected function definePatchEntity(VerbDefinitionEntity $verbDef)
+    protected function definePostEntity(VerbDefinitionEntity $verbDef)
     {
         $verbDef
             ->setDescription('Patch a media')
