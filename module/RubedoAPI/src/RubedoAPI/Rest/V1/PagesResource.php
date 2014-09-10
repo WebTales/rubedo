@@ -17,6 +17,7 @@
 
 namespace RubedoAPI\Rest\V1;
 
+use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
@@ -136,7 +137,29 @@ class PagesResource extends AbstractResource
         if ($lastMatchedNode['id'] == 'root') {
             throw new APIEntityException('Page not found', 404);
         }
-        $lastMatchedNode['blocks'] = $blocksServices->getListByPage($lastMatchedNode['id'])['data'];
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        $mask = Manager::getService('Masks')->findById($lastMatchedNode['maskId']);
+        AbstractCollection::disableUserFilter($wasFiltered);
+
+        if (empty($mask)) {
+            throw new APIEntityException('Mask not found', 404);
+        }
+
+        $pageBlocks = $blocksServices->getListByPage($lastMatchedNode['id'])['data'];
+
+        $blocksFound = array_merge($mask['blocks'], $pageBlocks);
+        $blocks = array();
+        foreach ($blocksFound as $block) {
+            if (isset($block['blockData'])) {
+                $block = $block['blockData'];
+            }
+            if (!isset($block['orderValue'])) {
+                throw new APIEntityException(sprintf('Missing orderValue for block %1$s', $block['id']), 404);
+            }
+            $blocks[$block['parentCol']][] = $block;
+        }
+        $lastMatchedNode['rows'] = $this->getRowsInfos($blocks, $mask['rows']);
+
         return [
             'success' => true,
             'site' => $this->outputSiteMask($site),
@@ -184,5 +207,56 @@ class PagesResource extends AbstractResource
     protected function outputPageMask($output)
     {
         return $output;
+    }
+    protected function getRowsInfos(array &$blocks, array $rows = null)
+    {
+        if ($rows === null) {
+            return null;
+        }
+        $returnArray = $rows;
+        foreach ($rows as $key => $row) {
+            $row = $this->localizeTitle($row);
+            $returnArray[$key] = $row;
+
+            if (is_array($row['columns'])) {
+                $returnArray[$key]['columns'] = $this->getColumnsInfos($blocks, $row['columns']);
+            } else {
+                $returnArray[$key]['columns'] = null;
+            }
+        }
+        return $returnArray;
+    }
+
+    protected function getColumnsInfos(array &$blocks, array $columns = null)
+    {
+        if ($columns === null) {
+            return null;
+        }
+        $returnArray = $columns;
+        foreach ($columns as $key => $column) {
+            $column = $this->localizeTitle($column);
+            $returnArray[$key] = $column;
+            if (isset($blocks[$column['id']])) {
+                $returnArray[$key]['blocks'] = $blocks[$column['id']];
+            } else {
+                $returnArray[$key]['rows'] = $this->getRowsInfos($blocks, $column['rows']);
+            }
+        }
+        return $returnArray;
+    }
+
+    protected function localizeTitle(array $item)
+    {
+        if (isset($item['i18n'])) {
+            if (isset($item['i18n'][$this->getCurrentLocalizationAPIService()->getCurrentLocalization()])) {
+                if (isset($item['i18n'][$this->getCurrentLocalizationAPIService()->getCurrentLocalization()]['eTitle'])) {
+                    $item['eTitle'] = $item['i18n'][$this->getCurrentLocalizationAPIService()->getCurrentLocalization()]['eTitle'];
+                } else {
+                    $item['title'] = $item['i18n'][$this->getCurrentLocalizationAPIService()->getCurrentLocalization()]['title'];
+                }
+            }
+            unset($item['i18n']);
+        }
+        return $item;
     }
 }
