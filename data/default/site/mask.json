@@ -8,63 +8,43 @@
 	 		    "style" : "Horizontal" ,
 	 		    "displayRootPage" : true ,
 	 		    "menuLevel" : 1
-	 		} , 
-	 		"elementStyle" : "" ,
-	 		"elementTag" : "div" ,
-	 		"renderDiv" : true ,
+	 		} ,
 	 		"title" : "Menu" ,
 	 		"responsive" : { 
 	 		    "phone" : true ,
 	 		    "tablet" : true ,
-	 		    "desktop" : true
+	 		    "desktop" : true,
+                "largeDesktop":true
 	 		} , 
-	 		"classHTML" :  null  ,
 	 		"displayTitle" :  null  ,
-	 		"idHTML" :  null  ,
-	 		"urlPrefix" :  null  ,
 	 		"flex" : 1 ,
 	 		"canEdit" :  null 
 	    }
 	] ,
 	"pageProperties" : { 
-	    "showInDiv" : true ,
-	    "divClass" : "container"
+
 	} , 
 	"rows" : [ 
 	    { 
 	        "height" :  null  ,
 	        "eTitle" : "titre" ,
-	        "elementStyle" : "" ,
-	        "elementTag" : "div" ,
-	        "displayRow" : true ,
-	        "displayRowFluid" : false ,
-	        "includeContainer" : false ,
-	        "includeContainerFluid" : false ,
 	        "mType" : "row" ,
-	        "displayAsTab" :  null  ,
-	        "responsive" : { 
+	        "responsive" : {
 	            "phone" : true ,
 	            "tablet" : true ,
-	            "desktop" : true
+	            "desktop" : true ,
+                "largeDesktop":true
 	        } , 
 	        "displayTitle" :  null  ,
-	        "containerId" :  null  ,
-	        "containerClass" :  null  ,
-	        "classHTML" :  null  ,
-	        "idHTML" :  null  ,
 	        "columns" : [ 
 	            { 
 	                "eTitle" : "titre" ,
 	                "responsive" : { 
 	                    "phone" : true ,
 	                    "tablet" : true ,
-	                    "desktop" : true
+	                    "desktop" : true ,
+                        "largeDesktop":true
 	                } ,
-	                "classHTML" :  null  ,
-	                "idHTML" :  null  ,
-	                "elementStyle" : "" ,
-	                "elementTag" : "div" ,
-	                "renderSpan" : true ,
 	                "displayTitle" :  null  ,
 	                "span" : 12 ,
 	                "mType" : "col" ,
@@ -77,37 +57,23 @@
 	    { 
 	        "height" :  null  ,
 	        "eTitle" : "titre" ,
-	        "elementStyle" : "" ,
-	        "elementTag" : "div" ,
-	        "displayRow" : true ,
-	        "displayRowFluid" : false ,
-	        "includeContainer" : false ,
-	        "includeContainerFluid" : false ,
 	        "mType" : "row" ,
-	        "displayAsTab" :  null  ,
-	        "responsive" : { 
+	        "responsive" : {
 	            "phone" : true ,
 	            "tablet" : true ,
-	            "desktop" : true
+	            "desktop" : true ,
+                "largeDesktop":true
 	        } , 
 	        "displayTitle" :  null  ,
-	        "containerId" :  null  ,
-	        "containerClass" :  null  ,
-	        "classHTML" :  null  ,
-	        "idHTML" :  null  ,
 	        "columns" : [
 	            {
 	                "eTitle" : "titre" ,
 	                "responsive" : { 
 	                    "phone" : true ,
 	                    "tablet" : true ,
-	                    "desktop" : true
-	                } , 
-	                "classHTML" :  null  ,
-	                "idHTML" :  null  ,
-	                "elementStyle" : "" ,
-	                "elementTag" : "div" ,
-	                "renderSpan" : true ,
+	                    "desktop" : true ,
+                        "largeDesktop":true
+	                } ,
 	                "displayTitle" :  null  ,
 	                "span" : 12 ,
 	                "mType" : "col" ,
