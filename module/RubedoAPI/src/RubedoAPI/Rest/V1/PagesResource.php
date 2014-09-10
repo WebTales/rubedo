@@ -63,6 +63,16 @@ class PagesResource extends AbstractResource
                     )
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
+                            ->setKey('mask')
+                            ->setDescription('Informations about the mask')
+                    )
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('content')
+                            ->setDescription('Informations about the content')
+                    )
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
                             ->setKey('breadcrumb')
                             ->setDescription('Breadcrumb')
                     )
@@ -119,6 +129,11 @@ class PagesResource extends AbstractResource
             $urlSegments = explode('/', trim($params['route'], '/'));
             $lastMatchedNode = ['id' => 'root'];
             foreach ($urlSegments as $key => $value) {
+                try {
+                    $contentId = new \MongoId($value);
+                    $content = $this->getContentsCollection()->findById($contentId, false, false);
+                    break;
+                } catch (\Exception $e) {}
                 $matchedNode = $pagesServices->matchSegment($value, $lastMatchedNode['id'], $site['id']);
                 if (null === $matchedNode) {
                     break;
@@ -160,12 +175,23 @@ class PagesResource extends AbstractResource
         }
         $lastMatchedNode['rows'] = $this->getRowsInfos($blocks, $mask['rows']);
 
-        return [
+        if (!empty($content)) {
+            $mainColumn =  isset($mask['mainColumnId']) ? $mask['mainColumnId'] : null;
+            if ($mainColumn) {
+                $blocks[$mainColumn] = array($this->getSingleBlock());
+            }
+        }
+        $output = array(
             'success' => true,
             'site' => $this->outputSiteMask($site),
             'page' => $this->outputPageMask($lastMatchedNode),
+            'mask' => $mask,
             'breadcrumb' => $pages,
-        ];
+        );
+        if (!empty($content)) {
+            $output['content'] = $content;
+        }
+        return $output;
     }
 
     public function getEntityAction($id, $params) {
@@ -243,6 +269,21 @@ class PagesResource extends AbstractResource
             }
         }
         return $returnArray;
+    }
+
+    protected function getSingleBlock()
+    {
+        $block = array();
+        $block['configBloc'] = array();
+        $block['bType'] = 'contentDetail';
+        $block['id'] = 'single';
+        $block['responsive'] = array(
+            'tablet' => true,
+            'desktop' => true,
+            'phone' => true
+        );
+
+        return $block;
     }
 
     protected function localizeTitle(array $item)
