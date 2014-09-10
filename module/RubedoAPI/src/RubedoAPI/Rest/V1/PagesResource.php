@@ -118,6 +118,7 @@ class PagesResource extends AbstractResource
         $sitesServices = Manager::getService('Sites');
         $pagesServices = Manager::getService('Pages');
         $blocksServices = Manager::getService('Blocks');
+        $languagesServices =  Manager::getService('Languages');
         $site = $sitesServices->findByHost($params['site']);
         $pages =  array();
         $url = '';
@@ -152,6 +153,13 @@ class PagesResource extends AbstractResource
         if ($lastMatchedNode['id'] == 'root') {
             throw new APIEntityException('Page not found', 404);
         }
+        $lastMatchedNode['blocks'] = $blocksServices->getListByPage($lastMatchedNode['id'])['data'];
+        $languagesWithFlag = array();
+        foreach($site['languages'] as $lang){
+            $localeDetail =  $languagesServices->findByLocale($lang);
+            $languagesWithFlag[]=array('lang'=>$lang,'flagCode'=>(isset($localeDetail['flagCode'])?$localeDetail['flagCode']:''));
+        }
+        $site['languages']=$languagesWithFlag;
         $wasFiltered = AbstractCollection::disableUserFilter();
         $mask = Manager::getService('Masks')->findById($lastMatchedNode['maskId']);
         AbstractCollection::disableUserFilter($wasFiltered);
