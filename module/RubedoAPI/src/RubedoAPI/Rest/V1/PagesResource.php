@@ -22,7 +22,6 @@ use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
-use Zend\Json\Json;
 
 /**
  * Class PagesResource
@@ -185,12 +184,9 @@ class PagesResource extends AbstractResource
             'success' => true,
             'site' => $this->outputSiteMask($site),
             'page' => $this->outputPageMask($lastMatchedNode),
-            'mask' => $mask,
+            'mask' => $this->outputMaskMask($mask),
             'breadcrumb' => $pages,
         );
-        if (!empty($content)) {
-            $output['content'] = $content;
-        }
         return $output;
     }
 
@@ -221,6 +217,12 @@ class PagesResource extends AbstractResource
     {
         $output['host'] = $output['text'];
         $mask = ['id', 'host', 'alias', 'description', 'keywords', 'defaultLanguage', 'languages', 'locale', 'locStrategy', 'homePage', 'author'];
+        return array_intersect_key($output, array_flip($mask));
+    }
+
+    protected function outputMaskMask($output)
+    {
+        $mask = array('pageProperties', 'mainColumnId');
         return array_intersect_key($output, array_flip($mask));
     }
 
@@ -276,7 +278,6 @@ class PagesResource extends AbstractResource
         $block = array();
         $block['configBloc'] = array(
             'contentId' => $id,
-            'inPagesQuery' => true
         );
         $block['bType'] = 'contentDetail';
         $block['id'] = 'single';
