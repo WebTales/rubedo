@@ -178,7 +178,7 @@ class PagesResource extends AbstractResource
         if (!empty($content)) {
             $mainColumn =  isset($mask['mainColumnId']) ? $mask['mainColumnId'] : null;
             if ($mainColumn) {
-                $blocks[$mainColumn] = array($this->getSingleBlock());
+                $blocks[$mainColumn] = array($this->getSingleBlock($content['id']));
             }
         }
         $output = array(
@@ -271,10 +271,12 @@ class PagesResource extends AbstractResource
         return $returnArray;
     }
 
-    protected function getSingleBlock()
+    protected function getSingleBlock($id)
     {
         $block = array();
-        $block['configBloc'] = array();
+        $block['configBloc'] = array(
+            "contentId" => $id,
+        );
         $block['bType'] = 'contentDetail';
         $block['id'] = 'single';
         $block['responsive'] = array(
