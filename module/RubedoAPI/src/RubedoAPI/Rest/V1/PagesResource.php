@@ -275,7 +275,8 @@ class PagesResource extends AbstractResource
     {
         $block = array();
         $block['configBloc'] = array(
-            "contentId" => $id,
+            'contentId' => $id,
+            'inPagesQuery' => true
         );
         $block['bType'] = 'contentDetail';
         $block['id'] = 'single';
