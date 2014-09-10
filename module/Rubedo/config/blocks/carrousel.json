@@ -147,7 +147,7 @@
                             "config":{
                                 "fieldLabel":"Custom template",
                                 "name":"customTemplate",
-                                "defaultTemplateUrl":"carousel.html",
+                                "defaultTemplateUrl":"blocks/carousel.html",
                                 "twigMode":false
 
                             }

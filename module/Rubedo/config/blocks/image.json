@@ -85,7 +85,7 @@
                             "config":{
                                 "fieldLabel":"Custom template",
                                 "name":"customTemplate",
-                                "defaultTemplateUrl":"image.html",
+                                "defaultTemplateUrl":"blocks/image.html",
                                 "twigMode":false
 
                             }
