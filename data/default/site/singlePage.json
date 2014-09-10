@@ -8,18 +8,12 @@
       },
       "orderValue": 1,
       "title": "###NewSite.single.singleBlocTitle###",
-      "elementStyle": "",
-      "elementTag": "div",
-      "renderDiv": true,
       "responsive": {
         "phone": true,
         "tablet": true,
-        "desktop": true
+        "desktop": true,
+        "largeDesktop":true
       },
-      "classHTML": null,
-      "displayTitle": null,
-      "idHTML": null,
-      "urlPrefix": null,
       "flex": 1,
       "canEdit": true
     }
