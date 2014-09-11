@@ -29,11 +29,14 @@ use Zend\Json\Json;
 class SearchResource extends AbstractResource
 {
     protected $searchOption;
+    protected $searchParamsArray;
 
     public function __construct()
     {
         parent::__construct();
         $this->searchOption = 'all';
+        $this->searchParamsArray = array('orderby', 'orderbyDirection','query','objectType','type','damType','userType','author',
+            'userName','lastUpdateTime','start','limit');
         $this
             ->definition
             ->setName('Search')
@@ -191,8 +194,6 @@ class SearchResource extends AbstractResource
     protected function initParams($queryParams)
     {
         $blockConfigArray = array('displayMode', 'displayedFacets');
-        $searchParamsArray = array('orderby', 'orderbyDirection','query','objectType','type','damType','userType','author',
-        'userName','lastUpdateTime','start','limit');
         $params = array(
             'limit' => 25,
             'start' => 0
@@ -204,7 +205,7 @@ class SearchResource extends AbstractResource
                 $this->parsePrefedinedFacets($params, $queryParams);
             } else if (in_array($keyQueryParams, $blockConfigArray)){
                 $params['block-config'][$keyQueryParams] = $param;
-            } else if (in_array($keyQueryParams, $searchParamsArray)){
+            } else if (in_array($keyQueryParams, $this->searchParamsArray)){
                 $params[$keyQueryParams] = $param;
             } else if($keyQueryParams == 'taxonomies'){
                 $taxonomies = JSON::decode($param);
@@ -255,18 +256,12 @@ class SearchResource extends AbstractResource
         if ($params['displayedFacets']=="['all']"){
             $taxonomyService = $this->getTaxonomyCollection();
             foreach($results['activeFacets'] as $key => $activeFacet){
-                switch($activeFacet['id']){
-                    case 'objectType':
-                        $results['activeFacets'][$key]['operator'] = 'and';
-                        break;
-                    case 'type':
-                        $results['activeFacets'][$key]['operator'] = 'and';
-                        break;
-                    default:
-                        $taxonomy = $taxonomyService->findById($activeFacet['id']);
-                        $results['activeFacets'][$key]['operator'] = isset($taxonomy['facetOperator']) ? strtolower(
-                            $taxonomy['facetOperator']) : 'and';
-                        break;
+                if(in_array($activeFacet['id'], $this->searchParamsArray)){
+                    $results['activeFacets'][$key]['operator'] = 'and';
+                } else {
+                    $taxonomy = $taxonomyService->findById($activeFacet['id']);
+                    $results['activeFacets'][$key]['operator'] = isset($taxonomy['facetOperator']) ? strtolower(
+                        $taxonomy['facetOperator']) : 'and';
                 }
             }
 

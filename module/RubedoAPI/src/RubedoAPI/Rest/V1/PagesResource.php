@@ -156,7 +156,7 @@ class PagesResource extends AbstractResource
         $languagesWithFlag = array();
         foreach($site['languages'] as $lang){
             $localeDetail =  $languagesServices->findByLocale($lang);
-            $languagesWithFlag[]=array('lang'=>$lang,'flagCode'=>(isset($localeDetail['flagCode'])?$localeDetail['flagCode']:''));
+            $languagesWithFlag[$lang]=array('lang'=>$lang,'flagCode'=>(isset($localeDetail['flagCode'])?$localeDetail['flagCode']:''));
         }
         $site['languages']=$languagesWithFlag;
         $wasFiltered = AbstractCollection::disableUserFilter();
