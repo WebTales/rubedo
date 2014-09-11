@@ -53,7 +53,8 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @method \Rubedo\Interfaces\Collection\ITinyUrl getTinyUrlCollection() return TinyUrl collection
  * @method \Rubedo\Interfaces\Elastic\IDataSearch getElasticDataSearchService() return DataSearch service
  * @method \Rubedo\Collection\Orders getOrdersCollection() return Orders collection
- * @method \Rubedo\Time\Date getDateService() return Date cservice
+ * @method \Rubedo\Time\Date getDateService() return Date service
+ * @method \Rubedo\Collection\ShoppingCart getShoppingCartCollection() return ShoppingCart service
  */
 trait LazyServiceManager
 {
