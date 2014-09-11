@@ -17,6 +17,7 @@
 
 namespace RubedoAPI\Frontoffice\Controller;
 
+use Rubedo\Collection\AbstractCollection;
 use RubedoAPI\Exceptions\APIAbstractException;
 use RubedoAPI\Exceptions\APIRequestException;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -37,6 +38,7 @@ class ApiController extends AbstractActionController
      */
     public function indexAction()
     {
+        AbstractCollection::setIsFrontEnd(true);
         try {
             $routes = $this->params()->fromRoute();
             array_walk(
