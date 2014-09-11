@@ -39,6 +39,7 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @method \Rubedo\Interfaces\Security\IHash getHashService() Return current localization service
  * @method \Zend\Mvc\Application getApplicationService() Return current application
  * @method \Zend\Config\Config getConfigService() Return config service
+ * @method \Zend\Stdlib\Parameters getSessionService() Return Session service
  * @method \Rubedo\Interfaces\Collection\IUsers getUsersCollection() Return Users collection
  * @method \Rubedo\Interfaces\Security\IAcl getAclService() Return ACL service
  * @method \RubedoAPI\Services\Security\Token getTokenAPIService() Return ACL service
