@@ -180,14 +180,14 @@ class PagesResource extends AbstractResource
             }
             $blocks[$block['parentCol']][] = $block;
         }
-        $lastMatchedNode['rows'] = $this->getRowsInfos($blocks, $mask['rows']);
-
         if (!empty($content)) {
             $mainColumn =  isset($mask['mainColumnId']) ? $mask['mainColumnId'] : null;
             if ($mainColumn) {
                 $blocks[$mainColumn] = array($this->getSingleBlock($content['id']));
             }
         }
+        $lastMatchedNode['rows'] = array_replace_recursive($mask['rows'], $this->getRowsInfos($blocks, $mask['rows']));
+
         $output = array(
             'success' => true,
             'site' => $this->outputSiteMask($site),
