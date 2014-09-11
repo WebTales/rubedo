@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -32,10 +32,10 @@ interface ITaxonomyTerms extends IAbstractCollection
      *
      * @param string $id
      *            id of the vocabulary
-     *            
+     *
      * @return array
      */
-    public function deleteByVocabularyId ($id);
+    public function deleteByVocabularyId($id);
 
     /**
      * Delete objects in the current collection
@@ -47,7 +47,7 @@ interface ITaxonomyTerms extends IAbstractCollection
      *            should we wait for a server response
      * @return array
      */
-    
+
     /**
      * Allow to find a term by its id
      *
@@ -55,14 +55,14 @@ interface ITaxonomyTerms extends IAbstractCollection
      *            id of the term
      * @return array Contain the term
      */
-    public function getTerm ($id);
+    public function getTerm($id);
 
     /**
      * Clear orphan terms in the collection
      *
      * @return array Result of the request
      */
-    public function clearOrphanTerms ();
+    public function clearOrphanTerms();
 
     /**
      * Allow to find terms by their vocabulary
@@ -71,7 +71,7 @@ interface ITaxonomyTerms extends IAbstractCollection
      *            Contain the id of the vocabulary
      * @return array Contain the terms associated to the vocabulary given in parameter
      */
-    public function findByVocabulary ($vocabularyId);
+    public function findByVocabulary($vocabularyId);
 
     /**
      * Allow to find term by vocabularyId and name
@@ -82,9 +82,9 @@ interface ITaxonomyTerms extends IAbstractCollection
      *            Contain the name of the term
      * @return array Contain the terms associated to the vocabulary given in parameter
      */
-    public function findByVocabularyIdAndName ($vocabularyId, $name);
+    public function findByVocabularyIdAndName($vocabularyId, $name);
 
-    public function countOrphanTerms ();
+    public function countOrphanTerms();
 
-    public function getNavigationTree ($withCurrentPage = false);
+    public function getNavigationTree($withCurrentPage = false);
 }

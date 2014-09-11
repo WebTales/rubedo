@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Interfaces\Collection;
+
 use WebTales\MongoFilters\IFilter;
 
 /**
@@ -28,34 +29,34 @@ use WebTales\MongoFilters\IFilter;
 interface IContents extends IAbstractCollection
 {
 
-    public function unsetTerms ($vocId, $termId);
+    public function unsetTerms($vocId, $termId);
 
-    public function getByType ($typeId);
+    public function getByType($typeId);
 
-    public function clearOrphanContents ();
+    public function clearOrphanContents();
 
-    public function countOrphanContents ();
+    public function countOrphanContents();
 
-    public function getListByTypeId ($typeId);
+    public function getListByTypeId($typeId);
 
-    public function isTypeUsed ($typeId);
+    public function isTypeUsed($typeId);
 
-    public static function getIsFrontEnd ();
+    public static function getIsFrontEnd();
 
-    public static function setIsFrontEnd ($_isFrontEnd);
+    public static function setIsFrontEnd($_isFrontEnd);
 
     /**
      * Return a list of ordered objects
      *
-     * @param array $filters            
-     * @param array $sort            
-     * @param string $start            
-     * @param string $limit            
-     * @param bool $live            
+     * @param array $filters
+     * @param array $sort
+     * @param string $start
+     * @param string $limit
+     * @param bool $live
      *
      * @return array Return the contents list
      */
-    public function getOrderedList ($filters = null, $sort = null, $start = null, $limit = null, $live = true);
+    public function getOrderedList($filters = null, $sort = null, $start = null, $limit = null, $live = true);
 
     /**
      * Return the visible contents list

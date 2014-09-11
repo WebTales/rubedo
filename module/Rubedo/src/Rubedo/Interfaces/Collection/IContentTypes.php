@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -32,26 +32,26 @@ interface IContentTypes extends IAbstractCollection
      *
      * @return array
      */
-    public function getReadableContentTypes ();
+    public function getReadableContentTypes();
 
     /**
      * Return the list of ID of contentTypes which implements a location field
      *
      * @return array
      */
-    public function getGeolocatedContentTypes ();
+    public function getGeolocatedContentTypes();
 
     /**
      * Push the content type to Elastic Search
      *
-     * @param array $obj            
+     * @param array $obj
      */
-    public function indexContentType ($obj);
+    public function indexContentType($obj);
 
     /**
      * Remove the content type from Indexed Search
      *
-     * @param array $obj            
+     * @param array $obj
      */
-    public function unIndexContentType ($obj);
+    public function unIndexContentType($obj);
 }

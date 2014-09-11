@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -36,16 +36,16 @@ interface ICache extends IAbstractCollection
      *            string parameter of the cache entry
      * @return bool
      */
-    public function upsertByCacheId ($obj, $cacheId);
+    public function upsertByCacheId($obj, $cacheId);
 
     /**
      * Remove expired cache items
      *
      * @return boolean
      */
-    public function deleteExpired ();
+    public function deleteExpired();
 
-    public function deleteByCacheId ($id);
+    public function deleteByCacheId($id);
 
-    public function findByCacheId ($cacheId, $time = null);
+    public function findByCacheId($cacheId, $time = null);
 }

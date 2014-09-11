@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,16 +29,16 @@ interface IDirectories extends IAbstractCollection
 {
 
 
-    public function getListByFilePlanId ($filePlanId);
+    public function getListByFilePlanId($filePlanId);
 
-    public function deleteByFilePlanId ($id);
+    public function deleteByFilePlanId($id);
 
-    public function clearOrphanDirectories ();
+    public function clearOrphanDirectories();
 
-    public function countOrphanDirectories ();
+    public function countOrphanDirectories();
 
-    public function propagateWorkspace ($parentId, $workspaceId, $filePlanId = null);
-    
+    public function propagateWorkspace($parentId, $workspaceId, $filePlanId = null);
+
     /**
      * Set the directory for dam items given by an array of ID
      *

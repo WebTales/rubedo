@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -27,7 +27,7 @@ namespace Rubedo\Interfaces\Collection;
 interface IPersonalPrefs extends IAbstractCollection
 {
 
-    public function clearOrphanPrefs ();
+    public function clearOrphanPrefs();
 
-    public function countOrphanPrefs ();
+    public function countOrphanPrefs();
 }

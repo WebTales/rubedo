@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -34,7 +34,7 @@ interface INestedContents
      *            parent id of nested contents
      * @return array
      */
-    public function getList ($parentContentId);
+    public function getList($parentContentId);
 
     /**
      * Create an objet in the current collection
@@ -47,7 +47,7 @@ interface INestedContents
      *            should we wait for a server response
      * @return array
      */
-    public function create ($parentContentId, array $obj, $options = array());
+    public function create($parentContentId, array $obj, $options = array());
 
     /**
      * Update an objet in the current collection
@@ -60,7 +60,7 @@ interface INestedContents
      *            should we wait for a server response
      * @return array
      */
-    public function update ($parentContentId, array $obj, $options = array());
+    public function update($parentContentId, array $obj, $options = array());
 
     /**
      * Delete objets in the current collection
@@ -73,7 +73,7 @@ interface INestedContents
      *            should we wait for a server response
      * @return array
      */
-    public function destroy ($parentContentId, array $obj, $options = array());
+    public function destroy($parentContentId, array $obj, $options = array());
 
     /**
      * Find a nested content by its id and its parentId
@@ -83,5 +83,5 @@ interface INestedContents
      * @param string $subContentId
      *            id of the content we are looking for
      */
-    public function findById ($parentContentId, $subContentId);
+    public function findById($parentContentId, $subContentId);
 }

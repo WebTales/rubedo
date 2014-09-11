@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,42 +30,42 @@ interface IGroups extends IAbstractCollection
     /**
      * return "can read" workspaces
      *
-     * @param string $groupId            
+     * @param string $groupId
      * @return array
      */
-    public function getReadWorkspaces ($groupId);
+    public function getReadWorkspaces($groupId);
 
     /**
      * return main workspace
      *
-     * @param string $groupId            
+     * @param string $groupId
      * @return array
      */
-    public function getMainWorkspace ($groupId);
+    public function getMainWorkspace($groupId);
 
     /**
      * return "can write" workspaces
      *
-     * @param string $groupId            
+     * @param string $groupId
      * @return array
      */
-    public function getWriteWorkspaces ($groupId);
+    public function getWriteWorkspaces($groupId);
 
-    public function getListByUserId ($userId);
+    public function getListByUserId($userId);
 
-    public function getValidatingGroupsId ();
+    public function getValidatingGroupsId();
 
-    public function getPublicGroup ();
+    public function getPublicGroup();
 
-    public function getValidatingGroupsForWorkspace ($workspace);
+    public function getValidatingGroupsForWorkspace($workspace);
 
-    public function clearOrphanGroups ();
+    public function clearOrphanGroups();
 
-    public function countOrphanGroups ();
+    public function countOrphanGroups();
 
-    public function clearUserFromGroups ($userId);
+    public function clearUserFromGroups($userId);
 
-    public function addUserToGroupList ($userId, $groupIdList);
+    public function addUserToGroupList($userId, $groupIdList);
 
-    public function propagateWorkspace ($parentId, $workspaceId);
+    public function propagateWorkspace($parentId, $workspaceId);
 }

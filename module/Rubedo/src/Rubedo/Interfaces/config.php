@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -91,7 +91,7 @@ class config
         'Localisation' => 'Rubedo\\Interfaces\\Collection\\ILocalisation',
         'RubedoVersion' => 'Rubedo\\Interfaces\\Collection\\IRubedoVersion',
         'Translate' => 'Rubedo\\Interfaces\\Internationalization\\ITranslate',
-        'CurrentLocalization' => 'Rubedo\\Interfaces\\Internationalization\\ICurrent',        
+        'CurrentLocalization' => 'Rubedo\\Interfaces\\Internationalization\\ICurrent',
         'Directories' => 'Rubedo\\Interfaces\\Collection\\IDirectories',
         'Languages' => 'Rubedo\\Interfaces\\Collection\\ILanguages',
         'CustomThemes' => 'Rubedo\\Interfaces\\Collection\\ICustomThemes'

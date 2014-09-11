@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -34,23 +34,23 @@ interface IPages extends IAbstractCollection
      *            Name of the page
      * @param string $siteId
      *            Site Id
-     *            
+     *
      * @return array
      *
      */
-    public function findByNameAndSite ($name, $siteId);
+    public function findByNameAndSite($name, $siteId);
 
-    public function matchSegment ($urlSegment, $parentId, $siteId);
+    public function matchSegment($urlSegment, $parentId, $siteId);
 
-    public function getListByMaskId ($maskId);
+    public function getListByMaskId($maskId);
 
-    public function isMaskUsed ($maskId);
+    public function isMaskUsed($maskId);
 
-    public function deleteBySiteId ($id);
+    public function deleteBySiteId($id);
 
-    public function clearOrphanPages ();
+    public function clearOrphanPages();
 
-    public function countOrphanPages ();
+    public function countOrphanPages();
 
-    public function propagateWorkspace ($parentId, $workspaceId, $siteId = null);
+    public function propagateWorkspace($parentId, $workspaceId, $siteId = null);
 }

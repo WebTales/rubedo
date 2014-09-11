@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -34,17 +34,17 @@ interface ISites extends IAbstractCollection
      *            site Array or Site ID
      * @return string hostName
      */
-    public function getHost ($site);
+    public function getHost($site);
 
     /**
      * Return site matching host part of the URL
      *
-     * @param string $host            
+     * @param string $host
      * @return array site data
      */
-    public function findByHost ($host);
+    public function findByHost($host);
 
-    public function deleteById ($id);
+    public function deleteById($id);
 
     public function getCurrent();
 }

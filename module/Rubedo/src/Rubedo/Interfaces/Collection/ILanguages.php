@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -25,21 +25,22 @@ namespace Rubedo\Interfaces\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-interface ILanguages extends IAbstractCollection {
-	
-	/**
-	 * Find a language given by its Locale name
-	 *
-	 * @param string $name        	
-	 * @return array
-	 */
-	public function findByLocale($name);
-	
-	/**
-	 * Find a language given by its ISO-639-1 code (2 letters ISO code)
-	 *
-	 * @param string $iso        	
-	 * @return array
-	 */
-	public function findByIso($iso);
+interface ILanguages extends IAbstractCollection
+{
+
+    /**
+     * Find a language given by its Locale name
+     *
+     * @param string $name
+     * @return array
+     */
+    public function findByLocale($name);
+
+    /**
+     * Find a language given by its ISO-639-1 code (2 letters ISO code)
+     *
+     * @param string $iso
+     * @return array
+     */
+    public function findByIso($iso);
 }

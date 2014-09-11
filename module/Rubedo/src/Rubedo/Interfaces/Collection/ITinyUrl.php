@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,48 +30,48 @@ interface ITinyUrl extends IAbstractCollection
     /**
      * find a tinyUrl object base on URL argument
      *
-     * @param string $url            
+     * @param string $url
      * @return array
      */
-    public function findByUrl ($url);
+    public function findByUrl($url);
 
     /**
      * Create a tinyUrl object base on URL argument
      *
      * return created object ID
      *
-     * @param string $url            
+     * @param string $url
      * @return string
      */
-    public function createUrlAlias ($url);
+    public function createUrlAlias($url);
 
     /**
      * create a tinyUrl object base on MVC context
      *
-     * @param string $action            
-     * @param string $controller            
-     * @param string $module            
-     * @param array $params            
+     * @param string $action
+     * @param string $controller
+     * @param string $module
+     * @param array $params
      * @return string
      */
-    public function createFromParameters ($action, $controller, $module, $params = array(), $expire = true);
+    public function createFromParameters($action, $controller, $module, $params = array(), $expire = true);
 
     /**
      * find a tinyUrl object base on MVC context
      *
-     * @param string $action            
-     * @param string $controller            
-     * @param string $module            
-     * @param array $params            
+     * @param string $action
+     * @param string $controller
+     * @param string $module
+     * @param array $params
      * @return array
      */
-    public function findByParameters ($action, $controller, $module, $params);
+    public function findByParameters($action, $controller, $module, $params);
 
     /**
      * Create an access link to download a document
      *
-     * @param string $damId            
+     * @param string $damId
      * @return string
      */
-    public function creamDamAccessLinkKey ($damId);
+    public function creamDamAccessLinkKey($damId);
 }

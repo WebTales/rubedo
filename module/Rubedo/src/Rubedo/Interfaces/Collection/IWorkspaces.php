@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -27,7 +27,7 @@ namespace Rubedo\Interfaces\Collection;
 interface IWorkspaces extends IAbstractCollection
 {
 
-    public function getWholeList ($filters = null, $sort = null, $start = null, $limit = null);
+    public function getWholeList($filters = null, $sort = null, $start = null, $limit = null);
 
-    public function getAdminWorkspaceId ();
+    public function getAdminWorkspaceId();
 }

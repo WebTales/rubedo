@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -38,18 +38,18 @@ interface IUsers extends IAbstractCollection
      * @param string $userId
      *            id of the user to be changed
      */
-    public function changePassword ($password, $version, $userId);
+    public function changePassword($password, $version, $userId);
 
     /**
      * Return the user associeted to the id
      *
-     * @param string $email            
+     * @param string $email
      *
      * @return array
      */
-    public function findByEmail ($email);
+    public function findByEmail($email);
 
-    public function findValidatingUsersByWorkspace ($workspace);
+    public function findValidatingUsersByWorkspace($workspace);
 
-    public function getAdminUsers ();
+    public function getAdminUsers();
 }

@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -34,15 +34,15 @@ interface IUrlCache extends IAbstractCollection
      *            page ID
      * @return array
      */
-    public function findByPageId ($pageId);
+    public function findByPageId($pageId);
 
     /**
      *
-     * @param string $url            
-     * @param string $siteid            
+     * @param string $url
+     * @param string $siteid
      * @return array
      */
-    public function findByUrl ($url, $siteid);
+    public function findByUrl($url, $siteid);
 
-    public function verifyIndexes ();
+    public function verifyIndexes();
 }

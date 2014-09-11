@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -36,10 +36,10 @@ interface IQueries extends IAbstractCollection
      * "sort" => $sort
      * )
      *
-     * @param string $id            
+     * @param string $id
      * @return array | false
      */
-    public function getFilterArrayById ($id);
+    public function getFilterArrayById($id);
 
     /**
      * Return an array of filter and sort params for the given query
@@ -50,16 +50,16 @@ interface IQueries extends IAbstractCollection
      * "sort" => $sort
      * )
      *
-     * @param array $query            
+     * @param array $query
      * @return array | false
      */
-    public function getFilterArrayByQuery ($query);
+    public function getFilterArrayByQuery($query);
 
     /**
      * Return a query
      *
-     * @param string $id            
+     * @param string $id
      * @return boolean multitype:
      */
-    public function getQueryById ($id = null);
+    public function getQueryById($id = null);
 }

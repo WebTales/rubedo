@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -36,23 +36,23 @@ interface IAbstractFileCollection
      *            sort the list with mongo syntax
      * @return array
      */
-    public function getList ($filters = null, $sort = null, $start = null, $limit = null);
+    public function getList($filters = null, $sort = null, $start = null, $limit = null);
 
     /**
      * Find an item given by its literral ID
      *
-     * @param string $contentId            
+     * @param string $contentId
      * @return array
      */
-    public function findById ($contentId);
+    public function findById($contentId);
 
     /**
      * Find an item given by its name (find only one if many)
      *
-     * @param string $name            
+     * @param string $name
      * @return array
      */
-    public function findByName ($name);
+    public function findByName($name);
 
     /**
      * Create an objet in the current collection
@@ -61,7 +61,7 @@ interface IAbstractFileCollection
      *            data object
      * @return array
      */
-    public function create (array $obj);
+    public function create(array $obj);
 
     /**
      * Update an objet in the current collection
@@ -70,7 +70,7 @@ interface IAbstractFileCollection
      *            data object
      * @return array
      */
-    public function update (array $obj);
+    public function update(array $obj);
 
     /**
      * Delete objets in the current collection
@@ -79,5 +79,5 @@ interface IAbstractFileCollection
      *            data object
      * @return array
      */
-    public function destroy (array $obj);
+    public function destroy(array $obj);
 }
