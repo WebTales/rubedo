@@ -18,7 +18,6 @@
 namespace RubedoAPI\Rest\V1;
 
 use Rubedo\Collection\AbstractCollection;
-use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
@@ -114,17 +113,13 @@ class PagesResource extends AbstractResource
      */
     public function getAction($params)
     {
-        $sitesServices = Manager::getService('Sites');
-        $pagesServices = Manager::getService('Pages');
-        $blocksServices = Manager::getService('Blocks');
-        $languagesServices =  Manager::getService('Languages');
-        $site = $sitesServices->findByHost($params['site']);
+        $site = $this->getSitesCollection()->findByHost($params['site']);
         $pages =  array();
         $url = '';
         if ($site == null)
             throw new APIEntityException('Site not found', 404);
         if (empty($params['route'])) {
-            $lastMatchedNode = $pagesServices->findById($site['homePage']);
+            $lastMatchedNode = $this->getPagesCollection()->findById($site['homePage']);
         } else {
             $urlSegments = explode('/', trim($params['route'], '/'));
             $lastMatchedNode = ['id' => 'root'];
@@ -134,7 +129,7 @@ class PagesResource extends AbstractResource
                     $content = $this->getContentsCollection()->findById($contentId, false, false);
                     break;
                 } catch (\Exception $e) {}
-                $matchedNode = $pagesServices->matchSegment($value, $lastMatchedNode['id'], $site['id']);
+                $matchedNode = $this->getPagesCollection()->matchSegment($value, $lastMatchedNode['id'], $site['id']);
                 if (null === $matchedNode) {
                     break;
                 } else {
@@ -152,24 +147,22 @@ class PagesResource extends AbstractResource
         if ($lastMatchedNode['id'] == 'root') {
             throw new APIEntityException('Page not found', 404);
         }
-        $lastMatchedNode['blocks'] = $blocksServices->getListByPage($lastMatchedNode['id'])['data'];
+        $lastMatchedNode['blocks'] = $this->getBlocksCollection()->getListByPage($lastMatchedNode['id'])['data'];
         $languagesWithFlag = array();
         foreach($site['languages'] as $lang){
-            $localeDetail =  $languagesServices->findByLocale($lang);
+            $localeDetail =  $this->getLanguagesCollection()->findByLocale($lang);
             $languagesWithFlag[$lang]=array('lang'=>$lang,'flagCode'=>(isset($localeDetail['flagCode'])?$localeDetail['flagCode']:''));
         }
         $site['languages']=$languagesWithFlag;
         $wasFiltered = AbstractCollection::disableUserFilter();
-        $mask = Manager::getService('Masks')->findById($lastMatchedNode['maskId']);
+        $mask = $this->getMasksCollection()->findById($lastMatchedNode['maskId']);
         AbstractCollection::disableUserFilter($wasFiltered);
 
         if (empty($mask)) {
             throw new APIEntityException('Mask not found', 404);
         }
 
-        $pageBlocks = $blocksServices->getListByPage($lastMatchedNode['id'])['data'];
-
-        $blocksFound = array_merge($mask['blocks'], $pageBlocks);
+        $blocksFound = array_merge($mask['blocks'], $lastMatchedNode['blocks']);
         $blocks = array();
         foreach ($blocksFound as $block) {
             if (isset($block['blockData'])) {

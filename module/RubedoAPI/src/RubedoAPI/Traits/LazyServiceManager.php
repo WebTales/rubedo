@@ -45,6 +45,9 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @method \RubedoAPI\Services\Security\Token getTokenAPIService() Return ACL service
  * @method \Rubedo\Collection\MailingList getMailingListCollection() Return MLists collection
  * @method \Rubedo\Collection\UserTypes getUserTypesCollection() Return UserTypes collection
+ * @method \Rubedo\Collection\Languages getLanguagesCollection() Return Languages collection
+ * @method \Rubedo\Collection\Masks getMasksCollection() Return Masks collection
+ * @method \Rubedo\Collection\Blocks getBlocksCollection() Return Blocks collection
  * @method \Rubedo\Interfaces\Time\ICurrentTime getCurrentTimeService() Return CurrentTime service
  * @method \Rubedo\Interfaces\Templates\IFrontOfficeTemplates getFrontOfficeTemplatesService() Return FrontOfficeTemplates service
  * @method \Rubedo\Interfaces\Internationalization\ITranslate getTranslateService() Return FrontOfficeTemplates service
