@@ -85,6 +85,9 @@ class OrdersResource extends AbstractResource
             ->setDescription('Deal with Orders')
             ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $this->defineGet($entity);
+            })
+            ->editVerb('post', function (VerbDefinitionEntity &$entity) {
+                $this->definePost($entity);
             });
 
         $this
@@ -132,6 +135,10 @@ class OrdersResource extends AbstractResource
             );
     }
 
+    protected function definePost($entity)
+    {
+    }
+
     protected function defineGetEntity($entity)
     {
         $entity
@@ -144,4 +151,5 @@ class OrdersResource extends AbstractResource
                     ->setRequired()
             );
     }
+
 }
