@@ -376,12 +376,39 @@ class ContentsResource extends AbstractResource
     public function getEntityAction($id, $params)
     {
         $content = $this->getContentsCollection()->findById($id, true, false);
-        if (empty($content))
+        if (empty($content)) {
             throw new APIEntityException('Content not found', 404);
+        }
 
         $contentType = $this->getContentTypesCollection()->findById($content['typeId'], true, false);
-        if (empty($contentType))
+        if (empty($contentType)) {
             throw new APIEntityException('ContentType not found', 404);
+        }
+
+        if (isset($params['fingerprint'])) {
+            $currentTime = $this->getCurrentTimeService()->getCurrentTime();
+            //get user fingerprint
+            $this->getContentViewLogCollection()->log($content['id'], $content['locale'], $params['fingerprint'], $currentTime);
+            //rebuild user recommendations if necessary
+            $emptyFilter = Filter::factory();
+            $oldestView = $this->getContentViewLogCollection()->findOne($emptyFilter);
+            if ($oldestView) {
+                $timeSinceLastRun = $currentTime - $oldestView['timestamp'];
+                if ($timeSinceLastRun > 60) {
+                    $curlUrl = 'http://'.$_SERVER['HTTP_HOST'].'/queue?service=UserRecommendations&class=build';
+                    $curly = curl_init();
+                    curl_setopt($curly, CURLOPT_URL, $curlUrl);
+                    curl_setopt($curly, CURLOPT_FOLLOWLOCATION, true);  // Follow the redirects (needed for mod_rewrite)
+                    curl_setopt($curly, CURLOPT_HEADER, false);         // Don't retrieve headers
+                    curl_setopt($curly, CURLOPT_NOBODY, true);          // Don't retrieve the body
+                    curl_setopt($curly, CURLOPT_RETURNTRANSFER, true);  // Return from curl_exec rather than echoing
+                    curl_setopt($curly, CURLOPT_FRESH_CONNECT, true);   // Always ensure the connection is fresh
+                    // Timeout super fast once connected, so it goes into async.
+                    curl_setopt($curly, CURLOPT_TIMEOUT, 1);
+                    curl_exec($curly);
+                }
+            }
+        }
 
         $content = array_intersect_key(
             $content,
