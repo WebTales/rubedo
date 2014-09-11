@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -18,6 +18,7 @@ namespace Rubedo\Elastic;
 
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
+
 /**
  * Class implementing the Rubedo API to Elastic Search indexing services using Elastica API
  *
@@ -78,7 +79,7 @@ class DataAbstract
 
     /**
      * Object which represent the default ES index param
-     * 
+     *
      * @var \Elastica_Index
      */
     protected static $_content_index_param;
@@ -93,7 +94,7 @@ class DataAbstract
     /**
      * Object which represent the default dam ES index param
      * @TODO : get param from config
-     * 
+     *
      * @var \Elastica_Index
      */
     protected static $_dam_index_param;
@@ -104,7 +105,7 @@ class DataAbstract
      * @var \Elastica_Index
      */
     protected static $_user_index;
-    
+
     /**
      * Object which represent the default user ES index param
      * @TODO : get param from config
@@ -112,10 +113,11 @@ class DataAbstract
      * @var \Elastica_Index
      */
     protected static $_user_index_param;
-    
-    
-    public function __construct(){
-        if(!isset(self::$_options)){
+
+
+    public function __construct()
+    {
+        if (!isset(self::$_options)) {
             self::lazyLoadConfig();
         }
     }
@@ -129,21 +131,21 @@ class DataAbstract
      * @param string $port
      *            http port
      */
-    public function init ($host = null, $port = null)
+    public function init($host = null, $port = null)
     {
         if (is_null($host)) {
             $host = self::$_options['host'];
         }
-        
+
         if (is_null($port)) {
             $port = self::$_options['port'];
         }
-        
+
         $this->_client = new \Elastica\Client(array(
             'port' => $port,
             'host' => $host
         ));
-        
+
         $this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
 
         $dataAccess = Manager::getService('MongoDataAccess');
@@ -153,39 +155,39 @@ class DataAbstract
         // Get content index
         $indexName = $defaultDB . "-" . self::$_options['contentIndex'];
         self::$_content_index = $this->_client->getIndex($indexName);
-     
+
         // Create content index if not exists
-        if (! self::$_content_index->exists()) {
+        if (!self::$_content_index->exists()) {
             self::$_content_index->create(self::$_content_index_param, true);
         }
-        
+
         // Get dam index
         $indexName = $defaultDB . "-" . self::$_options['damIndex'];
         self::$_dam_index = $this->_client->getIndex($indexName);
-        
+
         // Create dam index if not exists
-        if (! self::$_dam_index->exists()) {
+        if (!self::$_dam_index->exists()) {
             self::$_dam_index->create(self::$_dam_index_param, true);
         }
-        
+
         // Get user index
         $indexName = $defaultDB . "-" . self::$_options['userIndex'];
         self::$_user_index = $this->_client->getIndex($indexName);
-        
+
         // Create user index if not exists
 
-        if (! self::$_user_index->exists()) {
+        if (!self::$_user_index->exists()) {
             self::$_user_index->create(self::$_user_index_param, true);
         }
-        
+
     }
 
     /**
      * Set the options for ES connection
      *
-     * @param array $options            
+     * @param array $options
      */
-    public static function setOptions (array $options)
+    public static function setOptions(array $options)
     {
         self::$_options = $options;
     }
@@ -194,9 +196,9 @@ class DataAbstract
      *
      * @return the $_options
      */
-    public static function getOptions ()
+    public static function getOptions()
     {
-        if(!isset(self::$_options)){
+        if (!isset(self::$_options)) {
             self::lazyLoadConfig();
         }
         return self::$_options;
@@ -205,9 +207,9 @@ class DataAbstract
     /**
      * Set the options for the content index
      *
-     * @param string $host            
+     * @param string $host
      */
-    public static function setContentIndexOption (array $options)
+    public static function setContentIndexOption(array $options)
     {
         self::$_content_index_param = $options;
     }
@@ -217,7 +219,7 @@ class DataAbstract
      *
      * @param string $host
      */
-    public static function setDamIndexOption (array $options)
+    public static function setDamIndexOption(array $options)
     {
         self::$_dam_index_param = $options;
     }
@@ -227,17 +229,17 @@ class DataAbstract
      *
      * @param string $host
      */
-    public static function setUserIndexOption (array $options)
+    public static function setUserIndexOption(array $options)
     {
         self::$_user_index_param = $options;
     }
-    
+
     /**
      * Return the ElasticSearch Server Version
-     * 
+     *
      * @return string
      */
-    public function getVersion ()
+    public function getVersion()
     {
         $data = $this->_client->request('/', 'GET')->getData();
         if (isset($data['version']) && isset($data['version']['number'])) {
@@ -249,7 +251,7 @@ class DataAbstract
     /**
      * Read configuration from global application config and load it for the current class
      */
-    public static function lazyLoadConfig ()
+    public static function lazyLoadConfig()
     {
         $options = Manager::getService('config');
         if (isset($options)) {
@@ -260,5 +262,5 @@ class DataAbstract
         self::setContentIndexOption($indexOptions);
         self::setDamIndexOption($indexOptions);
         self::setUserIndexOption($indexOptions);
-    } 
+    }
 }
