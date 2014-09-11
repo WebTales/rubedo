@@ -17,6 +17,7 @@
 
 namespace RubedoAPI\Rest\V1\Ecommerce;
 
+use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Rest\V1\AbstractResource;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
@@ -55,6 +56,22 @@ class OrdersResource extends AbstractResource
         );
     }
 
+    public function getEntityAction($id, $params)
+    {
+        $user = $params['identity']->getUser();
+        $filters = Filter::factory()
+            ->addFilter(Filter::factory('Value')->setName('userId')->setValue($user['id']))
+            ->addFilter(Filter::factory('Uid')->setValue($id));
+        $order = $this->getOrdersCollection()->findOne($filters);
+        if (empty($order)) {
+            throw new APIEntityException('Order not found', 404);
+        }
+        return array(
+            'success' => true,
+            'order' => $order,
+        );
+    }
+
     public function maskOrderInList($order) {
         $mask = array('status', 'id', 'orderNumber', 'finalTFPrice');
         return array_intersect_key($order, array_flip($mask));
@@ -64,17 +81,25 @@ class OrdersResource extends AbstractResource
     {
         $this
             ->definition
-            ->setName('Shippers')
-            ->setDescription('Deal with Shippers')
+            ->setName('Orders')
+            ->setDescription('Deal with Orders')
             ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $this->defineGet($entity);
+            });
+
+        $this
+            ->entityDefinition
+            ->setName('Order')
+            ->setDescription('Deal with order')
+            ->editVerb('get', function (VerbDefinitionEntity &$entity) {
+                $this->defineGetEntity($entity);
             });
     }
 
     protected function defineGet(VerbDefinitionEntity &$entity)
     {
         $entity
-            ->setDescription('Get a page and all blocks')
+            ->setDescription('Get a list of orders')
             ->identityRequired()
             ->addInputFilter(
                 (new FilterDefinitionEntity())
@@ -104,6 +129,19 @@ class OrdersResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('Order details page url')
                     ->setKey('orderDetailPageUrl')
+            );
+    }
+
+    protected function defineGetEntity($entity)
+    {
+        $entity
+            ->setDescription('Get an order')
+            ->identityRequired()
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Order')
+                    ->setKey('order')
+                    ->setRequired()
             );
     }
 }
