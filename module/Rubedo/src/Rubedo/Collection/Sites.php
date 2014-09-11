@@ -65,7 +65,8 @@ class Sites extends AbstractLocalizableCollection implements ISites
         "staticDomain",
         "recaptcha_public_key",
         "recaptcha_private_key",
-        "enableECommerceFeatures"
+        "enableECommerceFeatures",
+        "resources"
     );
 
     protected $_indexes = array(
