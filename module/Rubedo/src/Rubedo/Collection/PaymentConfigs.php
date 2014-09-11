@@ -15,8 +15,9 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
-use WebTales\MongoFilters\Filter;
+
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Payment Configs
@@ -40,46 +41,48 @@ class PaymentConfigs extends AbstractCollection
      * @return array
      */
 
-    public function getConfigForPM ($pmName){
+    public function getConfigForPM($pmName)
+    {
         $rConfig = Manager::getService('config');
-        $installedPM=$rConfig['paymentMeans'];
-        if (!isset($installedPM[$pmName])){
-            return(array(
-                'success'=>false,
-                'msg'=>"Payment means not installed"
+        $installedPM = $rConfig['paymentMeans'];
+        if (!isset($installedPM[$pmName])) {
+            return (array(
+                'success' => false,
+                'msg' => "Payment means not installed"
             ));
         }
         $filter = Filter::factory('Value');
         $filter->setName('paymentMeans')->setValue($pmName);
-        $configForPM=$this->findOne($filter);
-        if (!$configForPM){
-            $configForPM=$this->create(array(
-                "paymentMeans"=>$pmName,
-                "active"=>false,
-                "displayName"=>$installedPM[$pmName]["name"],
-                "logo"=>null,
-                "nativePMConfig"=>array()
+        $configForPM = $this->findOne($filter);
+        if (!$configForPM) {
+            $configForPM = $this->create(array(
+                "paymentMeans" => $pmName,
+                "active" => false,
+                "displayName" => $installedPM[$pmName]["name"],
+                "logo" => null,
+                "nativePMConfig" => array()
             ));
-            if (!$configForPM['success']){
-                return(array(
-                    'success'=>false,
-                    'msg'=>"Failed to autocreate config"
+            if (!$configForPM['success']) {
+                return (array(
+                    'success' => false,
+                    'msg' => "Failed to autocreate config"
                 ));
             }
-            $configForPM=$configForPM['data'];
+            $configForPM = $configForPM['data'];
         }
-        return(array(
-            'success'=>true,
-            'data'=>$configForPM
+        return (array(
+            'success' => true,
+            'data' => $configForPM
         ));
     }
 
-    public function getActivePMConfigs(){
+    public function getActivePMConfigs()
+    {
         $rConfig = Manager::getService('config');
-        $installedPM=array_keys($rConfig['paymentMeans']);
+        $installedPM = array_keys($rConfig['paymentMeans']);
         $filters = Filter::factory()->addFilter(Filter::factory('Value')->setName('active')->setValue(true))
             ->addFilter(Filter::factory('In')->setName('paymentMeans')->setValue($installedPM));
-        $result=$this->getList($filters);
+        $result = $this->getList($filters);
         return $result;
     }
 

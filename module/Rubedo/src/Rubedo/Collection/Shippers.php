@@ -31,47 +31,47 @@ class Shippers extends AbstractCollection
         parent::__construct();
     }
 
-    public function getApplicableShippers ($country, $items)
+    public function getApplicableShippers($country, $items)
     {
-        $pipeline=array();
-        $pipeline[]=array(
-            '$project'=>array(
-                'shipperId'=>'$_id',
-                '_id'=>0,
-                'name'=>'$name',
-                'rateType'=>'$rateType',
-                'rates'=>'$rates'
+        $pipeline = array();
+        $pipeline[] = array(
+            '$project' => array(
+                'shipperId' => '$_id',
+                '_id' => 0,
+                'name' => '$name',
+                'rateType' => '$rateType',
+                'rates' => '$rates'
             )
         );
-        $pipeline[]=array(
-            '$unwind'=>'$rates'
+        $pipeline[] = array(
+            '$unwind' => '$rates'
         );
-        $pipeline[]=array(
-            '$match'=>array(
-                'rates.country'=>array(
-                    '$in'=>array($country)
+        $pipeline[] = array(
+            '$match' => array(
+                'rates.country' => array(
+                    '$in' => array($country)
                 )
             )
         );
-        $response=$this->_dataService->aggregate($pipeline);
-        if ($response['ok']){
-            foreach( $response['result'] as &$value){
-                $value['shipperId']=(string)$value['shipperId'];
-                $value=array_merge($value, $value['rates']);
+        $response = $this->_dataService->aggregate($pipeline);
+        if ($response['ok']) {
+            foreach ($response['result'] as &$value) {
+                $value['shipperId'] = (string)$value['shipperId'];
+                $value = array_merge($value, $value['rates']);
                 unset ($value['rates']);
-                if ($value['rateType']=='flatPerItem'){
-                    $value['rate']=$value['rate']*$items;
+                if ($value['rateType'] == 'flatPerItem') {
+                    $value['rate'] = $value['rate'] * $items;
                 }
             }
             return array(
-                "data"=>$response['result'],
-                "total"=>count($response['result']),
-                "success"=>true
+                "data" => $response['result'],
+                "total" => count($response['result']),
+                "success" => true
             );
         } else {
             return array(
-                "msg"=>$response['errmsg'],
-                "success"=>false
+                "msg" => $response['errmsg'],
+                "success" => false
             );
         }
     }
@@ -83,7 +83,7 @@ class Shippers extends AbstractCollection
      * @param $country
      * @return array
      */
-    public function findByIdAndWindApplicable ($id, $country)
+    public function findByIdAndWindApplicable($id, $country)
     {
         $finded = $this->findById($id);
         foreach ($finded['rates'] as $rate) {

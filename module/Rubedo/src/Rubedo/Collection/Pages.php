@@ -246,11 +246,11 @@ class Pages extends AbstractLocalizableCollection implements IPages
     }
 
     /**
- * Check if page is or is the father of the default page of its site
- *
- * @return bool
- *
- */
+     * Check if page is or is the father of the default page of its site
+     *
+     * @return bool
+     *
+     */
     public function hasDefaultPageAsChild($pageId)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();

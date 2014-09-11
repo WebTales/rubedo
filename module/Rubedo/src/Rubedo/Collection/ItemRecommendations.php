@@ -30,14 +30,15 @@ class ItemRecommendations extends AbstractCollection
         $this->_collectionName = 'ItemRecommendations';
         parent::__construct();
     }
-    
+
     public function init()
-    {  	 
+    {
     }
-       
-    public function build() {
-    
-    	$mapCode =	"
+
+    public function build()
+    {
+
+        $mapCode = "
 	    	function() {
 				var content = this;
 				if (content.live) {
@@ -58,8 +59,8 @@ class ItemRecommendations extends AbstractCollection
 					}
 				}
 			};";
-    	 
-    	$reduceCode = "
+
+        $reduceCode = "
 			function(key, values) {
 				var result = {};
 				values.forEach( function(element) {
@@ -68,17 +69,17 @@ class ItemRecommendations extends AbstractCollection
 				});
 				return result;
 			}";
-    
-    	$params = array(
-    			"mapreduce" => "Contents", // collection
-    			"map" => new \MongoCode($mapCode), // map
-    			"reduce" => new \MongoCode($reduceCode), // reduce
-    			"out" => array("replace" => "tmpRecommendations") // out
-    	);
-    
-    	$response = $this->_dataService->command($params);
-    
-    	$mapCode =	"
+
+        $params = array(
+            "mapreduce" => "Contents", // collection
+            "map" => new \MongoCode($mapCode), // map
+            "reduce" => new \MongoCode($reduceCode), // reduce
+            "out" => array("replace" => "tmpRecommendations") // out
+        );
+
+        $response = $this->_dataService->command($params);
+
+        $mapCode = "
 			function() {
 				var term = this;
 				var ids = Object.keys(term.value);
@@ -95,8 +96,8 @@ class ItemRecommendations extends AbstractCollection
     				}
     			}
     		}";
-    
-    	$reduceCode = "
+
+        $reduceCode = "
 			function(key, values) {
 				var result = {};
 				values.forEach( function(element) {
@@ -109,19 +110,19 @@ class ItemRecommendations extends AbstractCollection
 				});
 				return result;
 			}";
-    
-    	$params = array(
-    			"mapreduce" => "tmpRecommendations", // collection
-    			"map" => new \MongoCode($mapCode), // map
-    			"reduce" => new \MongoCode($reduceCode), // reduce
-    			"out" => array("replace" => "ItemRecommendations") // out
-    	);
-    
-    	$response = $this->_dataService->command($params);
-    
-    	$code = "db.tmpRecommendations.drop();";
-    	$this->_dataService->execute($code);
-    	
-    	return $response;
+
+        $params = array(
+            "mapreduce" => "tmpRecommendations", // collection
+            "map" => new \MongoCode($mapCode), // map
+            "reduce" => new \MongoCode($reduceCode), // reduce
+            "out" => array("replace" => "ItemRecommendations") // out
+        );
+
+        $response = $this->_dataService->command($params);
+
+        $code = "db.tmpRecommendations.drop();";
+        $this->_dataService->execute($code);
+
+        return $response;
     }
 }

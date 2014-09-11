@@ -140,7 +140,7 @@ abstract class AbstractCollection implements IAbstractCollection
             $recList = Manager::getService('UserRecommendations')->read();
 
             // If recommendations exists
-            if ($recList['total']> 0) {
+            if ($recList['total'] > 0) {
 
                 // recovers the list of recommended contents id
                 foreach ($recList['data'] as $value) {
@@ -148,7 +148,7 @@ abstract class AbstractCollection implements IAbstractCollection
                 }
 
                 // Add InUid filter to initial query to check if recommended contents are returned by original query
-                $filter = Filter::Factory('InUid',array('value'=>$this->_recList));
+                $filter = Filter::Factory('InUid', array('value' => $this->_recList));
                 $inFilters = Filter::factory();
                 $inFilters->addFilter($filter);
                 $inFilters->addFilter($filters);
@@ -162,12 +162,12 @@ abstract class AbstractCollection implements IAbstractCollection
                 if ($recNumber > 0) {
 
                     // Prepare filter for removing recommended Items from original query
-                    $ninFilter = Filter::Factory('NotInUid',array('value'=>$this->_recList));
+                    $ninFilter = Filter::Factory('NotInUid', array('value' => $this->_recList));
                     $filters->addFilter($ninFilter);
 
                     if ($start < $recNumber) { // recommendations are displayed
 
-                        if (($start+$limit) <= $recNumber) { // only recommendations
+                        if (($start + $limit) <= $recNumber) { // only recommendations
 
                             $unRecResults = $this->_dataService->read($filters);
                             $dataValues['data'] = array_slice($recValues['data'], $start, $limit);
@@ -176,7 +176,7 @@ abstract class AbstractCollection implements IAbstractCollection
                         } else { // merge recommendations and original results
 
                             $this->_dataService->setFirstResult(0);
-                            $this->_dataService->setNumberOfResults($start+$limit-$recNumber);
+                            $this->_dataService->setNumberOfResults($start + $limit - $recNumber);
                             $unRecResults = $this->_dataService->read($filters);
 
                             $dataValues['data'] = array_merge(array_slice($recValues['data'], $start), $unRecResults['data']);

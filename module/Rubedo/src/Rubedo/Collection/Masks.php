@@ -112,13 +112,13 @@ class Masks extends AbstractCollection implements IMasks
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
             $aclServive = Manager::getService('Acl');
             $obj['readOnly'] = true;
-            $mySite=Manager::getService("Sites")->findById($obj['site']);
+            $mySite = Manager::getService("Sites")->findById($obj['site']);
             if (in_array($mySite['workspace'], $writeWorkspaces)) {
                 $obj['readOnly'] = false;
             }
             if (!$aclServive->hasAccess("write.ui.masks")) {
                 $obj['readOnly'] = true;
-            } 
+            }
         }
 
         return $obj;

@@ -48,7 +48,7 @@ class MailingList extends AbstractCollection implements IMailingList
      *
      * @see \Rubedo\Interfaces\Collection\IMailingList::subscribe()
      */
-    public function subscribe($mailingListId, $email, $doNotDuplicate = true, $userName = null, $fieldsArray=array())
+    public function subscribe($mailingListId, $email, $doNotDuplicate = true, $userName = null, $fieldsArray = array())
     {
         // Get mailing list
         $mailingList = $this->findById($mailingListId);
@@ -118,9 +118,9 @@ class MailingList extends AbstractCollection implements IMailingList
             $filters->addFilter(Filter::factory('Value')->setName('UTType')
                 ->setValue("email"));
             $emailUserType = Manager::getService("UserTypes")->findOne($filters);
-            $newName=$email;
-            if (($userName)&&(!empty($userName))){
-                $newName=$userName;
+            $newName = $email;
+            if (($userName) && (!empty($userName))) {
+                $newName = $userName;
             }
             $user = array(
                 "login" => $email,
@@ -177,47 +177,46 @@ class MailingList extends AbstractCollection implements IMailingList
         $user = Manager::getService("Users")->findByEmail($email);
         AbstractCollection::disableUserFilter($wasFiltered);
         $date = Manager::getService("CurrentTime")->getCurrentTime();
-        $user["mailingLists"][$mailingList["id"]]['status']=false;
-        $user["mailingLists"][$mailingList["id"]]['date']=$date;
-        $updateResult=Manager::getService("Users")->update($user);
+        $user["mailingLists"][$mailingList["id"]]['status'] = false;
+        $user["mailingLists"][$mailingList["id"]]['date'] = $date;
+        $updateResult = Manager::getService("Users")->update($user);
         if ($updateResult["success"]) {
             $response = true;
         } else {
             throw new \Rubedo\Exceptions\User("Failed to update user", "Exception44");
         }
-        return($response);
+        return ($response);
     }
-    
+
     public function unSubscribeFromAll($email)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
         $user = Manager::getService("Users")->findByEmail($email);
         AbstractCollection::disableUserFilter($wasFiltered);
-        $response=array();
-        if ($user === null){
-            $response['success']=false;
-            $response['msg']="Adresse email inconnue";
-            return($response);
+        $response = array();
+        if ($user === null) {
+            $response['success'] = false;
+            $response['msg'] = "Adresse email inconnue";
+            return ($response);
         }
         $date = Manager::getService("CurrentTime")->getCurrentTime();
-        if ((isset($user["mailingLists"]))&&(is_array($user["mailingLists"]))){
-            foreach ($user["mailingLists"] as $key => $value){
-                $user["mailingLists"][$key]['status']=false;
-                $user["mailingLists"][$key]['date']=$date;
+        if ((isset($user["mailingLists"])) && (is_array($user["mailingLists"]))) {
+            foreach ($user["mailingLists"] as $key => $value) {
+                $user["mailingLists"][$key]['status'] = false;
+                $user["mailingLists"][$key]['date'] = $date;
             }
         }
-        
-        $updateResult=Manager::getService("Users")->update($user);
+
+        $updateResult = Manager::getService("Users")->update($user);
         if ($updateResult["success"]) {
-            $response['success']=true;
-            $response['msg']="Désinscription réussie";
+            $response['success'] = true;
+            $response['msg'] = "Désinscription réussie";
         } else {
             throw new \Rubedo\Exceptions\User("Failed to update user", "Exception44");
         }
-        return($response);
+        return ($response);
     }
-    
-    
+
 
     public function getNewMessage($mailingListId)
     {

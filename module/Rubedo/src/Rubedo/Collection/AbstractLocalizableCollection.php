@@ -606,7 +606,8 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         AbstractLocalizableCollection::$fallbackLocale = $fallbackLocale;
     }
 
-    public static function switchLocaleFiltered() {
+    public static function switchLocaleFiltered()
+    {
         static::$isLocaleFiltered = !static::$isLocaleFiltered;
     }
 }

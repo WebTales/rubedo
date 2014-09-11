@@ -70,7 +70,7 @@ class ShoppingCart extends AbstractCollection implements IShoppingCart
             return $currentUser[static::KEY];
         } elseif ($this->hasCookie()) {
             $tempCart = $this->findById($this->getCookie(), true);
-            return $tempCart?$tempCart[static::KEY]:array();
+            return $tempCart ? $tempCart[static::KEY] : array();
         } else {
             return array();
         }
@@ -118,10 +118,11 @@ class ShoppingCart extends AbstractCollection implements IShoppingCart
         $cart = $this->editItemToArray($cart, $productId, $variationId, $amount);
         $update = $this->setCurrentCart($cart);
 
-        return !$update['success']?$update['success']:$update['data'][static::KEY];
+        return !$update['success'] ? $update['success'] : $update['data'][static::KEY];
     }
 
-    protected function editItemToArray($cart, $productId, $variationId, $amount = 1) {
+    protected function editItemToArray($cart, $productId, $variationId, $amount = 1)
+    {
         $match = false;
         foreach ($cart as $key => &$value) {
             if (!$match && $value['productId'] == $productId && $value['variationId'] == $variationId) {
@@ -144,13 +145,12 @@ class ShoppingCart extends AbstractCollection implements IShoppingCart
     }
 
 
-
     public function removeItemFromCart($productId, $variationId, $amount = 1)
     {
         $cart = $this->getCurrentCart();
-        $cart = $this->editItemToArray($cart, $productId, $variationId, - $amount);
+        $cart = $this->editItemToArray($cart, $productId, $variationId, -$amount);
         $update = $this->setCurrentCart($cart);
-        return !$update['success']?$update['success']:$update['data'][static::KEY];
+        return !$update['success'] ? $update['success'] : $update['data'][static::KEY];
     }
 
     /**
@@ -158,7 +158,8 @@ class ShoppingCart extends AbstractCollection implements IShoppingCart
      *
      * @return array
      */
-    protected function getCurrentUser() {
+    protected function getCurrentUser()
+    {
         return $this->currentUserService->getCurrentUser();
     }
 
@@ -167,9 +168,10 @@ class ShoppingCart extends AbstractCollection implements IShoppingCart
      *
      * @return boolean
      */
-    protected function hasCookie() {
+    protected function hasCookie()
+    {
         $cookies = $this->requestService->getCookie();
-        return $cookies?$cookies->offsetExists(static::COOKIE):false;
+        return $cookies ? $cookies->offsetExists(static::COOKIE) : false;
     }
 
     /**
@@ -177,11 +179,13 @@ class ShoppingCart extends AbstractCollection implements IShoppingCart
      *
      * @return string
      */
-    protected function getCookie() {
+    protected function getCookie()
+    {
         return $this->requestService->getCookie()->offsetGet(static::COOKIE);
     }
 
-    protected function setCookie($value) {
+    protected function setCookie($value)
+    {
         $cookie = new SetCookie(static::COOKIE, $value, time() + 3600 * 24 * 30, '/');
         return $this->responseService->getHeaders()->addHeader($cookie);
     }

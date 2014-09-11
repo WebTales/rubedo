@@ -38,6 +38,7 @@ class Emails extends AbstractCollection implements IEmails
         $this->swiftMessage = $this->mailer->getNewMessage();
         parent::__construct();
     }
+
     /**
      * @var Swift_Message
      */
@@ -136,7 +137,7 @@ class Emails extends AbstractCollection implements IEmails
             throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
         }
         $meta = $file->file;
-        return $this->swiftMessage->embed(Swift_Image::newInstance($file->getBytes(), str_shuffle("uvxyzabcdefghijklmnop").$meta['filename'], $meta['Content-Type']));
+        return $this->swiftMessage->embed(Swift_Image::newInstance($file->getBytes(), str_shuffle("uvxyzabcdefghijklmnop") . $meta['filename'], $meta['Content-Type']));
     }
 
     /**

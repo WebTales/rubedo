@@ -29,7 +29,7 @@ use WebTales\MongoFilters\Filter;
  */
 class ContentTypes extends AbstractLocalizableCollection implements IContentTypes
 {
-    protected static $nonLocalizableFields = array("notifyForQuantityBelow","outOfStockLimit","preparationDelay","resupplyDelay","canOrderNotInStock","manageStock","shippers","productType","fields", "layouts", "vocabularies", "dependant", "activateDisqus", "dependantTypes", "readOnly", "workspaces", "workflow", "system", "CTType", "code");
+    protected static $nonLocalizableFields = array("notifyForQuantityBelow", "outOfStockLimit", "preparationDelay", "resupplyDelay", "canOrderNotInStock", "manageStock", "shippers", "productType", "fields", "layouts", "vocabularies", "dependant", "activateDisqus", "dependantTypes", "readOnly", "workspaces", "workflow", "system", "CTType", "code");
     protected static $labelField = 'type';
 
     protected $_indexes = array(
@@ -42,8 +42,8 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
             )
         ),
         array(
-            'keys'=>array(
-                'productType'=>1
+            'keys' => array(
+                'productType' => 1
             )
         )
     );
@@ -330,13 +330,14 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         return $geolocatedContentTypes;
     }
 
-    public function GetFacetedFields() {
-        
+    public function GetFacetedFields()
+    {
+
         $contentTypesList = $this->getList();
         $facetedFieldsList = array();
-        
+
         foreach ($contentTypesList['data'] as $contentType) {
-          
+
             $fields = $contentType["fields"];
             foreach ($fields as $field) {
                 if (isset($field['config']['useAsFacet']) && $field['config']['useAsFacet']) {
@@ -346,7 +347,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
                         "label" => $field['config']['fieldLabel'],
                         "localizable" => $field['config']['localizable'],
                         "facetOperator" => isset($field['config']['facetOperator']) ? strtolower($field['config']['facetOperator']) : "and",
-                    	"useAsVariation" => isset($field['config']['useAsVariation']) ? $field['config']['useAsVariation'] : false
+                        "useAsVariation" => isset($field['config']['useAsVariation']) ? $field['config']['useAsVariation'] : false
                     );
 
                 }
@@ -354,7 +355,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         }
         return $facetedFieldsList;
     }
-    
+
     public function isChangeableContentType($originalType, $newType)
     {
         $result = true;
@@ -369,7 +370,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
                 "slider",
                 "ratingField"
             ),
-            "checkbox"=>array(
+            "checkbox" => array(
                 "checkboxfield",
                 "checkbox"
             )
@@ -445,7 +446,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
 
         return $localizableFieldArray;
     }
-    
+
     /**
      * Return variation fields for content type
      *
@@ -454,17 +455,17 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
      */
     public function getVariationFieldForCType($cTypeId)
     {
-    	$contentType = $this->findById($cTypeId);
-    	$fieldsDef = $contentType['fields'];
-    
-    	$variationFieldArray = array();
-    
-    	foreach ($fieldsDef as $fieldDef) {
-    		if (isset($fieldDef['config']['useAsVariation']) && $fieldDef['config']['useAsVariation'] == true) {
-    			$variationFieldArray[] = $fieldDef['config']['name'];
-    		}
-    	}    
-    	return $variationFieldArray;
+        $contentType = $this->findById($cTypeId);
+        $fieldsDef = $contentType['fields'];
+
+        $variationFieldArray = array();
+
+        foreach ($fieldsDef as $fieldDef) {
+            if (isset($fieldDef['config']['useAsVariation']) && $fieldDef['config']['useAsVariation'] == true) {
+                $variationFieldArray[] = $fieldDef['config']['name'];
+            }
+        }
+        return $variationFieldArray;
     }
 
     protected function localizeOutput($obj, $alternativeFallBack = null)

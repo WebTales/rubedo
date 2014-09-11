@@ -149,9 +149,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
         parent::__construct();
     }
 
-    public function reInit() {
+    public function reInit()
+    {
         $this->_init();
     }
+
     /**
      * ensure that no nested contents are requested directly
      */
@@ -384,7 +386,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $contentType = Manager::getService('ContentTypes')->findById($contentTypeId);
         if (!self::isUserFilterDisabled()
             && !in_array($obj['writeWorkspace'], $contentType['workspaces'])
-            && !in_array('all', $contentType['workspaces'])) {
+            && !in_array('all', $contentType['workspaces'])
+        ) {
             throw new Access('You can not assign this content type to this workspace', "Exception37");
         }
         $contentTypeFields = $contentType['fields'];
@@ -445,8 +448,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
                             $value
                         );
                     }
-                    if ($value[0]==""){
-                        $value=array();
+                    if ($value[0] == "") {
+                        $value = array();
                     }
                     foreach ($value as $valueItem) {
                         $this->_validateFieldValue($valueItem, $fieldsArray[$key]['config'], $key);
@@ -800,14 +803,14 @@ class Contents extends WorkflowAbstractCollection implements IContents
                     }
                 }
                 if ((isset($obj['pageId'])) && ($obj['pageId'] != "")) {
-                    $myPage=Manager::getService("Pages")->findById($obj['pageId']);
+                    $myPage = Manager::getService("Pages")->findById($obj['pageId']);
                     if (in_array($myPage['workspace'], $writeWorkspaces)) {
                         $obj['readOnly'] = false;
                     }
                 }
                 if ((isset($obj['maskId'])) && ($obj['maskId'] != "")) {
-                    $myMask=Manager::getService("Masks")->findById($obj['maskId']);
-                    $mySite=Manager::getService("Sites")->findById($myMask['site']);
+                    $myMask = Manager::getService("Masks")->findById($obj['maskId']);
+                    $mySite = Manager::getService("Sites")->findById($myMask['site']);
                     if (in_array($mySite['workspace'], $writeWorkspaces)) {
                         $obj['readOnly'] = false;
                     }
@@ -819,7 +822,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         }
 
         return $obj;
-    
+
     }
 
     public function getListByTypeId($typeId)

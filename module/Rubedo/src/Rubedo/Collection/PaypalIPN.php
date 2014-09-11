@@ -16,7 +16,6 @@
  */
 namespace Rubedo\Collection;
 
-use WebTales\MongoFilters\Filter;
 /**
  * Service to handle Paypal IPN
  *

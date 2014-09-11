@@ -18,8 +18,8 @@ namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IWorkspaces;
 use Rubedo\Services\Manager;
-use WebTales\MongoFilters\Filter;
 use WebTales;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Workspaces

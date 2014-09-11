@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Collection;
+
 use Rubedo\Services\Manager;
 
 /**
@@ -38,58 +39,59 @@ class Orders extends AbstractCollection
      * @param $orderData
      * @return array
      */
-    public function createOrder ($orderData)
+    public function createOrder($orderData)
     {
         $date = new \DateTime();
-        $date=$date->format('Y-m-d');
-        $date=str_replace("-","",$date);
-        $incremental=$this->getIncrement($date);
-        $orderData['dateCode']=$date;
-        $orderData['incrementalCode']=$incremental;
-        $orderData['orderNumber']=$date.$incremental;
-        $createdOrder=$this->create($orderData);
-        if (!$createdOrder['success']){
+        $date = $date->format('Y-m-d');
+        $date = str_replace("-", "", $date);
+        $incremental = $this->getIncrement($date);
+        $orderData['dateCode'] = $date;
+        $orderData['incrementalCode'] = $incremental;
+        $orderData['orderNumber'] = $date . $incremental;
+        $createdOrder = $this->create($orderData);
+        if (!$createdOrder['success']) {
             return $createdOrder;
         }
-        $orderData=$createdOrder['data'];
-        $contentTypesService=Manager::getService("ContentTypes");
-        $contentsService=Manager::getService("Contents");
-        $stockService=Manager::getService("Stock");
-        foreach ($orderData['detailedCart']['cart'] as $value){
-            $content=$contentsService->findById($value['productId'], true, false);
-            $productType=$contentTypesService->findById($content['typeId']);
-            if ($productType['manageStock']){
-                $stockExtraction=$stockService->decreaseStock($value['productId'],$value['variationId'],$value['amount']);
-                if (!$stockExtraction['success']){
-                    $orderData['hasStockDecrementIssues']=true;
-                    $orderData['stockDecrementIssues'][]=$value;
+        $orderData = $createdOrder['data'];
+        $contentTypesService = Manager::getService("ContentTypes");
+        $contentsService = Manager::getService("Contents");
+        $stockService = Manager::getService("Stock");
+        foreach ($orderData['detailedCart']['cart'] as $value) {
+            $content = $contentsService->findById($value['productId'], true, false);
+            $productType = $contentTypesService->findById($content['typeId']);
+            if ($productType['manageStock']) {
+                $stockExtraction = $stockService->decreaseStock($value['productId'], $value['variationId'], $value['amount']);
+                if (!$stockExtraction['success']) {
+                    $orderData['hasStockDecrementIssues'] = true;
+                    $orderData['stockDecrementIssues'][] = $value;
                 }
             }
         }
-        $updatedOrder=$this->update($orderData);
+        $updatedOrder = $this->update($orderData);
         return $updatedOrder;
     }
 
-    public function getIncrement($dateCode){
-        $pipeline=array();
-        $pipeline[]=array(
-            '$match'=>array(
-                'dateCode'=>$dateCode
+    public function getIncrement($dateCode)
+    {
+        $pipeline = array();
+        $pipeline[] = array(
+            '$match' => array(
+                'dateCode' => $dateCode
             )
         );
-        $pipeline[]=array(
-            '$group'=>array(
-                '_id'=>'$dateCode',
-                'latestCode'=>array(
-                    '$max'=>'$incrementalCode'
+        $pipeline[] = array(
+            '$group' => array(
+                '_id' => '$dateCode',
+                'latestCode' => array(
+                    '$max' => '$incrementalCode'
                 ),
             )
         );
-        $response=$this->_dataService->aggregate($pipeline);
-        if (empty($response['result'])){
+        $response = $this->_dataService->aggregate($pipeline);
+        if (empty($response['result'])) {
             return 1;
         }
-        return($response['result'][0]['latestCode']+1);
+        return ($response['result'][0]['latestCode'] + 1);
 
     }
 
