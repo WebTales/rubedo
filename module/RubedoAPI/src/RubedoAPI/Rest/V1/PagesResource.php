@@ -120,6 +120,7 @@ class PagesResource extends AbstractResource
         }
         if (isset($site['locStrategy']) && $site['locStrategy'] == 'fallback') {
             $params['lang'] = new Language(implode('|', array($params['lang']->getLocale(), $site['defaultLanguage'])));
+            $this->getCurrentLocalizationAPIService()->refreshLocalization($params['lang']);
         }
         $pages =  array();
         $url = '';

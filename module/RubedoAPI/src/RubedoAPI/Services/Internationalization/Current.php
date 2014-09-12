@@ -43,6 +43,10 @@ class Current extends \Rubedo\Internationalization\Current
         if (!($lang instanceof Language))
             throw new APIServiceException('"lang" must be a Language entity', 400);
 
+        $this->refreshLocalization($params['lang']);
+    }
+    public function refreshLocalization(Language $lang)
+    {
         if ($lang->hasFallback()) {
             AbstractLocalizableCollection::setLocalizationStrategy('fallback');
             AbstractLocalizableCollection::setFallbackLocale($lang->getFallback());
