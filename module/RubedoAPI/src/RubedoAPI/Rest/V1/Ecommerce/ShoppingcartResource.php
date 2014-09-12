@@ -34,19 +34,48 @@ class ShoppingcartResource extends AbstractResource {
     public function postAction($params)
     {
         $params['amount'] = isset($params['amount'])?$params['amount']:1;
-        $cartUpdate = $this->getShoppingCartCollection()->addItemToCart($params['productId'], $params['variationId'], $params['amount']);
+        if (empty($params['shoppingCartToken'])) {
+            $cartUpdate = $this->getShoppingCartCollection()->addItemToCart($params['productId'], $params['variationId'], $params['amount']);
+        } else {
+            $cartUpdate = $this->getShoppingCartCollection()->addItemToCart($params['productId'], $params['variationId'], $params['amount'], $params['shoppingCartToken']);
+        }
         if ($cartUpdate === false) {
             throw new APIEntityException('Update failed');
         }
+        return array(
+            'success' => true,
+            'shoppingCart' => $cartUpdate,
+        );
     }
 
     public function deleteAction($params)
     {
         $params['amount'] = isset($params['amount'])?$params['amount']:1;
-        $cartUpdate = $this->getShoppingCartCollection()->removeItemFromCart($params['productId'], $params['variationId'], $params['amount']);
+        if (empty($params['shoppingCartToken'])) {
+            $cartUpdate = $this->getShoppingCartCollection()->removeItemFromCart($params['productId'], $params['variationId'], $params['amount']);
+        } else {
+            $cartUpdate = $this->getShoppingCartCollection()->removeItemFromCart($params['productId'], $params['variationId'], $params['amount'], $params['shoppingCartToken']);
+        }
         if ($cartUpdate === false) {
             throw new APIEntityException('Update failed');
         }
+        return array(
+            'success' => true,
+            'shoppingCart' => $cartUpdate,
+        );
+    }
+
+    public function getAction($params)
+    {
+        if (empty($params['shoppingCartToken'])) {
+            $shoppingCart = $this->getShoppingCartCollection()->getCurrentCart();
+        } else {
+            $shoppingCart = $this->getShoppingCartCollection()->getCurrentCart($params['shoppingCartToken']);
+        }
+        return array(
+            'success' => true,
+            'shoppingCart' => $shoppingCart,
+        );
     }
 
     protected function define()
@@ -57,16 +86,26 @@ class ShoppingcartResource extends AbstractResource {
             ->setDescription('Use shopping cart')
             ->editVerb('post', function (VerbDefinitionEntity &$entity) {
                 $this->defineEdition($entity);
+                $entity->setDescription('Add item to cart');
             })
             ->editVerb('delete', function (VerbDefinitionEntity &$entity) {
                 $this->defineEdition($entity);
+                $entity->setDescription('Remove item to cart');
+            })
+            ->editVerb('get', function (VerbDefinitionEntity &$entity) {
+                $this->defineGet($entity);
             });
     }
 
     protected function defineEdition (VerbDefinitionEntity &$entity)
     {
         $entity
-            ->setDescription('Add item to cart')
+            ->setDescription('Edit item to cart')
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Shopping cart token')
+                    ->setKey('shoppingCartToken')
+            )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
                     ->setDescription('Product id')
@@ -90,17 +129,25 @@ class ShoppingcartResource extends AbstractResource {
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
                     ->setDescription('Cart items')
-                    ->setKey('cartItems')
+                    ->setKey('shoppingCart')
+                    ->setRequired()
+            );
+    }
+
+    protected function defineGet(VerbDefinitionEntity &$entity)
+    {
+        $entity
+            ->setDescription('Get shopping cart')
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Shopping cart token')
+                    ->setKey('shoppingCartToken')
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
-                    ->setDescription('Total amount')
-                    ->setKey('totalAmount')
-            )
-            ->addOutputFilter(
-                (new FilterDefinitionEntity())
-                    ->setDescription('Total items')
-                    ->setKey('totalItems')
+                    ->setDescription('Cart items')
+                    ->setKey('shoppingCart')
+                    ->setRequired()
             );
     }
 } 
