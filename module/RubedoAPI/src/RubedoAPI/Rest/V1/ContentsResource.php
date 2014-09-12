@@ -269,7 +269,7 @@ class ContentsResource extends AbstractResource
         $urlService = $this->getUrlAPIService();
         $page = $this->getPagesCollection()->findById($params['pageId']);
         $site = $this->getSitesCollection()->findById($params['siteId']);
-        $mask = array('isProduct', 'productProperties', 'i18n', 'pageId', 'blockId', 'maskId');
+        $mask = array('isProduct', 'i18n', 'pageId', 'blockId', 'maskId');
         foreach ($contents as &$content) {
             $content['fields'] = array_intersect_key($content['fields'], array_flip($fields));
             $content['detailPageUrl'] = $urlService->displayUrlApi($content, 'default', $site,
