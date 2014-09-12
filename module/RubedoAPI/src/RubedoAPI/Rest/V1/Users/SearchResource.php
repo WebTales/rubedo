@@ -32,7 +32,7 @@ class SearchResource extends GlobalSearch
         $this->searchOption = 'user';
         $this
             ->definition
-            ->setName('Contents')
+            ->setName('Users')
             ->setDescription('Deal with users')
             ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $entity
