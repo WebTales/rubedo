@@ -191,7 +191,15 @@ class IndexController extends AbstractActionController
             $languageCookie = setcookie('locale', $lang, strtotime('+1 year'), '/', $domain);
         }
         $config=Manager::getService("config");
+        $defaultResources=array(
+            "externalStyles"=>array(),
+            "externalScripts"=>array(),
+            "internalStyles"=>array(),
+            "internalScripts"=>array()
+        );
+        $siteResources=!empty($this->_site['resources']) ? $this->_site['resources'] : $defaultResources;
         $this->viewData=array(
+            'siteResources'=>$siteResources,
             'activateMagic'=>(isset($config['rubedo_config']['activateMagic'])&&($config['rubedo_config']['activateMagic']=="1")) ? true : false,
             'angularLocale'=>$lang
         );
