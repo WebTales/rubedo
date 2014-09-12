@@ -18,6 +18,7 @@
 namespace RubedoAPI\Rest\V1;
 
 use Rubedo\Collection\AbstractCollection;
+use RubedoAPI\Entities\API\Language;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
@@ -114,10 +115,14 @@ class PagesResource extends AbstractResource
     public function getAction($params)
     {
         $site = $this->getSitesCollection()->findByHost($params['site']);
+        if (empty($site)) {
+            throw new APIEntityException('Site not found', 404);
+        }
+        if (isset($site['locStrategy']) && $site['locStrategy'] == 'fallback') {
+            $params['lang'] = new Language(implode('|', array($params['lang']->getLocale(), $site['defaultLanguage'])));
+        }
         $pages =  array();
         $url = '';
-        if ($site == null)
-            throw new APIEntityException('Site not found', 404);
         if (empty($params['route'])) {
             $lastMatchedNode = $this->getPagesCollection()->findById($site['homePage']);
         } else {
