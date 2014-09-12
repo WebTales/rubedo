@@ -111,43 +111,43 @@ class ContentsResource extends AbstractResource
             throw new APIEntityException('Query not found', 404);
         }
 
-        if ($filters !== false) {
-            $queryType = $filters["queryType"];
-            $query = $this->getQueriesCollection()->getQueryById($queryId);
+        $queryType = $filters['queryType'];
+        $query = $this->getQueriesCollection()->getQueryById($queryId);
 
-            if ($queryType === "manual" && $query != false && isset($query['query']) && is_array($query['query'])) {
-                $contentOrder = $query['query'];
-                $keyOrder = array();
-                $contentArray = array();
 
-                // getList
-                $unorderedContentArray = $this->getContentList($filters, $this->setPaginationValues($params));
+        $filters['filter']->addFilter(
+            $this->productFilter()
+        );
 
-                foreach ($contentOrder as $value) {
-                    foreach ($unorderedContentArray['data'] as $subKey => $subValue) {
-                        if ($value === $subValue['id']) {
-                            $keyOrder[] = $subKey;
-                        }
+        if ($queryType === 'manual' && $query != false && isset($query['query']) && is_array($query['query'])) {
+            $contentOrder = $query['query'];
+            $keyOrder = array();
+            $contentArray = array();
+
+            // getList
+            $unorderedContentArray = $this->getContentList($filters, $this->setPaginationValues($params));
+
+            foreach ($contentOrder as $value) {
+                foreach ($unorderedContentArray['data'] as $subKey => $subValue) {
+                    if ($value === $subValue['id']) {
+                        $keyOrder[] = $subKey;
                     }
                 }
-
-                foreach ($keyOrder as $value) {
-                    $contentArray["data"][] = $unorderedContentArray["data"][$value];
-                }
-
-                $nbItems = $unorderedContentArray["count"];
-            } else {
-                if ($params['fingerprint']) {
-                    $ismagic = true;
-                    $this->getSessionService()->set('fingerprint', $params['fingerprint']);
-                } else {
-                    $ismagic = false;
-                }
-                $contentArray = $this->getContentList($filters, $this->setPaginationValues($params), $ismagic);
-                $nbItems = $contentArray["count"];
             }
+
+            foreach ($keyOrder as $value) {
+                $contentArray['data'][] = $unorderedContentArray['data'][$value];
+            }
+
+            $nbItems = $unorderedContentArray['count'];
         } else {
-            $nbItems = 0;
+            $ismagic = false;
+            if (!empty($params['fingerprint'])) {
+                $ismagic = true;
+                $this->getSessionService()->set('fingerprint', $params['fingerprint']);
+            }
+            $contentArray = $this->getContentList($filters, $this->setPaginationValues($params), $ismagic);
+            $nbItems = $contentArray['count'];
         }
         return [
             'success' => true,
@@ -640,5 +640,12 @@ class ContentsResource extends AbstractResource
                     ->setKey('content')
                     ->setRequired()
             );
+    }
+
+    protected function productFilter()
+    {
+        return Filter::factory('Or')
+            ->addFilter(Filter::factory('OperatorToValue')->setName('isProduct')->setOperator('$exists')->setValue(false))
+            ->addFilter(Filter::factory('Value')->setName('isProduct')->setValue(false));
     }
 }
