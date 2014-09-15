@@ -142,6 +142,12 @@ class SearchResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setKey('profilePageId')
+                            ->setDescription('Id of the profile page')
+                            ->setFilter('\\MongoId')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
                             ->setKey('constrainToSite')
                             ->setDescription('Property to constrain to the site given with siteId')
                             ->setFilter('boolean')
@@ -234,6 +240,16 @@ class SearchResource extends AbstractResource
 
     protected function injectDataInResults(&$results, $params)
     {
+        if(isset($params['profilePageId'])){
+            $urlOptions = array(
+                'encode' => true,
+                'reset' => true,
+            );
+            $profilePageUrl = $this->getContext()->url()->fromRoute('rewrite', array(
+                'pageId' => $params['profilePageId'],
+                'locale' => $params['lang']->getLocale(),
+            ), $urlOptions);
+        }
         foreach ($results['data'] as $key => $value) {
             switch ($value['objectType']) {
                 case 'dam':
@@ -245,6 +261,11 @@ class SearchResource extends AbstractResource
                     $results['data'][$key]['url'] = $this->getUrlAPIService()->displayUrlApi($results['data'][$key], 'default', $site,
                         $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string) $params['detailPageId'] : null);
                     break;
+                case 'user':
+                    $results['data'][$key]['url'] = isset($profilePageUrl)?$profilePageUrl . '?userprofile=' . $results['data'][$key]['id']:'';
+                    $results['data'][$key]['avatar'] =
+                        $this->getUrlAPIService()->userAvatar($results['data'][$key]['id'],100,100,'boxed') == ' ' ?
+                            false:$this->getUrlAPIService()->userAvatar($results['data'][$key]['id'],100,100,'boxed');
             }
         }
         if (isset($params['displayedFacets'])) {
