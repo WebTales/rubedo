@@ -32,39 +32,42 @@ class MailConfigForm extends BootstrapForm
 {
     public static function getForm($params){
         
-        $serverNameField = new Text('server');
-        $serverNameField->setAttribute('Required',true);
-        $serverNameField->setValue(isset($params['server']) ? $params['server'] : null);
-        $serverNameField->setLabel('Server Name');
+        $serverNameField = (new Text('server'))
+            ->setAttribute('Required',true)
+            ->setValue(isset($params['server']) ? $params['server'] : null)
+            ->setLabel('Server Name')
+            ->setAttribute('class', 'form-control');
         
-        $serverPortField = new Number('port');
-        $serverPortField->setAttribute('Required',true);
-        $serverPortField->setValue(isset($params['port']) ? $params['port'] : null);
-        $serverPortField->setLabel('Server Port');
+        $serverPortField = (new Number('port'))
+            ->setAttribute('Required',true)
+            ->setValue(isset($params['port']) ? $params['port'] : null)
+            ->setLabel('Server Port')
+            ->setAttribute('class', 'form-control');
         
-        $sslField = new Checkbox('ssl');
-        $sslField->setValue(isset($params['ssl']) ? $params['ssl'] : null);
-        $sslField->setLabel('Use SSL');
+        $sslField = (new Checkbox('ssl'))
+            ->setValue(isset($params['ssl']) ? $params['ssl'] : null)
+            ->setLabel('Use SSL')
+            ->setAttribute('class', 'checkbox');
+
+        $loginField = (new Text('username'))
+            ->setValue(isset($params['username']) ? $params['username'] : null)
+            ->setLabel('User name')
+            ->setAttribute('class', 'form-control');
         
-        $loginField = new Text('username');
-        $loginField->setValue(isset($params['username']) ? $params['username'] : null);
-        $loginField->setLabel('User name');
-        
-        $passwordField = new Password('password');
-        $passwordField->setValue(isset($params['password']) ? $params['password'] : null);
-        $passwordField->setLabel('Password');
+        $passwordField = (new Password('password'))
+            ->setValue(isset($params['password']) ? $params['password'] : null)
+            ->setLabel('Password')
+            ->setAttribute('class', 'form-control');
 
         
-        $dbForm = new Form();
-        $dbForm->add($serverNameField);
-        $dbForm->add($serverPortField);
-        $dbForm->add($sslField);
-        $dbForm->add($loginField);
-        $dbForm->add($passwordField);
+        $dbForm = (new Form())
+            ->add($serverNameField)
+            ->add($serverPortField)
+            ->add($sslField)
+            ->add($loginField)
+            ->add($passwordField);
         
-        $dbForm = self::setForm($dbForm);
-        
-        return $dbForm;
+        return self::setForm($dbForm);
     }
 }
 

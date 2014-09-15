@@ -31,22 +31,15 @@ class LanguagesConfigForm extends BootstrapForm
 
     public static function getForm ($params)
     {
-        $languageField = new Select('defaultLanguage');
-        $languageField->setAttribute('Required',true);
-        $languageField->setOptions(array('value_options'=>$params['languages']));
-        $languageField->setValue($params['defaultLanguage']);
-        
-        $languageField->setLabel('Default language');
-        
-        
- 
-        $dbForm = new Form();
-        $dbForm->add($languageField);
-        
-        
-        $dbForm = self::setForm($dbForm);
-        
-        return $dbForm;
+        $languageField = (new Select('defaultLanguage'))
+            ->setAttribute('Required',true)
+            ->setOptions(array('value_options'=>$params['languages']))
+            ->setValue($params['defaultLanguage'])
+            ->setLabel('Default language')
+            ->setAttribute('class', 'form-control');
+
+        return self::setForm((new Form())
+            ->add($languageField));
     }
 }
 

@@ -38,30 +38,35 @@ class EsConfigForm extends BootstrapForm
 
     public static function getForm($params)
     {
-        $serverNameField = new Text('host');
-        $serverNameField->setAttribute('Required', true);
-        $serverNameField->setValue(isset($params['host']) ? $params['host'] : 'localhost');
-        $serverNameField->setLabel('Server Name');
-        
-        $serverPortField = new Number('port');
-        $serverPortField->setValue(isset($params['port']) ? $params['port'] : 9200);
-        $serverPortField->setLabel('Server Port');
-        
-        $contentIndexField = new Text('contentIndex');
-        $contentIndexField->setAttribute('Required', true);
-        $contentIndexField->setValue(isset($params['contentIndex']) ? $params['contentIndex'] : 'contents');
-        $contentIndexField->setLabel('Contents index name');
-        
-        $damIndexField = new Text('damIndex');
-        $damIndexField->setAttribute('Required', true);
-        $damIndexField->setValue(isset($params['damIndex']) ? $params['damIndex'] : 'dam');
-        $damIndexField->setLabel('Dam index name');
-        
-        $userIndexField = new Text('userIndex');
-        $userIndexField->setAttribute('Required', true);
-        $userIndexField->setValue(isset($params['userIndex']) ? $params['userIndex'] : 'users');
-        $userIndexField->setLabel('Users index name');
-        
+        $serverNameField = (new Text('host'))
+            ->setAttribute('Required', true)
+            ->setValue(isset($params['host']) ? $params['host'] : 'localhost')
+            ->setLabel('Server Name')
+            ->setAttribute('class', 'form-control');
+
+        $serverPortField = (new Number('port'))
+            ->setValue(isset($params['port']) ? $params['port'] : 9200)
+            ->setLabel('Server Port')
+            ->setAttribute('class', 'form-control');
+
+        $contentIndexField = (new Text('contentIndex'))
+            ->setAttribute('Required', true)
+            ->setValue(isset($params['contentIndex']) ? $params['contentIndex'] : 'contents')
+            ->setLabel('Contents index name')
+            ->setAttribute('class', 'form-control');
+
+        $damIndexField = (new Text('damIndex'))
+            ->setAttribute('Required', true)
+            ->setValue(isset($params['damIndex']) ? $params['damIndex'] : 'dam')
+            ->setLabel('Dam index name')
+            ->setAttribute('class', 'form-control');
+
+        $userIndexField = (new Text('userIndex'))
+            ->setAttribute('Required', true)
+            ->setValue(isset($params['userIndex']) ? $params['userIndex'] : 'users')
+            ->setLabel('Users index name')
+            ->setAttribute('class', 'form-control');
+
         $dbForm = new Form();
         $dbForm->add($serverNameField);
         $dbForm->add($serverPortField);

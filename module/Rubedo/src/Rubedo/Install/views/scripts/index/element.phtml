@@ -6,11 +6,11 @@ $element = $this->element;
 $messages = $element->getMessages();
 $hasError = !empty($messages);
 $classError = $hasError ? 'error' : '';
-echo '<div class="control-group ' . $classError . '">';
-echo '<div>';
+echo '<div class="form-group ' . $classError . '">';
+echo '<div class="col-sm-2 control-label">';
 echo $this->FormLabel($element);
 echo '</div>';
-echo '<div class="controls">';
+echo '<div class="col-sm-10">';
 if ($element instanceof Captcha) {
     $helperName = $element->getCaptcha()->getHelperName();
     $helper = $this->plugin($helperName);

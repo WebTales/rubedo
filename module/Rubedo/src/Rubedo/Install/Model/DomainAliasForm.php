@@ -29,21 +29,21 @@ class DomainAliasForm extends BootstrapForm
 {
     public static function getForm(){
                
-        $domainField = new Text('domain');
-        $domainField->setAttribute('Required',true);
-        $domainField->setLabel('Site domain');
+        $domainField = (new Text('domain'))
+            ->setAttribute('Required',true)
+            ->setLabel('Site domain')
+            ->setAttribute('class', 'form-control');
         
-        $localDomainField = new Text('localDomain');
-        $localDomainField->setAttribute('Required',true);
-        $localDomainField->setLabel('Local domain');
+        $localDomainField = (new Text('localDomain'))
+            ->setAttribute('Required',true)
+            ->setLabel('Local domain')
+            ->setAttribute('class', 'form-control');
         
-        $dbForm = new Form();
-        $dbForm->add($domainField);
-        $dbForm->add($localDomainField);
+        $dbForm = (new Form())
+            ->add($domainField)
+            ->add($localDomainField);
         
-        $dbForm = self::setForm($dbForm);
-        
-        return $dbForm;
+        return self::setForm($dbForm);
     }
 }
 

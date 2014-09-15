@@ -31,35 +31,42 @@ class DbConfigForm extends BootstrapForm
 
     public static function getForm ($params)
     {
-        $serverNameField = new Text('server');
-        $serverNameField->setAttribute('Required',true);
-        $serverNameField->setValue(isset($params['server']) ? $params['server'] : 'localhost');
-        $serverNameField->setLabel('Server Name');
+        $serverNameField = (new Text('server'))
+            ->setAttribute('Required',true)
+            ->setValue(isset($params['server']) ? $params['server'] : 'localhost')
+            ->setLabel('Server Name')
+            ->setAttribute('class', 'form-control');
         
-        $serverPortField = new Number('port');
-        $serverPortField->setValue(isset($params['port']) ? $params['port'] :27017);
-        $serverPortField->setLabel('Server Port');
-        
-        $dbNameField = new Text('db');
-        $dbNameField->setAttribute('Required',true);
-        $dbNameField->setValue(isset($params['db']) ? $params['db'] : 'rubedo');
-        $dbNameField->setLabel('Db Name');
-        
-        $serverAdminLoginField = new Text('adminLogin');
-        $serverAdminLoginField->setValue(isset($params['adminLogin']) ? $params['adminLogin'] : null);
-        $serverAdminLoginField->setLabel('Admin username (not saved)');
-        
-        $serverAdminPasswordField = new Text('adminPassword');
-        $serverAdminPasswordField->setValue(isset($params['adminPassword']) ? $params['adminPassword'] : null);
-        $serverAdminPasswordField->setLabel('Admin password (not saved)');
+        $serverPortField = (new Number('port'))
+            ->setValue(isset($params['port']) ? $params['port'] :27017)
+            ->setLabel('Server Port')
+            ->setAttribute('class', 'form-control');
 
-        $serverLoginField = new Text('login');
-        $serverLoginField->setValue(isset($params['login']) ? $params['login'] : null);
-        $serverLoginField->setLabel('Username');
+        $dbNameField = (new Text('db'))
+            ->setAttribute('Required',true)
+            ->setValue(isset($params['db']) ? $params['db'] : 'rubedo')
+            ->setLabel('Db Name')
+            ->setAttribute('class', 'form-control');
 
-        $serverPasswordField = new Text('password');
-        $serverPasswordField->setValue(isset($params['password']) ? $params['password'] : null);
-        $serverPasswordField->setLabel('Password');
+        $serverAdminLoginField = (new Text('adminLogin'))
+            ->setValue(isset($params['adminLogin']) ? $params['adminLogin'] : null)
+            ->setLabel('Admin username (not saved)')
+            ->setAttribute('class', 'form-control');
+
+        $serverAdminPasswordField = (new Text('adminPassword'))
+            ->setValue(isset($params['adminPassword']) ? $params['adminPassword'] : null)
+            ->setLabel('Admin password (not saved)')
+            ->setAttribute('class', 'form-control');
+
+        $serverLoginField = (new Text('login'))
+            ->setValue(isset($params['login']) ? $params['login'] : null)
+            ->setLabel('Username')
+            ->setAttribute('class', 'form-control');
+
+        $serverPasswordField = (new Text('password'))
+            ->setValue(isset($params['password']) ? $params['password'] : null)
+            ->setLabel('Password')
+            ->setAttribute('class', 'form-control');
 
         $dbForm = new Form();
         $dbForm->add($serverNameField);

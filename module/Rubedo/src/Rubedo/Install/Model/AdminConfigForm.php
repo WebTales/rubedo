@@ -30,45 +30,51 @@ use Zend\InputFilter\InputFilter;
  */
 class AdminConfigForm extends BootstrapForm
 {
-    public static function getForm(){
-        $nameField = new Text('name');
-        $nameField->setAttribute('Required',true);
-        $nameField->setAttribute('autocomplete', 'off');
-        $nameField->setLabel('Account Name');
+    public static function getForm()
+    {
+        $nameField = (new Text('name'))
+            ->setAttribute('Required',true)
+            ->setAttribute('autocomplete', 'off')
+            ->setLabel('Account Name')
+            ->setAttribute('class', 'form-control');
+
+        $loginField = (new Text('login'))
+            ->setAttribute('Required',true)
+            ->setAttribute('autocomplete', 'off')
+            ->setLabel('Login')
+            ->setAttribute('class', 'form-control');
+
+        $passwordField = (new Password('password'))
+            ->setAttribute('Required',true)
+            ->setAttribute('autocomplete', 'off')
+            ->setLabel('Password')
+            ->setAttribute('class', 'form-control');
         
-        $loginField = new Text('login');
-        $loginField->setAttribute('Required',true);
-        $loginField->setAttribute('autocomplete', 'off');
-        $loginField->setLabel('Login');
+        $confirmPasswordField = (new Password('confirmPassword'))
+            ->setAttribute('Required',true)
+            ->setAttribute('autocomplete', 'off')
+            ->setLabel('Confirm password')
+            ->setAttribute('class', 'form-control');
         
-        $passwordField = new Password('password');
-        $passwordField->setAttribute('Required',true);
-        $passwordField->setAttribute('autocomplete', 'off');
-        $passwordField->setLabel('Password');
+        $emailField = (new Email('email'))
+            ->setAttribute('Required',true)
+            ->setLabel('Email')
+            ->setAttribute('class', 'form-control');
         
-        $confirmPasswordField = new Password('confirmPassword');
-        $confirmPasswordField->setAttribute('Required',true);
-        $confirmPasswordField->setAttribute('autocomplete', 'off');
-        $confirmPasswordField->setLabel('Confirm password');
-        
-        $emailField = new Email('email');
-        $emailField->setAttribute('Required',true);
-        $emailField->setLabel('Email');
-        
-        $inputFilter = new InputFilter();
-        $inputFilter->add(array(
-            'name' => 'password',
-            'validators' => array(
-                array(
-                    'name' => 'StringLength',
-                    'options' => array(
-                        'encoding' => 'UTF-8',
-                        'min' => 2,
+        $inputFilter = (new InputFilter())
+            ->add(array(
+                'name' => 'password',
+                'validators' => array(
+                    array(
+                        'name' => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min' => 2,
+                        )
                     )
                 )
-            )
-        ));
-        $inputFilter->add(array(
+            ))
+            ->add(array(
             'name' => 'confirmPassword',
             'validators' => array(
                 array(
@@ -80,17 +86,14 @@ class AdminConfigForm extends BootstrapForm
             )
         ));
         
-        $dbForm = new Form();
-        $dbForm->add($nameField);
-        $dbForm->add($loginField);
-        $dbForm->add($passwordField);
-        $dbForm->add($confirmPasswordField);
-        $dbForm->add($emailField);
-        $dbForm->setInputFilter($inputFilter);
-        $dbForm = self::setForm($dbForm);
-        
-        return $dbForm;
-        
+        $dbForm = (new Form())
+            ->add($nameField)
+            ->add($loginField)
+            ->add($passwordField)
+            ->add($confirmPasswordField)
+            ->add($emailField)
+            ->setInputFilter($inputFilter);
+        return self::setForm($dbForm);
     }
 }
 

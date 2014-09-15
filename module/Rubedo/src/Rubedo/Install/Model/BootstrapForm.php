@@ -44,24 +44,27 @@ class BootstrapForm
             self::setIds($element);
         }
         
-        $submitButton = new Submit('Submit');
-        $submitButton->setValue('Submit');
-        $submitButton->setAttribute('class', 'btn btn-large btn-primary');
-        $resetButton = new Button('Reset', array(
+        $submitButton = (new Submit('Submit'))
+            ->setValue('Submit')
+            ->setAttribute('class', 'btn btn-large btn-primary')
+            ->setAttribute('style', 'margin-right: 10px;');
+
+        $resetButton = (new Button('Reset', array(
             'label' => 'Reset'
-        ));
-        $resetButton->setAttribute('class', 'btn btn-large btn-warning');
-        $resetButton->setAttribute('type', 'reset');
-        $dbForm->setAttribute('id', 'installForm');
-        $dbForm->setAttribute('class', 'form-horizontal');
-        
-        $buttonFieldSet = new Fieldset('buttonGroup');
-        $buttonFieldSet->add($submitButton);
-        $buttonFieldSet->add($resetButton);
-        $buttonFieldSet->setAttribute('class', 'form-actions');
-        $dbForm->add($buttonFieldSet);
-        $dbForm->setAttribute('class', 'form-horizontal');
-        
+        )))
+            ->setAttribute('class', 'btn btn-large btn-warning')
+            ->setAttribute('type', 'reset');
+
+        $buttonFieldSet = (new Fieldset('buttonGroup'))
+            ->add($submitButton)
+            ->add($resetButton)
+            ->setAttribute('class', 'col-sm-offset-2 col-sm-10');
+
+        $dbForm
+            ->setAttribute('id', 'installForm')
+            ->setAttribute('class', 'form-horizontal')
+            ->add($buttonFieldSet);
+
         return $dbForm;
     }
 
