@@ -44,7 +44,7 @@ class ShoppingcartResource extends AbstractResource {
         }
         return array(
             'success' => true,
-            'shoppingCart' => $cartUpdate,
+            'shoppingCart' => $this->filterShoppingCart($cartUpdate),
         );
     }
 
@@ -61,7 +61,7 @@ class ShoppingcartResource extends AbstractResource {
         }
         return array(
             'success' => true,
-            'shoppingCart' => $cartUpdate,
+            'shoppingCart' => $this->filterShoppingCart($cartUpdate),
         );
     }
 
@@ -74,8 +74,14 @@ class ShoppingcartResource extends AbstractResource {
         }
         return array(
             'success' => true,
-            'shoppingCart' => $shoppingCart,
+            'shoppingCart' => $this->filterShoppingCart($shoppingCart),
         );
+    }
+
+    protected function filterShoppingCart($shoppingCart)
+    {
+        $mask = array('id', 'shoppingCart', 'name');
+        return array_intersect_key($shoppingCart, array_flip($mask));
     }
 
     protected function define()
