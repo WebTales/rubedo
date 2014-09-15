@@ -31,15 +31,6 @@
 						{
 							"type":"Ext.form.field.Checkbox",
 							"config":{
-								"fieldLabel":"#ext-gen1194#",
-								"name":"videoPreload",
-								"labelWidth":160,
-								"inputValue":true
-							}
-						},
-						{
-							"type":"Ext.form.field.Checkbox",
-							"config":{
 								"fieldLabel":"#ext-gen1195#",
 								"name":"videoControls",
 								"labelWidth":160,
