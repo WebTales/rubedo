@@ -46,6 +46,13 @@ class ShoppingCart extends \Rubedo\Collection\ShoppingCart {
         }
     }
 
+    public function setToUser($shoppingCartToken)
+    {
+        $currentUser = $this->getCurrentUser();
+        $currentUser[static::KEY] = $this->findById($shoppingCartToken)[static::KEY];
+        return $this->usersService->update($currentUser);
+    }
+
     public function addItemToCart($productId, $variationId, $amount = 1, $shoppingCartToken = null)
     {
         $cart = $this->getCurrentCart($shoppingCartToken);
@@ -60,6 +67,7 @@ class ShoppingCart extends \Rubedo\Collection\ShoppingCart {
         $cart = $this->getCurrentCart($shoppingCartToken);
         $cart = $this->editItemToArray($cart, $productId, $variationId, -$amount);
         $update = $this->setCurrentCart($cart, $shoppingCartToken);
+
         return !$update['success'] ? $update['success'] : $update['data'];
     }
 }
