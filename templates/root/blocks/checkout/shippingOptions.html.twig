@@ -1,6 +1,0 @@
-{% for shipper in data %}
-    <label class="radio">
-        <input type="radio" name="shipper"  value="{{ shipper.shipperId }}" {% if shipper.shipperId==currentChoice %} checked {% endif %} >
-        {{ 'Blocks.Checkout.ShippingOption'|fotrans({'%name%': shipper.name, '%delay%': shipper.hRDelay, '%unit%': shipper.hRUnit, '%rate%': shipper.rate}) }}
-    </label>
-{% endfor %}

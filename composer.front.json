@@ -7,15 +7,12 @@
         "eternicode/bootstrap-datepicker": "~1.3",
         "sencha/extjs": "4.2.1",
         "webtales/ckeditor": "2.2.0",
-        "twitter/bootstrap": "v2.3.0",
-        "thomaspark/bootswatch": "v2.3.0",
         "webtales/rubedo-backoffice-ui": "dev-future",
         "longtailvideo/jwplayer": "6.*",
         "webtales/rubedo-localization": "dev-master",
         "jschr/bootstrap-modal": "2.1",
         "WebTales/bsie": "1.4.0",
         "stowball/jQuery-rwdImageMaps": "1.0",
-        "webTales/bootstrap-less": "2.2.0",
         "fingerprintjs":"0.5.3",
         "angular/angular.js":"1.2.23",
         "webtales/rubedo-frontoffice":"dev-master",
@@ -63,28 +60,6 @@
                 "version": "4.2.1",
                 "dist": {
                     "url": "http://cdn.sencha.com/ext/gpl/ext-4.2.1-gpl.zip",
-                    "type": "zip"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "twitter/bootstrap",
-                "version": "v2.3.0",
-                "dist": {
-                    "url": "http://getbootstrap.com/2.3.2/assets/bootstrap.zip",
-                    "type": "zip"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "thomaspark/bootswatch",
-                "version": "v2.3.0",
-                "dist": {
-                    "url": "https://github.com/thomaspark/bootswatch/archive/v2.3.0+1.zip",
                     "type": "zip"
                 }
             }
@@ -275,10 +250,6 @@
         {
             "type": "vcs",
             "url": "git://github.com/WebTales/bsie.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git://github.com/WebTales/bootstrap-less.git"
         },{
             "type": "vcs",
             "url": "git://github.com/WebTales/rubedo-frontoffice.git"

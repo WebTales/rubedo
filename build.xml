@@ -3,7 +3,6 @@
 
 	<target name="prepare-cache" depends="">
 		<mkdir dir="${project.basedir}/cache"/>
-		<mkdir dir="${project.basedir}/cache/twig"/>
 		<mkdir dir="${project.basedir}/cache/htmlpurifier"/>
 		<mkdir dir="${project.basedir}/cache/zend"/>
 		<mkdir dir="${project.basedir}/cache/config"/>
@@ -14,7 +13,6 @@
 		<mkdir dir="${project.basedir}/public/generate-image"/>
 		
 		<chmod file="${project.basedir}/cache" mode="777"/>
-		<chmod file="${project.basedir}/cache/twig" mode="777"/>
 		<chmod file="${project.basedir}/cache/htmlpurifier" mode="777"/>
 		<chmod file="${project.basedir}/cache/zend" mode="777"/>
 		<chmod file="${project.basedir}/cache/config" mode="777"/>
