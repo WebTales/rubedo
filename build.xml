@@ -1,143 +1,145 @@
 <project name="rubedo" default="main" basedir=".">
-	<target name="main" depends="set-rights"></target>
+    <target name="main" depends="set-rights"></target>
 
-	<target name="prepare-cache" depends="">
-		<mkdir dir="${project.basedir}/cache"/>
-		<mkdir dir="${project.basedir}/cache/htmlpurifier"/>
-		<mkdir dir="${project.basedir}/cache/zend"/>
-		<mkdir dir="${project.basedir}/cache/config"/>
-		<mkdir dir="${project.basedir}/cache/images"/>
-		<mkdir dir="${project.basedir}/log"/>
-		<mkdir dir="${project.basedir}/public/captcha"/>
-		<mkdir dir="${project.basedir}/public/theme"/>
-		<mkdir dir="${project.basedir}/public/generate-image"/>
-		
-		<chmod file="${project.basedir}/cache" mode="777"/>
-		<chmod file="${project.basedir}/cache/htmlpurifier" mode="777"/>
-		<chmod file="${project.basedir}/cache/zend" mode="777"/>
-		<chmod file="${project.basedir}/cache/config" mode="777"/>
-		<chmod file="${project.basedir}/cache/images" mode="777"/>
-		<chmod file="${project.basedir}/log" mode="777"/>
-		<chmod file="${project.basedir}/config/autoload" mode="777"/>
-		<chmod file="${project.basedir}/public/captcha" mode="777"/>
-		<chmod file="${project.basedir}/public/theme" mode="777"/>
-		<chmod file="${project.basedir}/public/generate-image" mode="777"/>
-		
-	</target>
-	
-	<target name="clean-cache" description="Cleanup cache Folder">
-		<delete dir="${project.basedir}/cache"/>
-	</target>
-	
-	<target name="set-rights" depends="prepare-cache"></target>
-	
-	<target name="clean-build" description="Cleanup build artifacts">
-		<delete dir="${project.basedir}/build"/>
-		<delete dir="${project.basedir}/build/api"/>
-		<delete dir="${project.basedir}/build/code-browser"/>
-		<delete dir="${project.basedir}/build/coverage"/>
-		<delete dir="${project.basedir}/build/logs"/>
-		<delete dir="${project.basedir}/build/pdepend"/>
-		<delete dir="${project.basedir}/build/phpdoc"/>
-	</target>
-	
-	<target name="prepare-build" depends="clean-build" description="Prepare for build">
-		<mkdir dir="${project.basedir}/build"/>
-		<mkdir dir="${project.basedir}/build/api"/>
-		<mkdir dir="${project.basedir}/build/code-browser"/>
-		<mkdir dir="${project.basedir}/build/coverage"/>
-		<mkdir dir="${project.basedir}/build/logs"/>
-		<mkdir dir="${project.basedir}/build/pdepend"/>
-		<mkdir dir="${project.basedir}/build/phpdoc"/>
-	</target>
-	
-	<target name="phpunit">
-		<exec
-		command="${project.basedir}/vendor/bin/phpunit  --colors --configuration ${project.basedir}/module/Rubedo/test/phpunit.xml"
-		dir="${project.basedir}/module/Rubedo/test"
-		passthru="true"
-		/>
-	</target>
-	
-	<target name="phpunit-ci">
-		<exec
-		command="${project.basedir}/vendor/bin/phpunit  --colors --configuration ${project.basedir}/tests/phpunit-ci.xml"
-		dir="${project.basedir}/tests"
-		passthru="true"
-		/>
-	</target>
-	
-	<target name="build" depends="prepare-build,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpunit-ci,phpdoc"></target>
-	
-	<target name="lint" description="Perform syntax check of sourcecode files">
-		<apply executable="php" failonerror="true">
-			<arg value="-l" />
-			<fileset dir="${project.basedir}/module/Rubedo">
-				<include name="**/*.php" />
-			</fileset>
-		</apply>
-	</target>
-	<target name="phploc" description="Measure project size using PHPLOC">
-		<exec executable="phploc">
-			<arg value="--log-csv" />
-			<arg value="${project.basedir}/build/logs/phploc.csv" />
-			<arg value="${project.basedir}/module/Rubedo" />
-		</exec>
-	</target>
-	<target name="pdepend" description="Calculate software metrics using PHP_Depend">
-		<exec executable="${project.basedir}/vendor/bin/pdepend">
-			<arg value="--jdepend-xml=${project.basedir}/build/logs/jdepend.xml" />
-			<arg value="--jdepend-chart=${project.basedir}/build/pdepend/dependencies.svg" />
-			<arg value="--overview-pyramid=${project.basedir}/build/pdepend/overview-pyramid.svg" />
-			<arg path="${project.basedir}/module/Rubedo" />
-		</exec>
-	</target>
-	<target name="phpmd"
-	description="Perform project mess detection using PHPMD and print human readable output. ">
-		<exec executable="${project.basedir}/vendor/bin/phpmd" passthru="true">
-			<arg path="${project.basedir}/module/Rubedo" />
-			<arg value="text" />
-			<arg value="design,unusedcode" />
+    <target name="prepare-cache" depends="">
+        <mkdir dir="${project.basedir}/cache"/>
+        <mkdir dir="${project.basedir}/cache/htmlpurifier"/>
+        <mkdir dir="${project.basedir}/cache/zend"/>
+        <mkdir dir="${project.basedir}/cache/config"/>
+        <mkdir dir="${project.basedir}/cache/images"/>
+        <mkdir dir="${project.basedir}/log"/>
+        <mkdir dir="${project.basedir}/public/captcha"/>
+        <mkdir dir="${project.basedir}/public/theme"/>
+        <mkdir dir="${project.basedir}/public/generate-image"/>
 
-		</exec>
-	</target>
-	<target name="phpmd-ci"
-	description="Perform project mess detection using PHPMD. ">
-		<exec executable="${project.basedir}/vendor/bin/phpmd">
-			<arg path="${project.basedir}/module/Rubedo" />
-			<arg value="xml" />
-			<arg value="design,unusedcode" />
-			<arg value="--reportfile" />
-			<arg value="${project.basedir}/build/logs/pmd.xml" />
-		</exec>
-	</target>
-	<target name="phpcs"
-	description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
-		<exec executable="${project.basedir}/vendor/bin/phpcs" passthru="true">
-			<arg value="--standard=PSR2" />
-			<arg path="${project.basedir}/module/Rubedo" />
-		</exec>
-	</target>
-	<target name="phpcs-ci" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
-		<exec executable="${project.basedir}/vendor/bin/phpcs" output="/dev/null">
-			<arg value="--report=checkstyle" />
-			<arg value="--report-file=${project.basedir}/build/logs/checkstyle.xml" />
-			<arg value="--standard=PSR2" />
-			<arg path="${project.basedir}/module/Rubedo" />
-		</exec>
-	</target>
-	<target name="phpcpd" description="Find duplicate code using PHPCPD">
-		<exec executable="phpcpd">
-			<arg value="--log-pmd" />
-			<arg value="${project.basedir}/build/logs/pmd-cpd.xml" />
-			<arg path="${project.basedir}/module/Rubedo" />
-		</exec>
-	</target>
-	
-	<target name="phpdoc" description="Build PHPdoc">
-		<exec executable="phpdoc">
-		</exec>
-	</target>
-	
+        <chmod file="${project.basedir}/cache" mode="777"/>
+        <chmod file="${project.basedir}/cache/htmlpurifier" mode="777"/>
+        <chmod file="${project.basedir}/cache/zend" mode="777"/>
+        <chmod file="${project.basedir}/cache/config" mode="777"/>
+        <chmod file="${project.basedir}/cache/images" mode="777"/>
+        <chmod file="${project.basedir}/log" mode="777"/>
+        <chmod file="${project.basedir}/config/autoload" mode="777"/>
+        <chmod file="${project.basedir}/public/captcha" mode="777"/>
+        <chmod file="${project.basedir}/public/theme" mode="777"/>
+        <chmod file="${project.basedir}/public/generate-image" mode="777"/>
+
+    </target>
+
+    <target name="clean-cache" description="Cleanup cache Folder">
+        <delete dir="${project.basedir}/cache"/>
+    </target>
+
+    <target name="set-rights" depends="prepare-cache"></target>
+
+    <target name="clean-build" description="Cleanup build artifacts">
+        <delete dir="${project.basedir}/build"/>
+        <delete dir="${project.basedir}/build/api"/>
+        <delete dir="${project.basedir}/build/code-browser"/>
+        <delete dir="${project.basedir}/build/coverage"/>
+        <delete dir="${project.basedir}/build/logs"/>
+        <delete dir="${project.basedir}/build/pdepend"/>
+        <delete dir="${project.basedir}/build/phpdoc"/>
+    </target>
+
+    <target name="prepare-build" depends="clean-build" description="Prepare for build">
+        <mkdir dir="${project.basedir}/build"/>
+        <mkdir dir="${project.basedir}/build/api"/>
+        <mkdir dir="${project.basedir}/build/code-browser"/>
+        <mkdir dir="${project.basedir}/build/coverage"/>
+        <mkdir dir="${project.basedir}/build/logs"/>
+        <mkdir dir="${project.basedir}/build/pdepend"/>
+        <mkdir dir="${project.basedir}/build/phpdoc"/>
+    </target>
+
+    <target name="phpunit">
+        <exec
+                command="${project.basedir}/vendor/bin/phpunit  --colors --configuration ${project.basedir}/module/Rubedo/test/phpunit.xml"
+                dir="${project.basedir}/module/Rubedo/test"
+                passthru="true"
+                />
+    </target>
+
+    <target name="phpunit-ci">
+        <exec
+                command="${project.basedir}/vendor/bin/phpunit  --colors --configuration ${project.basedir}/tests/phpunit-ci.xml"
+                dir="${project.basedir}/tests"
+                passthru="true"
+                />
+    </target>
+
+    <target name="build"
+            depends="prepare-build,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpunit-ci,phpdoc"></target>
+
+    <target name="lint" description="Perform syntax check of sourcecode files">
+        <apply executable="php" failonerror="true">
+            <arg value="-l"/>
+            <fileset dir="${project.basedir}/module/Rubedo">
+                <include name="**/*.php"/>
+            </fileset>
+        </apply>
+    </target>
+    <target name="phploc" description="Measure project size using PHPLOC">
+        <exec executable="phploc">
+            <arg value="--log-csv"/>
+            <arg value="${project.basedir}/build/logs/phploc.csv"/>
+            <arg value="${project.basedir}/module/Rubedo"/>
+        </exec>
+    </target>
+    <target name="pdepend" description="Calculate software metrics using PHP_Depend">
+        <exec executable="${project.basedir}/vendor/bin/pdepend">
+            <arg value="--jdepend-xml=${project.basedir}/build/logs/jdepend.xml"/>
+            <arg value="--jdepend-chart=${project.basedir}/build/pdepend/dependencies.svg"/>
+            <arg value="--overview-pyramid=${project.basedir}/build/pdepend/overview-pyramid.svg"/>
+            <arg path="${project.basedir}/module/Rubedo"/>
+        </exec>
+    </target>
+    <target name="phpmd"
+            description="Perform project mess detection using PHPMD and print human readable output. ">
+        <exec executable="${project.basedir}/vendor/bin/phpmd" passthru="true">
+            <arg path="${project.basedir}/module/Rubedo"/>
+            <arg value="text"/>
+            <arg value="design,unusedcode"/>
+
+        </exec>
+    </target>
+    <target name="phpmd-ci"
+            description="Perform project mess detection using PHPMD. ">
+        <exec executable="${project.basedir}/vendor/bin/phpmd">
+            <arg path="${project.basedir}/module/Rubedo"/>
+            <arg value="xml"/>
+            <arg value="design,unusedcode"/>
+            <arg value="--reportfile"/>
+            <arg value="${project.basedir}/build/logs/pmd.xml"/>
+        </exec>
+    </target>
+    <target name="phpcs"
+            description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
+        <exec executable="${project.basedir}/vendor/bin/phpcs" passthru="true">
+            <arg value="--standard=PSR2"/>
+            <arg path="${project.basedir}/module/Rubedo"/>
+        </exec>
+    </target>
+    <target name="phpcs-ci"
+            description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
+        <exec executable="${project.basedir}/vendor/bin/phpcs" output="/dev/null">
+            <arg value="--report=checkstyle"/>
+            <arg value="--report-file=${project.basedir}/build/logs/checkstyle.xml"/>
+            <arg value="--standard=PSR2"/>
+            <arg path="${project.basedir}/module/Rubedo"/>
+        </exec>
+    </target>
+    <target name="phpcpd" description="Find duplicate code using PHPCPD">
+        <exec executable="phpcpd">
+            <arg value="--log-pmd"/>
+            <arg value="${project.basedir}/build/logs/pmd-cpd.xml"/>
+            <arg path="${project.basedir}/module/Rubedo"/>
+        </exec>
+    </target>
+
+    <target name="phpdoc" description="Build PHPdoc">
+        <exec executable="phpdoc">
+        </exec>
+    </target>
+
 
 </project>
