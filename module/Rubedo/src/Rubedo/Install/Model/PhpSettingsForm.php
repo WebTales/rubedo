@@ -43,6 +43,17 @@ class PhpSettingsForm extends BootstrapForm
             ->add($displayExceptions)
             ->setAttribute('legend', 'Exception screen');
 
+        $zendToolbarEnabled = (new Checkbox('enabled'))
+            ->setValue(isset($params['zenddevelopertools']['toolbar']['enabled']) ? $params['zenddevelopertools']['toolbar']['enabled'] : false)
+            ->setLabel('Show zend toolbar');
+
+        $zendToolbar = (new Fieldset('toolbar'))
+            ->add($zendToolbarEnabled);
+
+        $zenddevelopertools = (new Fieldset('zenddevelopertools'))
+            ->add($zendToolbar)
+            ->setAttribute('legend', 'Zend developer tools');
+
         $chromePHPHandler = (new Checkbox('ChromePHPHandler'))
             ->setLabel('ChromePHPHandler')
             ->setValue($params['logger']['enableHandler']['ChromePHPHandler']);
@@ -165,9 +176,10 @@ class PhpSettingsForm extends BootstrapForm
 
         $dbForm = (new Form())
             ->add($displayExceptionsFieldSet)
-            ->add($loggerFieldSet);
-        $dbForm->add($sessionFieldset);
-        $dbForm->add($rubedoConfigFieldset);
+            ->add($zenddevelopertools)
+            ->add($loggerFieldSet)
+            ->add($sessionFieldset)
+            ->add($rubedoConfigFieldset);
 
 
         return self::setForm($dbForm);
