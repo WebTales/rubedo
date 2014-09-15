@@ -1,0 +1,11 @@
+<p>{{ 'Notification.publishedBody.hello'|botrans([], lang) }}</p>
+
+<p>{{ 'Notification.publishedBody.publishedBy'|botrans({'%title%': title, '%author%': publishingAuthor}, lang) }}
+    <br />
+    <a href="{{ directUrl|raw }}">{{ 'Notification.publishedBody.urlText'|botrans([], lang) }}</a>
+</p>
+<p>{{ 'Notification.publishedBody.thanks'|botrans([], lang) }}</p>
+
+<hr />
+{{ 'Notification.publishedBody.automaticMail'|botrans([], lang) }}
+<hr />
