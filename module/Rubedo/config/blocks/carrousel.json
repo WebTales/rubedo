@@ -119,6 +119,14 @@
                                 "allowDecimals":false,
                                 "minValue":0
                             }
+                        },{
+                            "type":"Ext.form.field.Number",
+                            "config":{
+                                "fieldLabel":"Image width",
+                                "name":"imageWidth",
+                                "allowDecimals":false,
+                                "minValue":0
+                            }
                         },
                         {
                             "type":"Ext.form.field.ComboBox",
