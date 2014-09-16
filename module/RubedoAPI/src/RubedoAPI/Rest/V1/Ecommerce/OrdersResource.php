@@ -17,7 +17,9 @@
 
 namespace RubedoAPI\Rest\V1\Ecommerce;
 
+use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
+use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Rest\V1\AbstractResource;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
@@ -54,6 +56,158 @@ class OrdersResource extends AbstractResource
             'orders' => &$orders['data'],
             'orderDetailPageUrl' => isset($orderDetailPageUrl)?$orderDetailPageUrl:null,
         );
+    }
+
+    public function postAction($params)
+    {
+        $pmConfig = $this->getConfigService()['paymentMeans'];
+        if (!isset($pmConfig[$params['paymentMeans']])) {
+            throw new APIRequestException('Unknown payment method', 400);
+        }
+        $myPaymentMeans = $pmConfig[$params['paymentMeans']];
+
+        $myCart = $this->getShoppingCartCollection()->getCurrentCart();
+        if (empty($myCart)) {
+            throw new APIAuthException('Shopping cart is empty', 404);
+        }
+
+        $currentUser = $this->getCurrentUserAPIService()->getCurrentUser();
+
+        if (!(isset($currentUser['shippingAddress']) && isset($currentUser['shippingAddress']['country']))) {
+            throw new APIAuthException('Missing shipping address country');
+        }
+
+        $order = array();
+        $items = 0;
+        foreach ($myCart as $value) {
+            $items = $items + $value['amount'];
+        }
+
+        $myShippers = $this->getShippersCollection()->getApplicableShippers($currentUser['shippingAddress']['country'], $items);
+
+        $shippingPrice = 0;
+        $shippingTaxedPrice = 0;
+        $shippingTax = 0;
+        $shipperFound = false;
+        $usedShipper = array();
+
+        foreach ($myShippers['data'] as $shipper) {
+            if ($shipper['shipperId'] == $params['shipperId']) {
+                $shippingPrice = $shipper['rate'];
+                $shippingTax = $shippingPrice * ($shipper['tax'] / 100);
+                $shippingTaxedPrice = $shippingPrice + $shippingTax;
+                $shipperFound = true;
+                $usedShipper = $shipper;
+                break;
+            }
+        }
+
+        if (!$shipperFound) {
+            throw new APIEntityException('Shipper not found', 404);
+        }
+
+        $order['detailedCart'] = $this->addCartInfos(
+            $myCart,
+            $currentUser['typeId'],
+            $currentUser['shippingAddress']['country'],
+            $currentUser['shippingAddress']['regionState'],
+            $currentUser['shippingAddress']['postCode']
+        );
+
+        if (isset($params['shippingComments'])) {
+            $order['shippingComments'] = $params['shippingComments'];
+        }
+        $order['shippingPrice'] = $shippingPrice;
+        $order['shippingTaxedPrice'] = $shippingTaxedPrice;
+        $order['shippingTax'] = $shippingTax;
+        $order['finalTFPrice'] = $order['detailedCart']['totalPrice'] + $order['shippingPrice'];
+        $order['finalTaxes'] = $order['detailedCart']['totalTaxedPrice'] - $order['detailedCart']['totalPrice'] + $order['shippingTax'];
+        $order['finalPrice'] = $order['detailedCart']['totalTaxedPrice'] + $order['shippingTaxedPrice'];
+        $order['shipper'] = $usedShipper;
+        $order['userId'] = $currentUser['id'];
+        $order['userName'] = $currentUser['name'];
+        $order['billingAddress'] = $currentUser['billingAddress'];
+        $order['shippingAddress'] = $currentUser['shippingAddress'];
+        $order['hasStockDecrementIssues'] = false;
+        $order['stockDecrementIssues'] = array();
+        $order['paymentMeans'] = $params['paymentMeans'];
+        $order['status'] = "pendingPayment";
+
+        $registeredOrder = $this->getOrdersCollection()->createOrder($order);
+
+        return array(
+            'success' => $registeredOrder['success'],
+            'order' => $registeredOrder['data'],
+        );
+    }
+
+    protected function addCartInfos($cart, $userTypeId, $country, $region, $postalCode)
+    {
+        $totalPrice = 0;
+        $totalTaxedPrice = 0;
+        $totalItems = 0;
+        $ignoredArray = array('price', 'amount', 'id', 'sku', 'stock', 'basePrice', 'specialOffers');
+        foreach ($cart as &$value) {
+            $myContent = $this->getContentsCollection()->findById($value['productId'], true, false);
+            if ($myContent) {
+                $value['title'] = $myContent['text'];
+                $value['subtitle'] = '';
+                $unitPrice = 0;
+                $taxedPrice = 0;
+                $unitTaxedPrice = 0;
+                $price = 0;
+                foreach ($myContent['productProperties']['variations'] as $variation) {
+                    if ($variation['id'] == $value['variationId']) {
+                        if (array_key_exists('specialOffers', $variation)) {
+                            $variation["price"] = $this->getBetterSpecialOffer($variation['specialOffers'], $variation["price"]);
+                            $value['unitPrice'] = $variation["price"];
+                        }
+                        $unitPrice = $variation['price'];
+                        $unitTaxedPrice = $this->getTaxesCollection()->getTaxValue($myContent['typeId'], $userTypeId, $country, $region, $postalCode, $unitPrice);
+                        $price = $unitPrice * $value['amount'];
+                        $taxedPrice = $unitTaxedPrice * $value['amount'];
+                        $totalTaxedPrice = $totalTaxedPrice + $taxedPrice;
+                        $totalPrice = $totalPrice + $price;
+                        $totalItems = $totalItems + $value['amount'];
+                        foreach ($variation as $varkey => $varvalue) {
+                            if (!in_array($varkey, $ignoredArray)) {
+                                $value['subtitle'] .= ' ' . $varvalue;
+                            }
+                        }
+                    }
+                }
+                $value['price'] = $price;
+                $value['unitPrice'] = $unitPrice;
+                $value['unitTaxedPrice'] = $unitTaxedPrice;
+                $value['taxedPrice'] = $taxedPrice;
+            }
+        }
+        return array(
+            'cart' => $cart,
+            'totalPrice' => $totalPrice,
+            'totalTaxedPrice' => $totalTaxedPrice,
+            'totalItems' => $totalItems
+        );
+    }
+
+    protected function getBetterSpecialOffer($offers, $basePrice) {
+        $actualDate = new \DateTime();
+        foreach($offers as $offer) {
+            $beginDate = $offer['beginDate'];
+            $endDate = $offer['endDate'];
+            $offer['beginDate'] = new \DateTime();
+            $offer['beginDate']->setTimestamp($beginDate);
+            $offer['endDate'] = new \DateTime();
+            $offer['endDate']->setTimestamp($endDate);
+            if (
+                $offer['beginDate'] <= $actualDate
+                && $offer['beginDate'] <= $actualDate
+                && $basePrice > $offer['price']
+            ) {
+                $basePrice = $offer['price'];
+            }
+        }
+        return $basePrice;
     }
 
     public function getEntityAction($id, $params)
@@ -135,11 +289,38 @@ class OrdersResource extends AbstractResource
             );
     }
 
-    protected function definePost($entity)
+    protected function definePost(VerbDefinitionEntity &$entity)
     {
+        $entity
+            ->setDescription('Post new order')
+            ->identityRequired()
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Payment mean')
+                    ->setKey('paymentMeans')
+                    ->setRequired()
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Shipper')
+                    ->setKey('shipperId')
+                    ->setRequired()
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Shipping comments')
+                    ->setKey('shippingComments')
+                    ->setFilter('string')
+            )
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Order')
+                    ->setKey('order')
+                    ->setRequired()
+            );
     }
 
-    protected function defineGetEntity($entity)
+    protected function defineGetEntity(VerbDefinitionEntity &$entity)
     {
         $entity
             ->setDescription('Get an order')
