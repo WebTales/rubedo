@@ -29,6 +29,7 @@ use RubedoAPI\Exceptions\APIControllerException;
  * @method \RubedoAPI\Services\Router\Url getUrlAPIService() Return Router URL service
  * @method \RubedoAPI\Services\User\CurrentUser getCurrentUserAPIService() Return current User service
  * @method \RubedoAPI\Services\Internationalization\Current getCurrentLocalizationAPIService() Return current localization service
+ * @method \RubedoAPI\Services\Internationalization\Translate getTranslationAPIService() Return current localization service
  * @method \Rubedo\Interfaces\Collection\IContents getContentsCollection() Return current localization service
  * @method \Rubedo\Interfaces\Collection\IContentTypes getContentTypesCollection() Return ContentTypes collection
  * @method \Rubedo\Interfaces\Collection\IDamTypes getDamTypesCollection() Return Damtypes collection
