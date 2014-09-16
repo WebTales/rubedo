@@ -272,12 +272,26 @@ class PagesResource extends AbstractResource
             $column = $this->localizeTitle($column);
             $returnArray[$key] = $column;
             if (isset($blocks[$column['id']])) {
-                $returnArray[$key]['blocks'] = $blocks[$column['id']];
+                $returnArray[$key]['blocks'] = $this->sortBlocks($blocks[$column['id']]);
             } else {
                 $returnArray[$key]['rows'] = $this->getRowsInfos($blocks, $column['rows']);
             }
         }
         return $returnArray;
+    }
+
+    protected function sortBlocks($blocks)
+    {
+        $newBlocks = array();
+        foreach ($blocks as &$block) {
+            if (isset($block['orderValue']) && !isset($newBlocks[$block['orderValue']])) {
+                $newBlocks[$block['orderValue']] = &$block;
+            } else {
+                $newBlocks[] = &$block;
+            }
+        }
+        ksort($newBlocks);
+        return $newBlocks;
     }
 
     protected function getSingleBlock($id)
