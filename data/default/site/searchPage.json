@@ -5,8 +5,8 @@
       "mType": "block",
       "configBloc": {
         "constrainToSite": false,
-        "predefinedFacets": "",
-        "displayedFacets":["all"]
+        "displayedFacets":"['all']",
+        "displayMode":"default"
       },
       "orderValue": 1,
       "title": "###NewSite.search.searchBlocTitle###",
