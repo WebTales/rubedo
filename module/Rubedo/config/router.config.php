@@ -72,23 +72,6 @@ return array(
             ),
             'may_terminate' => true
         ),
-        // Blocks controller (for Ajax Access)
-        'blocks' => array(
-            'type' => 'Segment',
-            'options' => array(
-                'route' => '/blocks/[:locale/[:controller[/:action]]]',
-                'defaults' => array(
-                    '__NAMESPACE__' => 'Rubedo\Blocks\Controller',
-                    'constraints' => array(
-                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
-                    ),
-                    'controller' => 'Index',
-                    'action' => 'index'
-                )
-            ),
-            'may_terminate' => true
-        ),
         // Payment controller
         'payment' => array(
             'type' => 'Segment',

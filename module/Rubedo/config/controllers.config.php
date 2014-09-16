@@ -18,6 +18,5 @@
 $backControllers = include 'backoffice.controllers.config.php';
 $frontControllers = include 'frontoffice.controllers.config.php';
 $installControllers = include 'install.controllers.config.php';
-$blocksControllers = include 'blocks.controllers.config.php';
 $paymentControllers = include 'payment.controllers.config.php';
-return array_merge($backControllers, $frontControllers, $installControllers, $blocksControllers, $paymentControllers);
+return array_merge($backControllers, $frontControllers, $installControllers, $paymentControllers);
