@@ -291,7 +291,7 @@ class PagesResource extends AbstractResource
             }
         }
         ksort($newBlocks);
-        return $newBlocks;
+        return array_values($newBlocks);
     }
 
     protected function getSingleBlock($id)
