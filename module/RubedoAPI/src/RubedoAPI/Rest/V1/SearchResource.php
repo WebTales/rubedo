@@ -293,9 +293,9 @@ class SearchResource extends AbstractResource
                 $operatorByActiveFacet[$displayedFacet['name']] = strtolower($displayedFacet['operator']);
             }
             foreach($results['activeFacets'] as $key => $activeFacet){
-                if($activeFacet['id']=='query' || $activeFacet['id']=='userType'){
+                if($activeFacet['id']=='query' || $activeFacet['id']=='userType' || $activeFacet['id']=='type'){
                     $results['activeFacets'][$key]['operator'] = 'and';
-                } else {
+                }  else {
                     $results['activeFacets'][$key]['operator'] = $operatorByActiveFacet[$activeFacet['id']];
                 }
             }
