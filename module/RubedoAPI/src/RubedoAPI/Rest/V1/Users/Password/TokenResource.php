@@ -10,13 +10,28 @@ use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Rest\V1\AbstractResource;
 
+/**
+ * Class TokenResource
+ * @package RubedoAPI\Rest\V1\Users\Password
+ */
 class TokenResource extends AbstractResource {
+    /**
+     * {@inheritdoc}
+     */
     function __construct()
     {
         parent::__construct();
         $this->define();
     }
 
+    /**
+     * Get action
+     *
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     * @throws \RubedoAPI\Exceptions\APIRequestException
+     */
     public function getAction($params)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
@@ -47,6 +62,13 @@ class TokenResource extends AbstractResource {
         );
     }
 
+    /**
+     * Post action
+     *
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function postAction($params)
     {
         AbstractCollection::disableUserFilter();
@@ -70,6 +92,16 @@ class TokenResource extends AbstractResource {
         return $this->getUsersCollection()->update($user);
     }
 
+    /**
+     * Send mail
+     *
+     * @param $title
+     * @param $template
+     * @param $vars
+     * @param $user
+     * @param $site
+     * @return bool
+     */
     protected function sendMail($title, $template, $vars, $user, $site)
     {
         $options = $this->getConfigService()['rubedo_config'];
@@ -104,6 +136,9 @@ class TokenResource extends AbstractResource {
         return $this->getMailerService()->sendMessage($message);
     }
 
+    /**
+     * Define
+     */
     protected function define()
     {
         $this
@@ -118,6 +153,11 @@ class TokenResource extends AbstractResource {
             });
     }
 
+    /**
+     * Define get
+     *
+     * @param VerbDefinitionEntity $entity
+     */
     protected function defineGet(VerbDefinitionEntity &$entity)
     {
         $entity
@@ -138,6 +178,11 @@ class TokenResource extends AbstractResource {
             );
     }
 
+    /**
+     * Define post
+     *
+     * @param VerbDefinitionEntity $entity
+     */
     protected function definePost(VerbDefinitionEntity &$entity)
     {
         $entity

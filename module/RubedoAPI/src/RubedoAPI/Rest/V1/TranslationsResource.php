@@ -20,13 +20,26 @@ namespace RubedoAPI\Rest\V1;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 
+/**
+ * Class TranslationsResource
+ * @package RubedoAPI\Rest\V1
+ */
 class TranslationsResource extends AbstractResource {
+    /**
+     * {@inheritdoc}
+     */
     function __construct()
     {
         parent::__construct();
         $this->define();
     }
 
+    /**
+     * Get action
+     *
+     * @param $params
+     * @return array
+     */
     public function getAction($params)
     {
         $translations = $this->getTranslationAPIService()->getTranslations($params['lang']->getLocale());
@@ -36,6 +49,9 @@ class TranslationsResource extends AbstractResource {
         );
     }
 
+    /**
+     * Define verbs
+     */
     protected function define()
     {
         $this
@@ -47,6 +63,11 @@ class TranslationsResource extends AbstractResource {
             });
     }
 
+    /**
+     * Define get
+     *
+     * @param VerbDefinitionEntity $entity
+     */
     protected function defineGet(VerbDefinitionEntity &$entity)
     {
         $entity

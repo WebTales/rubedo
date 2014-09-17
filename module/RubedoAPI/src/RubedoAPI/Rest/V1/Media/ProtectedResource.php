@@ -24,13 +24,28 @@ use RubedoAPI\Exceptions\APIControllerException;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Rest\V1\AbstractResource;
 
+/**
+ * Class ProtectedResource
+ * @package RubedoAPI\Rest\V1\Media
+ */
 class ProtectedResource extends AbstractResource {
 
+    /**
+     * {@inheritdoc}
+     */
     function __construct() {
         parent::__construct();
         $this->define();
     }
 
+    /**
+     * post action
+     *
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     * @throws \RubedoAPI\Exceptions\APIControllerException
+     */
     public function postAction($params)
     {
         $mailingList = $this->getMailingListCollection()->findById($params['mailingListId']);
@@ -59,6 +74,15 @@ class ProtectedResource extends AbstractResource {
         );
     }
 
+    /**
+     * Send DAM mail
+     *
+     * @param $mailingList
+     * @param $site
+     * @param $media
+     * @param $email
+     * @throws \RubedoAPI\Exceptions\APIControllerException
+     */
     protected function sendDamMail ($mailingList, $site, $media, $email)
     {
         $tk = $this->getTinyUrlCollection()->creamDamAccessLinkKey($media['id']);
@@ -72,6 +96,15 @@ class ProtectedResource extends AbstractResource {
         $this->sendEmail($mailingList, $site, $email, $fileUrl);
     }
 
+    /**
+     * Send mail
+     *
+     * @param $mailingList
+     * @param $site
+     * @param $email
+     * @param $url
+     * @throws \RubedoAPI\Exceptions\APIControllerException
+     */
     protected function sendEmail ($mailingList, $site, $email, $url)
     {
         $twigVar = array(
@@ -103,6 +136,9 @@ class ProtectedResource extends AbstractResource {
         }
     }
 
+    /**
+     * define verbs
+     */
     protected function define()
     {
         $this

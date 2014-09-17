@@ -197,6 +197,13 @@ class PagesResource extends AbstractResource
         return $output;
     }
 
+    /**
+     * Get entity action
+     *
+     * @param $id
+     * @param $params
+     * @return array
+     */
     public function getEntityAction($id, $params) {
         $page = $this->getPagesCollection()->findById($id);
         $urlOptions = array(
@@ -227,6 +234,11 @@ class PagesResource extends AbstractResource
         return array_intersect_key($output, array_flip($mask));
     }
 
+    /**
+     * Mask output mask
+     * @param $output
+     * @return array
+     */
     protected function outputMaskMask($output)
     {
         $mask = array('pageProperties', 'mainColumnId');
@@ -243,6 +255,14 @@ class PagesResource extends AbstractResource
     {
         return $output;
     }
+
+    /**
+     * Get rows infos
+     *
+     * @param array $blocks
+     * @param array $rows
+     * @return array|null
+     */
     protected function getRowsInfos(array &$blocks, array $rows = null)
     {
         if ($rows === null) {
@@ -262,6 +282,13 @@ class PagesResource extends AbstractResource
         return $returnArray;
     }
 
+    /**
+     * Get columns infos
+     *
+     * @param array $blocks
+     * @param array $columns
+     * @return array|null
+     */
     protected function getColumnsInfos(array &$blocks, array $columns = null)
     {
         if ($columns === null) {
@@ -280,6 +307,12 @@ class PagesResource extends AbstractResource
         return $returnArray;
     }
 
+    /**
+     * Sort blocks
+     *
+     * @param $blocks
+     * @return array
+     */
     protected function sortBlocks($blocks)
     {
         $newBlocks = array();
@@ -294,6 +327,12 @@ class PagesResource extends AbstractResource
         return array_values($newBlocks);
     }
 
+    /**
+     * Get single block
+     *
+     * @param $id
+     * @return array
+     */
     protected function getSingleBlock($id)
     {
         $block = array();
@@ -311,6 +350,12 @@ class PagesResource extends AbstractResource
         return $block;
     }
 
+    /**
+     * Localize title
+     *
+     * @param array $item
+     * @return array
+     */
     protected function localizeTitle(array $item)
     {
         if (isset($item['i18n'])) {

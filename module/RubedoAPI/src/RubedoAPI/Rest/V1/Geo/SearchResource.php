@@ -27,6 +27,9 @@ use RubedoAPI\Rest\V1\SearchResource as GlobalSearch;
  */
 class SearchResource extends GlobalSearch
 {
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();

@@ -21,6 +21,10 @@ namespace RubedoAPI\Rest\V1;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 
+/**
+ * Class MediatypesResource
+ * @package RubedoAPI\Rest\V1
+ */
 class MediatypesResource extends AbstractResource {
     /**
      * { @inheritdoc }

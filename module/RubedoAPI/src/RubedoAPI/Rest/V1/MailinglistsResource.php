@@ -22,8 +22,7 @@ use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 
 /**
- * Class ContenttypesResource
- *
+ * Class MailinglistsResource
  * @package RubedoAPI\Rest\V1
  */
 class MailinglistsResource extends AbstractResource {

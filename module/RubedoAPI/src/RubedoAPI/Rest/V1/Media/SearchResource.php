@@ -26,6 +26,9 @@ use RubedoAPI\Rest\V1\SearchResource as GlobalSearch;
  */
 class SearchResource extends GlobalSearch
 {
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();
@@ -40,6 +43,12 @@ class SearchResource extends GlobalSearch
             });
     }
 
+    /**
+     * Inject data in results
+     *
+     * @param $results
+     * @param $params
+     */
     protected function injectDataInResults(&$results, $params)
     {
         foreach ($results['data'] as $key => $value) {
@@ -49,6 +58,13 @@ class SearchResource extends GlobalSearch
         }
     }
 
+    /**
+     * Transform filesize in readable string
+     *
+     * @param $bytes
+     * @param int $decimals
+     * @return string
+     */
     protected function humanfilesize ($bytes, $decimals = 0)
     {
         $size = array(

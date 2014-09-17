@@ -32,7 +32,13 @@ use WebTales\MongoFilters\Filter;
  */
 class ContentsResource extends AbstractResource
 {
+    /**
+     * @var array
+     */
     protected $toExtractFromFields = array('text');
+    /**
+     * @var array
+     */
     protected $otherLocalizableFields = array('text', 'summary');
 
     /**
@@ -642,6 +648,11 @@ class ContentsResource extends AbstractResource
             );
     }
 
+    /**
+     * Add product filter
+     *
+     * @return $this
+     */
     protected function productFilter()
     {
         return Filter::factory('Or')

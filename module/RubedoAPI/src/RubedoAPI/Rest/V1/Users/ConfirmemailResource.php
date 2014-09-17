@@ -24,13 +24,28 @@ use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Rest\V1\AbstractResource;
 
+/**
+ * Class ConfirmemailResource
+ * @package RubedoAPI\Rest\V1\Users
+ */
 class ConfirmemailResource extends AbstractResource {
+    /**
+     * {@inheritdoc}
+     */
     function __construct()
     {
         parent::__construct();
         $this->define();
     }
 
+    /**
+     * Post action
+     *
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     * @throws \RubedoAPI\Exceptions\APIRequestException
+     */
     public function postAction($params)
     {
         $user = $this->getUsersCollection()->findById($params['userId']);
@@ -47,6 +62,9 @@ class ConfirmemailResource extends AbstractResource {
         return $this->getUsersCollection()->update($user);
     }
 
+    /**
+     * Define
+     */
     protected function define()
     {
         $this
@@ -58,6 +76,11 @@ class ConfirmemailResource extends AbstractResource {
             });
     }
 
+    /**
+     * Define post
+     *
+     * @param VerbDefinitionEntity $entity
+     */
     protected function definePost(VerbDefinitionEntity &$entity)
     {
         $entity

@@ -30,18 +30,37 @@ use Zend\Json\Json;
  */
 class MediaResource extends AbstractResource
 {
+    /**
+     * @var array
+     */
     protected $toExtractFromFields = array('title');
+
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();
         $this->define();
     }
 
+    /**
+     * Options action
+     *
+     * @return array
+     */
     public function optionsAction()
     {
         return array_merge(parent::optionsAction(), $this->getMediaMeans());
     }
 
+    /**
+     * Post action
+     *
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function postAction($params)
     {
         $type = $this->getDamTypesCollection()->findById($params['typeId']);
@@ -76,6 +95,14 @@ class MediaResource extends AbstractResource
         );
     }
 
+    /**
+     * Upload a file
+     *
+     * @param $file
+     * @param $mimeType
+     * @return mixed
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     private function uploadFile($file, &$mimeType)
     {
         $mimeType = mime_content_type($file['tmp_name']);
@@ -94,6 +121,13 @@ class MediaResource extends AbstractResource
 
     }
 
+    /**
+     * Get media from extracted fields
+     *
+     * @param $fields
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIRequestException
+     */
     protected function getMediaFromExtractedFields($fields)
     {
         foreach ($this->toExtractFromFields as $field) {
@@ -111,6 +145,13 @@ class MediaResource extends AbstractResource
         return $media;
     }
 
+    /**
+     * Filter fields
+     *
+     * @param $fields
+     * @param $type
+     * @return mixed
+     */
     protected function filterFields($fields, $type)
     {
         $existingFields = $this->toExtractFromFields;
@@ -126,6 +167,11 @@ class MediaResource extends AbstractResource
         return $fields;
     }
 
+    /**
+     * Get entity action
+     * @param $id
+     * @return array
+     */
     public function getEntityAction($id)
     {
         $media = $this->getDamCollection()->findById($id);
@@ -136,6 +182,14 @@ class MediaResource extends AbstractResource
         );
     }
 
+    /**
+     * Post entity action
+     *
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function postEntityAction($id, $params)
     {
         AbstractLocalizableCollection::setIncludeI18n(true);
@@ -183,6 +237,11 @@ class MediaResource extends AbstractResource
         );
     }
 
+    /**
+     * Get media means
+     *
+     * @return array
+     */
     protected function getMediaMeans()
     {
         return [
@@ -192,6 +251,9 @@ class MediaResource extends AbstractResource
         ];
     }
 
+    /**
+     * Define
+     */
     protected function define()
     {
         $this
@@ -213,6 +275,11 @@ class MediaResource extends AbstractResource
             });
     }
 
+    /**
+     * Define post
+     *
+     * @param VerbDefinitionEntity $verbDef
+     */
     protected function definePost(VerbDefinitionEntity &$verbDef)
     {
         $verbDef
@@ -254,6 +321,11 @@ class MediaResource extends AbstractResource
             );
     }
 
+    /**
+     * Define get entity
+     *
+     * @param VerbDefinitionEntity $verbDef
+     */
     protected function defineGetEntity(VerbDefinitionEntity &$verbDef)
     {
         $verbDef
@@ -266,6 +338,11 @@ class MediaResource extends AbstractResource
             );
     }
 
+    /**
+     * Define post entity
+     *
+     * @param VerbDefinitionEntity $verbDef
+     */
     protected function definePostEntity(VerbDefinitionEntity $verbDef)
     {
         $verbDef

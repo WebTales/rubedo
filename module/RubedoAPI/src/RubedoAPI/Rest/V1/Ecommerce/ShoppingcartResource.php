@@ -23,14 +23,28 @@ use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Rest\V1\AbstractResource;
 
+/**
+ * Class ShoppingcartResource
+ * @package RubedoAPI\Rest\V1\Ecommerce
+ */
 class ShoppingcartResource extends AbstractResource {
 
+    /**
+     * {@inheritdoc}
+     */
     function __construct()
     {
         parent::__construct();
         $this->define();
     }
 
+    /**
+     * Post action
+     *
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function postAction($params)
     {
         $params['amount'] = isset($params['amount'])?$params['amount']:1;
@@ -48,6 +62,13 @@ class ShoppingcartResource extends AbstractResource {
         );
     }
 
+    /**
+     * Delete action
+     *
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function deleteAction($params)
     {
         $params['amount'] = isset($params['amount'])?$params['amount']:1;
@@ -65,6 +86,12 @@ class ShoppingcartResource extends AbstractResource {
         );
     }
 
+    /**
+     * Get action
+     *
+     * @param $params
+     * @return array
+     */
     public function getAction($params)
     {
         if (empty($params['shoppingCartToken'])) {
@@ -78,12 +105,21 @@ class ShoppingcartResource extends AbstractResource {
         );
     }
 
+    /**
+     * Filter shopping cart
+     *
+     * @param $shoppingCart
+     * @return array
+     */
     protected function filterShoppingCart($shoppingCart)
     {
         $mask = array('id', 'shoppingCart', 'name');
         return array_intersect_key($shoppingCart, array_flip($mask));
     }
 
+    /**
+     * Define verbs
+     */
     protected function define()
     {
         $this
@@ -103,6 +139,11 @@ class ShoppingcartResource extends AbstractResource {
             });
     }
 
+    /**
+     * Define both post and delete filters
+     *
+     * @param VerbDefinitionEntity $entity
+     */
     protected function defineEdition (VerbDefinitionEntity &$entity)
     {
         $entity
@@ -140,6 +181,11 @@ class ShoppingcartResource extends AbstractResource {
             );
     }
 
+    /**
+     * Define get filters
+     *
+     * @param VerbDefinitionEntity $entity
+     */
     protected function defineGet(VerbDefinitionEntity &$entity)
     {
         $entity

@@ -23,16 +23,36 @@ use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 
+/**
+ * Class UsersResource
+ * @package RubedoAPI\Rest\V1
+ */
 class UsersResource extends AbstractResource {
+    /**
+     * @var array
+     */
     protected $toExtractFromFields = array('name', 'login', 'email', 'password');
+    /**
+     * @var array
+     */
     protected $toInjectIntoFields = array('name', 'email');
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();
         $this->define();
     }
 
+    /**
+     * Get entity action
+     *
+     * @param $id
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function getEntityAction($id) {
         $user = $this->getUsersCollection()->findById($id);
         if (empty($user)) {
@@ -82,6 +102,15 @@ class UsersResource extends AbstractResource {
         );
     }
 
+    /**
+     * Patch entity action
+     *
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIAuthException
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function patchEntityAction($id, $params)
     {
         $user = $this->getUsersCollection()->findById($id);
@@ -123,6 +152,13 @@ class UsersResource extends AbstractResource {
         return $updateResult;
     }
 
+    /**
+     * Post action
+     *
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function postAction($params) {
         $userType = $this->getUserTypesCollection()->findById($params['usertype']);
         if (empty($userType))
@@ -227,6 +263,9 @@ class UsersResource extends AbstractResource {
         return $fields;
     }
 
+    /**
+     * Define verbs
+     */
     protected function define()
     {
         $this->definition
@@ -246,6 +285,11 @@ class UsersResource extends AbstractResource {
             });
     }
 
+    /**
+     * Define post
+     *
+     * @param VerbDefinitionEntity $verbDef
+     */
     protected function definePost(VerbDefinitionEntity &$verbDef)
     {
         $verbDef
@@ -271,6 +315,11 @@ class UsersResource extends AbstractResource {
             );
     }
 
+    /**
+     * Define get entity
+     *
+     * @param VerbDefinitionEntity $verbDef
+     */
     protected function defineGetEntity(VerbDefinitionEntity &$verbDef)
     {
         $verbDef
@@ -283,6 +332,11 @@ class UsersResource extends AbstractResource {
             );
     }
 
+    /**
+     * Define patch entity
+     *
+     * @param VerbDefinitionEntity $verbDef
+     */
     protected function definePatchEntity(VerbDefinitionEntity &$verbDef)
     {
         $verbDef

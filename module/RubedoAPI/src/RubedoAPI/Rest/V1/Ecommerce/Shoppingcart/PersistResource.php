@@ -6,7 +6,14 @@ use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Rest\V1\AbstractResource;
 
+/**
+ * Class PersistResource
+ * @package RubedoAPI\Rest\V1\Ecommerce\Shoppingcart
+ */
 class PersistResource extends AbstractResource {
+    /**
+     * {@inheritdoc}
+     */
     function __construct()
     {
         parent::__construct();
@@ -14,11 +21,20 @@ class PersistResource extends AbstractResource {
 
     }
 
+    /**
+     * Post action
+     *
+     * @param $params
+     * @return array
+     */
     public function postAction($params)
     {
         return $this->getShoppingCartCollection()->setToUser($params['shoppingCartToken']);
     }
 
+    /**
+     * define verbs
+     */
     protected function define()
     {
         $this->definition

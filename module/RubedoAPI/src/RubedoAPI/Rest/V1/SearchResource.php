@@ -28,9 +28,18 @@ use Zend\Json\Json;
  */
 class SearchResource extends AbstractResource
 {
+    /**
+     * @var string
+     */
     protected $searchOption;
+    /**
+     * @var array
+     */
     protected $searchParamsArray;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();
@@ -177,6 +186,11 @@ class SearchResource extends AbstractResource
             });
     }
 
+    /**
+     * Get action
+     * @param $queryParams
+     * @return array
+     */
     public function getAction($queryParams)
     {
         $params = $this->initParams($queryParams);
@@ -197,6 +211,12 @@ class SearchResource extends AbstractResource
 
     }
 
+    /**
+     * init params
+     *
+     * @param $queryParams
+     * @return array
+     */
     protected function initParams($queryParams)
     {
         $blockConfigArray = array('displayMode', 'displayedFacets');
@@ -223,6 +243,12 @@ class SearchResource extends AbstractResource
         return $params;
     }
 
+    /**
+     * Parse predefined facets
+     *
+     * @param $params
+     * @param $queryParams
+     */
     protected function parsePrefedinedFacets(&$params, $queryParams)
     {
         $predefParamsArray = Json::decode($queryParams['predefinedFacets'], Json::TYPE_ARRAY);
@@ -238,6 +264,12 @@ class SearchResource extends AbstractResource
         }
     }
 
+    /**
+     * Inject data in results
+     *
+     * @param $results
+     * @param $params
+     */
     protected function injectDataInResults(&$results, $params)
     {
         if(isset($params['profilePageId'])){
@@ -278,6 +310,13 @@ class SearchResource extends AbstractResource
             $this->injectOperatorsInActiveFacets($results, $params);
         }
     }
+
+    /**
+     * inject operators in active facets
+     *
+     * @param $results
+     * @param $params
+     */
     protected function injectOperatorsInActiveFacets(&$results,$params)
     {
         if ($params['displayedFacets']=="['all']"){

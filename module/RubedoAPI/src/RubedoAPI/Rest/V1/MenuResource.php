@@ -33,8 +33,14 @@ class MenuResource extends AbstractResource
      */
     private $pageService;
 
+    /**
+     * @var array
+     */
     private $rootline;
 
+    /**
+     * @var array
+     */
     private $excludeFromMenuCondition;
 
     /**

@@ -105,6 +105,11 @@ class SubscribeResource extends AbstractResource {
             });
     }
 
+    /**
+     * define post
+     *
+     * @param VerbDefinitionEntity $definition
+     */
     protected function definePost(VerbDefinitionEntity &$definition)
     {
         $definition
@@ -123,6 +128,12 @@ class SubscribeResource extends AbstractResource {
                     ->setRequired()
             );
     }
+
+    /**
+     * define delete
+     *
+     * @param VerbDefinitionEntity $definition
+     */
     protected function defineDelete(VerbDefinitionEntity &$definition)
     {
         $definition

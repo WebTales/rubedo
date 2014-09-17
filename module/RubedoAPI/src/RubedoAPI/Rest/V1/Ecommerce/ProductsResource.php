@@ -22,8 +22,15 @@ use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Rest\V1\ContentsResource;
 use WebTales\MongoFilters\Filter;
 
+/**
+ * Class ProductsResource
+ * @package RubedoAPI\Rest\V1\Ecommerce
+ */
 class ProductsResource extends ContentsResource
 {
+    /**
+     * define verbs
+     */
     protected function define()
     {
         $this
@@ -48,6 +55,11 @@ class ProductsResource extends ContentsResource
             });
     }
 
+    /**
+     * redefine get action
+     *
+     * @param VerbDefinitionEntity $definition
+     */
     protected function defineGet(VerbDefinitionEntity &$definition)
     {
         parent::defineGet($definition);
@@ -59,6 +71,11 @@ class ProductsResource extends ContentsResource
             });
     }
 
+    /**
+     * redefine post action
+     *
+     * @param VerbDefinitionEntity $definition
+     */
     protected function definePost(VerbDefinitionEntity &$definition) {
         parent::definePost($definition);
         $definition
@@ -69,6 +86,11 @@ class ProductsResource extends ContentsResource
             });
     }
 
+    /**
+     * redefine get on entity
+     *
+     * @param VerbDefinitionEntity $definition
+     */
     protected function defineEntityGet(VerbDefinitionEntity &$definition)
     {
         parent::defineEntityGet($definition);
@@ -80,6 +102,11 @@ class ProductsResource extends ContentsResource
             });
     }
 
+    /**
+     * redefine patch on entity
+     *
+     * @param VerbDefinitionEntity $definition
+     */
     protected function defineEntityPatch(VerbDefinitionEntity &$definition)
     {
         parent::defineEntityPatch($definition);
@@ -91,6 +118,11 @@ class ProductsResource extends ContentsResource
             });
     }
 
+    /**
+     * Return filter for a product
+     *
+     * @return $this
+     */
     protected function productFilter()
     {
         return Filter::factory('And')

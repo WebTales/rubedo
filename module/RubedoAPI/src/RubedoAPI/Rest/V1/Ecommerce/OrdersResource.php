@@ -25,14 +25,25 @@ use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use WebTales\MongoFilters\Filter;
 
+/**
+ * Class OrdersResource
+ * @package RubedoAPI\Rest\V1\Ecommerce
+ */
 class OrdersResource extends AbstractResource
 {
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();
         $this->define();
     }
 
+    /**
+     * @param $params
+     * @return array
+     */
     public function getAction($params)
     {
         $user = $params['identity']->getUser();
@@ -58,6 +69,13 @@ class OrdersResource extends AbstractResource
         );
     }
 
+    /**
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIAuthException
+     * @throws \RubedoAPI\Exceptions\APIRequestException
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function postAction($params)
     {
         $pmConfig = $this->getConfigService()['paymentMeans'];
@@ -141,6 +159,14 @@ class OrdersResource extends AbstractResource
         );
     }
 
+    /**
+     * @param $cart
+     * @param $userTypeId
+     * @param $country
+     * @param $region
+     * @param $postalCode
+     * @return array
+     */
     protected function addCartInfos($cart, $userTypeId, $country, $region, $postalCode)
     {
         $totalPrice = 0;
@@ -190,6 +216,11 @@ class OrdersResource extends AbstractResource
         );
     }
 
+    /**
+     * @param $offers
+     * @param $basePrice
+     * @return mixed
+     */
     protected function getBetterSpecialOffer($offers, $basePrice) {
         $actualDate = new \DateTime();
         foreach($offers as $offer) {
@@ -210,6 +241,12 @@ class OrdersResource extends AbstractResource
         return $basePrice;
     }
 
+    /**
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws \RubedoAPI\Exceptions\APIEntityException
+     */
     public function getEntityAction($id, $params)
     {
         $user = $params['identity']->getUser();
@@ -226,11 +263,18 @@ class OrdersResource extends AbstractResource
         );
     }
 
+    /**
+     * @param $order
+     * @return array
+     */
     public function maskOrderInList($order) {
         $mask = array('status', 'id', 'orderNumber', 'finalTFPrice');
         return array_intersect_key($order, array_flip($mask));
     }
 
+    /**
+     *
+     */
     protected function define()
     {
         $this
@@ -253,6 +297,9 @@ class OrdersResource extends AbstractResource
             });
     }
 
+    /**
+     * @param VerbDefinitionEntity $entity
+     */
     protected function defineGet(VerbDefinitionEntity &$entity)
     {
         $entity
@@ -289,6 +336,9 @@ class OrdersResource extends AbstractResource
             );
     }
 
+    /**
+     * @param VerbDefinitionEntity $entity
+     */
     protected function definePost(VerbDefinitionEntity &$entity)
     {
         $entity
@@ -320,6 +370,9 @@ class OrdersResource extends AbstractResource
             );
     }
 
+    /**
+     * @param VerbDefinitionEntity $entity
+     */
     protected function defineGetEntity(VerbDefinitionEntity &$entity)
     {
         $entity
