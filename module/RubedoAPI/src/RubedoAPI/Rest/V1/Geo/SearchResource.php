@@ -35,7 +35,7 @@ class SearchResource extends GlobalSearch
         parent::__construct();
         $this->searchOption = 'geo';
         $this->searchParamsArray = array('orderby', 'orderbyDirection','query','objectType','type','damType','userType','author',
-            'userName','lastUpdateTime','start','limit',"inflat","inflon","suplat","suplon");
+            'userName','lastupdatetime','start','limit',"inflat","inflon","suplat","suplon");
         $this
             ->definition
             ->setName('Geo')
