@@ -522,7 +522,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $this->_globalFilterList ['geo'] = $filter;
             $this->_setFilter = true;
             // set precision for geohash aggregation
-            $bucketWidth =  round($this->get_distance_m($this->_params ['inflat'],$this->_params ['inflon'],$this->_params ['inflat'],$this->_params ['suplon']));
+            $bucketWidth =  round($this->get_distance_m($this->_params ['inflat'],$this->_params ['inflon'],$this->_params ['inflat'],$this->_params ['suplon'])/8);
         	switch($bucketWidth) {
         		case 0:
         			$geoPrecision = 1;
@@ -1582,8 +1582,8 @@ class DataSearch extends DataAbstract implements IDataSearch
     $ll['minlon'] = $minlon;
     $ll['maxlat'] = $maxlat;
     $ll['maxlon'] = $maxlon;
-    $ll['medlat'] = round(($minlat+$maxlat)/2, max(1, -round(log10($latE)))-1);
-    $ll['medlon'] = round(($minlon+$maxlon)/2, max(1, -round(log10($lonE)))-1);
+    $ll['medlat'] = ($minlat+$maxlat)/2;
+    $ll['medlon'] = ($minlon+$maxlon)/2;
     return $ll;
   }
     
