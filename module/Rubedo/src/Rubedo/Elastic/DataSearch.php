@@ -522,7 +522,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $this->_globalFilterList ['geo'] = $filter;
             $this->_setFilter = true;
             // set precision for geohash aggregation
-            $bucketWidth =  round($this->get_distance_m($this->_params ['inflat'],$this->_params ['inflon'],$this->_params ['inflat'],$this->_params ['suplon']));
+            $bucketWidth =  round($this->get_distance_m($this->_params ['inflat'],$this->_params ['inflon'],$this->_params ['inflat'],$this->_params ['suplon'])/8);
         	switch($bucketWidth) {
         		case 0:
         			$geoPrecision = 1;
@@ -656,7 +656,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
         $elasticaQuery->setQuery($elasticaQueryString);
 
-        // Apply filter to query
+        // Apply filter to query and aggregations
         if (!empty ($this->_globalFilterList)) {
             foreach ($this->_globalFilterList as $filter) {
                 $globalFilter->addFilter($filter);
@@ -966,7 +966,10 @@ class DataSearch extends DataAbstract implements IDataSearch
                 break;
             case 'geo' :
             	if (isset($geoPrecision)) $geoAgreggation->setPrecision($geoPrecision);
-            	$elasticaQuery->addAggregation($geoAgreggation);
+            	$agf = new \Elastica\Aggregation\Filter('agf');
+            	$agf->setFilter($globalFilter);
+            	$agf->addAggregation($geoAgreggation);
+            	$elasticaQuery->addAggregation($agf);
                 $search->addIndex(self::$_content_index);
                 break;
             case 'all' :
@@ -988,12 +991,11 @@ class DataSearch extends DataAbstract implements IDataSearch
         		$elasticaResultSet = $search->search($elasticaQuery);
         	}
         	
-        	$result ['Aggregations'] = $elasticaResultSet->getAggregation("hash");
+        	$result ['Aggregations'] = $elasticaResultSet->getAggregation("agf")['hash'];
         	
         	foreach ($result ['Aggregations']['buckets'] as $key => $bucket) {
         		$point = $this->geoHashDecode($bucket['key']); 
         		$result ['Aggregations']['buckets'][$key] += $point;
-        		//$result ['data'] [] = array('fields.position.location.coordinates'=>[$point['medlat'],$point['medlon']]);
         	}
         }
 
@@ -1582,8 +1584,8 @@ class DataSearch extends DataAbstract implements IDataSearch
     $ll['minlon'] = $minlon;
     $ll['maxlat'] = $maxlat;
     $ll['maxlon'] = $maxlon;
-    $ll['medlat'] = round(($minlat+$maxlat)/2, max(1, -round(log10($latE)))-1);
-    $ll['medlon'] = round(($minlon+$maxlon)/2, max(1, -round(log10($lonE)))-1);
+    $ll['medlat'] = ($minlat+$maxlat)/2;
+    $ll['medlon'] = ($minlon+$maxlon)/2;
     return $ll;
   }
     
