@@ -47,16 +47,28 @@ class ApiController extends AbstractActionController
                     $item = ucfirst($item);
                 }
             );
+            $namespacesToSearch = array();
+            foreach ($this->getServiceLocator()->get('ModuleManager')->getLoadedModules() as $module) {
+                $moduleConfig = $module->getConfig();
+                $namespacesToSearch = array_merge($namespacesToSearch, isset($moduleConfig['namespaces_api'])?$moduleConfig['namespaces_api']:array());
+            }
+            $resourceArray = array('Rest', mb_strtoupper($routes['version']));
             $class = array_pop($routes['api']) . 'Resource';
-            $resource = 'RubedoAPI\\Rest\\' . mb_strtoupper($routes['version']) . '\\';
-            if (!empty($routes['api']))
-                $resource .= implode('\\', $routes['api']) . '\\';
-            $resource .= $class;
-            /** @var \RubedoAPI\Interfaces\IResource $resourceObject */
-            if (!class_exists($resource)) {
+            if (!empty($routes['api'])) {
+                $resourceArray = array_merge($resourceArray, $routes['api']);
+            }
+            $resourceArray[] = $class;
+            foreach(array_reverse($namespacesToSearch) as $namespaceWithRest) {
+                /** @var \RubedoAPI\Interfaces\IResource $resourceObject */
+                $namespacedResource = implode('\\', array_merge(array($namespaceWithRest), $resourceArray));
+                if (class_exists($namespacedResource)) {
+                    $resourceObject = new $namespacedResource();
+                    break;
+                }
+            }
+            if (!isset($resourceObject)) {
                 throw new APIRequestException('Resource not exist', 404);
             }
-            $resourceObject = new $resource();
 
             $paramsBody = json_decode($this->getRequest()->getContent(), true);
             if (empty($paramsBody))

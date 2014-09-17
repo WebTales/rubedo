@@ -63,4 +63,7 @@ return array(
             'ShoppingCart' => 'RubedoAPI\\Collection\\ShoppingCart',
         ),
     ),
+    'namespaces_api' => array(
+        'RubedoAPI',
+    ),
 );
