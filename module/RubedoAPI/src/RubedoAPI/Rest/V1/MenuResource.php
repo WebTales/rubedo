@@ -90,7 +90,7 @@ class MenuResource extends AbstractResource
         $rootPage = $this->pageService->findById($params['pageId']);
         $startLevel = 1;
         $levelOnePages = $this->_getPagesByLevel($rootPage['id'], $startLevel);
-        $menu = array_intersect_key($rootPage, array_flip(array('title', 'id')));
+        $menu = array_intersect_key($rootPage, array_flip(array('title', 'id', 'text')));
         $menu['url'] = $this->getContext()->url()->fromRoute('rewrite', array(
             'pageId' => $menu['id'],
             'locale' => $params['menuLocale']
