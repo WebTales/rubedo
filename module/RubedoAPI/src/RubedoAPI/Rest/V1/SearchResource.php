@@ -254,12 +254,18 @@ class SearchResource extends AbstractResource
             switch ($value['objectType']) {
                 case 'dam':
                     $results['data'][$key]['url'] = $this->getUrlAPIService()->mediaUrl($results['data'][$key]['id']);
+                    if(isset($results['data'][$key]['author'])){
+                        $results['data'][$key]['authorUrl'] = isset($profilePageUrl)?$profilePageUrl . '?userprofile=' . $results['data'][$key]['id']:'';
+                    }
                     break;
                 case 'content':
                     $page = $this->getPagesCollection()->findById($params['pageId']);
                     $site = $this->getSitesCollection()->findById($params['siteId']);
                     $results['data'][$key]['url'] = $this->getUrlAPIService()->displayUrlApi($results['data'][$key], 'default', $site,
                         $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string) $params['detailPageId'] : null);
+                    if(isset($results['data'][$key]['author'])){
+                        $results['data'][$key]['authorUrl'] = isset($profilePageUrl)?$profilePageUrl . '?userprofile=' . $results['data'][$key]['id']:'';
+                    }
                     break;
                 case 'user':
                     $results['data'][$key]['url'] = isset($profilePageUrl)?$profilePageUrl . '?userprofile=' . $results['data'][$key]['id']:'';
