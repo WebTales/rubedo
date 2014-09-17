@@ -118,7 +118,7 @@ class ContenttypesResource extends AbstractResource {
      *
      * @param VerbDefinitionEntity $definition
      */
-    private function defineGetEntity($definition)
+    protected function defineGetEntity($definition)
     {
         $definition
             ->setDescription('Get a content type')
