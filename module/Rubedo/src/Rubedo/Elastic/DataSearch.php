@@ -334,15 +334,12 @@ class DataSearch extends DataAbstract implements IDataSearch
 
         // Default parameters
         $defaultVars = array(
-            'query' => '',
-            'type' => '',
-            'lang' => '',
-            'author' => '',
-            'lastupdatetime' => '',
+        	'query' => '',
             'pager' => 0,
             'orderby' => '_score',
             'orderbyDirection' => 'desc',
-            'pagesize' => 25
+            'pagesize' => 25,
+        	'precision' => 5
         );
 
         // set default options
@@ -350,21 +347,11 @@ class DataSearch extends DataAbstract implements IDataSearch
             $session = Manager::getService('Session');
             $this->_params ['lang'] = $session->get('lang', 'fr');
         }
-
-        if (!array_key_exists('pager', $this->_params))
-            $this->_params ['pager'] = $defaultVars ['pager'];
-
-        if (!array_key_exists('orderby', $this->_params))
-            $this->_params ['orderby'] = $defaultVars ['orderby'];
-
-        if (!array_key_exists('orderbyDirection', $this->_params))
-            $this->_params ['orderbyDirection'] = $defaultVars ['orderbyDirection'];
-
-        if (!array_key_exists('pagesize', $this->_params))
-            $this->_params ['pagesize'] = $defaultVars ['pagesize'];
-
-        if (!array_key_exists('query', $this->_params))
-            $this->_params ['query'] = $defaultVars ['query'];
+        
+        foreach($defaultVars as $varKey => $varValue) {
+        	if (!array_key_exists($varKey, $this->_params))
+        		$this->_params [$varKey] = $varValue;	
+        }
 
         $this->_params ['query'] = strip_tags($this->_params ['query']);
 
@@ -493,7 +480,9 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $this->_globalFilterList ['geoTypes'] = $geoFilter;
                 $this->_setFilter = true;
             }
-        }
+            $geoAgreggation = new \Elastica\Aggregation\GeohashGrid('hash', 'fields.position.location.coordinates');
+            $geoAgreggation->setPrecision($this->_params ['precision']);
+        }    
 
         // filter on author
         if (array_key_exists('author', $this->_params)) {
@@ -532,6 +521,8 @@ class DataSearch extends DataAbstract implements IDataSearch
             ));
             $this->_globalFilterList ['geo'] = $filter;
             $this->_setFilter = true;
+            // set precision for geohash aggregation
+            // $this->get_distance_m($this->_params ['inflat'],$this->_params ['inflon'],$this->_params ['suplat'],$this->_params ['suplon']);
         }
 
         // filter on taxonomy
@@ -925,7 +916,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             "*"
         );
         $elasticaQuery->setFields($returnedFieldsArray);
-
+        
         // run query
         $client = $this->_client;
         $client->setLogger(Manager::getService('SearchLogger')->getLogger());
@@ -941,6 +932,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $search->addIndex(self::$_user_index);
                 break;
             case 'geo' :
+            	$elasticaQuery->addAggregation($geoAgreggation);
                 $search->addIndex(self::$_content_index);
                 break;
             case 'all' :
@@ -951,7 +943,20 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
 
         // Get resultset
-        $elasticaResultSet = $search->search($elasticaQuery);
+        if ($option!='geo') {
+        	
+        	$elasticaResultSet = $search->search($elasticaQuery);
+        	
+        } else {
+        	
+        	if ($this->_params ['precision'] < 6) {
+        		$elasticaResultSet = $search->count($elasticaQuery,true);
+        	} else {
+        		$elasticaResultSet = $search->search($elasticaQuery);
+        	}
+        	
+        	$result ['Aggregations'] = $elasticaResultSet->getAggregation("hash");
+        }
 
         // Update data
         $resultsList = $elasticaResultSet->getResults();
@@ -1487,4 +1492,18 @@ class DataSearch extends DataAbstract implements IDataSearch
 
         return $results;
     }
+    
+    protected function get_distance_m($lat1, $lng1, $lat2, $lng2) {
+	  $earth_radius = 6378137;
+	  $rlo1 = deg2rad($lng1);
+	  $rla1 = deg2rad($lat1);
+	  $rlo2 = deg2rad($lng2);
+	  $rla2 = deg2rad($lat2);
+	  $dlo = ($rlo2 - $rlo1) / 2;
+	  $dla = ($rla2 - $rla1) / 2;
+	  $a = (sin($dla) * sin($dla)) + cos($rla1) * cos($rla2) * (sin($dlo) * sin($dlo));
+	  $d = 2 * atan2(sqrt($a), sqrt(1 - $a));
+	  return ($earth_radius * $d);
+	}
+    
 }
