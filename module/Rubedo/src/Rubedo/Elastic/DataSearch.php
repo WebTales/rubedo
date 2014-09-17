@@ -44,6 +44,7 @@ class DataSearch extends DataAbstract implements IDataSearch
     protected $_facetOperators;
     protected $_displayedFacets = array();
     protected $_facetDisplayMode;
+    private $table = "0123456789bcdefghjkmnpqrstuvwxyz";
 
     /**
      * Cached getter for content type
@@ -338,8 +339,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             'pager' => 0,
             'orderby' => '_score',
             'orderbyDirection' => 'desc',
-            'pagesize' => 25,
-        	'precision' => 5
+            'pagesize' => 25
         );
 
         // set default options
@@ -481,7 +481,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $this->_setFilter = true;
             }
             $geoAgreggation = new \Elastica\Aggregation\GeohashGrid('hash', 'fields.position.location.coordinates');
-            $geoAgreggation->setPrecision($this->_params ['precision']);
+            
         }    
 
         // filter on author
@@ -522,7 +522,40 @@ class DataSearch extends DataAbstract implements IDataSearch
             $this->_globalFilterList ['geo'] = $filter;
             $this->_setFilter = true;
             // set precision for geohash aggregation
-            // $this->get_distance_m($this->_params ['inflat'],$this->_params ['inflon'],$this->_params ['suplat'],$this->_params ['suplon']);
+            $bucketWidth =  round($this->get_distance_m($this->_params ['inflat'],$this->_params ['inflon'],$this->_params ['inflat'],$this->_params ['suplon']));
+        	switch($bucketWidth) {
+        		case 0:
+        			$geoPrecision = 1;
+        			break;
+        		case $bucketWidth > 5009400:
+        			$geoPrecision = 1;
+        			break;
+        		case $bucketWidth > 1252300:
+        			$geoPrecision = 2;
+        			break;
+        		case $bucketWidth > 156500:
+        			$geoPrecision = 3;
+        			break;      
+        		case $bucketWidth > 39100:
+        			$geoPrecision = 4;
+        			break;
+        		case $bucketWidth > 4900:
+        			$geoPrecision = 5;
+        			break;
+        		case $bucketWidth > 1200:
+        			$geoPrecision = 6;
+        			break;  	
+        		case $bucketWidth > 153:
+        			$geoPrecision = 7;
+        			break;
+        		case $bucketWidth > 38:
+        			$geoPrecision = 8;
+        			break;	
+        		case $bucketWidth > 5:
+        			$geoPrecision = 9;
+        			break;	
+        	}
+        	
         }
 
         // filter on taxonomy
@@ -932,6 +965,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $search->addIndex(self::$_user_index);
                 break;
             case 'geo' :
+            	if (isset($geoPrecision)) $geoAgreggation->setPrecision($geoPrecision);
             	$elasticaQuery->addAggregation($geoAgreggation);
                 $search->addIndex(self::$_content_index);
                 break;
@@ -948,14 +982,19 @@ class DataSearch extends DataAbstract implements IDataSearch
         	$elasticaResultSet = $search->search($elasticaQuery);
         	
         } else {
-        	
-        	if ($this->_params ['precision'] < 6) {
+        	if ($geoPrecision < 7) {
         		$elasticaResultSet = $search->count($elasticaQuery,true);
         	} else {
         		$elasticaResultSet = $search->search($elasticaQuery);
         	}
         	
         	$result ['Aggregations'] = $elasticaResultSet->getAggregation("hash");
+        	
+        	foreach ($result ['Aggregations']['buckets'] as $key => $bucket) {
+        		$point = $this->geoHashDecode($bucket['key']); 
+        		$result ['Aggregations']['buckets'][$key] += $point;
+        		//$result ['data'] [] = array('fields.position.location.coordinates'=>[$point['medlat'],$point['medlon']]);
+        	}
         }
 
         // Update data
@@ -1503,7 +1542,50 @@ class DataSearch extends DataAbstract implements IDataSearch
 	  $dla = ($rla2 - $rla1) / 2;
 	  $a = (sin($dla) * sin($dla)) + cos($rla1) * cos($rla2) * (sin($dlo) * sin($dlo));
 	  $d = 2 * atan2(sqrt($a), sqrt(1 - $a));
-	  return ($earth_radius * $d);
+	  return round($earth_radius * $d);
 	}
+	
+	  /**
+   * @param string $hash a geohash
+   * @author algorithm based on code by Alexander Songe <a@songe.me>
+   * @see https://github.com/asonge/php-geohash/issues/1
+   */
+  private function geoHashDecode($hash){
+    $ll = array();
+    $minlat =  -90;
+    $maxlat =   90;
+    $minlon = -180;
+    $maxlon =  180;
+    $latE   =   90;
+    $lonE   =  180;
+    for($i=0,$c=strlen($hash);$i<$c;$i++) {
+      $v = strpos($this->table,$hash[$i]);
+      if(1&$i) {
+        if(16&$v)$minlat = ($minlat+$maxlat)/2; else $maxlat = ($minlat+$maxlat)/2;
+        if(8&$v) $minlon = ($minlon+$maxlon)/2; else $maxlon = ($minlon+$maxlon)/2;
+        if(4&$v) $minlat = ($minlat+$maxlat)/2; else $maxlat = ($minlat+$maxlat)/2;
+        if(2&$v) $minlon = ($minlon+$maxlon)/2; else $maxlon = ($minlon+$maxlon)/2;
+        if(1&$v) $minlat = ($minlat+$maxlat)/2; else $maxlat = ($minlat+$maxlat)/2;
+        $latE /= 8;
+        $lonE /= 4;
+      } else {
+        if(16&$v)$minlon = ($minlon+$maxlon)/2; else $maxlon = ($minlon+$maxlon)/2;
+        if(8&$v) $minlat = ($minlat+$maxlat)/2; else $maxlat = ($minlat+$maxlat)/2;
+        if(4&$v) $minlon = ($minlon+$maxlon)/2; else $maxlon = ($minlon+$maxlon)/2;
+        if(2&$v) $minlat = ($minlat+$maxlat)/2; else $maxlat = ($minlat+$maxlat)/2;
+        if(1&$v) $minlon = ($minlon+$maxlon)/2; else $maxlon = ($minlon+$maxlon)/2;
+        $latE /= 4;
+        $lonE /= 8;
+      }
+    }
+    $ll['minlat'] = $minlat;
+    $ll['minlon'] = $minlon;
+    $ll['maxlat'] = $maxlat;
+    $ll['maxlon'] = $maxlon;
+    $ll['medlat'] = round(($minlat+$maxlat)/2, max(1, -round(log10($latE)))-1);
+    $ll['medlon'] = round(($minlon+$maxlon)/2, max(1, -round(log10($lonE)))-1);
+    return $ll;
+  }
     
 }
+
