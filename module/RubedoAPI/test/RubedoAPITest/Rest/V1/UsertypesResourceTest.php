@@ -23,7 +23,7 @@ use RubedoAPI\Rest\V1\UsertypesResource;
 class UsertypesResourceTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \RubedoAPI\Rest\V1\ContentsResource
+     * @var \RubedoAPI\Rest\V1\UsertypesResource
      */
     protected $resource;
     protected $userTypes;
