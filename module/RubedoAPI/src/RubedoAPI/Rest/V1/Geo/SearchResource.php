@@ -18,6 +18,7 @@
 namespace RubedoAPI\Rest\V1\Geo;
 
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
+use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Rest\V1\SearchResource as GlobalSearch;
 
 /**
@@ -30,13 +31,35 @@ class SearchResource extends GlobalSearch
     {
         parent::__construct();
         $this->searchOption = 'geo';
+        $this->searchParamsArray = array('orderby', 'orderbyDirection','query','objectType','type','damType','userType','author',
+            'userName','lastUpdateTime','start','limit',"inflat","inflon","suplat","suplon");
         $this
             ->definition
             ->setName('Geo')
             ->setDescription('Deal with geolocated data')
             ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $entity
-                    ->setDescription('Get a list of geolocated items using Elastic Search');
+                    ->setDescription('Get a list of geolocated items using Elastic Search')
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('inflat')
+                            ->setDescription('Min latitude')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('inflon')
+                            ->setDescription('Min longitude')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('suplat')
+                            ->setDescription('Max latitude')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('suplon')
+                            ->setDescription('Max longitude')
+                    );
             });
     }
 }
