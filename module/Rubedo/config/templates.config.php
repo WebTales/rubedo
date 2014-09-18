@@ -24,5 +24,10 @@ return array(
     'auto_reload' => true,
     'namespaces' => array(),
     'overrideThemes' => array(),
-    'themes' => array(),
+    'themes' => array(
+        'default' => array(
+            'label' => 'Default',
+            'basePath' => realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-frontoffice')
+        ),
+    ),
 );
