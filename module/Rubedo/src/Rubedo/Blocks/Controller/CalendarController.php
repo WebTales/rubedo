@@ -37,13 +37,13 @@ class CalendarController extends ContentListController
         $blockConfig = $this->params()->fromQuery('block-config');
         
         if (isset($blockConfig['displayType']) && ! empty($blockConfig['displayType'])) {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $blockConfig['displayType'] . ".html.twig");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath('blocks/' . $blockConfig['displayType'] . '.html.twig');
         } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath('blocks/' . $this->_defaultTemplate . '.html.twig');
         }
         $css = array();
         $js = array(
-            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath("js/calendar.js")
+            $this->getRequest()->getBasePath() . '/' . Manager::getService('FrontOfficeTemplates')->getFileThemePath('js/calendar.js')
         );
         return $this->_sendResponse($output, $template, $css, $js);
     }
@@ -55,8 +55,7 @@ class CalendarController extends ContentListController
         $this->_queryReader = Manager::getService('Queries');
         $blockConfig = $this->getParamFromQuery('block-config');
         
-        $dateField = isset($blockConfig['dateField']) ? $blockConfig['dateField'] : $this->getParamFromQuery('date-field', 'date');
-        // $endDateField = isset($blockConfig['endDateField']) ? $blockConfig['endDateField'] : $this->params()->fromQuery('endDateField', 'date_end');
+        $dateField = isset($blockConfig['date']) ? $blockConfig['date'] : $this->getParamFromQuery('date-field', 'date');
         $usedDateField = 'fields.' . $dateField;
         
         $date = $this->getParamFromQuery('cal-date');
@@ -84,7 +83,7 @@ class CalendarController extends ContentListController
         if ($queryId) { // nothing shown if no query given
             $queryFilter = Manager::getService('Queries')->getFilterArrayById($queryId);
             
-            $queryType = $queryFilter["queryType"];
+            $queryType = $queryFilter['queryType'];
             
             $dateFilter = Filter::factory('And')->addFilter(Filter::factory('OperatorTovalue')->setName($usedDateField)
                 ->setOperator('$gte')
@@ -99,7 +98,7 @@ class CalendarController extends ContentListController
             
             $query = $this->_queryReader->getQueryById($queryId);
             
-            if ($queryType === "manual" && $query != false && isset($query['query']) && is_array($query['query'])) {
+            if ($queryType === 'manual' && $query != false && isset($query['query']) && is_array($query['query'])) {
                 $contentOrder = $query['query'];
                 $keyOrder = array();
                 $contentArray = array();
@@ -121,7 +120,7 @@ class CalendarController extends ContentListController
                 }
                 
                 foreach ($keyOrder as $value) {
-                    $contentArray["data"][] = $unorderedContentArray["data"][$value];
+                    $contentArray['data'][] = $unorderedContentArray['data'][$value];
                 }
             } else {
                 
@@ -139,7 +138,7 @@ class CalendarController extends ContentListController
                 $fields['id'] = (string) $vignette['id'];
                 $fields['typeId'] = $vignette['typeId'];
                 
-                if (! is_array($vignette["fields"]["date"])) {
+                if (! is_array($vignette['fields'][$dateField])) {
                     $fields['readDate'] = Manager::getService('Date')->getLocalised(null, $vignette['fields'][$dateField]);
                 } else {
                     $fields['readDate'] = Manager::getService('Date')->getLocalised(null, $vignette['fields'][$dateField][0]);
@@ -147,25 +146,23 @@ class CalendarController extends ContentListController
                 
                 $data[] = $fields;
                 
-                if (! is_array($vignette["fields"]["date"])) {
-                    $day = date('d', $vignette["fields"]["date"]);
+                if (! is_array($vignette['fields'][$dateField])) {
+                    $day = date('d', $vignette['fields'][$dateField]);
                     $filledDate[$day] = true;
                 } else {
-                    foreach ($vignette["fields"]["date"] as $value) {
+                    foreach ($vignette['fields'][$dateField] as $value) {
                         $day = date('d', $value);
                         $filledDate[$day] = true;
                     }
                 }
-                
-                // $filledDate[date('d', $vignette['fields'][$dateField])] = true;
             }
-        } else {}
+        }
         
         $output = $this->getParamFromQuery();
         $output['blockConfig'] = $blockConfig;
-        $output["data"] = $data;
-        $output["query"]['type'] = isset($queryType) ? $queryType : null;
-        $output["query"]['id'] = isset($queryId) ? $queryId : null;
+        $output['data'] = $data;
+        $output['query']['type'] = isset($queryType) ? $queryType : null;
+        $output['query']['id'] = isset($queryId) ? $queryId : null;
         $output['prefix'] = $this->getParamFromQuery('prefix');
         $output['filledDate'] = $filledDate;
         $output['days'] = Manager::getService('Date')->getShortDayList();
@@ -209,8 +206,8 @@ class CalendarController extends ContentListController
         }
         $twigVars = $this->_getList();
         
-        $calendarHtml = Manager::getService('FrontOfficeTemplates')->render($template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/calendar/table.html.twig"), $twigVars);
-        $html = Manager::getService('FrontOfficeTemplates')->render($template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/calendar/list.html.twig"), $twigVars);
+        $calendarHtml = Manager::getService('FrontOfficeTemplates')->render($template = Manager::getService('FrontOfficeTemplates')->getFileThemePath('blocks/calendar/table.html.twig'), $twigVars);
+        $html = Manager::getService('FrontOfficeTemplates')->render($template = Manager::getService('FrontOfficeTemplates')->getFileThemePath('blocks/calendar/list.html.twig'), $twigVars);
         
         $data = array(
             'calendarHtml' => $calendarHtml,
