@@ -193,6 +193,8 @@ class UsersResource extends AbstractResource {
         } else if ($userType['signUpType'] == 'emailConfirmation') {
             $user['status'] = 'emailUnconfirmed';
             $user['signupTime'] = $this->getCurrentTimeService()->getCurrentTime();
+        } else {
+            throw new APIEntityException('Usertype not authorised', 403);
         }
 
         $createdUser = $this->getUsersCollection()->create($user);
