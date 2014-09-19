@@ -196,6 +196,20 @@ class IndexController extends AbstractActionController
             "internalScripts" => array()
         );
         $siteResources = !empty($this->_site['resources']) ? $this->_site['resources'] : $defaultResources;
+        if (isset($config['templates']['themes'][$this->_site['theme']])) {
+            $theme = $config['templates']['themes'][$this->_site['theme']];
+            $prepend = '/theme/' . $this->_site['theme'];
+            if (isset($theme['css'])) {
+                foreach ($theme['css'] as $css) {
+                    $siteResources['internalStyles'][] = $prepend . $css;
+                }
+            }
+            if (isset($theme['js'])) {
+                foreach ($theme['js'] as $js) {
+                    $siteResources['internalScripts'][] = $prepend . $js;
+                }
+            }
+        }
         $this->viewData = array(
             'siteResources' => $siteResources,
             'activateMagic' => (isset($config['rubedo_config']['activateMagic']) && ($config['rubedo_config']['activateMagic'] == "1")) ? true : false,

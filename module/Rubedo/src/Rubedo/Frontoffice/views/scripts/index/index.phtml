@@ -28,13 +28,17 @@
     <link rel="stylesheet" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.theme.css">
     <link rel="stylesheet" href="/components/vitalets/angular-xeditable/dist/css/xeditable.css">
     <!--external resource styles-->
-    <?php foreach($this->siteResources['externalStyles'] as $externalStyle){ ?>
+    <?php foreach ($this->siteResources['externalStyles'] as $externalStyle): ?>
         <link rel="stylesheet" href="<?php echo $externalStyle['url']; ?>">
-    <?php } ?>
+    <?php endforeach; ?>
     <!--internal resource styles-->
-    <?php foreach($this->siteResources['internalStyles'] as $internalStyle){ ?>
-        <style type="text/css"> <?php echo $internalStyle['code']; ?> </style>
-    <?php } ?>
+    <?php foreach ($this->siteResources['internalStyles'] as $internalStyle): ?>
+        <?php if (is_array($internalStyle)): ?>
+            <style type="text/css"> <?php echo $internalStyle['code']; ?> </style>
+        <?php else: ?>
+            <link rel="stylesheet" href="<?php echo $internalStyle ?>">
+        <?php endif; ?>
+    <?php endforeach; ?>
     <!--[if lte IE 8]>
     <script src="/components/webtales/rubedo-frontoffice/legacyFixes/respond.js"></script>
     <![endif]-->
@@ -70,24 +74,29 @@
     <script src="/components/longtailvideo/jwplayer/jwplayer.js"></script>
     <script src="/components/ivpusic/angular-cookie/angular-cookie.min.js"></script>
     <script src="//s7.addthis.com/js/300/addthis_widget.js"></script>
-    <?php if ($this->activateMagic) { ?>
+    <?php if ($this->activateMagic): ?>
         <script src="/components/fingerprintjs/fingerprint.js"></script>
-    <?php } if ($this->angularLocale) { ?>
+    <?php endif; ?>
+    <?php if ($this->angularLocale): ?>
         <script src="/components/angular/angular.js/i18n/angular-locale_<?php echo $this->angularLocale; ?>.js"></script>
-    <?php } ?>
+    <?php endif; ?>
     <!--frontoffice scripts-->
     <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>
     <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoFields/rubedoFields.js"></script>
     <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoBlocks/rubedoBlocks.js"></script>
     <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedo/rubedo.js"></script>
     <!--external resource scripts-->
-    <?php foreach($this->siteResources['externalScripts'] as $externalScript){ ?>
+    <?php foreach($this->siteResources['externalScripts'] as $externalScript): ?>
         <script src="<?php echo $externalScript['url']; ?>"></script>
-    <?php } ?>
+    <?php endforeach; ?>
     <!--internal resource scripts-->
-    <?php foreach($this->siteResources['internalScripts'] as $internalScript){ ?>
-        <script type="text/javascript"> <?php echo $internalScript['code']; ?> </script>
-    <?php } ?>
+    <?php foreach($this->siteResources['internalScripts'] as $internalScript): ?>
+        <?php if (is_array($internalScript)): ?>
+            <script type="text/javascript"> <?php echo $internalScript['code']; ?> </script>
+        <?php else: ?>
+            <script type="text/javascript" src="<?php echo $internalScript; ?>"></script>
+        <?php endif; ?>
+    <?php endforeach; ?>
     <!--base href for angular routing-->
     <base href="/">
 </head>
