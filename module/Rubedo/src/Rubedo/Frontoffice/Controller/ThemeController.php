@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Frontoffice\Controller;
 
+use WebTales\MongoFilters\Filter;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
@@ -96,18 +97,73 @@ class ThemeController extends AbstractActionController
                 $content = \JSMin::minify($content);
             }
         }
-        
-        if (isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == true && file_put_contents($targetPath, $content)) {
-            $stream = fopen($targetPath, 'r');
-        } else {
-            $stream = fopen($consolidatedFilePath, 'r');
+        /** @var \Rubedo\Collection\Directories $directoriesCollection */
+        $directoriesCollection = Manager::getService('Directories');
+        $filters = Filter::factory('And');
+        $filters
+            ->addFilter(
+            Filter::factory('Value')
+                ->setName('parentId')
+                ->setValue('root')
+            )
+            ->addFilter(
+                Filter::factory('Value')
+                    ->setName('text')
+                    ->setValue('theme')
+            );
+        $rootDirectory = $directoriesCollection->findOne($filters);
+        $hasFileInDatabase = false;
+        if (!empty($rootDirectory)) {
+            $directories = $directoriesCollection->fetchAndSortAllChildren($rootDirectory['id']);
+            $directoryExploded = explode('/', $theme . '/' . $filePath);
+            $file = array_pop($directoryExploded);
+            $dirWhereSearch = $this->recursivePathExist($directories, $directoryExploded);
+            if (!empty($dirWhereSearch)) {
+                /** @var \Rubedo\Collection\Dam $damCollection */
+                $damCollection = Manager::getService('Dam');
+                $media = $damCollection->findOne(
+                    Filter::factory('And')
+                    ->addFilter(
+                        Filter::factory('Value')
+                        ->setValue($file)
+                        ->setName('title')
+                    )
+                    ->addFilter(
+                        Filter::factory('Value')
+                        ->setValue($dirWhereSearch)
+                        ->setName('directory')
+                    )
+                );
+                if (!empty($media)) {
+                    $fileService = Manager::getService('Files');
+                    $gridFSFile = $fileService->findById($media['originalFileId']);
+                    if ($gridFSFile instanceof \MongoGridFSFile) {
+                        $hasFileInDatabase = true;
+                    }
+                }
+            }
         }
-        
         $response = new \Zend\Http\Response\Stream();
         $headers = array(
             'Content-type' => $mimeType,
             'Pragma' => 'Public',
         );
+        if (isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == true && file_put_contents($targetPath, $content)) {
+            $stream = fopen($targetPath, 'r');
+        } elseif ($hasFileInDatabase) {
+            $stream = $gridFSFile->getResource();
+            $filelength = $gridFSFile->getSize();
+
+            $headers = array_replace($headers, array(
+                'Content-Length' => $filelength,
+                'Content-Range' => "bytes 0-/$filelength",
+            ));
+            fseek($stream, 0);
+            $response->setStream($stream);
+        } else {
+            $stream = fopen($consolidatedFilePath, 'r');
+        }
+
         if (isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == true) {
             $headers['Cache-Control'] = 'public, max-age=' . 7 * 24 * 3600;
             $headers['Expires'] = date(DATE_RFC822, strtotime("7 day"));
@@ -117,5 +173,21 @@ class ThemeController extends AbstractActionController
         
         $response->setStream($stream);
         return $response;
+    }
+
+    protected function recursivePathExist ($directories, $directoryExploded)
+    {
+        $currentDirName = array_shift($directoryExploded);
+        foreach ($directories as $directory) {
+            if ($directory['text'] === $currentDirName) {
+                if (empty($directoryExploded)) {
+                    return $directory['id'];
+                } elseif (isset($directory['children'])) {
+                    return $this->recursivePathExist($directory['children'], $directoryExploded);
+                }
+                return false;
+            }
+        }
+        return false;
     }
 }

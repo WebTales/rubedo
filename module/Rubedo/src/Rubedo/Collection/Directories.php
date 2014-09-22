@@ -439,5 +439,21 @@ class Directories extends AbstractCollection implements IDirectories
 
     }
 
+    public function fetchAndSortAllChildren($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null, $limit = 10)
+    {
+        return $this->sortAllChildren($parentId, $this->fetchAllChildren($parentId, $filters, $sort, $limit));
+    }
 
+    protected function sortAllChildren ($parent, array $children)
+    {
+        $sortedChildren = array();
+        foreach ($children as $child) {
+            if ($child['parentId'] === $parent) {
+                $child['children'] = $this->sortAllChildren($child['id'], $children);
+                $sortedChildren[$child['orderValue']] = $child;
+            }
+        }
+        ksort($sortedChildren);
+        return $sortedChildren;
+    }
 }
