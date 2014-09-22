@@ -10,24 +10,14 @@
 				{
 					"categorie":"#ext-gen1063#",
 					"champs":[
-						{
-							"type":"Ext.ux.form.field.BoxSelect",
-							"config":{
-								"store":[
-
-								],
-								"name":"contacts",
-								"fieldLabel":"#ext-gen1161#",
-								"multiSelect":true,
-								"forceSelection":false,
-								"stacked":true,
-								"createNewOnEnter":true,
-								"hideTrigger":true,
-								"triggerOnClick":false,
-								"createNewOnBlur":true,
-								"pinList":false
-							}
-						},
+                        {
+                            "type":"Rubedo.view.MailingListPickerField",
+                            "config":{
+                                "fieldLabel":"#ext-gen1155#",
+                                "name":"mailingListId",
+                                "multiSelect":false
+                            }
+                        },
 						{
 							"type":"Ext.form.field.Checkbox",
 							"config":{
