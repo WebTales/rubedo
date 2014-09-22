@@ -196,7 +196,16 @@ class UsersResource extends AbstractResource {
         } else {
             throw new APIEntityException('Usertype not authorised', 403);
         }
-
+        if (
+            empty($user['groups'])
+            || empty($user['defaultGroup'])
+            || empty($user['status'])
+            || empty($user['login'])
+            || empty($user['email'])
+            || empty($user['name'])
+        ) {
+            throw new APIEntityException('User not consistent', 400);
+        }
         $createdUser = $this->getUsersCollection()->create($user);
 
         if (!$createdUser['success']) {
