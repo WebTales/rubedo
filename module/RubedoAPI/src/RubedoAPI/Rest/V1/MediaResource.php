@@ -21,6 +21,7 @@ use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
+use WebTales\MongoFilters\Filter;
 use Zend\Json\Json;
 
 /**
@@ -93,6 +94,119 @@ class MediaResource extends AbstractResource
             'success' => true,
             'media' => $returnArray['data'],
         );
+    }
+
+    public function getAction($params){
+        $pagination = $this->setPaginationValues($params);
+        $query = Json::decode(html_entity_decode($params["query"]), Json::TYPE_ARRAY);
+        $imageThumbnailHeight = isset($params['imageThumbnailHeight'])?$params['imageThumbnailHeight']:100;
+        $imageThumbnailWidth = isset($params['imageThumbnailWidth'])?$params['imageThumbnailWidth']:100;
+        $filter = $this->setFilters($query, $params);
+        $damService = $this->getDamCollection();
+        $damService->toggleLocaleFilters();
+        if (!isset($filter['filter'])){
+            $filter['filter'] = null;
+        }
+        if (!isset($filter['sort'])){
+            $filter['sort'] = null;
+        }
+        $damCount = $damService->count($filter['filter']);
+
+        $mediaArray = $damService->getList($filter['filter'], $filter['sort'],$pagination['start'],$pagination['limit']);
+
+        foreach($mediaArray['data'] as &$media){
+            $media['url']=$this->getUrlAPIService()->imageUrl($media['id']);
+            $media['thumbnailUrl']=$this->getUrlAPIService()->imageUrl($media['id'],$imageThumbnailWidth,$imageThumbnailHeight);
+        }
+
+        return [
+            'success' => true,
+            'media' => $mediaArray,
+            'count' => $damCount
+        ];
+    }
+
+    protected function setFilters($query, $params){
+        if ($query != null) {
+            $filters = Filter::factory();
+            /* Add filters on TypeId and publication */
+            $filters->addFilter(Filter::factory('In')->setName('typeId')
+                ->setValue($query['DAMTypes']));
+
+            /* Add filter on taxonomy */
+            foreach ($query['vocabularies'] as $key => $value) {
+                if (isset($value['rule'])) {
+                    if ($value['rule'] == "some") {
+                        $taxOperator = '$in';
+                    } elseif ($value['rule'] == "all") {
+                        $taxOperator = '$all';
+                    } elseif ($value['rule'] == "someRec") {
+                        if (count($value['terms']) > 0) {
+                            foreach ($value['terms'] as $child) {
+                                $terms = $this->getTaxonomyCollection()->fetchAllChildren($child);
+                                foreach ($terms as $taxonomyTerms) {
+                                    $value['terms'][] = $taxonomyTerms["id"];
+                                }
+                            }
+                        }
+                        $taxOperator = '$in';
+                    } else {
+                        $taxOperator = '$in';
+                    }
+                } else {
+                    $taxOperator = '$in';
+                }
+                if (count($value['terms']) > 0) {
+                    $filters->addFilter(Filter::factory('OperatorToValue')->setName('taxonomy.' . $key)
+                        ->setValue($value['terms'])
+                        ->setOperator($taxOperator));
+                }
+            }
+            $filters->addFilter(Filter::factory('In')->setName('target')
+                ->setValue(array(
+                    $params['pageWorkspace'],
+                    'global'
+                )));
+
+            /*
+             * Add Sort
+             */
+            if (isset($query['fieldRules'])) {
+                foreach ($query['fieldRules'] as $field => $rule) {
+                    $sort[] = array(
+                        "property" => $field,
+                        'direction' => $rule['sort']
+                    );
+                }
+            } else {
+                $sort[] = array(
+                    'property' => 'id',
+                    'direction' => 'DESC'
+                );
+            }
+        } else {
+            return array();
+        }
+        $returnArray = array(
+            "filter" => $filters,
+            "sort" => isset($sort) ? $sort : null
+        );
+        return $returnArray;
+    }
+
+    protected function setPaginationValues($params)
+    {
+        $defaultLimit = isset($params['limit']) ? $params['limit'] : 8;
+        $defaultStart = isset($params['start']) ? $params['start'] : 0;
+        if ($defaultStart < 0) {
+            throw new APIEntityException('Start paramater must be >= 0', 404);
+        }
+        if ($defaultLimit < 1) {
+            throw new APIEntityException('Limit paramater must be >= 1', 404);
+        }
+        $pageData['start'] = $defaultStart;
+        $pageData['limit'] = $defaultLimit;
+        return $pageData;
     }
 
     /**
@@ -262,6 +376,9 @@ class MediaResource extends AbstractResource
             ->setDescription('Deal with media')
             ->editVerb('post', function(VerbDefinitionEntity &$verbDef) {
                 $this->definePost($verbDef);
+            })
+            ->editVerb('get', function(VerbDefinitionEntity &$verbDef) {
+                $this->defineGet($verbDef);
             });
         $this
             ->entityDefinition
@@ -318,6 +435,59 @@ class MediaResource extends AbstractResource
                     ->setDescription('Media')
                     ->setKey('media')
                     ->setRequired()
+            );
+    }
+
+    protected function defineGet(VerbDefinitionEntity &$verbDef){
+        $verbDef
+            ->setDescription('Get multiple Media from query')
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('start')
+                    ->setDescription('Item\'s index number to start')
+                    ->setFilter('int')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('limit')
+                    ->setDescription('How much contents to return')
+                    ->setFilter('int')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('imageThumbnailWidth')
+                    ->setDescription('Width of the thumbnail')
+                    ->setFilter('int')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('imageThumbnailHeight')
+                    ->setDescription('Height of the thumbnail')
+                    ->setFilter('int')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('query')
+                    ->setFilter('string')
+                    ->setKey('query')
+                    ->setRequired()
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Workspace of the current page')
+                    ->setKey('pageWorkspace')
+                    ->setFilter('string')
+                    ->setRequired()
+            )
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('media')
+                    ->setDescription('List of media')
+            )
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('count')
+                    ->setDescription('Number of all media')
             );
     }
 
