@@ -47,6 +47,11 @@ class Files extends AbstractFileCollection implements IFiles
         "application/vnd.oasis.opendocument.text",
         "application/vnd.oasis.opendocument.presentation"
     );
+    protected $allowedResourceMimeTypes = array(
+        "text/plain",
+        "application/javascript",
+        "text/css"
+    );
     protected $_allowedIllustrationMimeTypes = array(
         "image/jpeg",
         "image/jpg",
@@ -88,6 +93,14 @@ class Files extends AbstractFileCollection implements IFiles
         switch ($fileObj ['mainFileType']) {
             case 'DocumentOrImage' :
                 if ((!in_array($fileObj ['Content-Type'], $this->_allowedDocumentMimeTypes)) && (!in_array($fileObj ['Content-Type'], $this->_allowedIllustrationMimeTypes))) {
+                    return array(
+                        'success' => false,
+                        'msg' => 'Not authorized file extension ' . $fileObj ['Content-Type']
+                    );
+                }
+                break;
+            case 'Resource':
+                if (!in_array($fileObj ['Content-Type'], $this->allowedResourceMimeTypes)) {
                     return array(
                         'success' => false,
                         'msg' => 'Not authorized file extension ' . $fileObj ['Content-Type']
@@ -158,6 +171,14 @@ class Files extends AbstractFileCollection implements IFiles
     public function createBinary(array $fileObj, $options = array())
     {
         switch ($fileObj ['mainFileType']) {
+            case 'Resource' :
+                if (!in_array($fileObj ['Content-Type'], $this->allowedResourceMimeTypes)) {
+                    return array(
+                        'success' => false,
+                        'msg' => 'Not authorized file extension ' . $fileObj ['Content-Type']
+                    );
+                }
+                break;
             case 'Document' :
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedDocumentMimeTypes)) {
                     return array(

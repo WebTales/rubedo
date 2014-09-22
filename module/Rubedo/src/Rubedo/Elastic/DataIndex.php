@@ -799,7 +799,9 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function deleteDam($typeId, $id)
     {
         $type = new \Elastica\Type(self::$_dam_index, $typeId);
-        $type->deleteById($id);
+        try {
+            $type->deleteById($id);
+        } catch (\Exception $e) {} // Ignore not found error
     }
 
     /**
@@ -973,7 +975,9 @@ class DataIndex extends DataAbstract implements IDataIndex
     public function indexDam($data, $bulk = false)
     {
         $typeId = $data['typeId'];
-
+        if (isset($data['mainFileType']) && $data['mainFileType'] === 'Resource') {
+            return;
+        }
         // Load ES dam type
         $damType = self::$_dam_index->getType($typeId);
 
