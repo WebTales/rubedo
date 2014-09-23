@@ -253,6 +253,7 @@ class UsersResource extends AbstractResource {
 
         return array(
             'success' => true,
+            'user' => $createdUser,
         );
     }
 
@@ -325,6 +326,12 @@ class UsersResource extends AbstractResource {
                 (new FilterDefinitionEntity())
                     ->setDescription('Fields')
                     ->setKey('fields')
+            )
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('User')
+                    ->setKey('user')
+                    ->setRequired()
             );
     }
 
