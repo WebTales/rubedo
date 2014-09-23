@@ -77,11 +77,12 @@ class ProtectedResource extends AbstractResource {
     public function getAction($params)
     {
         $media = $this->getDamCollection()->findById($params['mediaId']);
-        $intro = isset($params['introContentId'])?$this->getContentsCollection()->findById((string)$params['introContentId'],true,false):'';
+
+        $intro = isset($params['introContentId'])?(new \RubedoAPI\Rest\V1\ContentsResource())->getEntityAction($params['introContentId'],$params):null;
         return [
             'success' => true,
             'media' => $media,
-            'introduction' => $intro
+            'introduction' => $intro['content']
         ];
     }
 
