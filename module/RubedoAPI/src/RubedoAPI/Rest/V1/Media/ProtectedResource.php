@@ -74,6 +74,17 @@ class ProtectedResource extends AbstractResource {
         );
     }
 
+    public function getAction($params)
+    {
+        $media = $this->getDamCollection()->findById($params['mediaId']);
+        $intro = isset($params['introContentId'])?$this->getContentsCollection()->findById((string)$params['introContentId'],true,false):'';
+        return [
+            'success' => true,
+            'media' => $media,
+            'introduction' => $intro
+        ];
+    }
+
     /**
      * Send DAM mail
      *
@@ -174,6 +185,32 @@ class ProtectedResource extends AbstractResource {
                             ->setKey('email')
                             ->setFilter('validate_email')
                             ->setRequired()
+                    );
+            })
+            ->editVerb('get', function (VerbDefinitionEntity &$verbDef) {
+                $verbDef
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setDescription('Introduction content ID')
+                            ->setKey('introContentId')
+                            ->setFilter('\MongoId')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setDescription('media ID')
+                            ->setKey('mediaId')
+                            ->setFilter('\MongoId')
+                            ->setRequired()
+                    )
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('media')
+                            ->setDescription('Media Detail')
+                    )
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('introduction')
+                            ->setDescription('Introduction Content')
                     );
             });
     }
