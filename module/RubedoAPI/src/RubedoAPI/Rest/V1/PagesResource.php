@@ -317,6 +317,7 @@ class PagesResource extends AbstractResource
     {
         $newBlocks = array();
         foreach ($blocks as &$block) {
+            $block['id'] = (string) $block['id'];
             if (isset($block['orderValue']) && !isset($newBlocks[$block['orderValue']])) {
                 $newBlocks[$block['orderValue']] = &$block;
             } else {
