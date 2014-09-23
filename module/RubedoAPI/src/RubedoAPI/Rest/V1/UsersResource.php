@@ -215,6 +215,7 @@ class UsersResource extends AbstractResource {
         if (!empty($user['password'])) {
             $passwordChanged = $this->getUsersCollection()->changePassword($user['password'], $createdUser['data']['version'], $createdUser['data']['id']);
             if (!$passwordChanged) {
+                $this->getUsersCollection()->destroy($createdUser);
                 throw new APIEntityException('Can\'t set password');
             }
         }
@@ -245,6 +246,7 @@ class UsersResource extends AbstractResource {
                 ->setBody($mailBody, 'text/html');
             $result = $this->getMailerService()->sendMessage($message);
             if ($result !== 1) {
+                $this->getUsersCollection()->destroy($createdUser);
                 throw new APIEntityException('Can\'t send mail');
             }
         }
