@@ -30,18 +30,21 @@
 				}
 			],
 			"avance":[
-				{
-					"categorie":"#ext-gen1072#",
-					"champs":[
-						{
-							"type":"Ext.form.field.Text",
-							"config":{
-								"fieldLabel":"#ext-gen1082#",
-								"name":"displayType"
-							}
-						}
-					]
-				}
+                {
+                    "categorie":"Template",
+                    "champs":[
+                        {
+                            "type":"Rubedo.view.ACEField",
+                            "config":{
+                                "fieldLabel":"Custom template",
+                                "name":"customTemplate",
+                                "defaultTemplateUrl":"blocks/siteMap.html",
+                                "twigMode":false
+
+                            }
+                        }
+                    ]
+                }
 			]
 		},
 		"configBloc":[

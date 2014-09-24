@@ -174,7 +174,21 @@
 							}
 						}
 					]
-				}
+				},{
+                    "categorie":"Template",
+                    "champs":[
+                        {
+                            "type":"Rubedo.view.ACEField",
+                            "config":{
+                                "fieldLabel":"Custom template",
+                                "name":"customTemplate",
+                                "defaultTemplateUrl":"blocks/geoSearchResults.html",
+                                "twigMode":false
+
+                            }
+                        }
+                    ]
+                }
 			]
 		},
 		"configBloc":{

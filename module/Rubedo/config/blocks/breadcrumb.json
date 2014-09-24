@@ -25,7 +25,21 @@
 			]
 		},
 		"configBloc":[
+            {
+                "categorie":"Template",
+                "champs":[
+                    {
+                        "type":"Rubedo.view.ACEField",
+                        "config":{
+                            "fieldLabel":"Custom template",
+                            "name":"customTemplate",
+                            "defaultTemplateUrl":"blocks/breadcrumb.html",
+                            "twigMode":false
 
+                        }
+                    }
+                ]
+            }
 		]
 	},
 	"category":"#ext-gen1277#",
