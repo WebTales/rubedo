@@ -28,7 +28,8 @@
 							"type":"Ext.form.field.Text",
 							"config":{
 								"fieldLabel":"#ext-gen1225#",
-								"name":"externalURL"
+								"name":"externalURL",
+                                "vtype":"url"
 							}
 						},
 						{

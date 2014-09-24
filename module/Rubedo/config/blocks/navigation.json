@@ -17,6 +17,21 @@
 								"name":"rootPage"
 							}
 						},
+                        {
+                            "type":"Ext.form.field.ComboBox",
+                            "config":{
+                                "fieldLabel":"Fallback root",
+                                "name":"fallbackRoot",
+                                "editable":false,
+                                "forceSelection":true,
+                                "queryMode":"local",
+                                "value":"current",
+                                "store":[
+                                    ["current","Current"],
+                                    ["parent", "Parent"]
+                                ]
+                            }
+                        },
 						{
 							"type":"Ext.ux.TreePicker",
 							"config":{
@@ -69,15 +84,6 @@
 									"Horizontal"
 								]
 							}
-						},
-						{
-							"type":"Rubedo.view.ImagePickerField",
-							"config":{
-								"fieldLabel":"#ext-gen1295#",
-								"name":"logo",
-								"allowedFileType":"Image",
-								"smallMode":true
-							}
 						}
 					]
 				}
@@ -103,7 +109,8 @@
 		"configBloc":{
 			"style":"Horizontal",
 			"displayRootPage":true,
-			"menuLevel":1
+			"menuLevel":1,
+            "fallbackRoot":"current"
 		}
 	},
 	"category":"#ext-gen1277#",
