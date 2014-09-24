@@ -974,10 +974,10 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function indexDam($data, $bulk = false)
     {
-        $typeId = $data['typeId'];
-        if (isset($data['mainFileType']) && $data['mainFileType'] === 'Resource') {
+        if (!isset($data['typeId']) || isset($data['mainFileType']) && $data['mainFileType'] === 'Resource') {
             return;
         }
+        $typeId = $data['typeId'];
         // Load ES dam type
         $damType = self::$_dam_index->getType($typeId);
 

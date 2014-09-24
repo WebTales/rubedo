@@ -240,6 +240,23 @@ class Files extends AbstractFileCollection implements IFiles
         return $result;
     }
 
+    public function getMainType($mimeType) {
+        if (in_array($mimeType, $this->allowedResourceMimeTypes)) {
+            return 'Resource';
+        } elseif (in_array($mimeType, $this->_allowedDocumentMimeTypes)) {
+            return 'Document';
+        } elseif (in_array($mimeType, $this->_allowedIllustrationMimeTypes)) {
+            return 'Image';
+        } elseif (in_array($mimeType, $this->_allowedVideoMimeTypes)) {
+            return 'Video';
+        } elseif (in_array($mimeType, $this->_allowedAnimationMimeTypes)) {
+            return 'Animation';
+        } elseif (in_array($mimeType, $this->_allowedSoundMimeTypes)) {
+            return 'Sound';
+        }
+        return null;
+    }
+
     public function  findByFileNAme($name)
     {
 

@@ -262,17 +262,20 @@ class Dam extends AbstractLocalizableCollection implements IDam
                 );
             }
 
-            $damTypeId = $obj['typeId'];
-            $aclServive = Manager::getService('Acl');
-            $damType = Manager::getService('DamTypes')->findById($damTypeId);
+            if (isset($obj['typeId'])) {
+                $damTypeId = $obj['typeId'];
+                $aclServive = Manager::getService('Acl');
+                $damType = Manager::getService('DamTypes')->findById($damTypeId);
 
-            if ($damType['readOnly'] || !$aclServive->hasAccess("write.ui.dam")) {
-                $obj['readOnly'] = true;
-            } elseif (in_array($obj['writeWorkspace'], $writeWorkspaces) == false) {
-                $obj['readOnly'] = true;
+                if ($damType['readOnly'] || !$aclServive->hasAccess("write.ui.dam")) {
+                    $obj['readOnly'] = true;
+                } elseif (in_array($obj['writeWorkspace'], $writeWorkspaces) == false) {
+                    $obj['readOnly'] = true;
+                } else {
+                    $obj['readOnly'] = false;
+                }
             } else {
-
-                $obj['readOnly'] = false;
+                $obj['readOnly'] = true;
             }
         }
 
@@ -293,10 +296,12 @@ class Dam extends AbstractLocalizableCollection implements IDam
                 throw new \Rubedo\Exceptions\Access('You can not assign to this workspace', "Exception36");
             }
 
-            $damTypeId = $obj['typeId'];
-            $damType = Manager::getService('DamTypes')->findById($damTypeId);
-            if (!in_array($obj['writeWorkspace'], $damType['workspaces']) && !in_array('all', $damType['workspaces'])) {
-                throw new \Rubedo\Exceptions\Access('You can not assign to this workspace', "Exception36");
+            if (isset($obj['typeId'])) {
+                $damTypeId = $obj['typeId'];
+                $damType = Manager::getService('DamTypes')->findById($damTypeId);
+                if (!in_array($obj['writeWorkspace'], $damType['workspaces']) && !in_array('all', $damType['workspaces'])) {
+                    throw new \Rubedo\Exceptions\Access('You can not assign to this workspace', "Exception36");
+                }
             }
         }
 

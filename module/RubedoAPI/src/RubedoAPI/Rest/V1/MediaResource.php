@@ -217,7 +217,7 @@ class MediaResource extends AbstractResource
      * @return mixed
      * @throws \RubedoAPI\Exceptions\APIEntityException
      */
-    private function uploadFile($file, &$mimeType)
+    protected function uploadFile($file, &$mimeType)
     {
         $mimeType = mime_content_type($file['tmp_name']);
         $fileToCreate = array(
