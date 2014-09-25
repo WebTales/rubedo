@@ -450,7 +450,11 @@ class Directories extends AbstractCollection implements IDirectories
         foreach ($children as $child) {
             if ($child['parentId'] === $parent) {
                 $child['children'] = $this->sortAllChildren($child['id'], $children);
-                $sortedChildren[$child['orderValue']] = $child;
+                if (isset($child['orderValue'])) {
+                    $sortedChildren[$child['orderValue']] = $child;
+                } else {
+                    $sortedChildren[] = $child;
+                }
             }
         }
         ksort($sortedChildren);
