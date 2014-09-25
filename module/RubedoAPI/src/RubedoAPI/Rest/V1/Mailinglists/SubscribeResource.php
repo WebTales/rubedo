@@ -21,6 +21,7 @@ namespace RubedoAPI\Rest\V1\Mailinglists;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Rest\V1\AbstractResource;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Class SubscribeResource
@@ -54,8 +55,28 @@ class SubscribeResource extends AbstractResource {
         } else {
             $mailingLists = (array) $params['mailingLists'];
         }
+        if (empty($params['name'])) {
+            $params['name'] = null;
+        }
+        if (empty($params['fields'])) {
+            $params['fields'] = null;
+        } else {
+            $filters = Filter::factory();
+            $filters->addFilter(Filter::factory('Value')->setName('UTType')
+                ->setValue("email"));
+            $fieldsFromType = $this->getUserTypesCollection()->findOne($filters)['fields'];
+            $existingFields = array();
+            foreach ($fieldsFromType as $userTypeField) {
+                $existingFields[] = $userTypeField['config']['name'];
+            }
+            foreach ($params['fields'] as $fieldName => $fieldValue) {
+                if (!in_array($fieldName, $existingFields)) {
+                    unset ($params['fields'][$fieldName]);
+                }
+            }
+        }
         foreach($mailingLists as &$mailingListTargeted) {
-            $result = $this->getMailingListCollection()->subscribe($mailingListTargeted, $params['email']);
+            $result = $this->getMailingListCollection()->subscribe($mailingListTargeted, $params['email'], true, $params['name'], $params['fields']);
             if (!$result['success']) {
                 return $result;
             }
@@ -126,6 +147,17 @@ class SubscribeResource extends AbstractResource {
                     ->setKey('mailingLists')
                     ->setDescription('Array or string of id to delete. "all" target all mailing lists.')
                     ->setRequired()
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('name')
+                    ->setDescription('Name for user')
+                    ->setFilter('string')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Fields associated to user')
+                    ->setKey('fields')
             );
     }
 

@@ -43,6 +43,8 @@ class MailingList extends AbstractCollection implements IMailingList
      * @param string $email
      * @param boolean $doNotDuplicate
      *
+     * @param null $userName
+     * @param array $fieldsArray
      * @throws \Rubedo\Exceptions\User
      * @return array
      *
