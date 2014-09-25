@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Controller providing CRUD API for the themes JSON
@@ -38,5 +39,22 @@ class ThemesController extends DataAccessController
         
         // init the data access service
         $this->_dataService = Manager::getService('Themes');
+    }
+
+    protected function _buildFilter($filters = null) {
+        $mongoFilters = parent::_buildFilter($filters);
+        $contextExist = Filter::factory('OperatorToValue')
+            ->setName('context')
+            ->setOperator('$exists')
+            ->setValue(false);
+        $boContext = Filter::factory('Value')
+            ->setName('context')
+            ->setValue('back');
+        $mongoFilters->addFilter(
+            Filter::factory('Or')
+                ->addFilter($contextExist)
+                ->addFilter($boContext)
+        );
+        return $mongoFilters;
     }
 }

@@ -18,6 +18,7 @@ namespace Rubedo\Templates;
 
 use Rubedo\Interfaces\Templates\IFrontOfficeTemplates;
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 use Zend\Json\Json;
 
 /**
@@ -462,11 +463,21 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         }
         
         // get database custom themes
-        $customThemesArray = Manager::getService('CustomThemes')->getList();
+        $contextExist = Filter::factory('OperatorToValue')
+            ->setName('context')
+            ->setOperator('$exists')
+            ->setValue(true);
+        $foContext = Filter::factory('Value')
+            ->setName('context')
+            ->setValue('front');
+        $foContextFilters = Filter::factory()
+                ->addFilter($contextExist)
+                ->addFilter($foContext);
+        $customThemesArray = Manager::getService('Themes')->getList($foContextFilters);
         $customThemesArray = $customThemesArray['data'];
         foreach ($customThemesArray as &$value) {
-            $value['text'] = $value['id'];
-            $value['label'] = $value['name'];
+            $value['label'] = $value['text'];
+            $value['text'] = strtolower($value['text']);
             $themeInfosArray[] = $value;
         }
         
