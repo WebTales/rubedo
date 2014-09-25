@@ -157,7 +157,7 @@ class ContentsResource extends AbstractResource
         }
         return [
             'success' => true,
-            'contents' => $this->outputContentsMask($contentArray['data'], $params),
+            'contents' => $this->outputContentsMask($contentArray['data'], $params, $query),
             'count' => $nbItems
         ];
     }
@@ -269,9 +269,11 @@ class ContentsResource extends AbstractResource
      * @param $params
      * @return mixed
      */
-    protected function outputContentsMask($contents, $params)
+    protected function outputContentsMask($contents, $params, $query)
     {
         $fields = isset($params['fields']) ? $params['fields'] : array('text', 'summary', 'image');
+        $queryReturnedFields=!empty($query["returnedFields"])&&is_array($query["returnedFields"]) ? $query["returnedFields"] : array();
+        $fields = array_merge($fields,$queryReturnedFields);
         $urlService = $this->getUrlAPIService();
         $page = $this->getPagesCollection()->findById($params['pageId']);
         $site = $this->getSitesCollection()->findById($params['siteId']);
