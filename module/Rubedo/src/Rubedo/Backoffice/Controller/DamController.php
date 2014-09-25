@@ -78,11 +78,7 @@ class DamController extends DataAccessController
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
         $version = $this->params()->fromQuery('version', $media['id']);
-        $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
-        if (! $mediaType) {
-            throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
-        }
-        if ($mediaType['mainFileType'] == 'Image') {
+        if ($media['mainFileType'] == 'Image') {
             $queryString = $this->getRequest()->getQuery();
             $queryString->set('file-id', $media['originalFileId']);
             $queryString->set('version', $version);

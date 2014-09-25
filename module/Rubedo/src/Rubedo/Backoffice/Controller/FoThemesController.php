@@ -96,7 +96,7 @@ class FoThemesController extends AbstractActionController
 
             $it = new \RecursiveDirectoryIterator($this->unzipDir, \RecursiveDirectoryIterator::SKIP_DOTS);
             $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::LEAVES_ONLY);
-            $directoryToStore = $this->getTemplateDirectory('new');
+            $directoryToStore = $this->getTemplateDirectory(strtolower($this->params()->fromPost('name', 'default')));
             foreach ($files as $file) {
                 $directory = $this->getVirtualPathId($file->getRealPath(), $directoryToStore);
                 $this->getOrCreateDam($file, $directory);
