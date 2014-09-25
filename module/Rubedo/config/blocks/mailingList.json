@@ -17,7 +17,14 @@
 								"name":"mailingListId",
 								"multiSelect":true
 							}
-						}
+						},
+                        {
+                            "type":"Rubedo.view.UTCField",
+                            "config":{
+                                "fieldLabel":"#ext-gen1413#",
+                                "name":"userType"
+                            }
+                        }
 					]
 				}
 			],
