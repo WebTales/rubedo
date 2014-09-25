@@ -20,6 +20,7 @@ namespace RubedoAPI\Rest\V1;
 
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Class MailinglistsResource
@@ -44,9 +45,14 @@ class MailinglistsResource extends AbstractResource {
         foreach ($mailinglists as &$mailingList) {
             $mailingList = $this->filterMailingList($mailingList);
         }
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('Value')->setName('UTType')
+            ->setValue("email"));
+        $userType = $this->getUserTypesCollection()->findOne($filters)['fields'];
         return array(
             'success' => true,
             'mailinglists' => $mailinglists,
+            'userType' => $userType,
         );
     }
 
@@ -87,6 +93,12 @@ class MailinglistsResource extends AbstractResource {
                 (new FilterDefinitionEntity())
                     ->setKey('mailinglists')
                     ->setDescription('List of mailing lists')
+            )
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('User type')
+                    ->setKey('userType')
+                    ->setRequired()
             );
     }
 }
