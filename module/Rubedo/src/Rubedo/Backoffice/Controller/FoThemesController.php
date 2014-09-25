@@ -85,6 +85,23 @@ class FoThemesController extends AbstractActionController
         return new JsonModel($response);
     }
 
+    public function getAvailableAction ()
+    {
+        $contextExist = Filter::factory('OperatorToValue')
+            ->setName('context')
+            ->setOperator('$exists')
+            ->setValue(true);
+        $foContext = Filter::factory('Value')
+            ->setName('context')
+            ->setValue('front');
+        $foContextFilters = Filter::factory()
+            ->addFilter($contextExist)
+            ->addFilter($foContext);
+        $response = Manager::getService('Themes')->getList($foContextFilters);
+        $response['success'] = true;
+        return new JsonModel($response);
+    }
+
     public function importAction()
     {
         $zip = new \ZipArchive();
@@ -96,7 +113,11 @@ class FoThemesController extends AbstractActionController
 
             $it = new \RecursiveDirectoryIterator($this->unzipDir, \RecursiveDirectoryIterator::SKIP_DOTS);
             $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::LEAVES_ONLY);
-            $directoryToStore = $this->getTemplateDirectory(strtolower($this->params()->fromPost('name', 'default')));
+
+            $name = $this->params()->fromPost('name', 'default');
+            $dirName = strtolower($name);
+            $directoryToStore = $this->getTemplateDirectory($dirName);
+            $this->createTemplateIfNotExist($name);
             foreach ($files as $file) {
                 $directory = $this->getVirtualPathId($file->getRealPath(), $directoryToStore);
                 $this->getOrCreateDam($file, $directory);
@@ -191,6 +212,24 @@ class FoThemesController extends AbstractActionController
             $this->templateDirectory = $this->getDirectory($rootDirectory['id'], $name);
         }
         return $this->templateDirectory;
+    }
+
+    protected function createTemplateIfNotExist($name)
+    {
+        /** @var \Rubedo\Collection\Themes $themesCollection */
+        $themesCollection = Manager::getService('Themes');
+        $theme = $themesCollection->findByName($name);
+        if (empty($theme)) {
+            $themesCollection->create(
+                array(
+                'context' => 'front',
+                'text' => $name
+                ),
+                array (
+                    'w' => 0
+                )
+            );
+        }
     }
 
     protected function getRootDirectory()
