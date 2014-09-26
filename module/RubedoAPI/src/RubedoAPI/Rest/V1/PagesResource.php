@@ -18,10 +18,10 @@
 namespace RubedoAPI\Rest\V1;
 
 use Rubedo\Collection\AbstractCollection;
-use RubedoAPI\Entities\API\Language;
-use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
+use RubedoAPI\Entities\API\Language;
+use RubedoAPI\Exceptions\APIEntityException;
 
 /**
  * Class PagesResource
@@ -85,10 +85,9 @@ class PagesResource extends AbstractResource
             ->entityDefinition
             ->setName('Pages entity')
             ->setDescription('Deal with pages entity')
-            ->editVerb('get', function (VerbDefinitionEntity &$entity){
+            ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $entity
                     ->setDescription('Get URL from pageId')
-
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('Url')
@@ -122,7 +121,7 @@ class PagesResource extends AbstractResource
             $params['lang'] = new Language(implode('|', array($params['lang']->getLocale(), $site['defaultLanguage'])));
             $this->getCurrentLocalizationAPIService()->refreshLocalization($params['lang']);
         }
-        $pages =  array();
+        $pages = array();
         $url = '';
         if (empty($params['route'])) {
             $lastMatchedNode = $this->getPagesCollection()->findById($site['homePage']);
@@ -134,18 +133,19 @@ class PagesResource extends AbstractResource
                     $contentId = new \MongoId($value);
                     $content = $this->getContentsCollection()->findById($contentId, false, false);
                     break;
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                }
                 $matchedNode = $this->getPagesCollection()->matchSegment($value, $lastMatchedNode['id'], $site['id']);
                 if (null === $matchedNode) {
                     break;
                 } else {
-                    if($key == 0){
-                        $getUrl = $this->getEntityAction($matchedNode['id'],$params);
+                    if ($key == 0) {
+                        $getUrl = $this->getEntityAction($matchedNode['id'], $params);
                         $url = $getUrl['url'];
                     } else {
-                        $url = $url . '/' .$value;
+                        $url = $url . '/' . $value;
                     }
-                    $pages[]=array('title'=>$matchedNode['text'], 'url'=>$url);
+                    $pages[] = array('title' => $matchedNode['text'], 'url' => $url);
                     $lastMatchedNode = $matchedNode;
                 }
             }
@@ -155,11 +155,11 @@ class PagesResource extends AbstractResource
         }
         $lastMatchedNode['blocks'] = $this->getBlocksCollection()->getListByPage($lastMatchedNode['id'])['data'];
         $languagesWithFlag = array();
-        foreach($site['languages'] as $lang){
-            $localeDetail =  $this->getLanguagesCollection()->findByLocale($lang);
-            $languagesWithFlag[$lang]=array('lang'=>$lang,'label'=>(isset($localeDetail['label'])?$localeDetail['label']:$lang),'flagCode'=>(isset($localeDetail['flagCode'])?$localeDetail['flagCode']:''));
+        foreach ($site['languages'] as $lang) {
+            $localeDetail = $this->getLanguagesCollection()->findByLocale($lang);
+            $languagesWithFlag[$lang] = array('lang' => $lang, 'label' => (isset($localeDetail['label']) ? $localeDetail['label'] : $lang), 'flagCode' => (isset($localeDetail['flagCode']) ? $localeDetail['flagCode'] : ''));
         }
-        $site['languages']=$languagesWithFlag;
+        $site['languages'] = $languagesWithFlag;
         $wasFiltered = AbstractCollection::disableUserFilter();
         $mask = $this->getMasksCollection()->findById($lastMatchedNode['maskId']);
         AbstractCollection::disableUserFilter($wasFiltered);
@@ -180,7 +180,7 @@ class PagesResource extends AbstractResource
             $blocks[$block['parentCol']][] = $block;
         }
         if (!empty($content)) {
-            $mainColumn =  isset($mask['mainColumnId']) ? $mask['mainColumnId'] : null;
+            $mainColumn = isset($mask['mainColumnId']) ? $mask['mainColumnId'] : null;
             if ($mainColumn) {
                 $blocks[$mainColumn] = array($this->getSingleBlock($content['id']));
             }
@@ -204,7 +204,8 @@ class PagesResource extends AbstractResource
      * @param $params
      * @return array
      */
-    public function getEntityAction($id, $params) {
+    public function getEntityAction($id, $params)
+    {
         $page = $this->getPagesCollection()->findById($id);
         $urlOptions = array(
             'encode' => true,
@@ -317,7 +318,7 @@ class PagesResource extends AbstractResource
     {
         $newBlocks = array();
         foreach ($blocks as &$block) {
-            $block['id'] = (string) $block['id'];
+            $block['id'] = (string)$block['id'];
             if (isset($block['orderValue']) && !isset($newBlocks[$block['orderValue']])) {
                 $newBlocks[$block['orderValue']] = &$block;
             } else {

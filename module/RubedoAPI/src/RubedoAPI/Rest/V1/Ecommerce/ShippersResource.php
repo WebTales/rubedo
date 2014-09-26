@@ -18,10 +18,10 @@
 namespace RubedoAPI\Rest\V1\Ecommerce;
 
 use Rubedo\Services\Manager;
-use RubedoAPI\Exceptions\APIEntityException;
-use RubedoAPI\Rest\V1\AbstractResource;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
+use RubedoAPI\Exceptions\APIEntityException;
+use RubedoAPI\Rest\V1\AbstractResource;
 
 /**
  * Class ShippersResource

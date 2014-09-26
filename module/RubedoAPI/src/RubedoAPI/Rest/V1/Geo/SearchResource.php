@@ -17,8 +17,8 @@
 
 namespace RubedoAPI\Rest\V1\Geo;
 
-use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
+use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Rest\V1\SearchResource as GlobalSearch;
 
 /**
@@ -34,8 +34,8 @@ class SearchResource extends GlobalSearch
     {
         parent::__construct();
         $this->searchOption = 'geo';
-        $this->searchParamsArray = array('orderby', 'orderbyDirection','query','objectType','type','damType','userType','author',
-            'userName','lastupdatetime','start','limit',"inflat","inflon","suplat","suplon");
+        $this->searchParamsArray = array('orderby', 'orderbyDirection', 'query', 'objectType', 'type', 'damType', 'userType', 'author',
+            'userName', 'lastupdatetime', 'start', 'limit', "inflat", "inflon", "suplat", "suplon");
         $this
             ->definition
             ->setName('Geo')

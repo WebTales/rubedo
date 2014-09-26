@@ -27,7 +27,8 @@ use RubedoAPI\Rest\V1\AbstractResource;
  * Class ShoppingcartResource
  * @package RubedoAPI\Rest\V1\Ecommerce
  */
-class ShoppingcartResource extends AbstractResource {
+class ShoppingcartResource extends AbstractResource
+{
 
     /**
      * {@inheritdoc}
@@ -47,7 +48,7 @@ class ShoppingcartResource extends AbstractResource {
      */
     public function postAction($params)
     {
-        $params['amount'] = isset($params['amount'])?$params['amount']:1;
+        $params['amount'] = isset($params['amount']) ? $params['amount'] : 1;
         if (empty($params['shoppingCartToken'])) {
             $cartUpdate = $this->getShoppingCartCollection()->addItemToCart($params['productId'], $params['variationId'], $params['amount']);
         } else {
@@ -71,7 +72,7 @@ class ShoppingcartResource extends AbstractResource {
      */
     public function deleteAction($params)
     {
-        $params['amount'] = isset($params['amount'])?$params['amount']:1;
+        $params['amount'] = isset($params['amount']) ? $params['amount'] : 1;
         if (empty($params['shoppingCartToken'])) {
             $cartUpdate = $this->getShoppingCartCollection()->removeItemFromCart($params['productId'], $params['variationId'], $params['amount']);
         } else {
@@ -144,7 +145,7 @@ class ShoppingcartResource extends AbstractResource {
      *
      * @param VerbDefinitionEntity $entity
      */
-    protected function defineEdition (VerbDefinitionEntity &$entity)
+    protected function defineEdition(VerbDefinitionEntity &$entity)
     {
         $entity
             ->setDescription('Edit item to cart')

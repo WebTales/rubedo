@@ -17,7 +17,6 @@
 
 namespace RubedoAPI\Rest\V1;
 
-use MongoId;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Exceptions\APIAuthException;
@@ -27,7 +26,8 @@ use RubedoAPI\Exceptions\APIEntityException;
  * Class UsersResource
  * @package RubedoAPI\Rest\V1
  */
-class UsersResource extends AbstractResource {
+class UsersResource extends AbstractResource
+{
     /**
      * @var array
      */
@@ -53,7 +53,8 @@ class UsersResource extends AbstractResource {
      * @return array
      * @throws \RubedoAPI\Exceptions\APIEntityException
      */
-    public function getEntityAction($id) {
+    public function getEntityAction($id)
+    {
         $user = $this->getUsersCollection()->findById($id);
         if (empty($user)) {
             throw new APIEntityException('User not found', 404);
@@ -118,7 +119,7 @@ class UsersResource extends AbstractResource {
             throw new APIEntityException('User not found', 404);
         }
         $data = &$params['user'];
-        $type = $this->getUserTypesCollection()->findById(empty($data['typeId'])?$user['typeId']:$data['typeId']);
+        $type = $this->getUserTypesCollection()->findById(empty($data['typeId']) ? $user['typeId'] : $data['typeId']);
         if (empty($type)) {
             throw new APIEntityException('UserType not found.', 404);
         }
@@ -159,7 +160,8 @@ class UsersResource extends AbstractResource {
      * @return array
      * @throws \RubedoAPI\Exceptions\APIEntityException
      */
-    public function postAction($params) {
+    public function postAction($params)
+    {
         $userType = $this->getUserTypesCollection()->findById($params['usertype']);
         if (empty($userType))
             throw new APIEntityException('Usertype not exist', 404);
@@ -169,7 +171,7 @@ class UsersResource extends AbstractResource {
         $user['groups'] = array($userType['defaultGroup']);
         $user['taxonomy'] = array();
 
-        $fields = empty($params['fields'])?array():$params['fields'];
+        $fields = empty($params['fields']) ? array() : $params['fields'];
         $user['fields'] = &$fields;
 
         $existingFields = array();
@@ -232,10 +234,10 @@ class UsersResource extends AbstractResource {
             $options = $this->getconfigService()['rubedo_config'];
             $currentLang = $this->getCurrentLocalizationAPIService()->getCurrentLocalization();
             $subject = $this->getTranslateService()->getTranslation(
-                    'Blocks.SignUp.confirmEmail.subject',
-                    $currentLang,
-                    'en'
-                );
+                'Blocks.SignUp.confirmEmail.subject',
+                $currentLang,
+                'en'
+            );
 
             $message = $this->getMailerService()->getNewMessage()
                 ->setTo(array(
@@ -286,7 +288,7 @@ class UsersResource extends AbstractResource {
             ->setName('Users')
             ->setDescription('Deal with users')
             ->editVerb('post', function (VerbDefinitionEntity &$verbDef) {
-               $this->definePost($verbDef);
+                $this->definePost($verbDef);
             });
         $this->entityDefinition
             ->setName('User')

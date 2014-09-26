@@ -65,7 +65,7 @@ class SearchResource extends GlobalSearch
      * @param int $decimals
      * @return string
      */
-    protected function humanfilesize ($bytes, $decimals = 0)
+    protected function humanfilesize($bytes, $decimals = 0)
     {
         $size = array(
             'B',

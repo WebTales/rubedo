@@ -28,7 +28,8 @@ use WebTales\MongoFilters\Filter;
  *
  * @package RubedoAPI\Rest\V1
  */
-class SubscribeResource extends AbstractResource {
+class SubscribeResource extends AbstractResource
+{
     /**
      * { @inheritdoc }
      */
@@ -44,16 +45,17 @@ class SubscribeResource extends AbstractResource {
      * @param $params
      * @return array
      */
-    public function postAction($params) {
+    public function postAction($params)
+    {
         if (is_array($params['mailingLists'])) {
-            $mailingLists  = &$params['mailingLists'];
+            $mailingLists = &$params['mailingLists'];
         } elseif ($params['mailingLists'] === 'all') {
             $mailingLists = array();
             foreach ($this->getMailingListCollection()->getList()['data'] as $mailingListAvailable) {
                 $mailingLists[] = $mailingListAvailable['id'];
             }
         } else {
-            $mailingLists = (array) $params['mailingLists'];
+            $mailingLists = (array)$params['mailingLists'];
         }
         if (empty($params['name'])) {
             $params['name'] = null;
@@ -75,7 +77,7 @@ class SubscribeResource extends AbstractResource {
                 }
             }
         }
-        foreach($mailingLists as &$mailingListTargeted) {
+        foreach ($mailingLists as &$mailingListTargeted) {
             $result = $this->getMailingListCollection()->subscribe($mailingListTargeted, $params['email'], true, $params['name'], $params['fields']);
             if (!$result['success']) {
                 return $result;
@@ -92,12 +94,13 @@ class SubscribeResource extends AbstractResource {
      * @param $params
      * @return array
      */
-    public function deleteAction($params) {
+    public function deleteAction($params)
+    {
         if ($params['mailingLists'] === 'all') {
             return $this->getMailingListCollection()->unSubscribeFromAll($params['email']);
         } else {
-            $mailingLists = (array) $params['mailingLists'];
-            foreach($mailingLists as &$mailingListTargeted) {
+            $mailingLists = (array)$params['mailingLists'];
+            foreach ($mailingLists as &$mailingListTargeted) {
                 $result = $this->getMailingListCollection()->unSubscribe($mailingListTargeted, $params['email']);
                 if (!$result['success']) {
                     return $result;

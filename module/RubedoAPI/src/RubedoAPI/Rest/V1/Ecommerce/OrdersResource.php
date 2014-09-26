@@ -17,12 +17,12 @@
 
 namespace RubedoAPI\Rest\V1\Ecommerce;
 
+use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
+use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Rest\V1\AbstractResource;
-use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
-use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use WebTales\MongoFilters\Filter;
 
 /**
@@ -65,7 +65,7 @@ class OrdersResource extends AbstractResource
         return array(
             'success' => true,
             'orders' => &$orders['data'],
-            'orderDetailPageUrl' => isset($orderDetailPageUrl)?$orderDetailPageUrl:null,
+            'orderDetailPageUrl' => isset($orderDetailPageUrl) ? $orderDetailPageUrl : null,
         );
     }
 
@@ -221,9 +221,10 @@ class OrdersResource extends AbstractResource
      * @param $basePrice
      * @return mixed
      */
-    protected function getBetterSpecialOffer($offers, $basePrice) {
+    protected function getBetterSpecialOffer($offers, $basePrice)
+    {
         $actualDate = new \DateTime();
-        foreach($offers as $offer) {
+        foreach ($offers as $offer) {
             $beginDate = $offer['beginDate'];
             $endDate = $offer['endDate'];
             $offer['beginDate'] = new \DateTime();
@@ -267,7 +268,8 @@ class OrdersResource extends AbstractResource
      * @param $order
      * @return array
      */
-    public function maskOrderInList($order) {
+    public function maskOrderInList($order)
+    {
         $mask = array('status', 'id', 'orderNumber', 'finalTFPrice');
         return array_intersect_key($order, array_flip($mask));
     }

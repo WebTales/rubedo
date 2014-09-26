@@ -25,7 +25,8 @@ use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
  * Class UsertypesResource
  * @package RubedoAPI\Rest\V1
  */
-class UsertypesResource extends AbstractResource {
+class UsertypesResource extends AbstractResource
+{
     /**
      * { @inheritdoc }
      */
@@ -39,7 +40,8 @@ class UsertypesResource extends AbstractResource {
      * Get a list of user types
      * @return array
      */
-    public function getAction() {
+    public function getAction()
+    {
         $userTypes = $this->getUserTypesCollection()->getList()['data'];
         foreach ($userTypes as &$userType) {
             $userType = $this->filterUserType($userType);
@@ -71,8 +73,9 @@ class UsertypesResource extends AbstractResource {
      * @param array $contentType
      * @return array
      */
-    protected function filterUserType(array $contentType) {
-        return array_intersect_key($contentType, array_flip(array('id', 'UTType', 'type', )));
+    protected function filterUserType(array $contentType)
+    {
+        return array_intersect_key($contentType, array_flip(array('id', 'UTType', 'type',)));
     }
 
     /**

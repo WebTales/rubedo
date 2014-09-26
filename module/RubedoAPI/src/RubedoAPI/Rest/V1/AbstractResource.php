@@ -17,9 +17,9 @@
 
 namespace RubedoAPI\Rest\V1;
 
+use RubedoAPI\Entities\API\Definition\DefinitionEntity;
 use RubedoAPI\Exceptions\APIRequestException;
 use RubedoAPI\Interfaces\IResource;
-use RubedoAPI\Entities\API\Definition\DefinitionEntity;
 use RubedoAPI\Traits\LazyServiceManager;
 
 /**

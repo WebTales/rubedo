@@ -26,7 +26,8 @@ use WebTales\MongoFilters\Filter;
  * Class MailinglistsResource
  * @package RubedoAPI\Rest\V1
  */
-class MailinglistsResource extends AbstractResource {
+class MailinglistsResource extends AbstractResource
+{
     /**
      * { @inheritdoc }
      */
@@ -40,7 +41,8 @@ class MailinglistsResource extends AbstractResource {
      * Get a list of mailing lists
      * @return array
      */
-    public function getAction() {
+    public function getAction()
+    {
         $mailinglists = $this->getMailingListCollection()->getList()['data'];
         foreach ($mailinglists as &$mailingList) {
             $mailingList = $this->filterMailingList($mailingList);
@@ -62,7 +64,8 @@ class MailinglistsResource extends AbstractResource {
      * @param array $mailingList
      * @return array
      */
-    protected function filterMailingList(array $mailingList) {
+    protected function filterMailingList(array $mailingList)
+    {
         return array_intersect_key($mailingList, array_flip(array('id', 'name')));
     }
 

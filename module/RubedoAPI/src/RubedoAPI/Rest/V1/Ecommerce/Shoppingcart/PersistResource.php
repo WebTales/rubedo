@@ -10,7 +10,8 @@ use RubedoAPI\Rest\V1\AbstractResource;
  * Class PersistResource
  * @package RubedoAPI\Rest\V1\Ecommerce\Shoppingcart
  */
-class PersistResource extends AbstractResource {
+class PersistResource extends AbstractResource
+{
     /**
      * {@inheritdoc}
      */

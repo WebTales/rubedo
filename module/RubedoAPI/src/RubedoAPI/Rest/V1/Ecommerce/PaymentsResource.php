@@ -8,7 +8,8 @@ use RubedoAPI\Rest\V1\AbstractResource;
  * Class PaymentsResource
  * @package RubedoAPI\Rest\V1\Ecommerce
  */
-class PaymentsResource extends AbstractResource {
+class PaymentsResource extends AbstractResource
+{
     /**
      * {@inheritdoc}
      */

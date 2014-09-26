@@ -26,7 +26,8 @@ use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
  *
  * @package RubedoAPI\Rest\V1
  */
-class ContenttypesResource extends AbstractResource {
+class ContenttypesResource extends AbstractResource
+{
     /**
      * { @inheritdoc }
      */
@@ -40,7 +41,8 @@ class ContenttypesResource extends AbstractResource {
      * Get a list of content types
      * @return array
      */
-    public function getAction() {
+    public function getAction()
+    {
         $contentTypes = $this->getContentTypesCollection()->getList()['data'];
         foreach ($contentTypes as &$contentType) {
             $contentType = $this->filterContentType($contentType);
@@ -72,7 +74,8 @@ class ContenttypesResource extends AbstractResource {
      * @param array $contentType
      * @return array
      */
-    protected function filterContentType(array $contentType) {
+    protected function filterContentType(array $contentType)
+    {
         return array_intersect_key($contentType, array_flip(array('id', 'code', 'dependant', 'dependantTypes', 'type', 'workflow', 'productType', 'manageStock', 'readOnly', 'locale')));
     }
 

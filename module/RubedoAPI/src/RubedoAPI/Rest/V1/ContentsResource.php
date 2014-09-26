@@ -18,11 +18,11 @@
 namespace RubedoAPI\Rest\V1;
 
 use Rubedo\Collection\AbstractLocalizableCollection;
+use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
+use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
-use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
-use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use WebTales\MongoFilters\Filter;
 
 
@@ -60,12 +60,12 @@ class ContentsResource extends AbstractResource
     public function getAction($params)
     {
 
-        $queryId = & $params['queryId'];
+        $queryId = &$params['queryId'];
 
         $filters = $this->getQueriesCollection()->getFilterArrayById($queryId);
 
-        if (isset($params['date']) && isset($params['dateFieldName'])){
-            if(isset($params['endDate'])){
+        if (isset($params['date']) && isset($params['dateFieldName'])) {
+            if (isset($params['endDate'])) {
                 $timestamp = $params['date'];
                 $nextMonthTimeStamp = $params['endDate'];
             } else {
@@ -73,35 +73,35 @@ class ContentsResource extends AbstractResource
                 $mounth = $dateArray['mon'];
                 $year = $dateArray['year'];
                 $date = new \DateTime();
-                $date->setDate($year,$mounth,1);
-                $date->setTime(0,0,0);
-                $timestamp = (string) $date->getTimestamp();
-                if ($mounth < 12){
+                $date->setDate($year, $mounth, 1);
+                $date->setTime(0, 0, 0);
+                $timestamp = (string)$date->getTimestamp();
+                if ($mounth < 12) {
                     $date->setDate($year, $mounth + 1, 1);
                 } else {
                     $date->setDate($year + 1, 1, 1);
                 }
-                $nextMonthTimeStamp = (string) $date->getTimestamp();
+                $nextMonthTimeStamp = (string)$date->getTimestamp();
             }
 
             $eventStartInCurrentlyMonth = Filter::factory('And')
-                ->addFilter(Filter::factory('OperatorTovalue')->setName('fields.'.$params['dateFieldName'])
+                ->addFilter(Filter::factory('OperatorTovalue')->setName('fields.' . $params['dateFieldName'])
                     ->setOperator('$gte')
                     ->setValue($timestamp))
-                ->addFilter(Filter::factory('OperatorTovalue')->setName('fields.'.$params['dateFieldName'])
+                ->addFilter(Filter::factory('OperatorTovalue')->setName('fields.' . $params['dateFieldName'])
                     ->setOperator('$lt')
                     ->setValue($nextMonthTimeStamp));
 
-            if(isset($params['endDateFieldName'])){
+            if (isset($params['endDateFieldName'])) {
                 $eventStartingBeforeCurrenltyMonth = Filter::factory('And')
                     ->addFilter(Filter::factory('OperatorTovalue')
-                        ->setName('fields.'.$params['dateFieldName'])
+                        ->setName('fields.' . $params['dateFieldName'])
                         ->setOperator('$lt')
                         ->setValue($timestamp))
-                ->addFilter(Filter::factory('OperatorTovalue')
-                    ->setName('fields.'.$params['endDateFieldName'])
-                    ->setOperator('$gte')
-                    ->setValue($timestamp));
+                    ->addFilter(Filter::factory('OperatorTovalue')
+                        ->setName('fields.' . $params['endDateFieldName'])
+                        ->setOperator('$gte')
+                        ->setValue($timestamp));
 
                 $eventsInMonth = Filter::factory('Or')
                     ->addFilter($eventStartingBeforeCurrenltyMonth)
@@ -262,6 +262,7 @@ class ContentsResource extends AbstractResource
         }
         return $fields;
     }
+
     /**
      * Filter contents
      *
@@ -272,8 +273,8 @@ class ContentsResource extends AbstractResource
     protected function outputContentsMask($contents, $params, $query)
     {
         $fields = isset($params['fields']) ? $params['fields'] : array('text', 'summary', 'image');
-        $queryReturnedFields=!empty($query["returnedFields"])&&is_array($query["returnedFields"]) ? $query["returnedFields"] : array();
-        $fields = array_merge($fields,$queryReturnedFields);
+        $queryReturnedFields = !empty($query["returnedFields"]) && is_array($query["returnedFields"]) ? $query["returnedFields"] : array();
+        $fields = array_merge($fields, $queryReturnedFields);
         $urlService = $this->getUrlAPIService();
         $page = $this->getPagesCollection()->findById($params['pageId']);
         $site = $this->getSitesCollection()->findById($params['siteId']);
@@ -281,7 +282,7 @@ class ContentsResource extends AbstractResource
         foreach ($contents as &$content) {
             $content['fields'] = array_intersect_key($content['fields'], array_flip($fields));
             $content['detailPageUrl'] = $urlService->displayUrlApi($content, 'default', $site,
-                $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string) $params['detailPageId'] : null);
+                $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
             $content = array_diff_key($content, array_flip($mask));
         }
         return $contents;
@@ -346,7 +347,7 @@ class ContentsResource extends AbstractResource
             throw new APIEntityException('Content not found', 404);
         }
         $data = &$params['content'];
-        $type = $this->getContentTypesCollection()->findById(empty($data['typeId'])?$content['typeId']:$data['typeId']);
+        $type = $this->getContentTypesCollection()->findById(empty($data['typeId']) ? $content['typeId'] : $data['typeId']);
         if (empty($type)) {
             throw new APIEntityException('ContentType not found.', 404);
         }
@@ -408,7 +409,7 @@ class ContentsResource extends AbstractResource
             if ($oldestView) {
                 $timeSinceLastRun = $currentTime - $oldestView['timestamp'];
                 if ($timeSinceLastRun > 60) {
-                    $curlUrl = 'http://'.$_SERVER['HTTP_HOST'].'/queue?service=UserRecommendations&class=build';
+                    $curlUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/queue?service=UserRecommendations&class=build';
                     $curly = curl_init();
                     curl_setopt($curly, CURLOPT_URL, $curlUrl);
                     curl_setopt($curly, CURLOPT_FOLLOWLOCATION, true);  // Follow the redirects (needed for mod_rewrite)
@@ -593,7 +594,8 @@ class ContentsResource extends AbstractResource
      *
      * @param VerbDefinitionEntity $definition
      */
-    protected function definePost(VerbDefinitionEntity &$definition) {
+    protected function definePost(VerbDefinitionEntity &$definition)
+    {
         $definition
             ->setDescription('Post a new content')
             ->addInputFilter(

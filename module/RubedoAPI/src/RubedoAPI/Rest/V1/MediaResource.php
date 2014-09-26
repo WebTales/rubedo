@@ -16,6 +16,7 @@
  */
 
 namespace RubedoAPI\Rest\V1;
+
 use Rubedo\Collection\AbstractLocalizableCollection;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
@@ -68,16 +69,16 @@ class MediaResource extends AbstractResource
         if (empty($type)) {
             throw new APIEntityException('Type not exist', 404);
         }
-        if(!isset($params['fields'])) {
+        if (!isset($params['fields'])) {
             $params['fields'] = array();
         }
         $nativeLanguage = $params['lang']->getLocale();
         $media = $this->getMediaFromExtractedFields($params['fields']);
         $media['fields'] = $this->filterFields($params['fields'], $type);
         $media['typeId'] = $type['id'];
-        $media['directory'] = empty($params['directory'])?'notFiled':$params['directory'];
+        $media['directory'] = empty($params['directory']) ? 'notFiled' : $params['directory'];
         $media['mainFileType'] = $type['mainFileType'];
-        $media['taxonomy'] = empty($params['taxonomy'])?null:Json::decode($params['taxonomy'], Json::TYPE_ARRAY);
+        $media['taxonomy'] = empty($params['taxonomy']) ? null : Json::decode($params['taxonomy'], Json::TYPE_ARRAY);
         $media['nativeLanguage'] = $nativeLanguage;
         $media['i18n'] = array();
         $media['i18n'][$nativeLanguage] = array();
@@ -96,27 +97,28 @@ class MediaResource extends AbstractResource
         );
     }
 
-    public function getAction($params){
+    public function getAction($params)
+    {
         $pagination = $this->setPaginationValues($params);
         $query = Json::decode(html_entity_decode($params["query"]), Json::TYPE_ARRAY);
-        $imageThumbnailHeight = isset($params['imageThumbnailHeight'])?$params['imageThumbnailHeight']:100;
-        $imageThumbnailWidth = isset($params['imageThumbnailWidth'])?$params['imageThumbnailWidth']:100;
+        $imageThumbnailHeight = isset($params['imageThumbnailHeight']) ? $params['imageThumbnailHeight'] : 100;
+        $imageThumbnailWidth = isset($params['imageThumbnailWidth']) ? $params['imageThumbnailWidth'] : 100;
         $filter = $this->setFilters($query, $params);
         $damService = $this->getDamCollection();
         $damService->toggleLocaleFilters();
-        if (!isset($filter['filter'])){
+        if (!isset($filter['filter'])) {
             $filter['filter'] = null;
         }
-        if (!isset($filter['sort'])){
+        if (!isset($filter['sort'])) {
             $filter['sort'] = null;
         }
         $damCount = $damService->count($filter['filter']);
 
-        $mediaArray = $damService->getList($filter['filter'], $filter['sort'],$pagination['start'],$pagination['limit']);
+        $mediaArray = $damService->getList($filter['filter'], $filter['sort'], $pagination['start'], $pagination['limit']);
 
-        foreach($mediaArray['data'] as &$media){
-            $media['url']=$this->getUrlAPIService()->imageUrl($media['id']);
-            $media['thumbnailUrl']=$this->getUrlAPIService()->imageUrl($media['id'],$imageThumbnailWidth,$imageThumbnailHeight);
+        foreach ($mediaArray['data'] as &$media) {
+            $media['url'] = $this->getUrlAPIService()->imageUrl($media['id']);
+            $media['thumbnailUrl'] = $this->getUrlAPIService()->imageUrl($media['id'], $imageThumbnailWidth, $imageThumbnailHeight);
         }
 
         return [
@@ -126,7 +128,8 @@ class MediaResource extends AbstractResource
         ];
     }
 
-    protected function setFilters($query, $params){
+    protected function setFilters($query, $params)
+    {
         if ($query != null) {
             $filters = Filter::factory();
             /* Add filters on TypeId and publication */
@@ -228,7 +231,7 @@ class MediaResource extends AbstractResource
             'mainFileType' => $file
         );
         $result = $this->getFilesCollection()->create($fileToCreate);
-        if (! $result['success']) {
+        if (!$result['success']) {
             throw new APIEntityException('Failed to create file', 500);
         }
         return $result['data']['id'];
@@ -252,7 +255,7 @@ class MediaResource extends AbstractResource
 
         $media = array();
         foreach ($fields as $fieldName => &$fieldValue) {
-            if (in_array($fieldName,$this->toExtractFromFields)) {
+            if (in_array($fieldName, $this->toExtractFromFields)) {
                 $media[$fieldName] = $fieldValue;
             }
         }
@@ -272,7 +275,7 @@ class MediaResource extends AbstractResource
         foreach ($type['fields'] as $fieldType) {
             $existingFields[] = $fieldType['config']['name'];
         }
-        foreach($fields as $fieldName => &$fieldValue) {
+        foreach ($fields as $fieldName => &$fieldValue) {
             if (!in_array($fieldName, $existingFields)) {
                 unset($fields[$fieldName]);
             }
@@ -313,7 +316,7 @@ class MediaResource extends AbstractResource
             throw new APIEntityException('Type no longer exist', 404);
         }
         $locale = $params['lang']->getLocale();
-        if(isset($params['fields'])) {
+        if (isset($params['fields'])) {
             $fields = $this->filterFields($params['fields'], $type);
             if ($locale === $media['nativeLanguage']) {
                 $media['fields'] = array_replace_recursive($media['fields'], $fields);
@@ -336,10 +339,10 @@ class MediaResource extends AbstractResource
             $media['originalFileId'] = $this->uploadFile($params['file'], $media['Content-Type']);
         }
         if (isset($params['directory'])) {
-            $media['directory'] = empty($params['directory'])?'notFiled':$params['directory'];
+            $media['directory'] = empty($params['directory']) ? 'notFiled' : $params['directory'];
         }
         if (isset($params['taxonomy'])) {
-            $media['taxonomy'] = empty($params['taxonomy'])?null:Json::decode($params['taxonomy'], Json::TYPE_ARRAY);
+            $media['taxonomy'] = empty($params['taxonomy']) ? null : Json::decode($params['taxonomy'], Json::TYPE_ARRAY);
         }
 
         $returnArray = $this->getDamCollection()->update($media);
@@ -374,20 +377,20 @@ class MediaResource extends AbstractResource
             ->definition
             ->setName('Media')
             ->setDescription('Deal with media')
-            ->editVerb('post', function(VerbDefinitionEntity &$verbDef) {
+            ->editVerb('post', function (VerbDefinitionEntity &$verbDef) {
                 $this->definePost($verbDef);
             })
-            ->editVerb('get', function(VerbDefinitionEntity &$verbDef) {
+            ->editVerb('get', function (VerbDefinitionEntity &$verbDef) {
                 $this->defineGet($verbDef);
             });
         $this
             ->entityDefinition
             ->setName('Media')
             ->setDescription('Deal with a media')
-            ->editVerb('get', function(VerbDefinitionEntity &$verbDef) {
+            ->editVerb('get', function (VerbDefinitionEntity &$verbDef) {
                 $this->defineGetEntity($verbDef);
             })
-            ->editVerb('post', function(VerbDefinitionEntity &$verbDef) {
+            ->editVerb('post', function (VerbDefinitionEntity &$verbDef) {
                 $this->definePostEntity($verbDef);
             });
     }
@@ -438,7 +441,8 @@ class MediaResource extends AbstractResource
             );
     }
 
-    protected function defineGet(VerbDefinitionEntity &$verbDef){
+    protected function defineGet(VerbDefinitionEntity &$verbDef)
+    {
         $verbDef
             ->setDescription('Get multiple Media from query')
             ->addInputFilter(

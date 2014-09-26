@@ -16,6 +16,7 @@
  */
 
 namespace RubedoAPI\Rest\V1;
+
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 
@@ -42,8 +43,7 @@ class AuthResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setDescription('My rights')
                             ->setKey('rights')
-                    )
-                ;
+                    );
 
             });
     }
@@ -76,6 +76,7 @@ class AuthResource extends AbstractResource
             ),
         );
     }
+
     /**
      * return authentication means and API uri
      *

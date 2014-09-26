@@ -76,11 +76,12 @@ class ProductsResource extends ContentsResource
      *
      * @param VerbDefinitionEntity $definition
      */
-    protected function definePost(VerbDefinitionEntity &$definition) {
+    protected function definePost(VerbDefinitionEntity &$definition)
+    {
         parent::definePost($definition);
         $definition
             ->setDescription('Post a new product')
-            ->editInputFilter('content', function(FilterDefinitionEntity &$entity) {
+            ->editInputFilter('content', function (FilterDefinitionEntity &$entity) {
                 $entity
                     ->setDescription('The product to post');
             });
@@ -96,7 +97,7 @@ class ProductsResource extends ContentsResource
         parent::defineEntityGet($definition);
         $definition
             ->setDescription('Get a product')
-            ->editOutputFilter('content', function(FilterDefinitionEntity &$entity) {
+            ->editOutputFilter('content', function (FilterDefinitionEntity &$entity) {
                 $entity
                     ->setDescription('The product');
             });
@@ -112,7 +113,7 @@ class ProductsResource extends ContentsResource
         parent::defineEntityPatch($definition);
         $definition
             ->setDescription('Patch a product')
-            ->editInputFilter('content', function(FilterDefinitionEntity &$entity) {
+            ->editInputFilter('content', function (FilterDefinitionEntity &$entity) {
                 $entity
                     ->setDescription('The product');
             });

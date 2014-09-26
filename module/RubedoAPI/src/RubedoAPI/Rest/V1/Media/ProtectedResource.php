@@ -28,12 +28,14 @@ use RubedoAPI\Rest\V1\AbstractResource;
  * Class ProtectedResource
  * @package RubedoAPI\Rest\V1\Media
  */
-class ProtectedResource extends AbstractResource {
+class ProtectedResource extends AbstractResource
+{
 
     /**
      * {@inheritdoc}
      */
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->define();
     }
@@ -78,7 +80,7 @@ class ProtectedResource extends AbstractResource {
     {
         $media = $this->getDamCollection()->findById($params['mediaId']);
 
-        $intro = isset($params['introContentId'])?(new \RubedoAPI\Rest\V1\ContentsResource())->getEntityAction($params['introContentId'],$params):null;
+        $intro = isset($params['introContentId']) ? (new \RubedoAPI\Rest\V1\ContentsResource())->getEntityAction($params['introContentId'], $params) : null;
         return [
             'success' => true,
             'media' => $media,
@@ -95,7 +97,7 @@ class ProtectedResource extends AbstractResource {
      * @param $email
      * @throws \RubedoAPI\Exceptions\APIControllerException
      */
-    protected function sendDamMail ($mailingList, $site, $media, $email)
+    protected function sendDamMail($mailingList, $site, $media, $email)
     {
         $tk = $this->getTinyUrlCollection()->creamDamAccessLinkKey($media['id']);
         $protocol = in_array('HTTP', $site['protocol']) ? 'http' : 'https';
@@ -117,7 +119,7 @@ class ProtectedResource extends AbstractResource {
      * @param $url
      * @throws \RubedoAPI\Exceptions\APIControllerException
      */
-    protected function sendEmail ($mailingList, $site, $email, $url)
+    protected function sendEmail($mailingList, $site, $email, $url)
     {
         $twigVar = array(
             'downloadUrl' => $url

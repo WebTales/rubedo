@@ -44,8 +44,8 @@ class SearchResource extends AbstractResource
     {
         parent::__construct();
         $this->searchOption = 'all';
-        $this->searchParamsArray = array('orderby', 'orderbyDirection','query','objectType','type','damType','userType','author',
-            'userName','lastupdatetime','start','limit');
+        $this->searchParamsArray = array('orderby', 'orderbyDirection', 'query', 'objectType', 'type', 'damType', 'userType', 'author',
+            'userName', 'lastupdatetime', 'start', 'limit');
         $this
             ->definition
             ->setName('Search')
@@ -225,17 +225,17 @@ class SearchResource extends AbstractResource
             'start' => 0
         );
         foreach ($queryParams as $keyQueryParams => $param) {
-            if($keyQueryParams == 'constrainToSite' && $param && isset($queryParams['siteId'])){
-                $params['navigation'][] = (string) $queryParams['siteId'];
-            } else if($keyQueryParams == 'predefinedFacets') {
+            if ($keyQueryParams == 'constrainToSite' && $param && isset($queryParams['siteId'])) {
+                $params['navigation'][] = (string)$queryParams['siteId'];
+            } else if ($keyQueryParams == 'predefinedFacets') {
                 $this->parsePrefedinedFacets($params, $queryParams);
-            } else if (in_array($keyQueryParams, $blockConfigArray)){
+            } else if (in_array($keyQueryParams, $blockConfigArray)) {
                 $params['block-config'][$keyQueryParams] = $param;
-            } else if (in_array($keyQueryParams, $this->searchParamsArray)){
+            } else if (in_array($keyQueryParams, $this->searchParamsArray)) {
                 $params[$keyQueryParams] = $param;
-            } else if($keyQueryParams == 'taxonomies'){
+            } else if ($keyQueryParams == 'taxonomies') {
                 $taxonomies = JSON::decode($param);
-                foreach($taxonomies as $taxonomy => $verbs){
+                foreach ($taxonomies as $taxonomy => $verbs) {
                     $params[$taxonomy] = $verbs;
                 }
             }
@@ -253,8 +253,8 @@ class SearchResource extends AbstractResource
     {
         $predefParamsArray = Json::decode($queryParams['predefinedFacets'], Json::TYPE_ARRAY);
         if (is_array($predefParamsArray)) {
-            if(isset($predefParamsArray['query'])&&isset($queryParams['query'])&&$predefParamsArray['query']!=$queryParams['query']){
-                $inter = $predefParamsArray['query'].' '.$queryParams['query'];
+            if (isset($predefParamsArray['query']) && isset($queryParams['query']) && $predefParamsArray['query'] != $queryParams['query']) {
+                $inter = $predefParamsArray['query'] . ' ' . $queryParams['query'];
                 $predefParamsArray['query'] = $inter;
                 $queryParams['query'] = $inter;
             }
@@ -272,7 +272,7 @@ class SearchResource extends AbstractResource
      */
     protected function injectDataInResults(&$results, $params)
     {
-        if(isset($params['profilePageId'])){
+        if (isset($params['profilePageId'])) {
             $urlOptions = array(
                 'encode' => true,
                 'reset' => true,
@@ -286,24 +286,24 @@ class SearchResource extends AbstractResource
             switch ($value['objectType']) {
                 case 'dam':
                     $results['data'][$key]['url'] = $this->getUrlAPIService()->mediaUrl($results['data'][$key]['id']);
-                    if(isset($results['data'][$key]['author'])){
-                        $results['data'][$key]['authorUrl'] = isset($profilePageUrl)?$profilePageUrl . '?userprofile=' . $results['data'][$key]['id']:'';
+                    if (isset($results['data'][$key]['author'])) {
+                        $results['data'][$key]['authorUrl'] = isset($profilePageUrl) ? $profilePageUrl . '?userprofile=' . $results['data'][$key]['id'] : '';
                     }
                     break;
                 case 'content':
                     $page = $this->getPagesCollection()->findById($params['pageId']);
                     $site = $this->getSitesCollection()->findById($params['siteId']);
                     $results['data'][$key]['url'] = $this->getUrlAPIService()->displayUrlApi($results['data'][$key], 'default', $site,
-                        $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string) $params['detailPageId'] : null);
-                    if(isset($results['data'][$key]['author'])){
-                        $results['data'][$key]['authorUrl'] = isset($profilePageUrl)?$profilePageUrl . '?userprofile=' . $results['data'][$key]['id']:'';
+                        $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
+                    if (isset($results['data'][$key]['author'])) {
+                        $results['data'][$key]['authorUrl'] = isset($profilePageUrl) ? $profilePageUrl . '?userprofile=' . $results['data'][$key]['id'] : '';
                     }
                     break;
                 case 'user':
-                    $results['data'][$key]['url'] = isset($profilePageUrl)?$profilePageUrl . '?userprofile=' . $results['data'][$key]['id']:'';
+                    $results['data'][$key]['url'] = isset($profilePageUrl) ? $profilePageUrl . '?userprofile=' . $results['data'][$key]['id'] : '';
                     $results['data'][$key]['avatar'] =
-                        $this->getUrlAPIService()->userAvatar($results['data'][$key]['id'],100,100,'boxed') == ' ' ?
-                            false:$this->getUrlAPIService()->userAvatar($results['data'][$key]['id'],100,100,'boxed');
+                        $this->getUrlAPIService()->userAvatar($results['data'][$key]['id'], 100, 100, 'boxed') == ' ' ?
+                            false : $this->getUrlAPIService()->userAvatar($results['data'][$key]['id'], 100, 100, 'boxed');
             }
         }
         if (isset($params['displayedFacets'])) {
@@ -317,12 +317,12 @@ class SearchResource extends AbstractResource
      * @param $results
      * @param $params
      */
-    protected function injectOperatorsInActiveFacets(&$results,$params)
+    protected function injectOperatorsInActiveFacets(&$results, $params)
     {
-        if ($params['displayedFacets']=="['all']"){
+        if ($params['displayedFacets'] == "['all']") {
             $taxonomyService = $this->getTaxonomyCollection();
-            foreach($results['activeFacets'] as $key => $activeFacet){
-                if(in_array($activeFacet['id'], $this->searchParamsArray)){
+            foreach ($results['activeFacets'] as $key => $activeFacet) {
+                if (in_array($activeFacet['id'], $this->searchParamsArray)) {
                     $results['activeFacets'][$key]['operator'] = 'and';
                 } else {
                     $taxonomy = $taxonomyService->findById($activeFacet['id']);
@@ -334,13 +334,13 @@ class SearchResource extends AbstractResource
         } else {
             $displayedFacets = Json::decode($params['displayedFacets'], Json::TYPE_ARRAY);
             $operatorByActiveFacet = array();
-            foreach($displayedFacets as $displayedFacet){
+            foreach ($displayedFacets as $displayedFacet) {
                 $operatorByActiveFacet[$displayedFacet['name']] = strtolower($displayedFacet['operator']);
             }
-            foreach($results['activeFacets'] as $key => $activeFacet){
-                if($activeFacet['id']=='query' || !isset($operatorByActiveFacet[$activeFacet['id']])){
+            foreach ($results['activeFacets'] as $key => $activeFacet) {
+                if ($activeFacet['id'] == 'query' || !isset($operatorByActiveFacet[$activeFacet['id']])) {
                     $results['activeFacets'][$key]['operator'] = 'and';
-                }  else {
+                } else {
                     $results['activeFacets'][$key]['operator'] = $operatorByActiveFacet[$activeFacet['id']];
                 }
             }

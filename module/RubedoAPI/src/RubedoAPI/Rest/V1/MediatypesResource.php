@@ -25,7 +25,8 @@ use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
  * Class MediatypesResource
  * @package RubedoAPI\Rest\V1
  */
-class MediatypesResource extends AbstractResource {
+class MediatypesResource extends AbstractResource
+{
     /**
      * { @inheritdoc }
      */
@@ -39,7 +40,8 @@ class MediatypesResource extends AbstractResource {
      * Get a list of media types
      * @return array
      */
-    public function getAction() {
+    public function getAction()
+    {
         $mediaTypes = $this->getDamTypesCollection()->getList()['data'];
         foreach ($mediaTypes as &$mediaType) {
             $mediaType = $this->filterMediaType($mediaType);
@@ -71,7 +73,8 @@ class MediatypesResource extends AbstractResource {
      * @param array $mediaType
      * @return array
      */
-    protected function filterMediaType(array $mediaType) {
+    protected function filterMediaType(array $mediaType)
+    {
         return array_intersect_key($mediaType, array_flip(array('id', 'mainFileType', 'type', 'readOnly', 'locale')));
     }
 

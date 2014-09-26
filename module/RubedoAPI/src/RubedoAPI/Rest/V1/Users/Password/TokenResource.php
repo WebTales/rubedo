@@ -14,7 +14,8 @@ use RubedoAPI\Rest\V1\AbstractResource;
  * Class TokenResource
  * @package RubedoAPI\Rest\V1\Users\Password
  */
-class TokenResource extends AbstractResource {
+class TokenResource extends AbstractResource
+{
     /**
      * {@inheritdoc}
      */
@@ -126,7 +127,6 @@ class TokenResource extends AbstractResource {
                 $user["email"] => (!empty($user['name'])) ? $user['name'] : $user['login'],
             ))
             ->setFrom(array($options['fromEmailNotification'] => "Rubedo"))
-
             ->setSubject('[' . $vars['siteName'] . ']' . $this->getTranslationAPIService()->getTranslation(
                     $title,
                     $vars['lang'],

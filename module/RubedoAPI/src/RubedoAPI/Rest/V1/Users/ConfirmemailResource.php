@@ -28,7 +28,8 @@ use RubedoAPI\Rest\V1\AbstractResource;
  * Class ConfirmemailResource
  * @package RubedoAPI\Rest\V1\Users
  */
-class ConfirmemailResource extends AbstractResource {
+class ConfirmemailResource extends AbstractResource
+{
     /**
      * {@inheritdoc}
      */

@@ -24,7 +24,8 @@ use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
  * Class TranslationsResource
  * @package RubedoAPI\Rest\V1
  */
-class TranslationsResource extends AbstractResource {
+class TranslationsResource extends AbstractResource
+{
     /**
      * {@inheritdoc}
      */

@@ -19,9 +19,9 @@ namespace RubedoAPI\Rest\V1;
 
 
 use Rubedo\Services\Manager;
-use RubedoAPI\Exceptions\APIControllerException;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
+use RubedoAPI\Exceptions\APIControllerException;
 
 /**
  * Class ContactResource
