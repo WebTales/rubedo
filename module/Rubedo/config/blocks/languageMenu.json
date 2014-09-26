@@ -37,7 +37,14 @@
 								"fieldLabel":"#ext-gen1380#",
 								"name":"showCurrentLanguage"
 							}
-						}
+						},
+                        {
+                            "type":"Ext.form.field.Checkbox",
+                            "config":{
+                                "fieldLabel":"Show flags",
+                                "name":"showFlags"
+                            }
+                        }
 					]
 				}
 			],
@@ -60,7 +67,8 @@
 		},
 		"configBloc":{
 			"displayAs":"select",
-			"showCurrentLanguage":true
+			"showCurrentLanguage":true,
+            "showFlags": true
 		}
 	},
 	"category":"#ext-gen1211#",
