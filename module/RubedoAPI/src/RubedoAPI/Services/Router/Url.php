@@ -46,7 +46,12 @@ class Url extends \Rubedo\Router\Url
 
         $doNotAddSite = true;
 
-        if (isset($content['taxonomy']['navigation']) && $content['taxonomy']['navigation'] !== "") {
+        if ($defaultPage && $type == "default") {
+            $pageId = $defaultPage;
+            $pageValid = true;
+        }
+
+        if (isset($content['taxonomy']['navigation']) && $content['taxonomy']['navigation'] !== "" && !$pageValid) {
             foreach ($content['taxonomy']['navigation'] as $pageId) {
                 if ($pageId == 'all') {
                     continue;
@@ -61,15 +66,11 @@ class Url extends \Rubedo\Router\Url
 
         if (!$pageValid) {
             if ($type == "default") {
-                if ($defaultPage) {
-                    $pageId = $defaultPage;
-                } else {
-                    $pageId = $page['id'];
-                    if (isset($page['maskId'])) {
-                        $mask = Manager::getService('Masks')->findById($page['maskId']);
-                        if (!isset($mask['mainColumnId']) || empty($mask['mainColumnId'])) {
-                            $pageId = $this->_getDefaultSingleBySiteID($site['id']);
-                        }
+                $pageId = $page['id'];
+                if (isset($page['maskId'])) {
+                    $mask = Manager::getService('Masks')->findById($page['maskId']);
+                    if (!isset($mask['mainColumnId']) || empty($mask['mainColumnId'])) {
+                        $pageId = $this->_getDefaultSingleBySiteID($site['id']);
                     }
                 }
             } elseif ($type == "canonical") {
