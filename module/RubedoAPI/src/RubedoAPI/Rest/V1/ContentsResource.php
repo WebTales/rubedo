@@ -125,6 +125,17 @@ class ContentsResource extends AbstractResource
             $this->productFilter()
         );
 
+        if (!empty($params['requiredFields'])&&is_array($params['requiredFields'])){
+            foreach($params['requiredFields'] as $requiredField){
+                $filters['filter']->addFilter(
+                    Filter::factory('OperatorToValue')->setName('fields.'.$requiredField)->setOperator('$exists')->setValue(true)
+                );
+                $filters['filter']->addFilter(
+                    Filter::factory('OperatorToValue')->setName('fields.'.$requiredField)->setOperator('$ne')->setValue("")
+                );
+            }
+        }
+
         if ($queryType === 'manual' && $query != false && isset($query['query']) && is_array($query['query'])) {
             $contentOrder = $query['query'];
             $keyOrder = array();
@@ -559,6 +570,10 @@ class ContentsResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setKey('endDate')
                     ->setDescription('endDate filter for the query')
+            )->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('requiredFields')
+                    ->setDescription('Array of required fields used to further refine the results')
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
