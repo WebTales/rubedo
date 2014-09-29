@@ -186,6 +186,8 @@ class PagesResource extends AbstractResource
             }
         }
         $lastMatchedNode['rows'] = array_replace_recursive($mask['rows'], $this->getRowsInfos($blocks, $mask['rows']));
+        $lastMatchedNode['title'] = isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'])?
+            $lastMatchedNode['i18n'][$params['lang']->getLocale()]['title']:$lastMatchedNode['i18n'][$params['lang']->getFallback()]['title'];
 
         $output = array(
             'success' => true,
