@@ -50,7 +50,7 @@ class MailinglistsResource extends AbstractResource
         $filters = Filter::factory();
         $filters->addFilter(Filter::factory('Value')->setName('UTType')
             ->setValue("email"));
-        $userType = $this->getUserTypesCollection()->findOne($filters)['fields'];
+        $userType = $this->getUserTypesCollection()->findOne($filters);
         return array(
             'success' => true,
             'mailinglists' => $mailinglists,

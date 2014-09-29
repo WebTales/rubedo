@@ -41,7 +41,7 @@
                         {
                             "type":"Ext.form.field.Checkbox",
                             "config":{
-                                "fieldLabel":"Show flags",
+                                "fieldLabel":"#ext-gen1449#",
                                 "name":"showFlags"
                             }
                         }
