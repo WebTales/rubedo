@@ -461,6 +461,13 @@ class ContentsResource extends AbstractResource
             $content['fields'] = array_intersect_key($content['fields'], array_flip($params['fields']));
         }
 
+        if(isset($params['pageId'])&&isset($params['siteId'])){
+            $page = $this->getPagesCollection()->findById($params['pageId']);
+            $site = $this->getSitesCollection()->findById($params['siteId']);
+            $content['canonicalUrl'] = $this->getUrlAPIService()->displayUrlApi($content, 'canonical', $site,
+                $page, $params['lang']->getLocale(), null);
+        }
+
         $content['type'] = array_intersect_key(
             $contentType,
             array_flip(
@@ -636,6 +643,18 @@ class ContentsResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('Fields to return')
                     ->setKey('fields')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('siteId')
+                    ->setDescription('Id of the site')
+                    ->setFilter('\\MongoId')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('pageId')
+                    ->setDescription('Id of the page')
+                    ->setFilter('\\MongoId')
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())

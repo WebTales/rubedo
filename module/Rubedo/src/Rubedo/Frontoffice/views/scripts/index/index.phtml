@@ -15,6 +15,13 @@
     </script>
     <![endif]-->
     <meta charset="UTF-8">
+    <meta ng-if="rubedo.current.page.description" name="description" ng-attr-content="{{rubedo.current.page.description}}"/>
+    <meta ng-if="rubedo.current.page.metaKeywords" name="keywords" ng-attr-content="{{ rubedo.current.page.metaKeywords }}">
+    <meta ng-if="rubedo.current.page.metaRobots" name="robots" ng-attr-content="{{ rubedo.current.page.metaRobots }}">
+    <meta ng-if="rubedo.current.page.metaAuthor" name="author" ng-attr-content="{{ rubedo.current.page.metaAuthor }}">
+
+    <link ng-if="rubedo.current.page.contentCanonicalUrl" rel="canonical" ng-href="{{ rubedo.current.page.contentCanonicalUrl }}"/>
+
     <!--mobile meta-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title ng-bind-template="{{rubedo.current.page.title}}"></title>
