@@ -91,7 +91,7 @@ class Url extends \Rubedo\Router\Url
                 $pageUrl = $this->url($data, 'rewrite', true);
             } elseif ($type == "canonical") {
                 // @todo refactor this
-                $pageUrl = $this->url($data, null, true);
+                $pageUrl = $this->url($data, 'rewrite', true);
             } else {
                 throw new APIServiceException("You must specify a good type of URL : default or canonical", 500);
             }
