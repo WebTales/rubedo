@@ -27,7 +27,8 @@
         "lemonde/angular-ckeditor":"v0.2.0",
         "lodash/lodash":"2.4.1",
         "angular-ui/angular-google-maps":"1.2.1",
-        "ivpusic/angular-cookie":"v4.0.2"
+        "ivpusic/angular-cookie":"v4.0.2",
+        "mbostock/d3":"3.4.11"
     },
     "require-dev": {},
     "repositories": [
@@ -227,6 +228,17 @@
                 "version": "v4.0.2",
                 "dist": {
                     "url": "https://github.com/ivpusic/angular-cookie/archive/v4.0.2.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "mbostock/d3",
+                "version": "3.4.11",
+                "dist": {
+                    "url": "https://github.com/mbostock/d3/releases/download/v3.4.11/d3.zip",
                     "type": "zip"
                 }
             }
