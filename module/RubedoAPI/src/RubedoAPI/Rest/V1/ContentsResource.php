@@ -468,6 +468,7 @@ class ContentsResource extends AbstractResource
                     'id',
                     'code',
                     'activateDisqus',
+                    'layouts',
                     'fields',
                     'locale',
                     'version',
