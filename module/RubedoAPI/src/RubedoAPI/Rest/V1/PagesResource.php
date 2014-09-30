@@ -234,7 +234,7 @@ class PagesResource extends AbstractResource
     protected function outputSiteMask($output)
     {
         $output['host'] = $output['text'];
-        $mask = ['id', 'host', 'alias', 'description', 'keywords', 'defaultLanguage', 'languages', 'locale', 'locStrategy', 'homePage', 'author'];
+        $mask = ['id', 'host', 'alias', 'description', 'keywords', 'defaultLanguage', 'languages', 'locale', 'locStrategy', 'homePage', 'author','disqusKey'];
         return array_intersect_key($output, array_flip($mask));
     }
 
