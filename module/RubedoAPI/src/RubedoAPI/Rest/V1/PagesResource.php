@@ -311,7 +311,7 @@ class PagesResource extends AbstractResource
             } elseif ($termColumn == $column) {
                 $column['isTerminal'] = true;
             } else {
-                $returnArray[$key]['rows'] = $this->getRowsInfos($blocks, $column['rows']);
+                $returnArray[$key]['rows'] = $this->getRowsInfos($blocks, $column['rows'], $termColumn);
             }
         }
         return $returnArray;
