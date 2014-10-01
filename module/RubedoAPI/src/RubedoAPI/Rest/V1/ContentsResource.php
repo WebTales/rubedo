@@ -61,7 +61,7 @@ class ContentsResource extends AbstractResource
     {
 
         $queryId = &$params['queryId'];
-        $this->getQueriesCollection()->setCurrentPage($params['pageId']);
+        $this->getQueriesCollection()->setCurrentPage((string) $params['pageId']);
         $filters = $this->getQueriesCollection()->getFilterArrayById($queryId);
 
         if (isset($params['date']) && isset($params['dateFieldName'])) {
