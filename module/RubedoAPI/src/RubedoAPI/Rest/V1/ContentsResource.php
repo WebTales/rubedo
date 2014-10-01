@@ -118,7 +118,8 @@ class ContentsResource extends AbstractResource
         }
 
         $queryType = $filters['queryType'];
-        $this->getPageContentService()->setCurrentPage($params['pageId']);
+        $pageContentsService=$this->getPageContentService();
+        $pageContentsService::setCurrentPage($params['pageId']);
         $query = $this->getQueriesCollection()->getQueryById($queryId);
 
 
