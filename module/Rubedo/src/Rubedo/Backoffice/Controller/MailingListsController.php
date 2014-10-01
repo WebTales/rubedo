@@ -19,7 +19,6 @@ namespace Rubedo\Backoffice\Controller;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\View\Model\JsonModel;
-use Zend\Debug\Debug;
 use Zend\Json\Json;
 
 /**
@@ -180,7 +179,7 @@ class MailingListsController extends DataAccessController
         }
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         $contentType = isset($mimeType) ? $mimeType : $fileInfos['type'];
-        if (($contentType != "text/plain") && ($contentType!= "text/csv")&& ($contentType!= "text/x-c")) {
+        if (!in_array($contentType, array('text/plain', 'text/csv', 'text/x-c', 'application/vnd.ms-excel'))) {
             $returnArray['success'] = false;
             $returnArray['message'] = "Le fichier doit doit être au format CSV.";
             $this->getResponse()->setStatusCode(500);
