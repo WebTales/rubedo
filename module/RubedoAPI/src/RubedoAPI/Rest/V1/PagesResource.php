@@ -183,9 +183,11 @@ class PagesResource extends AbstractResource
             $mainColumn = isset($mask['mainColumnId']) ? $mask['mainColumnId'] : null;
             if ($mainColumn) {
                 $blocks[$mainColumn] = array($this->getSingleBlock($content['id']));
+
             }
         }
-        $lastMatchedNode['rows'] = array_replace_recursive($mask['rows'], $this->getRowsInfos($blocks, $mask['rows']));
+        $termColumn = (!empty($mainColumn))?$mainColumn:null;
+        $lastMatchedNode['rows'] = array_replace_recursive($mask['rows'], $this->getRowsInfos($blocks, $mask['rows'], $termColumn));
         if(!isset($lastMatchedNode['title'])){
             $lastMatchedNode['title'] = isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'])?
                 $lastMatchedNode['i18n'][$params['lang']->getLocale()]['title']:$lastMatchedNode['i18n'][$params['lang']->getFallback()]['title'];
@@ -265,9 +267,10 @@ class PagesResource extends AbstractResource
      *
      * @param array $blocks
      * @param array $rows
+     * @param null $termColumn
      * @return array|null
      */
-    protected function getRowsInfos(array &$blocks, array $rows = null)
+    protected function getRowsInfos(array &$blocks, array $rows = null, $termColumn = null)
     {
         if ($rows === null) {
             return null;
@@ -278,7 +281,7 @@ class PagesResource extends AbstractResource
             $returnArray[$key] = $row;
 
             if (is_array($row['columns'])) {
-                $returnArray[$key]['columns'] = $this->getColumnsInfos($blocks, $row['columns']);
+                $returnArray[$key]['columns'] = $this->getColumnsInfos($blocks, $row['columns'], $termColumn);
             } else {
                 $returnArray[$key]['columns'] = null;
             }
@@ -291,9 +294,10 @@ class PagesResource extends AbstractResource
      *
      * @param array $blocks
      * @param array $columns
+     * @param null $termColumn
      * @return array|null
      */
-    protected function getColumnsInfos(array &$blocks, array $columns = null)
+    protected function getColumnsInfos(array &$blocks, array $columns = null, $termColumn = null)
     {
         if ($columns === null) {
             return null;
@@ -304,6 +308,8 @@ class PagesResource extends AbstractResource
             $returnArray[$key] = $column;
             if (isset($blocks[$column['id']])) {
                 $returnArray[$key]['blocks'] = $this->sortBlocks($blocks[$column['id']]);
+            } elseif ($termColumn == $column) {
+                $column['isTerminal'] = true;
             } else {
                 $returnArray[$key]['rows'] = $this->getRowsInfos($blocks, $column['rows']);
             }
