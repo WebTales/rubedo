@@ -109,7 +109,9 @@ class MenuResource extends AbstractResource
                 'locale' => $params['menuLocale']
             ), $urlOptions);
 
+            if (isset($page['title'])){
             $tempArray['title'] = $page['title'];
+            }
             $tempArray['text'] = $page['text'];
             $tempArray['id'] = $page['id'];
             $levelTwoPages = $this->pageService->readChild($page['id'], $this->excludeFromMenuCondition);
@@ -124,7 +126,9 @@ class MenuResource extends AbstractResource
                         "locale" => $params['menuLocale']
                     ), $urlOptions);
 
-                    $tempSubArray['title'] = $subPage['title'];
+                    if (isset($subPage['title'])){
+                        $tempSubArray['title'] = $subPage['title'];
+                    }
                     $tempSubArray['text'] = $subPage['text'];
                     $tempSubArray['id'] = $subPage['id'];
                     $tempArray['pages'][] = $tempSubArray;
