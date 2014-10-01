@@ -61,7 +61,7 @@ class ContentsResource extends AbstractResource
     {
 
         $queryId = &$params['queryId'];
-
+        $this->getQueriesCollection()->setCurrentPage((string) $params['pageId']);
         $filters = $this->getQueriesCollection()->getFilterArrayById($queryId);
 
         if (isset($params['date']) && isset($params['dateFieldName'])) {
@@ -487,7 +487,7 @@ class ContentsResource extends AbstractResource
 
         //remove inactive layouts
 
-        if ($content['type']['layouts']){
+        if (isset($content['type']['layouts'])){
             foreach($content['type']['layouts'] as $key => $value){
                 if (!$value['active']){
                     unset ($content['type']['layouts'][$key]);
@@ -497,7 +497,7 @@ class ContentsResource extends AbstractResource
 
         //if site is set filter layouts
 
-        if ($content['type']['layouts']&&isset($params['siteId'])){
+        if (isset($content['type']['layouts'])&&isset($params['siteId'])){
             foreach($content['type']['layouts'] as $key => $value){
                 if ($value['site']!=$params['siteId']){
                     unset ($content['type']['layouts'][$key]);

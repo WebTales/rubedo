@@ -110,6 +110,12 @@ class Queries extends AbstractCollection implements IQueries
         )
     );
 
+    protected  $currentPage = null;
+
+    public function setCurrentPage($pageId){
+        $this->currentPage=$pageId;
+    }
+
     /**
      * Add a readOnly field to contents based on user rights
      *
@@ -416,7 +422,7 @@ class Queries extends AbstractCollection implements IQueries
         if ($key == 'navigation') {
             foreach ($value['terms'] as &$term) {
                 if ($term == "currentPage") {
-                    $currentPage = Manager::getService('PageContent')->getCurrentPage();
+                    $currentPage = $this->currentPage;
                     if (!$currentPage) {
                         throw new \Rubedo\Exceptions\Server('Current page is not defined.', "Exception49");
                     }
