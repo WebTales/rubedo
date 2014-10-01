@@ -51,4 +51,17 @@ interface IResource
      * @return mixed
      */
     public function setContext($controller);
-} 
+
+    /**
+     * Get OPTIONS
+     *
+     * @return array
+     */
+    public function optionsAction();
+
+    /**
+     * Get OPTIONS for entity
+     * @return array
+     */
+    public function optionsEntityAction();
+}
