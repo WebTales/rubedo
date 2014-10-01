@@ -306,12 +306,13 @@ class PagesResource extends AbstractResource
         foreach ($columns as $key => $column) {
             $column = $this->localizeTitle($column);
             $returnArray[$key] = $column;
-            if (isset($blocks[$column['id']])) {
-                $returnArray[$key]['blocks'] = $this->sortBlocks($blocks[$column['id']]);
-            } elseif ($termColumn == $column) {
-                $column['isTerminal'] = true;
+            if ($termColumn == $column['id']) {
+                $returnArray[$key]['isTerminal'] = true;
             } else {
                 $returnArray[$key]['rows'] = $this->getRowsInfos($blocks, $column['rows'], $termColumn);
+            }
+            if (isset($blocks[$column['id']])) {
+                $returnArray[$key]['blocks'] = $this->sortBlocks($blocks[$column['id']]);
             }
         }
         return $returnArray;
