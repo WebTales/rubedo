@@ -307,36 +307,39 @@ class ContentSingleController extends AbstractController
                     $oembedParams['url'] = implode("/", $decomposedUrl);
                 }
                 /** @var \Alb\OEmbed\Response $response */
-                $response = OEmbed\Simple::request($oembedParams['url'], array_intersect_key($oembedParams, array_flip(array('maxWidth', 'maxHeight'))));
-
-                $item['width'] = $oembedParams['maxWidth'];
-                $item['height'] = $oembedParams['maxHeight'];
-                if (!stristr($oembedParams['url'], 'www.flickr.com')) {
-                    $item['html'] = $response->getHtml();
-                } else {
-                    $raw = $response->getRaw();
-                    if ($oembedParams['maxWidth'] > 0) {
-                        $width_ratio = $raw->width / $oembedParams['maxWidth'];
+                try {
+                    $response = OEmbed\Simple::request($oembedParams['url'], array_intersect_key($oembedParams, array_flip(array('maxWidth', 'maxHeight'))));
+                    $item['width'] = $oembedParams['maxWidth'];
+                    $item['height'] = $oembedParams['maxHeight'];
+                    if (!stristr($oembedParams['url'], 'www.flickr.com')) {
+                        $item['html'] = $response->getHtml();
                     } else {
-                        $width_ratio = 1;
-                    }
-                    if ($oembedParams['maxHeight'] > 0) {
-                        $height_ratio = $raw->height / $oembedParams['maxHeight'];
-                    } else {
-                        $height_ratio = 1;
+                        $raw = $response->getRaw();
+                        if ($oembedParams['maxWidth'] > 0) {
+                            $width_ratio = $raw->width / $oembedParams['maxWidth'];
+                        } else {
+                            $width_ratio = 1;
+                        }
+                        if ($oembedParams['maxHeight'] > 0) {
+                            $height_ratio = $raw->height / $oembedParams['maxHeight'];
+                        } else {
+                            $height_ratio = 1;
+                        }
+
+                        $size = "";
+                        if ($width_ratio > $height_ratio) {
+                            $size = "width='" . $oembedParams['maxWidth'] . "'";
+                        }
+                        if ($width_ratio < $height_ratio) {
+                            $size = "height='" . $oembedParams['maxHeight'] . "'";
+                        }
+                        $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
                     }
 
-                    $size = "";
-                    if ($width_ratio > $height_ratio) {
-                        $size = "width='" . $oembedParams['maxWidth'] . "'";
-                    }
-                    if ($width_ratio < $height_ratio) {
-                        $size = "height='" . $oembedParams['maxHeight'] . "'";
-                    }
-                    $item['html'] = "<img src='" . $raw->url . "' " . $size . "' title='" . $raw->title . "'>";
+                    $cache->setItem($cacheKey, $item);
+                } catch (\Exception $e) {
+                    $item['html'] = 'Can\'t find video';
                 }
-
-                $cache->setItem($cacheKey, $item);
             }
             return $item;
         }
