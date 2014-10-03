@@ -157,10 +157,11 @@ class DataIndex extends DataAbstract implements IDataIndex
 			
 			// add mapping for autocomplete in every active language
 			foreach ( $activeLanguages as $lang ) {
+                $locale = in_array($lang['locale'], $activeAnalysers)?$lang['locale']:'default';
 				$generic_mapping ['autocomplete_' . $lang ['locale']] = array (
 						'type' => 'completion',
-						'index_analyzer' => $lang ['locale'] . '_analyzer',
-						'search_analyzer' => $lang ['locale'] . '_analyzer',
+						'index_analyzer' => $locale . '_analyzer',
+						'search_analyzer' => $locale . '_analyzer',
 						'payloads' => true,
 						'preserve_position_increments' => false 
 				);
