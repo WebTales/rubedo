@@ -73,7 +73,7 @@ class Url implements IUrl
     protected static $staticDomain = null;
 
     protected static $avatarUrls = array();
-    
+
     /**
      * Number of URL segment match
      *
@@ -111,7 +111,7 @@ class Url implements IUrl
 
     /**
      *
-     * @param string $routeName            
+     * @param string $routeName
      */
     public static function setRouteName($routeName)
     {
@@ -138,7 +138,7 @@ class Url implements IUrl
         }
         $locale = null;
         $siteId = $site['id'];
-        
+
         $eventResult = Events::getEventManager()->trigger(self::URL_TO_PAGE_READ_CACHE_PRE, null, array(
             'url' => $url,
             'siteId' => $site['id']
@@ -147,9 +147,9 @@ class Url implements IUrl
             $data = $eventResult->first();
             return $data;
         }
-        
+
         $urlSegments = explode(self::URI_DELIMITER, trim($url, self::URI_DELIMITER));
-        
+
         // check for locale in URL
         if (! empty($urlSegments[0])) {
             $language = Manager::getService('Languages')->findActiveByLocale($urlSegments[0]);
@@ -158,7 +158,7 @@ class Url implements IUrl
                 $locale = $language['locale'];
             }
         }
-        
+
         $lastMatchedNode = 'root';
         if (empty($urlSegments[0])) {
             if (isset($site['homePage'])) {
@@ -170,15 +170,15 @@ class Url implements IUrl
                 return null;
             }
         }
-        
+
         $nbSegments = count($urlSegments);
         $this->nbMatched = 0;
-        
+
         foreach ($urlSegments as $value) {
             $wasFiltered = AbstractCollection::disableUserFilter();
             $matchedNode = Manager::getService('Pages')->matchSegment($value, $lastMatchedNode, $siteId);
             AbstractCollection::disableUserFilter($wasFiltered);
-            
+
             if (null === $matchedNode) {
                 break;
             } else {
@@ -186,12 +186,12 @@ class Url implements IUrl
             }
             $this->nbMatched ++;
         }
-        
+
         if ($this->nbMatched == 0) {
             return null;
         }
         $contentId = null;
-        
+
         // next segment could be a content-id
         if ($nbSegments > $this->nbMatched) {
             $urlSegments = array_slice($urlSegments, $this->nbMatched);
@@ -204,25 +204,25 @@ class Url implements IUrl
                 }
             }
         }
-        
+
         // trigger an event to allow more matches from specific rules
         if ($nbSegments > $this->nbMatched) {
             Events::getEventManager()->trigger(self::MATCH_EXTRA_PARAMS, $this, array(
                 'urlSegments' => $urlSegments
             ));
         }
-        
+
         if ($nbSegments > $this->nbMatched) {
             return null;
         }
-        
+
         $result = array(
             'pageId' => $lastMatchedNode,
             'url' => $url,
             'siteId' => $siteId,
             'locale' => $locale
         );
-        
+
         if ($contentId) {
             $result['content-id'] = $contentId;
         }
@@ -255,18 +255,18 @@ class Url implements IUrl
         if ($eventResult->stopped()) {
             return $eventResult->first();
         }
-        
+
         $url = '';
         if ($locale) {
             $url .= self::URI_DELIMITER;
             $url .= $locale;
         }
-        
+
         $wasWithI18n = AbstractLocalizableCollection::getIncludeI18n();
         AbstractLocalizableCollection::setIncludeI18n(true);
-        
+
         $page = Manager::getService('Pages')->findById($pageId);
-        
+
         $siteId = $page['site'];
         $site = Manager::getService('sites')->findById($siteId);
         if ($site['locStrategy'] == 'fallback') {
@@ -274,9 +274,9 @@ class Url implements IUrl
         } else {
             $fallbackLocale = null;
         }
-        
+
         $rootline = Manager::getService('Pages')->getAncestors($page);
-        
+
         foreach ($rootline as $value) {
             if ($locale && isset($value['i18n'][$locale]['pageURL'])) {
                 $url .= self::URI_DELIMITER;
@@ -288,7 +288,7 @@ class Url implements IUrl
                 return false;
             }
         }
-        
+
         if ($locale && isset($page['i18n'][$locale])) {
             $url .= self::URI_DELIMITER;
             $url .= urlencode($page['i18n'][$locale]['pageURL']);
@@ -301,9 +301,9 @@ class Url implements IUrl
         } else {
             return false;
         }
-        
+
         AbstractLocalizableCollection::setIncludeI18n($wasWithI18n);
-        
+
         $urlToCache = array(
             'pageId' => $pageId,
             'url' => $url,
@@ -311,7 +311,7 @@ class Url implements IUrl
             'locale' => $locale
         );
         $eventResult = Events::getEventManager()->trigger(self::PAGE_TO_URL_READ_CACHE_POST, null, $urlToCache);
-        
+
         return $url;
     }
 
@@ -359,9 +359,9 @@ class Url implements IUrl
         if (! $locale) {
             return null;
         }
-        
+
         list ($contentId, $encodedText) = $segments;
-        
+
         $wasWithI18n = AbstractLocalizableCollection::getIncludeI18n();
         AbstractLocalizableCollection::setIncludeI18n(true);
         $wasFiltered = AbstractCollection::disableUserFilter();
@@ -387,20 +387,20 @@ class Url implements IUrl
         if (self::$_disableNav) {
             return trim('#', self::URI_DELIMITER);
         }
-        
+
         if (! isset($data['pageId'])) {
             return null;
         }
-        
+
         $url = $this->getPageUrl($data['pageId'], $data['locale']);
-        
+
         if ($url == false) {
             return false;
         }
-        
+
         if (isset($data['content-id'])) {
             $page = Manager::getService('Pages')->findById($data['pageId']);
-            
+
             $siteId = $page['site'];
             $site = Manager::getService('sites')->findById($siteId);
             if ($site['locStrategy'] == 'fallback') {
@@ -415,7 +415,7 @@ class Url implements IUrl
                 $url .= $contentPart;
             }
         }
-        
+
         return '/' . ltrim($url, self::URI_DELIMITER);
     }
 
@@ -466,14 +466,14 @@ class Url implements IUrl
             $params['locale'] = AbstractLocalizableCollection::getWorkingLocale();
         }
         $uri = Manager::getService('Application')->getRequest()->getUri();
-        
+
         switch ($options['reset']) {
             case 'true':
                 break;
             case 'add':
                 $currentParams = $uri->getQueryAsArray();
                 foreach ($mergedParams as $key => $value) {
-                    
+
                     if (! isset($currentParams[$key])) {
                         $currentParams[$key] = array();
                     }
@@ -529,7 +529,7 @@ class Url implements IUrl
                 unset($mergedParams[$key]);
             }
         }
-        
+
         $options['query'] = $mergedParams;
         return $this->getRouter()->assemble($params, $options);
     }
@@ -544,7 +544,7 @@ class Url implements IUrl
      *            Type of the URL : "default" or "cononical"
      * @param string $siteId
      *            Id of the site
-     *            
+     *
      * @return string Url
      */
     public function displayUrl($contentId, $type = "default", $siteId = null, $defaultPage = null)
@@ -559,12 +559,17 @@ class Url implements IUrl
         } else {
             $doNotAddSite = false;
         }
-        
+
         $ws = Context::isDraft() ? 'draft' : 'live';
-        
+
         $content = Manager::getService('Contents')->findById($contentId, $ws === 'live', false);
-        
-        if (isset($content['taxonomy']['navigation']) && $content['taxonomy']['navigation'] !== "") {
+
+        if ($defaultPage && $type == "default") {
+            $pageId = $defaultPage;
+            $pageValid = true;
+        }
+
+        if (isset($content['taxonomy']['navigation']) && $content['taxonomy']['navigation'] !== "" && !$pageValid) {
             foreach ($content['taxonomy']['navigation'] as $pageId) {
                 if ($pageId == 'all') {
                     continue;
@@ -576,19 +581,15 @@ class Url implements IUrl
                 }
             }
         }
-        
+
         if (! $pageValid) {
             if ($type == "default") {
-                if ($defaultPage) {
-                    $pageId = $defaultPage;
-                } else {
-                    $pageId = Manager::getService('PageContent')->getCurrentPage();
-                    $page = Manager::getService('Pages')->findById($pageId);
-                    if (isset($page['maskId'])) {
-                        $mask = Manager::getService('Masks')->findById($page['maskId']);
-                        if (! isset($mask['mainColumnId']) || empty($mask['mainColumnId'])) {
-                            $pageId = $this->_getDefaultSingleBySiteID($siteId);
-                        }
+                $pageId = Manager::getService('PageContent')->getCurrentPage();
+                $page = Manager::getService('Pages')->findById($pageId);
+                if (isset($page['maskId'])) {
+                    $mask = Manager::getService('Masks')->findById($page['maskId']);
+                    if (! isset($mask['mainColumnId']) || empty($mask['mainColumnId'])) {
+                        $pageId = $this->_getDefaultSingleBySiteID($siteId);
                     }
                 }
             } elseif ($type == "canonical") {
@@ -597,13 +598,13 @@ class Url implements IUrl
                 throw new Server("You must specify a good type of URL : default or canonical", "Exception94");
             }
         }
-        
+
         if ($pageId) {
             $data = array(
                 'pageId' => $pageId,
                 'content-id' => $contentId
             );
-            
+
             if ($type == "default") {
                 $pageUrl = $this->url($data, 'rewrite', true);
             } elseif ($type == "canonical") {
@@ -612,11 +613,11 @@ class Url implements IUrl
             } else {
                 throw new Server("You must specify a good type of URL : default or canonical", "Exception94");
             }
-            
+
             if ($doNotAddSite) {
                 return $pageUrl;
             } else {
-                
+
                 return 'http://' . Manager::getService('Sites')->getHost($siteId) . $pageUrl;
             }
         } else {
@@ -652,7 +653,7 @@ class Url implements IUrl
             return '';
         }
         $meta = $obj->file;
-        
+
         $router = Manager::getService('Router');
         $options = array(
             'name' => 'mediaFromDam'
@@ -695,7 +696,7 @@ class Url implements IUrl
             return '';
         }
         $meta = $obj->file;
-        
+
         $router = Manager::getService('Router');
         $options = array(
             'name' => 'imageFromDam'
