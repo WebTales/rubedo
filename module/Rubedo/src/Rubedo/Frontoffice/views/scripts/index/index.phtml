@@ -28,7 +28,7 @@
     <!--css-->
     <link rel="stylesheet" href="/components/jtrussell/angular-snap.js-bower/angular-snap.min.css">
     <link rel="stylesheet" href="/components/twbs/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/components/webtales/rubedo-frontoffice/css/rubedo.css">
+    <link rel="stylesheet" href="/theme/<?php echo $this->siteTheme; ?>/css/rubedo.css">
     <link href='/components/jquery/fullCalendar/fullcalendar.css' rel='stylesheet' />
     <link href='/components/jquery/fullCalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
     <link rel="stylesheet" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.carousel.css">
@@ -47,14 +47,14 @@
         <?php endif; ?>
     <?php endforeach; ?>
     <!--[if lte IE 8]>
-    <script src="/components/webtales/rubedo-frontoffice/legacyFixes/respond.js"></script>
+    <script src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/respond.js"></script>
     <![endif]-->
     <!--library scripts-->
     <script src="/components/jquery/jquery/jquery-1.11.1.min.js"></script>
     <script src="/components/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
     <!--[if lte IE 9]>
-    <script src="/components/webtales/rubedo-frontoffice/legacyFixes/angular.js"></script>
-    <script src="/components/webtales/rubedo-frontoffice/legacyFixes/history.js"></script>
+    <script src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/angular.js"></script>
+    <script src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/history.js"></script>
     <![endif]-->
     <![if !lte IE 9]>
     <script src="/components/angular/angular.js/angular.js"></script>
@@ -82,7 +82,7 @@
     <script src="/components/ivpusic/angular-cookie/angular-cookie.min.js"></script>
     <script src="//s7.addthis.com/js/300/addthis_widget.js"></script>
     <script src="/components/stowball/jQuery-rwdImageMaps/jquery.rwdImageMaps.min.js"></script>
-    <script src="/components/webtales/rubedo-frontoffice/libraryOverrides/angular-google-map.js"></script>
+    <script src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/angular-google-map.js"></script>
     <script src="/components/mbostock/d3/d3.min.js"></script>
     <?php if ($this->activateMagic): ?>
         <script src="/components/fingerprintjs/fingerprint.js"></script>
@@ -90,11 +90,17 @@
     <?php if ($this->angularLocale): ?>
         <script src="/components/angular/angular.js/i18n/angular-locale_<?php echo $this->angularLocale; ?>.js"></script>
     <?php endif; ?>
+     <script type="text/javascript">
+        window.rubedoConfig={
+            siteTheme:"<?php echo $this->siteTheme; ?>"
+        };
+     </script>
+    <?php  ?>
     <!--frontoffice scripts-->
-    <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>
-    <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoFields/rubedoFields.js"></script>
-    <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedoBlocks/rubedoBlocks.js"></script>
-    <script src="/components/webtales/rubedo-frontoffice/src/modules/rubedo/rubedo.js"></script>
+    <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>
+    <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoFields/rubedoFields.js"></script>
+    <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoBlocks/rubedoBlocks.js"></script>
+    <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedo/rubedo.js"></script>
     <!--external resource scripts-->
     <?php foreach($this->siteResources['externalScripts'] as $externalScript): ?>
         <script src="<?php echo $externalScript['url']; ?>"></script>
@@ -112,10 +118,10 @@
 </head>
 <body>
     <snap-drawer ng-if="rubedo.current.user.rights.canEdit" class="rubedo-admin-drawer">
-        <ng-include src="'/components/webtales/rubedo-frontoffice/templates/admin/admin.html'"></ng-include>
+        <ng-include src="'/theme/<?php echo $this->siteTheme; ?>/templates/admin/admin.html'"></ng-include>
     </snap-drawer>
     <button ng-if="rubedo.current.user.rights.canEdit" ng-click="rubedo.toggleAdminPanel()" class="btn btn-default rubedo-admin-btn">
-        <img alt="Admin" title="Admin" src="/components/webtales/rubedo-frontoffice/img/salamander.png">
+        <img alt="Admin" title="Admin" src="/theme/<?php echo $this->siteTheme; ?>/img/salamander.png">
     </button>
     <snap-content snap-options="rubedo.snapOpts" class="rubedo-page-holder">
         <div ng-view></div>
