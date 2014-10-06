@@ -196,9 +196,11 @@ class IndexController extends AbstractActionController
             "internalScripts" => array()
         );
         $siteResources = !empty($this->_site['resources']) ? $this->_site['resources'] : $defaultResources;
+        $propagatedSiteTheme="default";
         if (isset($config['templates']['themes'][$this->_site['theme']])) {
             $theme = $config['templates']['themes'][$this->_site['theme']];
             $prepend = '/theme/' . $this->_site['theme'];
+            $propagatedSiteTheme=$this->_site['theme'];
             if (isset($theme['css'])) {
                 foreach ($theme['css'] as $css) {
                     $siteResources['internalStyles'][] = $prepend . $css;
@@ -213,7 +215,8 @@ class IndexController extends AbstractActionController
         $this->viewData = array(
             'siteResources' => $siteResources,
             'activateMagic' => (isset($config['rubedo_config']['activateMagic']) && ($config['rubedo_config']['activateMagic'] == "1")) ? true : false,
-            'angularLocale' => $lang
+            'angularLocale' => $lang,
+            'siteTheme' => $propagatedSiteTheme
         );
         $viewModel = new ViewModel($this->viewData);
         $viewModel->setTerminal(true);

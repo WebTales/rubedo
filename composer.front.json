@@ -28,7 +28,8 @@
         "lodash/lodash":"2.4.1",
         "angular-ui/angular-google-maps":"1.2.1",
         "ivpusic/angular-cookie":"v4.0.2",
-        "mbostock/d3":"3.4.11"
+        "mbostock/d3":"3.4.11",
+        "ded/script.js":"v2.5.7"
     },
     "require-dev": {},
     "repositories": [
@@ -239,6 +240,16 @@
                 "version": "3.4.11",
                 "dist": {
                     "url": "https://github.com/mbostock/d3/releases/download/v3.4.11/d3.zip",
+                    "type": "zip"
+                }
+            }
+        },{
+            "type": "package",
+            "package": {
+                "name": "ded/script.js",
+                "version": "v2.5.7",
+                "dist": {
+                    "url": "https://github.com/ded/script.js/archive/v2.5.7.zip",
                     "type": "zip"
                 }
             }
