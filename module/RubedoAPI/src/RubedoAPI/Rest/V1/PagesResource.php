@@ -79,6 +79,14 @@ class PagesResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setKey('site')
                             ->setDescription('Informations about the host')
+                    )
+                    ->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setDescription('Block types in the page')
+                            ->setKey('blockTypes')
+                            ->setFilter('string')
+                            ->setRequired()
+                            ->setMultivalued()
                     );
             });
         $this
@@ -170,12 +178,16 @@ class PagesResource extends AbstractResource
 
         $blocksFound = array_merge($mask['blocks'], $lastMatchedNode['blocks']);
         $blocks = array();
+        $blockTypes = array();
         foreach ($blocksFound as $block) {
             if (isset($block['blockData'])) {
                 $block = $block['blockData'];
             }
             if (!isset($block['orderValue'])) {
                 throw new APIEntityException(sprintf('Missing orderValue for block %1$s', $block['id']), 404);
+            }
+            if (!in_array($block['bType'], $blockTypes)) {
+                $blockTypes[] = $block['bType'];
             }
             $blocks[$block['parentCol']][] = $block;
         }
@@ -198,6 +210,7 @@ class PagesResource extends AbstractResource
             'page' => $this->outputPageMask($lastMatchedNode),
             'mask' => $this->outputMaskMask($mask),
             'breadcrumb' => $pages,
+            'blockTypes' => $blockTypes,
         );
         return $output;
     }
