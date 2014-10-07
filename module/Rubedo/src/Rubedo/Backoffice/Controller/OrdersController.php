@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2014, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2014 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Backoffice\Controller;
@@ -39,4 +39,62 @@ class OrdersController extends DataAccessController
         $this->_dataService = Manager::getService('Orders');
     }
 
+    public function exportAction()
+    {
+        $orders = $this->_dataService->getList();
+        $fileName = 'export_rubedo_orders_' . time() . '.csv';
+        $filePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName;
+        $csvResource = fopen($filePath, 'w+');
+        $csvHeader = array(
+            'Order number', 'Payment mean', 'Status', 'Price incl tax ', 'Price excl tax',
+            'Billing address 1', 'Billing address 2', 'Billing city', 'Billing postal code', 'Billing country', 'Billing region state',
+            'Shipping address 1', 'Shipping address 2', 'Shipping city', 'Shipping postal code', 'Shipping country', 'Shipping region state',
+            'Product name', 'Product subtitle', 'Product amount', 'Unit price incl tax', 'Unit price excl tax', 'Price incl tax', 'Price excl tax'
+        );
+        fputcsv($csvResource, $csvHeader, ';');
+        foreach($orders['data'] as $order) {
+            $billingA = &$order['billingAddress'];
+            $shippingA = &$order['shippingAddress'];
+            $product = array_shift($order['detailedCart']['cart']);
+            $firstLine = array(
+                $order['orderNumber'], $order['paymentMeans'], $order['status'], $order['finalTFPrice'], $order['finalTaxes'],
+                //Billing address
+                isset($billingA['address1'])?$billingA['address1']:'',
+                isset($billingA['address2'])?$billingA['address2']:'',
+                isset($billingA['city'])?$billingA['city']:'',
+                isset($billingA['postCode'])?$billingA['postCode']:'',
+                isset($billingA['country'])?$billingA['country']:'',
+                isset($billingA['regionState'])?$billingA['regionState']:'',
+                //Shipping address
+                isset($shippingA['address1'])?$shippingA['address1']:'',
+                isset($shippingA['address2'])?$shippingA['address2']:'',
+                isset($shippingA['city'])?$shippingA['city']:'',
+                isset($shippingA['postCode'])?$shippingA['postCode']:'',
+                isset($shippingA['country'])?$shippingA['country']:'',
+                isset($shippingA['regionState'])?$shippingA['regionState']:'',
+                $product['title'], $product['subtitle'], $product['amount'], $product['unitTaxedPrice'], $product['unitPrice'], $product['taxedPrice'], $product['price'],
+            );
+            fputcsv($csvResource, $firstLine, ';');
+            foreach ($order['detailedCart']['cart'] as $product) {
+                $line = array(
+                    $order['orderNumber'], '', '', '', '',
+                    '', '', '', '', '', '',
+                    '', '', '', '', '', '',
+                    $product['title'], $product['subtitle'], $product['amount'], $product['unitTaxedPrice'], $product['unitPrice'], $product['taxedPrice'], $product['price'],
+                );
+                fputcsv($csvResource, $line, ';');
+            }
+        }
+
+        $content = file_get_contents($filePath);
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-Type', 'text/csv');
+        $headers->addHeaderLine('Content-Disposition', "attachment; filename=\"$fileName\"");
+        $headers->addHeaderLine('Accept-Ranges', 'bytes');
+        $headers->addHeaderLine('Content-Length', strlen($content));
+
+        $response->setContent($content);
+        return $response;
+    }
 }

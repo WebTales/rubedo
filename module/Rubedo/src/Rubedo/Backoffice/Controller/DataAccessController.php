@@ -45,7 +45,7 @@ abstract class DataAccessController extends AbstractActionController
     /**
      * Data Access Service
      *
-     * @var IAbstractCollection
+     * @var \Rubedo\Interfaces\Collection\IAbstractCollection
      */
     protected $_dataService;
 
