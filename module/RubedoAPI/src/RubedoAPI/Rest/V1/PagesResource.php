@@ -195,7 +195,9 @@ class PagesResource extends AbstractResource
             $mainColumn = isset($mask['mainColumnId']) ? $mask['mainColumnId'] : null;
             if ($mainColumn) {
                 $blocks[$mainColumn] = array($this->getSingleBlock($content['id']));
-
+                if (!in_array("contentDetail", $blockTypes)) {
+                    $blockTypes[] = "contentDetail";
+                }
             }
         }
         $termColumn = (!empty($mainColumn))?$mainColumn:null;
