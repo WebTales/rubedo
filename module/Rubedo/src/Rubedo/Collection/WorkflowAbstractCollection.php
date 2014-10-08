@@ -163,14 +163,14 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null, $live = true, $ismagic = null, $fingerPrint=null)
+    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null, $live = true, $ismagic = null)
     {
         if ($live === true) {
             $this->_dataService->setLive();
         } else {
             $this->_dataService->setWorkspace();
         }
-        $returnArray = parent::getList($filters, $sort, $start, $limit, $ismagic, $fingerPrint);
+        $returnArray = parent::getList($filters, $sort, $start, $limit, $ismagic);
 
         return $returnArray;
     }

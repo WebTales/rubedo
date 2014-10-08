@@ -37,8 +37,9 @@ class UserRecommendations extends AbstractCollection
     {
     }
 
-    public function read($limit = 50, $fingerprint)
+    public function read($limit = 50)
     {
+        $fingerprint = Manager::getService("Session")->get("fingerprint");
         $pipeline = array();
         $pipeline[] = array(
             '$match' => array(
