@@ -110,7 +110,7 @@ abstract class AbstractCollection implements IAbstractCollection
      *            sort the list with mongo syntax
      * @return array
      */
-    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = 0, $limit = null, $ismagic = null)
+    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = 0, $limit = null, $ismagic = null, $fingerPrint= null)
     {
 
         // Add sort
@@ -137,7 +137,7 @@ abstract class AbstractCollection implements IAbstractCollection
 
         } else {
             // Geet all user recommendations sorted by score desc
-            $recList = Manager::getService('UserRecommendations')->read();
+            $recList = Manager::getService('UserRecommendations')->read(null, $fingerPrint);
 
             // If recommendations exists
             if ($recList['total'] > 0) {

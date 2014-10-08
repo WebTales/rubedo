@@ -206,7 +206,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      *            max number of items in the list
      * @return array:
      */
-    public function getOnlineList(IFilter $filters = null, $sort = null, $start = null, $limit = null, $ismagic = null)
+    public function getOnlineList(IFilter $filters = null, $sort = null, $start = null, $limit = null, $ismagic = null, $fingerPrint=null)
     {
         if (is_null($filters)) {
             $filters = Filter::factory();
@@ -214,7 +214,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $filters->addFilter(Filter::factory('Value')->setName('online')
             ->setValue(true));
 
-        $returnArray = $this->getList($filters, $sort, $start, $limit, Context::isLive(), $ismagic);
+        $returnArray = $this->getList($filters, $sort, $start, $limit, Context::isLive(), $ismagic, $fingerPrint);
 
         return $returnArray;
     }

@@ -161,9 +161,8 @@ class ContentsResource extends AbstractResource
             $ismagic = false;
             if (!empty($params['fingerprint'])) {
                 $ismagic = true;
-                $this->getSessionService()->set('fingerprint', $params['fingerprint']);
             }
-            $contentArray = $this->getContentList($filters, $this->setPaginationValues($params), $ismagic);
+            $contentArray = $this->getContentList($filters, $this->setPaginationValues($params), $ismagic, $params['fingerprint']);
             $nbItems = $contentArray['count'];
         }
         return [
@@ -308,10 +307,10 @@ class ContentsResource extends AbstractResource
      * @return array
      * @throws \RubedoAPI\Exceptions\APIEntityException
      */
-    protected function getContentList($filters, $pageData, $ismagic = false)
+    protected function getContentList($filters, $pageData, $ismagic = false, $fingerPrint= null)
     {
         $filters["sort"] = isset($filters["sort"]) ? $filters["sort"] : array();
-        $contentArray = $this->getContentsCollection()->getOnlineList($filters["filter"], $filters["sort"], $pageData['start'], $pageData['limit'], $ismagic);
+        $contentArray = $this->getContentsCollection()->getOnlineList($filters["filter"], $filters["sort"], $pageData['start'], $pageData['limit'], $ismagic, $fingerPrint);
         $contentArray['page'] = $pageData;
         if ($contentArray['count'] < $pageData['start']) {
             throw new APIEntityException('There is only ' . $contentArray['count'] . ' contents. Start parameter must be inferior of this value', 404);
