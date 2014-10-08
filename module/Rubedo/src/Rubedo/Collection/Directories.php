@@ -120,7 +120,7 @@ class Directories extends AbstractCollection implements IDirectories
         parent::__construct();
     }
 
-    public function readChild($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null)
+    public function readChild($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null, $allowVirtual = true)
     {
         if (!$parentId) {
             return array();
@@ -143,7 +143,7 @@ class Directories extends AbstractCollection implements IDirectories
                 $obj = $this->_addReadableProperty($obj);
             }
         }
-        if ($parentId == "root") {
+        if ($parentId == "root"&&$allowVirtual) {
             $result[] = $this->_virtualNotFiledDirectory;
         }
         return $result;
