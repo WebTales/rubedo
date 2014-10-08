@@ -37,8 +37,9 @@ class UserRecommendations extends AbstractCollection
     {
     }
 
-    public function read($limit = 50, $fingerprint)
+    public function read($fingerprint,$limit = 50)
     {
+
         $pipeline = array();
         $pipeline[] = array(
             '$match' => array(

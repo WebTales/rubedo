@@ -137,7 +137,7 @@ abstract class AbstractCollection implements IAbstractCollection
 
         } else {
             // Geet all user recommendations sorted by score desc
-            $recList = Manager::getService('UserRecommendations')->read(null, $fingerPrint);
+            $recList = Manager::getService('UserRecommendations')->read($fingerPrint);
 
             // If recommendations exists
             if ($recList['total'] > 0) {
