@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use WebTales\MongoFilters\Filter;
+use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Zend\View\Model\JsonModel;
@@ -117,10 +118,10 @@ class FoThemesController extends AbstractActionController
             $name = $this->params()->fromPost('name', 'default');
             $dirName = strtolower($name);
             $directoryToStore = $this->getTemplateDirectory($dirName);
-            $this->createTemplateIfNotExist($name);
+            $themeId=$this->createTemplateIfNotExist($name);
             foreach ($files as $file) {
                 $directory = $this->getVirtualPathId($file->getRealPath(), $directoryToStore);
-                $this->getOrCreateDam($file, $directory);
+                $this->getOrCreateDam($file, $directory,$themeId);
             }
 
             $result['success'] = true;
@@ -165,7 +166,7 @@ class FoThemesController extends AbstractActionController
         } catch (\Exception $e) {}
     }
 
-    protected function getOrCreateDam(\SplFileInfo $file, $directory)
+    protected function getOrCreateDam(\SplFileInfo $file, $directory,$themeId)
     {
         $mimeType = mime_content_type($file->getPathname());
         $fileToCreate = array(
@@ -193,6 +194,7 @@ class FoThemesController extends AbstractActionController
         if (empty($media)) {
             $media = array(
                 'title' => $file->getFileName(),
+                'themeId' => $themeId,
                 'directory' => $directory['id'],
                 'Content-Type' => $mimeType,
                 'originalFileId' => $mongoFile['id'],
@@ -220,15 +222,15 @@ class FoThemesController extends AbstractActionController
         $themesCollection = Manager::getService('Themes');
         $theme = $themesCollection->findByName($name);
         if (empty($theme)) {
-            $themesCollection->create(
+            $createdTheme=$themesCollection->create(
                 array(
                 'context' => 'front',
                 'text' => $name
-                ),
-                array (
-                    'w' => 0
                 )
             );
+            return ($createdTheme['data']["id"]);
+        } else {
+            return ($theme["id"]);
         }
     }
 

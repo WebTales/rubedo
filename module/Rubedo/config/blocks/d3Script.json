@@ -41,7 +41,21 @@
 
 			],
 			"avance":[
+                {
+                    "categorie":"Template",
+                    "champs":[
+                        {
+                            "type":"Rubedo.view.ACEField",
+                            "config":{
+                                "fieldLabel":"Custom template",
+                                "name":"customTemplate",
+                                "defaultTemplateUrl":"blocks/d3Script.html",
+                                "twigMode":false
 
+                            }
+                        }
+                    ]
+                }
 			]
 		},
 		"configBloc":{
