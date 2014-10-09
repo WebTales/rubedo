@@ -85,6 +85,8 @@ abstract class AbstractCollection implements IAbstractCollection
     protected static $_isFrontEnd = false;
 
     protected $_recList = array();
+    
+    protected $_sortedRecList = array();
 
     protected function _init()
     {
@@ -136,7 +138,7 @@ abstract class AbstractCollection implements IAbstractCollection
             $dataValues = $this->_dataService->read($filters);
 
         } else {
-            // Geet all user recommendations sorted by score desc
+            // Get all user recommendations sorted by score desc
             $recList = Manager::getService('UserRecommendations')->read($fingerPrint);
 
             // If recommendations exists
@@ -145,17 +147,26 @@ abstract class AbstractCollection implements IAbstractCollection
                 // recovers the list of recommended contents id
                 foreach ($recList['data'] as $value) {
                     $this->_recList[] = $value['id'];
+                    $this->_sortedRecList[$value['id']] = $value['score'];
                 }
 
                 // Add InUid filter to initial query to check if recommended contents are returned by original query
-                $filter = Filter::Factory('InUid', array('value' => $this->_recList));
-                $inFilters = Filter::factory();
-                $inFilters->addFilter($filter);
-                $inFilters->addFilter($filters);
+                $filter = Filter::Factory('InUid')->setValue($this->_recList);
+                $filters->addFilter($filter);
 
                 // Get unsorted recommended items
-                $recValues = $this->_dataService->read($inFilters);
+                $recValues = $this->_dataService->read($filters);
 
+                // Sort recommended items by score
+                usort($recValues['data'], function ($c1,$c2)
+                {
+                	$key1 = $this->_sortedRecList[$c1['id']];
+                	$key2 = $this->_sortedRecList[$c2['id']];
+                	 
+                	return ($key1 > $key2) ? 1 : -1;
+                
+                });
+                
                 // if there is some recommended items
                 $recNumber = $recValues['count'];
 
