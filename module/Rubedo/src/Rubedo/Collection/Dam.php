@@ -29,7 +29,7 @@ use WebTales\MongoFilters\Filter;
  */
 class Dam extends AbstractLocalizableCollection implements IDam
 {
-    protected static $nonLocalizableFields = array("Content-Type", "typeId", "taxonomy", "fileSize", "mainFileType", "target", "writeWorkspace", "directory", "readOnly", "originalFileId","loadOnLaunch");
+    protected static $nonLocalizableFields = array("Content-Type", "typeId", "taxonomy", "fileSize", "mainFileType", "target", "writeWorkspace", "directory", "readOnly", "originalFileId","loadOnLaunch","themeId");
     protected static $labelField = 'title';
     protected static $isLocaleFiltered = false;
 
