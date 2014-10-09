@@ -136,8 +136,12 @@ class ContentListController extends AbstractController
                     $contentTypeArray[(string) $dataType['id']] = Manager::getService('FrontOfficeTemplates')->getFileThemePath("/blocks/shortsingle/default.html.twig");
                 }
             }
+            $data = array();
             foreach ($contentArray['data'] as $vignette) {
                 $fields = $vignette['fields'];
+                if (isset($vignette['isProduct']) && $vignette['isProduct']) {
+                    $fields['product'] = $vignette['productProperties'];
+                }
                 $fields['title'] = $fields['text'];
                 unset($fields['text']);
                 $fields['id'] = (string) $vignette['id'];
