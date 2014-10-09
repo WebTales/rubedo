@@ -14,7 +14,21 @@
 			]
 		},
 		"configBloc":[
+            {
+                "categorie":"Template",
+                "champs":[
+                    {
+                        "type":"Rubedo.view.ACEField",
+                        "config":{
+                            "fieldLabel":"Custom template",
+                            "name":"customTemplate",
+                            "defaultTemplateUrl":"blocks/mailingListUnsuscribe.html",
+                            "twigMode":false
 
+                        }
+                    }
+                ]
+            }
 		]
 	},
 	"category":"#ext-gen1150#",

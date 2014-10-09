@@ -49,7 +49,21 @@
 				}
 			],
 			"avance":[
+                {
+                    "categorie":"Template",
+                    "champs":[
+                        {
+                            "type":"Rubedo.view.ACEField",
+                            "config":{
+                                "fieldLabel":"Custom template",
+                                "name":"customTemplate",
+                                "defaultTemplateUrl":"blocks/gallery.html",
+                                "twigMode":false
 
+                            }
+                        }
+                    ]
+                }
 			]
 		},
 		"configBloc":[
