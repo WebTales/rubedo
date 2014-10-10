@@ -117,8 +117,8 @@ class FoThemesController extends AbstractActionController
 
             $name = $this->params()->fromPost('name', 'default');
             $dirName = strtolower($name);
-            $directoryToStore = $this->getTemplateDirectory($dirName);
-            $themeId=$this->createTemplateIfNotExist($name);
+            $themeId = $this->createTemplateIfNotExist($name);
+            $directoryToStore = $this->getTemplateDirectory($dirName, $themeId);
             foreach ($files as $file) {
                 $directory = $this->getVirtualPathId($file->getRealPath(), $directoryToStore);
                 $this->getOrCreateDam($file, $directory,$themeId);
@@ -207,11 +207,11 @@ class FoThemesController extends AbstractActionController
         }
     }
 
-    protected function getTemplateDirectory($name)
+    protected function getTemplateDirectory($name, $themeId)
     {
         if (!isset($this->templateDirectory)) {
             $rootDirectory = $this->getRootDirectory();
-            $this->templateDirectory = $this->getDirectory($rootDirectory['id'], $name);
+            $this->templateDirectory = $this->getDirectory($rootDirectory['id'], $name, $themeId);
         }
         return $this->templateDirectory;
     }
@@ -238,11 +238,15 @@ class FoThemesController extends AbstractActionController
     {
         if (!isset($this->virtualDirectory)) {
             $this->virtualDirectory = $this->getDirectory('root', 'theme');
+            if ($this->virtualDirectory && !$this->virtualDirectory['expandable']) {
+                $this->virtualDirectory['expandable'] = true;
+                $this->directoriesService->update($this->virtualDirectory);
+            }
         }
         return $this->virtualDirectory;
     }
 
-    protected function getDirectory($parentId, $name)
+    protected function getDirectory($parentId, $name, $themeId = null)
     {
         $filters = Filter::factory('And');
         $filters
@@ -258,12 +262,16 @@ class FoThemesController extends AbstractActionController
             );
         $directory = $this->directoriesService->findOne($filters);
         if (empty($directory)) {
-            $directory = $this->directoriesService->create(array(
+            $toCreate = array(
                 'filePlan' => 'default',
                 'expandable' => true,
                 'text' => $name,
                 'parentId' => $parentId,
-            ))['data'];
+            );
+            if (!empty($themeId)) {
+                $toCreate['themeId'] = $themeId;
+            }
+            $directory = $this->directoriesService->create($toCreate)['data'];
         }
         return $directory;
     }

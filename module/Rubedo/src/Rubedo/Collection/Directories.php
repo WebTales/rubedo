@@ -155,12 +155,18 @@ class Directories extends AbstractCollection implements IDirectories
      * @see \Rubedo\Interfaces\IDataAccess::destroy
      * @param array $obj
      *            data object
-     * @param bool $options
+     * @param array $options
      *            should we wait for a server response
      * @return array
      */
     public function destroy(array $obj, $options = array())
     {
+        if (!empty($obj['themeId'])) {
+            /** @var Themes $themeService */
+            $themeService = Manager::getService('Themes');
+            $theme = $themeService->findById($obj['themeId']);
+            $themeService->destroy($theme);
+        }
         $deleteCond = Filter::factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
 
         $resultArray = $this->_dataService->customDelete($deleteCond);
