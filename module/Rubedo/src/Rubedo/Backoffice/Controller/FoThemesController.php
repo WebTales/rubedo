@@ -134,7 +134,7 @@ class FoThemesController extends AbstractActionController
 
     protected function getVirtualPathId($path, $rootDir) {
         $path = str_replace($this->unzipDir . DIRECTORY_SEPARATOR, '', $path);
-        $pathArray = explode('/', $path);
+        $pathArray = explode(DIRECTORY_SEPARATOR, $path);
         array_pop($pathArray);
         $currentPathArray = array();
         $lastOccurDir = $rootDir;
