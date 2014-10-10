@@ -339,7 +339,8 @@ class DataSearch extends DataAbstract implements IDataSearch
             'pager' => 0,
             'orderby' => '_score',
             'orderbyDirection' => 'desc',
-            'pagesize' => 25
+            'pagesize' => 25,
+        	'searchMode' => 'default'
         );
 
         // set default options
@@ -354,7 +355,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
 
         $this->_params ['query'] = strip_tags($this->_params ['query']);
-
+        
         // Build global filter
 
         $this->_setFilter = false;
@@ -979,19 +980,32 @@ class DataSearch extends DataAbstract implements IDataSearch
                 break;
         }
 
-        // Get resultset
-        if ($option!='geo') {
-        	
-        	$elasticaResultSet = $search->search($elasticaQuery);
-        	
-        } else {
+        // For geosearch dynamically set searchMode depending on the number of results
+        if ($option=='geo') {
         	$noResults = $search->count($elasticaQuery,false);
-        	
-        	if ($noResults > 1000) {
-        		$elasticaResultSet = $search->count($elasticaQuery,true);
+        	if ($noResults > $this->_params['limit']) {
+        		$this->_params['searchMode'] = 'aggregate';
         	} else {
-        		$elasticaResultSet = $search->search($elasticaQuery);
+        		$this->_params['searchMode'] = 'default';
         	}
+        	 
+        }
+        
+        // Get resultset
+        switch ($this->_params['searchMode']) {
+        	case 'default':
+        		$elasticaResultSet = $search->search($elasticaQuery);
+        		break;
+        	case 'aggregate':
+        		$elasticaResultSet = $search->count($elasticaQuery,true);
+        		break;
+        	case 'count':
+        		$elasticaResultSet = $search->count($elasticaQuery,false);
+        		break;
+        }
+        
+        // For geosearch get aggregation buckets
+        if ($option=='geo') {
         	
         	$result ['Aggregations'] = $elasticaResultSet->getAggregation("agf")['hash'];
         	
