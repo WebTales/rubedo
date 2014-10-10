@@ -265,6 +265,26 @@ class Directories extends AbstractCollection implements IDirectories
 
     public function create(array $obj, $options = array())
     {
+        if (!empty($obj['parentId']) && $obj['parentId'] != 'root') {
+            $parent = $this->findById($obj['parentId']);
+            if ($parent['text'] == 'theme' && $parent['parentId'] == 'root') {
+                /** @var \Rubedo\Collection\Themes $themesCollection */
+                $themesCollection = Manager::getService('Themes');
+                $theme = $themesCollection->findByName($obj['text']);
+                if (empty($theme)) {
+                    $theme = $themesCollection->create(
+                        array(
+                            'context' => 'front',
+                            'text' => $obj['text']
+                        )
+                    )['data'];
+                }
+                $obj['text'] = strtolower($obj['text']);
+                if (empty($obj['themeId']) && !empty($theme['id'])) {
+                    $obj['themeId'] = $theme['id'];
+                }
+            }
+        }
         $obj = $this->_initContent($obj);
         $result = parent::create($obj, $options);
         return $result;
