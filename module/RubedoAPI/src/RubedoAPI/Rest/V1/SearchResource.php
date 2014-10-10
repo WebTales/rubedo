@@ -45,7 +45,7 @@ class SearchResource extends AbstractResource
         parent::__construct();
         $this->searchOption = 'all';
         $this->searchParamsArray = array('orderby', 'orderbyDirection', 'query', 'objectType', 'type', 'damType', 'userType', 'author',
-            'userName', 'lastupdatetime', 'start', 'limit');
+            'userName', 'lastupdatetime', 'start', 'limit','searchMode');
         $this
             ->definition
             ->setName('Search')

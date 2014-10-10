@@ -981,7 +981,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
 
         // For geosearch dynamically set searchMode depending on the number of results
-        if ($option=='geo') {
+        if ($option=='geo' && self::$_isFrontEnd) {
         	$noResults = $search->count($elasticaQuery,false);
         	if ($noResults > $this->_params['limit']) {
         		$this->_params['searchMode'] = 'aggregate';
@@ -990,7 +990,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         	}
         	 
         }
-        
+
         // Get resultset
         switch ($this->_params['searchMode']) {
         	case 'default':
