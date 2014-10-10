@@ -173,6 +173,11 @@ class SearchResource extends AbstractResource
                             ->setDescription('How much contents to return')
                             ->setFilter('int')
                     )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('searchMode')
+                            ->setDescription('Search mode : default, count or aggregate')
+                    )
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('results')
