@@ -18,6 +18,7 @@ namespace Rubedo\Frontoffice\Controller;
 
 use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -196,11 +197,49 @@ class IndexController extends AbstractActionController
             "internalScripts" => array()
         );
         $siteResources = !empty($this->_site['resources']) ? $this->_site['resources'] : $defaultResources;
+        $theme = $this->_site['theme'];
+        /** @var \Rubedo\Collection\Themes $themesService */
+        $themesService = Manager::getService('Themes');
+        $themeObj = $themesService->findByName($theme);
+        if ($themeObj) {
+            /** @var \Rubedo\Collection\DAM $DAMService */
+            $DAMService = Manager::getService('DAM');
+            $filters = Filter::factory()
+                ->addFilter(
+                    Filter::factory('Value')
+                        ->setName('loadOnLaunch')
+                        ->setValue(true)
+                )
+                ->addFilter(
+                    Filter::factory('Value')
+                        ->setName('themeId')
+                        ->setValue($themeObj['id'])
+                )
+                ->addFilter(
+                    Filter::factory('OperatorToValue')
+                        ->setName('title')
+                        ->setOperator('$regex')
+                        ->setValue('.+(css|js)$')
+                );
+            $themeFilesToLoad = $DAMService->getList($filters)['data'];
+            foreach($themeFilesToLoad as &$fileToLoad) {
+                $themeFile = '/'
+                    . implode('/', $this->discoverDirNames(array(), $fileToLoad['directory']))
+                    . '/' . $fileToLoad['title'];
+                $extension = substr(strrchr($themeFile, '.'), 1);
+                if ($extension == 'css') {
+                    $siteResources['internalStyles'][] = $themeFile;
+                } elseif ($extension == 'js') {
+                    $siteResources['internalScripts'][] = $themeFile;
+                }
+            }
+        }
+        $themeName = strtolower($theme);
         $propagatedSiteTheme="default";
-        if (isset($config['templates']['themes'][$this->_site['theme']])) {
-            $theme = $config['templates']['themes'][$this->_site['theme']];
-            $prepend = '/theme/' . $this->_site['theme'];
-            $propagatedSiteTheme=$this->_site['theme'];
+        if (isset($config['templates']['themes'][$themeName])) {
+            $theme = $config['templates']['themes'][$themeName];
+            $prepend = '/theme/' . $themeName;
+            $propagatedSiteTheme = $themeName;
             if (isset($theme['css'])) {
                 foreach ($theme['css'] as $css) {
                     $siteResources['internalStyles'][] = $prepend . $css;
@@ -222,5 +261,17 @@ class IndexController extends AbstractActionController
         $viewModel->setTerminal(true);
 
         return $viewModel;
+    }
+    function discoverDirNames($dirs, $nextDir) {
+        if ($nextDir === 'root') {
+            return $dirs;
+        }
+        /** @var \Rubedo\Collection\Directories $dirService */
+        $dirService = Manager::getService('Directories');
+        $directory = $dirService->findById($nextDir);
+        if ($directory) {
+            array_unshift($dirs,$directory['text']);
+        }
+        return $this->discoverDirNames($dirs, $directory['parentId']);
     }
 }

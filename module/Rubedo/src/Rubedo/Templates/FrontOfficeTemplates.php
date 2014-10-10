@@ -477,7 +477,6 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $customThemesArray = $customThemesArray['data'];
         foreach ($customThemesArray as &$value) {
             $value['label'] = $value['text'];
-            $value['text'] = strtolower($value['text']);
             $themeInfosArray[] = $value;
         }
         
