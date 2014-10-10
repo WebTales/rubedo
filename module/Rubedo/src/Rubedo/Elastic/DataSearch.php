@@ -985,11 +985,13 @@ class DataSearch extends DataAbstract implements IDataSearch
         	$elasticaResultSet = $search->search($elasticaQuery);
         	
         } else {
-        	//if ($geoPrecision < 7) {
-        	//	$elasticaResultSet = $search->count($elasticaQuery,true);
-        	//} else {
+        	$noResults = $search->count($elasticaQuery,false);
+        	
+        	if ($noResults > 1000) {
+        		$elasticaResultSet = $search->count($elasticaQuery,true);
+        	} else {
         		$elasticaResultSet = $search->search($elasticaQuery);
-        	//}
+        	}
         	
         	$result ['Aggregations'] = $elasticaResultSet->getAggregation("agf")['hash'];
         	
