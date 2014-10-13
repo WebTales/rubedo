@@ -168,7 +168,19 @@ class FoThemesController extends AbstractActionController
 
     protected function getOrCreateDam(\SplFileInfo $file, $directory,$themeId)
     {
-        $mimeType = mime_content_type($file->getPathname());
+
+        $extension = substr(strchr($file->getFilename(), '.'), 1);
+        switch ($extension) {
+            case 'css':
+                $mimeType = 'text/css';
+                break;
+            case 'js':
+                $mimeType = 'text/js';
+                break;
+            default:
+                $mimeType = mime_content_type($file->getPathname());
+                break;
+        }
         $fileToCreate = array(
             'serverFilename' => $file->getPathname(),
             'text' => $file->getFilename(),
