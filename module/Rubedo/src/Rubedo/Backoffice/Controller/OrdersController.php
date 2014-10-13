@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Controller providing CRUD API for the Orders JSON
@@ -41,7 +42,23 @@ class OrdersController extends DataAccessController
 
     public function exportAction()
     {
-        $orders = $this->_dataService->getList();
+        $params = $this->params()->fromQuery();
+        $filters = Filter::factory();
+        if (!empty($params['startDate'])) {
+            $filters->addFilter(
+                Filter::factory('OperatorTovalue')->setName('createTime')
+                    ->setOperator('$gte')
+                    ->setValue((int)$params['startDate'])
+            );
+        }
+        if (!empty($params['endDate'])) {
+            $filters->addFilter(
+                Filter::factory('OperatorTovalue')->setName('createTime')
+                    ->setOperator('$lte')
+                    ->setValue((int)$params['endDate'])
+            );
+        }
+        $orders = $this->_dataService->getList($filters);
         $fileName = 'export_rubedo_orders_' . time() . '.csv';
         $filePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName;
         $csvResource = fopen($filePath, 'w+');
