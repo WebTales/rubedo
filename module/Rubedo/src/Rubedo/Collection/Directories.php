@@ -270,7 +270,7 @@ class Directories extends AbstractCollection implements IDirectories
             if ($parent['text'] == 'theme' && $parent['parentId'] == 'root') {
                 /** @var \Rubedo\Collection\Themes $themesCollection */
                 $themesCollection = Manager::getService('Themes');
-                $theme = $themesCollection->findByName($obj['text']);
+                $theme = $themesCollection->findById($obj['themeId']);
                 if (empty($theme)) {
                     $theme = $themesCollection->create(
                         array(
