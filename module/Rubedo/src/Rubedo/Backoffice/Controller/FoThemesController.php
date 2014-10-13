@@ -175,7 +175,7 @@ class FoThemesController extends AbstractActionController
                 $mimeType = 'text/css';
                 break;
             case 'js':
-                $mimeType = 'text/js';
+                $mimeType = 'text/javascript';
                 break;
             default:
                 $mimeType = mime_content_type($file->getPathname());
