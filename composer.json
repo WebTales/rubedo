@@ -13,7 +13,7 @@
 		"ezyang/htmlpurifier": "~4.6",
 		"zendframework/zendframework": "~2.3",
 		"zendframework/zendservice-flickr":"dev-master",
-		"alb/oembed": "1.1.*",
+		"alb/oembed": "dev-master",
 		"swiftmailer/swiftmailer": "~5.1",
 		"phing/phing": "~2.7",
 		"leafo/lessphp": "v0.4.0",
@@ -34,7 +34,11 @@
 		{
 			"type": "vcs",
 			"url": "git://github.com/WebTales/MongoFilters.git"
-		}
+		},
+        {
+            "type": "vcs",
+            "url": "git://github.com/Nainterceptor/alb-oembed.git"
+        }
 	],
 	"autoload": {
         "classmap": ["module/Rubedo/src/Rubedo"]
