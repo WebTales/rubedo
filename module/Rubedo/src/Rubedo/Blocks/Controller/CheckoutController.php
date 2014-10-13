@@ -360,6 +360,7 @@ class CheckoutController extends AbstractController
 
     public function xhrGetShippingOptionsAction()
     {
+        $this->init();
         $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
         $currentChoice = $this->params()->fromPost("current-choice", "");
         if (!$currentUser) {
