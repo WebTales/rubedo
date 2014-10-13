@@ -393,6 +393,7 @@ class CheckoutController extends AbstractController
 
     public function xhrGetSummaryAction()
     {
+        $this->init();
         $currentUser = Manager::getService("CurrentUser")->getCurrentUser();
         $currentChoice = $this->params()->fromPost("current-choice", "");
         $comments = $this->params()->fromPost("comments", "");

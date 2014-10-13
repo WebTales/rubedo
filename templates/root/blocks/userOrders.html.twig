@@ -18,7 +18,7 @@
                 <td>{{ item.hrDate }}</td>
                 <td>{{ item.finalPrice|number_format(2) }} €</td>
                 <td>{{ item.shipper.name }}</td>
-                <td>{{ item.paymentMeans }}</td>
+                <td>{{ item.paymentMeansLabel }}</td>
                 <td>{{ item.status }}</td>
                 {% if orderDetailPage %}
                     <td><a href="{{ orderDetailPageUrl }}?order={{ item.orderNumber }}" ><button class="btn btn-primary"><i class="icon-search icon-chevron-right icon-white"></i> {{ 'Blocks.UserOrders.ViewDetails'|fotrans }}</button></a></td>

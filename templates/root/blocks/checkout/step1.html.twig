@@ -3,8 +3,8 @@
         <div class="span12">
             <div style="text-align:center">
                 <p>{{ 'Blocks.Checkout.Step1.CurrentlyLogged'|fotrans({'%user%': currentUser.name}) }}</p>
-                <button onclick="checkoutLoggout();return false;" class="btn btn-primary">Log Out</button>
-                <button class="btn btn-primary" onclick="setCheckoutStep(2);return false;">Continue</button>
+                <button onclick="checkoutLoggout();return false;" class="btn btn-primary">{{ 'Blocks.Checkout.Button.LogOut' | fotrans }}</button>
+                <button class="btn btn-primary" onclick="setCheckoutStep(2);return false;">{{ 'Blocks.Checkout.Button.Continue' | fotrans }}</button>
             </div>
         </div>
     </div>
@@ -14,7 +14,7 @@
             <h4 class="text-center">{{ 'Blocks.Checkout.Step1.CreateAccount'|fotrans }}</h4>
             <div class="editable" id="{{ introContentId }}_body">{{ introContentText|cleanHtml }}</div>
             <div style="text-align:center">
-                <button class="btn btn-primary" onclick="setCheckoutStep(2);return false;">Continue</button>
+                <button class="btn btn-primary" onclick="setCheckoutStep(2);return false;">{{ 'Blocks.Checkout.Button.Continue' | fotrans }}</button>
             </div>
         </div>
         <div class="span6">

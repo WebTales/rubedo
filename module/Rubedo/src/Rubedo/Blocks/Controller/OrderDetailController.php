@@ -49,6 +49,9 @@ class OrderDetailController extends AbstractController
             $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/genericError.html.twig");
             return $this->_sendResponse($output, $template);
         }
+        $paymentMeansService = Manager::getService("PaymentConfigs");
+        $paymentMeansConfig=$paymentMeansService->getConfigForPM($order['paymentMeans']);
+        $order['paymentMeansLabel'] = $paymentMeansConfig['data']['displayName'];
         $output['order']=$order;
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/orderDetail.html.twig");
         $css = array();

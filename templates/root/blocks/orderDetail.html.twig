@@ -112,7 +112,7 @@
 
     <h4>{{ 'Blocks.OrderDetails.Payment'|fotrans }}</h4>
     <ul class="unstyled">
-        <li><strong>{{ 'Blocks.OrderDetails.Payment.Means'|fotrans }}</strong> : {{ order.paymentMeans }}</li>
+        <li><strong>{{ 'Blocks.OrderDetails.Payment.Means'|fotrans }}</strong> : {{ order.paymentMeansLabel }}</li>
         <li><strong>{{ 'Blocks.OrderDetails.Payment.Status'|fotrans }}</strong> : {{ order.status }}</li>
         {% if order.billingAddress.vatEin is not empty %}
             <li><strong>{{ 'Blocks.OrderDetails.Payment.VatEin' }}</strong> : {{ order.billingAddress.vatEin }}</li>

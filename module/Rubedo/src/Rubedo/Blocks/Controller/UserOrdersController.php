@@ -40,10 +40,13 @@ class UserOrdersController extends AbstractController
         }
         $filter=Filter::factory()->addFilter(Filter::factory('Value')->setName('userId')->setValue($currentUser['id']));
         $orders = Manager::getService("Orders")->getList($filter, array(array('property' => 'createTime', 'direction' => 'desc')));
+        $paymentMeansService = Manager::getService("PaymentConfigs");
         $output['orders']=$orders['data'];
         $dateService=Manager::getService("Date");
         foreach($output['orders'] as &$value){
             $value['hrDate']=$dateService->convertToYmd($value['createTime']);
+            $paymentMeansConfig=$paymentMeansService->getConfigForPM($value['paymentMeans']);
+            $value['paymentMeansLabel'] = $paymentMeansConfig['data']['displayName'];
         }
         $output['orderDetailPage'] = isset($blockConfig['orderDetailPage']) ? $blockConfig['orderDetailPage'] : false;
         if ($output["orderDetailPage"]) {
