@@ -57,6 +57,15 @@ class CheckoutController extends AbstractController
             $order = array();
             $items = 0;
             foreach ($myCart as $value) {
+                $product = Manager::getService('Contents')->findById($value['productId'], true, false);
+                if (
+                    $product
+                    && isset($product['productProperties'])
+                    && isset($product['productProperties']['freeShipping'])
+                    && filter_var($product['productProperties']['freeShipping'], FILTER_VALIDATE_BOOLEAN)
+                ) {
+                    continue;
+                }
                 $items = $items + $value['amount'];
             }
             $myShippers = Manager::getService("Shippers")->getApplicableShippers($currentUser['shippingAddress']['country'], $items);
@@ -373,6 +382,15 @@ class CheckoutController extends AbstractController
             $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
             $items = 0;
             foreach ($myCart as $value) {
+                $product = Manager::getService('Contents')->findById($value['productId'], true, false);
+                if (
+                    $product
+                    && isset($product['productProperties'])
+                    && isset($product['productProperties']['freeShipping'])
+                    && filter_var($product['productProperties']['freeShipping'], FILTER_VALIDATE_BOOLEAN)
+                ) {
+                    continue;
+                }
                 $items = $items + $value['amount'];
             }
             $myShippers = Manager::getService("Shippers")->getApplicableShippers($currentUser['shippingAddress']['country'], $items);
@@ -407,6 +425,15 @@ class CheckoutController extends AbstractController
             $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
             $items = 0;
             foreach ($myCart as $value) {
+                $product = Manager::getService('Contents')->findById($value['productId'], true, false);
+                if (
+                    $product
+                    && isset($product['productProperties'])
+                    && isset($product['productProperties']['freeShipping'])
+                    && filter_var($product['productProperties']['freeShipping'], FILTER_VALIDATE_BOOLEAN)
+                ) {
+                    continue;
+                }
                 $items = $items + $value['amount'];
             }
             $myShippers = Manager::getService("Shippers")->getApplicableShippers($currentUser['shippingAddress']['country'], $items);
