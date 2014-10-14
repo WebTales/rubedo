@@ -6,6 +6,10 @@
             <h3>{{ 'Blocks.OrderDetails.OrderNumber'|fotrans({'%order%':order.orderNumber }) }}</h3>
         </div>
         <div class="span4 text-right"><time>{{ order.createTime|date }}</time></div>
+        {% if order.billDocument %}
+            <div class="span4 text-right"><strong><a href="{{ mediaUrl(order.billDocument) }}"
+                                                     target="_blank">{{ 'Blocks.OrderDetails.OrderBill'|fotrans }}</a></strong></div>
+        {% endif %}
     </div>
 
     <div class="row-fluid">
@@ -116,9 +120,6 @@
         <li><strong>{{ 'Blocks.OrderDetails.Payment.Status'|fotrans }}</strong> : {{ order.status }}</li>
         {% if order.billingAddress.vatEin is not empty %}
             <li><strong>{{ 'Blocks.OrderDetails.Payment.VatEin' }}</strong> : {{ order.billingAddress.vatEin }}</li>
-        {% endif %}
-        {% if order.billDocument %}
-            <li><strong><a href="{{ mediaUrl(order.billDocument) }}" target="_blank">{{ 'Blocks.OrderDetails.OrderBill'|fotrans }}</a></strong></li>
         {% endif %}
     </ul>
 {% endblock %}
