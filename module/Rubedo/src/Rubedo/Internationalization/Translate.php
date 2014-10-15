@@ -120,16 +120,16 @@ class Translate implements ITranslate
      * @param string $defaultLabel
      * @return string
      */
-    public function translateInWorkingLanguage ($code, $defaultLabel = '')
+    public function translateInWorkingLanguage ($code, $defaultLabel = '', $placeholders = array())
     {
         $language = \Rubedo\Collection\AbstractLocalizableCollection::getWorkingLocale();
         if ($language === null) {
             $language = self::$defaultLanguage;
         }
     
-        $translatedValue = $this->getTranslation($code, $language);
+        $translatedValue = $this->getTranslation($code, $language, null, $placeholders);
         if ($translatedValue == null) {
-            $translatedValue = $this->getTranslation($code, 'en');
+            $translatedValue = $this->getTranslation($code, 'en', null, $placeholders);
         }
     
         if ($translatedValue == null) {

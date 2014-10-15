@@ -179,6 +179,23 @@ class Module
             'logCollectionEvent'
         ), 1);
 
+        /** @var \Rubedo\Collection\Orders $ordersCollection */
+        $ordersCollection = Manager::getService('Orders');
+        $eventManager->attach(array(
+            $ordersCollection::POST_CREATE_ORDERS,
+            $ordersCollection::POST_UPDATE_ORDERS,
+        ), array(
+            $ordersCollection,
+            'sendCustomerNotification'
+        ), 1);
+
+        $eventManager->attach(array(
+            $ordersCollection::POST_CREATE_ORDERS,
+        ), array(
+            $ordersCollection,
+            'sendShopNotification'
+        ), 1);
+
         $wasFiltered = AbstractCollection::disableUserFilter();
         $contentsService = Manager::getService('Contents');
         AbstractCollection::disableUserFilter($wasFiltered);
