@@ -142,7 +142,7 @@ class ShoppingCartController extends AbstractController
             $myContent=$contentsService->findById($value["productId"], true, false);
             if ($myContent){
                 $value['title']=$myContent['text'];
-                $value['product'] = &$myContent;
+                $value['product'] = $myContent;
                 $value['subtitle']="";
                 $price=0;
                 $value['unitPrice'] = $myContent["productProperties"]['basePrice'];
