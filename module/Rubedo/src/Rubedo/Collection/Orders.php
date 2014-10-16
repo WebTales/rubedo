@@ -129,6 +129,11 @@ class Orders extends AbstractCollection
         $usersCollection = Manager::getService('Users');
         $user = $usersCollection->findById($data['userId']);
         $data['user'] = &$user;
+
+        /** @var Sites $usersCollection */
+        $sitesCollection = Manager::getService('Sites');
+        $data['site'] = $sitesCollection->findById($data['siteId']);
+
         /** @var \Rubedo\Mail\Mailer $mailer */
         $mailer = Manager::getService('Mailer');
 

@@ -1,59 +1,49 @@
 {{ 'Notification.Orders.ShopNotification.Hello'|fotrans }} <br />
-
 {{ 'Notification.Orders.ShopNotification.Body'|fotrans }}<br />
 
-<table>
-    <tr>
-        <th>{{ 'Blocks.OrderDetails.BillingAddress'|fotrans }}</th>
-        <th>{{ 'Blocks.OrderDetails.ShippingAddress'|fotrans }}</th>
-    </tr>
-    <tr>
-        <td>
-            {% if billingAddress.company is not empty  %}
-                <strong>{{ billingAddress.company }}</strong><br />
-            {% endif %}
-            {% if billingAddress.attention is not empty %}
-                <strong>{{ billingAddress.attention }}</strong><br />
-            {% endif %}
-            {% if billingAddress.address1 is not empty %}
-                {{ billingAddress.address1 }}<br />
-            {% endif %}
-            {% if billingAddress.address2 is not empty %}
-                {{ billingAddress.address2 }}<br />
-            {% endif %}
-            {% if billingAddress.city is not empty or billingAddress.postCode is not empty %}
-                {{ billingAddress.postCode }} {{ billingAddress.city }}<br />
-            {% endif %}
-            {% if billingAddress.regionState is not empty and billingAddress.country is not empty %}
-                {{ billingAddress.regionState }}, {{ billingAddress.country|getCountryName }}<br />
-            {% elseif billingAddress.regionState is not empty or billingAddress.country is not empty %}
-                {{ billingAddress.regionState }} {{ billingAddress.country|getCountryName }}<br />
-            {% endif %}
-        </td>
-        <td>
-            {% if shippingAddress.company is not empty  %}
-                <strong>{{ shippingAddress.company }}</strong><br />
-            {% endif %}
-            {% if shippingAddress.attention is not empty %}
-                <strong>{{ shippingAddress.attention }}</strong><br />
-            {% endif %}
-            {% if shippingAddress.address1 is not empty %}
-                {{ shippingAddress.address1 }}<br />
-            {% endif %}
-            {% if shippingAddress.address2 is not empty %}
-                {{ shippingAddress.address2 }}<br />
-            {% endif %}
-            {% if shippingAddress.city is not empty or shippingAddress.postCode is not empty %}
-                {{ shippingAddress.postCode }} {{ shippingAddress.city }}<br />
-            {% endif %}
-            {% if shippingAddress.regionState is not empty and shippingAddress.country is not empty %}
-                {{ shippingAddress.regionState }}, {{ shippingAddress.country|getCountryName }}<br />
-            {% elseif shippingAddress.regionState is not empty or shippingAddress.country is not empty %}
-                {{ shippingAddress.regionState }} {{ shippingAddress.country|getCountryName }}<br />
-            {% endif %}
-        </td>
-    </tr>
-</table>
+<strong>{{ 'Blocks.OrderDetails.BillingAddress'|fotrans }}</strong><br />
+{% if billingAddress.company is not empty  %}
+    <strong>{{ billingAddress.company }}</strong><br />
+{% endif %}
+{% if billingAddress.attention is not empty %}
+    <strong>{{ billingAddress.attention }}</strong><br />
+{% endif %}
+{% if billingAddress.address1 is not empty %}
+    {{ billingAddress.address1 }}<br />
+{% endif %}
+{% if billingAddress.address2 is not empty %}
+    {{ billingAddress.address2 }}<br />
+{% endif %}
+{% if billingAddress.city is not empty or billingAddress.postCode is not empty %}
+    {{ billingAddress.postCode }} {{ billingAddress.city }}<br />
+{% endif %}
+{% if billingAddress.regionState is not empty and billingAddress.country is not empty %}
+    {{ billingAddress.regionState }}, {{ billingAddress.country|getCountryName }}<br />
+{% elseif billingAddress.regionState is not empty or billingAddress.country is not empty %}
+    {{ billingAddress.regionState }} {{ billingAddress.country|getCountryName }}<br />
+{% endif %}
+<br/>
+<strong>{{ 'Blocks.OrderDetails.ShippingAddress'|fotrans }}</strong><br />
+{% if shippingAddress.company is not empty  %}
+    <strong>{{ shippingAddress.company }}</strong><br />
+{% endif %}
+{% if shippingAddress.attention is not empty %}
+    <strong>{{ shippingAddress.attention }}</strong><br />
+{% endif %}
+{% if shippingAddress.address1 is not empty %}
+    {{ shippingAddress.address1 }}<br />
+{% endif %}
+{% if shippingAddress.address2 is not empty %}
+    {{ shippingAddress.address2 }}<br />
+{% endif %}
+{% if shippingAddress.city is not empty or shippingAddress.postCode is not empty %}
+    {{ shippingAddress.postCode }} {{ shippingAddress.city }}<br />
+{% endif %}
+{% if shippingAddress.regionState is not empty and shippingAddress.country is not empty %}
+    {{ shippingAddress.regionState }}, {{ shippingAddress.country|getCountryName }}<br />
+{% elseif shippingAddress.regionState is not empty or shippingAddress.country is not empty %}
+    {{ shippingAddress.regionState }} {{ shippingAddress.country|getCountryName }}<br />
+{% endif %}
 <br />
 
 <table>
