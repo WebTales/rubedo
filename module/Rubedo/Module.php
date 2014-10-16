@@ -183,7 +183,7 @@ class Module
         $ordersCollection = Manager::getService('Orders');
         $eventManager->attach(array(
             $ordersCollection::POST_CREATE_ORDERS,
-            $ordersCollection::POST_UPDATE_ORDERS,
+            $ordersCollection::POST_UPDATE_STATUS_ORDERS,
         ), array(
             $ordersCollection,
             'sendCustomerNotification'

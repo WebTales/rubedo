@@ -29,7 +29,7 @@ use Rubedo\Services\Manager;
 class Orders extends AbstractCollection
 {
     const POST_CREATE_ORDERS = 'rubedo_orders_create_post';
-    const POST_UPDATE_ORDERS = 'rubedo_orders_update_post';
+    const POST_UPDATE_STATUS_ORDERS = 'rubedo_orders_status_update_post';
 
     public function __construct()
     {
@@ -114,9 +114,10 @@ class Orders extends AbstractCollection
 
     public function update(array $obj, $options = array())
     {
-        $result = parent::create($obj, $options);
-        if ($result !== null) {
-            Events::getEventManager()->trigger(self::POST_UPDATE_ORDERS, $this, $result);
+        $beforeUpdate = $this->findById($obj['id']); //Not greedy if object cache is correctly used
+        $result = parent::update($obj, $options);
+        if ($result !== null && $beforeUpdate['status'] != $result['data']['status']) {
+            Events::getEventManager()->trigger(self::POST_UPDATE_STATUS_ORDERS, $this, $result);
         }
         return $result;
     }
@@ -124,9 +125,6 @@ class Orders extends AbstractCollection
     public function sendCustomerNotification(\Zend\EventManager\Event $event)
     {
         $data = $event->getParam('data');
-        if ($event->getName() === self::POST_CREATE_ORDERS && $data['status'] != 'pendingPayment') {
-            return false;
-        }
         /** @var Users $usersCollection */
         $usersCollection = Manager::getService('Users');
         $user = $usersCollection->findById($data['userId']);
