@@ -81,7 +81,12 @@ class EmailsController extends DataAccessController
         $to = array();
         $allSendResult = true;
         $count = 0;
+        $badEmails = array();
         foreach ($users['data'] as $user) {
+            if (!$this->validEmailAddress($user['email'])) {
+                $badEmails[] = $user['email'];
+                continue;
+            }
             $index = (int) floor($count++/static::NUM_BY_MAIL);
             $to[$index][$user['email']] = ($user['name']) ? : $user['login'];
         }
@@ -104,6 +109,12 @@ class EmailsController extends DataAccessController
             }
         }
 
-        return new JsonModel(array('success' => $allSendResult));
+        return new JsonModel(array('success' => $allSendResult, 'badEmails' => $badEmails));
+    }
+    function validEmailAddress($mail)
+    {
+        $user = '[a-zA-Z0-9_\-\.\+\^!#\$%&*+\/\=\?\`\|\{\}~\']+';
+        $domain = '(?:(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.?)+';
+        return preg_match("/^$user@$domain$/", $mail);
     }
 }
