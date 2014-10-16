@@ -31,11 +31,11 @@ class UsersResource extends AbstractResource
     /**
      * @var array
      */
-    protected $toExtractFromFields = array('name', 'login', 'email', 'password');
+    protected $toExtractFromFields = array('name', 'login', 'email', 'password', 'photo');
     /**
      * @var array
      */
-    protected $toInjectIntoFields = array('name', 'email');
+    protected $toInjectIntoFields = array('name', 'email', 'photo');
 
     /**
      * {@inheritdoc}
