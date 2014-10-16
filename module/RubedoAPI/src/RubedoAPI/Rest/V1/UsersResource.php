@@ -62,6 +62,9 @@ class UsersResource extends AbstractResource
         foreach ($this->toInjectIntoFields as $fieldToInject) {
             $user['fields'][$fieldToInject] = $user[$fieldToInject];
         }
+        if (!empty($user['fields']['photo'])){
+            $user['photoUrl']=$this->getUrlAPIService()->userAvatar($user['id'], 100, 100, 'boxed');
+        }
         $user = array_intersect_key(
             $user,
             array_flip(
@@ -74,6 +77,7 @@ class UsersResource extends AbstractResource
                     'id',
                     'readOnly',
                     'typeId',
+                    'photoUrl',
                 )
             )
         );
