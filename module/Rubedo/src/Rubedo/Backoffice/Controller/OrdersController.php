@@ -62,19 +62,29 @@ class OrdersController extends DataAccessController
         $fileName = 'export_rubedo_orders_' . time() . '.csv';
         $filePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName;
         $csvResource = fopen($filePath, 'w+');
+
         $csvHeader = array(
-            'Order number', 'Payment mean', 'Status', 'Price incl tax ', 'Price excl tax',
-            'Billing address 1', 'Billing address 2', 'Billing city', 'Billing postal code', 'Billing country', 'Billing region state',
-            'Shipping address 1', 'Shipping address 2', 'Shipping city', 'Shipping postal code', 'Shipping country', 'Shipping region state',
-            'Product name', 'Product subtitle', 'Product amount', 'Unit price incl tax', 'Unit price excl tax', 'Price incl tax', 'Price excl tax'
+            'OrderNumber', 'PaymentMean', 'Status', 'PriceInclTax', 'PriceExclTax',
+            'BillingAddress1', 'BillingAddress2', 'BillingCity', 'BillingPostalCode', 'BillingCountry', 'BillingRegionState',
+            'ShippingAddress1', 'ShippingAddress', 'ShippingCity', 'ShippingPostalCode', 'ShippingCountry', 'ShippingRegionState',
+            'ProductName', 'ProductSubtitle', 'ProductAmount', 'UnitPriceInclTax', 'UnitPriceExclTax', 'ProductPriceInclTax', 'ProductPriceExclTax'
         );
+
+        /** @var \Rubedo\Internationalization\Translate $translationService */
+        $translationService = Manager::getService('Translate');
+        $workingLanguage = $this->params()->fromQuery('workingLanguage', 'en');
+        foreach ($csvHeader as &$head) {
+            $head = 'Backoffice.Exports.Orders.' . $head;
+            $head = $translationService->getTranslation($head, $workingLanguage);
+        }
+
         fputcsv($csvResource, $csvHeader, ';');
         foreach($orders['data'] as $order) {
             $billingA = &$order['billingAddress'];
             $shippingA = &$order['shippingAddress'];
             $product = array_shift($order['detailedCart']['cart']);
             $firstLine = array(
-                $order['orderNumber'], $order['paymentMeans'], $order['status'], $order['finalTFPrice'], $order['finalTaxes'],
+                $order['orderNumber'], $order['paymentMeans'], $order['status'], $order['finalPrice'], $order['finalTFPrice'],
                 //Billing address
                 isset($billingA['address1'])?$billingA['address1']:'',
                 isset($billingA['address2'])?$billingA['address2']:'',
