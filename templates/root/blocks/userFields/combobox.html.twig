@@ -1,25 +1,29 @@
 {%  if(type[key]["config"]["multivalued"])and data[key] is iterable %}
-	{% for item in data[key] %}
-	{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
-		<ul>
-        {% for option in item %}
-            {% for dataelement in type[key]["store"]["data"] %}
-                {% if dataelement['valeur']==option %}
-                    <li>{{ dataelement['nom'] }}</li>
-                {% endif %}
+    {% for item in data[key] %}
+        {% include "/blocks/edition/edition-tooltip-button.html.twig" %}
+        <ul>
+            {% for option in item %}
+                {% for dataelement in type[key]["store"]["data"] %}
+                    {% if dataelement['valeur']==option %}
+                        <li>{{ dataelement['nom'] }}</li>
+                    {% endif %}
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
         </ul>
-	{% endfor %}
-{% else %}
-{% include "/blocks/edition/edition-tooltip-button.html.twig" %}
-    <ul>
-    {% for option in data[key] %}
-            {% for dataelement in type[key]["config"]["store"]["data"] %}
-                {% if dataelement['valeur']==option %}
-                    <li>{{ dataelement['nom'] }}</li>
-                {% endif %}
-            {% endfor %}
     {% endfor %}
-    </ul>
+{% else %}
+    {% include "/blocks/edition/edition-tooltip-button.html.twig" %}
+    {% if (data[key]|length) == 1 %}
+        <p>{{ data[key][0] }}</p>
+    {% else %}
+        <ul>
+            {% for option in data[key] %}
+                {% for dataelement in type[key]["config"]["store"]["data"] %}
+                    {% if dataelement['valeur']==option %}
+                        <li>{{ dataelement['nom'] }}</li>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endif %}
