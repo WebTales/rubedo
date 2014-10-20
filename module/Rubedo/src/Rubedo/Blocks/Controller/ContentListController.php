@@ -191,10 +191,10 @@ class ContentListController extends AbstractController
             $twigVars['blockConfig']['showOnlyTitle']=false;
         }
 
-        if ($displayType) {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentList/" . $displayType . ".html.twig");
+        if (isset($displayType) && ! empty($displayType)) {
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $displayType . ".html.twig");
         } else {
-            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/contentList/list.html.twig");
+            $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/" . $this->_defaultTemplate . ".html.twig");
         }
         
         $html = Manager::getService('FrontOfficeTemplates')->render($template, $twigVars);
