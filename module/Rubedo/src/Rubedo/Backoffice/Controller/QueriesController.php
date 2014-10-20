@@ -48,8 +48,30 @@ class QueriesController extends DataAccessController
         if (isset($data['query'])) {
 
             $filters = $this->_dataService->getFilterArrayById($data['query']);
+            $queryRecord=$this->_dataService->findById($data['query']);
             if ($filters !== false) {
                 $contentList = $contentsService->getOnlineList($filters['filter'], $filters["sort"], (($data['page']-1) * $data['limit']), intval($data['limit']));
+                if ($queryRecord['type'] === 'manual'  && isset($queryRecord['query']) && is_array($queryRecord['query'])) {
+                    $contentOrder = $queryRecord['query'];
+                    $keyOrder = array();
+                    $contentArray = array();
+
+                    // getList
+                    $unorderedContentArray = $contentList['data'];
+
+                    foreach ($contentOrder as $value) {
+                        foreach ($unorderedContentArray as $subKey => $subValue) {
+                            if ($value === $subValue['id']) {
+                                $keyOrder[] = $subKey;
+                            }
+                        }
+                    }
+
+                    foreach ($keyOrder as $value) {
+                        $contentArray[] = $unorderedContentArray[$value];
+                    }
+                    $contentList['data']=$contentArray;
+                }
             } else {
                 $contentList = array(
                     'count' => 0
