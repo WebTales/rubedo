@@ -65,7 +65,7 @@
                     <label class="control-label" >{{ 'Blocks.Checkout.Label.Country'|fotrans }}</label>
                     <div class="controls">
                         <select name="address_country" required="">
-                            <option disabled="disabled" selected="selected">Choose your country</option>
+                            <option disabled="disabled" selected="selected">{{ 'Blocks.Checkout.Label.ChooseCountry' | fotrans }}</option>
                             {% for country in countries['data'] %}
                             <option value="{{ country['alpha-2'] }}">{{ country['name'] }}</option>
                             {% endfor %}
@@ -101,7 +101,7 @@
         </div>
         <form method="post" class="form-horizontal" id="checkoutSignupForm" >
             <div class="span6">
-                <h4 class="text-center">Personal details</h4>
+                <h4 class="text-center">{{ 'Blocks.Checkout.PersonalDetails' | fotrans }}</h4>
                 <div class="control-group">
                     <label class="control-label" >{{ 'Label.Email'|fotrans }} *</label>
                     <div class="controls">
@@ -131,7 +131,7 @@
                             {% include '/blocks/inputFields/combobox.html.twig' %}
                         {% endif %}
                 {% endfor %}
-                <h4 class="text-center">Your password</h4>
+                <h4 class="text-center">{{ 'Blocks.Checkout.Password' | fotrans }}</h4>
                 <div class="control-group">
                     <label class="control-label" >{{ 'Blocks.SignUp.label.password'|fotrans }} *</label>
                     <div class="controls">
@@ -146,9 +146,9 @@
                 </div>
                 <input type="hidden" name="userTypeId" value="{{ userTypeId }}">
                 {% if mailingListArray %}
-                <h4 class="text-center">Mailing lists</h4>
+                <h4 class="text-center">{{ 'Blocks.Checkout.MailingLists' | fotrans }}</h4>
                 <div class="control-group">
-                    <label class="control-label">I wish to subscribe to the following mailing lists</label>
+                    <label class="control-label">{{ 'Blocks.Checkout.MailingLists.Label' | fotrans }}</label>
                     <div class="controls">
                         {% for mailinglist in mailingListArray %}
                             <label class="checkbox">
@@ -163,43 +163,43 @@
 
             </div>
             <div class="span6">
-                <h4 class="text-center">Your address</h4>
+                <h4 class="text-center">{{ 'Blocks.Checkout.Address' | fotrans }}</h4>
                 <div class="control-group">
-                    <label class="control-label" >Company /Organization </label>
+                    <label class="control-label" >{{ 'Blocks.Checkout.Label.Company' | fotrans }}</label>
                     <div class="controls">
                         <input type="text" name="address_company">
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" >Attention </label>
+                    <label class="control-label" >{{ 'Blocks.Checkout.Label.Attention' | fotrans }}</label>
                     <div class="controls">
                         <input type="text" name="address_attention">
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" >Address 1 *</label>
+                    <label class="control-label" >{{ 'Blocks.Checkout.Label.Address1' | fotrans }}</label>
                     <div class="controls">
                         <input type="text" name="address_address1" required>
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" >Address 2 </label>
+                    <label class="control-label" >{{ 'Blocks.Checkout.Label.Address2' | fotrans }}</label>
                     <div class="controls">
                         <input type="text" name="address_address2">
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" >City *</label>
+                    <label class="control-label" >{{ 'Blocks.Checkout.Label.City' | fotrans }}</label>
                     <div class="controls">
                         <input type="text" name="address_city" required>
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" >Country *</label>
+                    <label class="control-label" >{{ 'Blocks.Checkout.Label.Country' | fotrans }}</label>
                     <div class="controls">
                         <select name="address_country" required>
-                            <option disabled="disabled" selected="selected">Choose your country</option>
+                            <option disabled="disabled" selected="selected">{{ 'Blocks.Checkout.Label.ChooseCountry' | fotrans }}</option>
                             {% for country in countries['data'] %}
                                 <option value="{{ country['alpha-2'] }}">{{ country['name'] }}</option>
                             {% endfor %}
@@ -207,13 +207,13 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" >State / Province</label>
+                    <label class="control-label" >{{ 'Blocks.Checkout.Label.State' | fotrans }}</label>
                     <div class="controls">
                         <input type="text" name="address_regionState">
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" >Zip / Postal Code *</label>
+                    <label class="control-label" >{{ 'Blocks.Checkout.Label.Zipcode' | fotrans }}</label>
                     <div class="controls">
                         <input type="text" name="address_postCode" required>
                     </div>
@@ -222,15 +222,15 @@
                     <div class="controls">
                         <label class="checkbox">
                             <input checked="checked" type="checkbox"  name="useSameAddressBilling" >
-                            Use same address for billing.
+                            {{ 'Blocks.Checkout.Label.Address.SameBilling' | fotrans }}
                         </label>
                         <label class="checkbox">
                             <input checked="checked" type="checkbox"  name="useSameAddressDelivery" >
-                            Use same address for delivery.
+                            {{ 'Blocks.Checkout.Label.Address.SameShipping' | fotrans }}
                         </label>
                         <label class="checkbox">
                             <input type="checkbox"  name="readTermsAndConds" >
-                            I have read and agree to the <a {% if tCPage %} href="{{ tCPageUrl }}" target="_blank"{% endif %}>Terms and Conditions</a>
+                            {{ 'Blocks.Checkout.Label.Terms'|fotrans}} <a {% if tCPage %} href="{{ tCPageUrl }}" target="_blank"{% endif %}>{{ 'Blocks.Checkout.Label.TermsAndCondition' | fotrans }}</a>
                         </label>
                     </div>
                 </div>
