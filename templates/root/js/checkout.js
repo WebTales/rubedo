@@ -282,7 +282,7 @@ function checkoutCheckFormValid(formId){
     jQuery("#"+formId+" input").each(function(){
         jQuery(this).closest('.error').removeClass('error');
         jQuery(this).siblings(".help-inline").remove();
-        if (jQuery(this).is(":required") && jQuery.isEmptyObject(jQuery(this).val())){
+        if (jQuery(this).prop("required") && jQuery.isEmptyObject(jQuery(this).val())){
             canContinue = false;
             jQuery(this).closest('.control-group').addClass('error');
             jQuery(this).after('<span class="help-inline">This field is required.</span>');
