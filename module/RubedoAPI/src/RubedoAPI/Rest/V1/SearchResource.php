@@ -90,22 +90,22 @@ class SearchResource extends AbstractResource
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('objectType')
-                            ->setDescription('object Type array')
+                            ->setDescription('Object Type array')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('userType')
-                            ->setDescription('user Type array')
+                            ->setDescription('User Type array')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('author')
-                            ->setDescription('author')
+                            ->setDescription('Author')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('userName')
-                            ->setDescription('userName')
+                            ->setDescription('Username')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
@@ -115,7 +115,7 @@ class SearchResource extends AbstractResource
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('lastupdatetime')
-                            ->setDescription('lastUpdateTime')
+                            ->setDescription('Last update time')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
@@ -126,7 +126,7 @@ class SearchResource extends AbstractResource
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('query')
-                            ->setDescription('query parameter')
+                            ->setDescription('Query parameter')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
