@@ -16,14 +16,6 @@
     {% if (data[key]|length) == 1 %}
         <p>{{ data[key][0] }}</p>
     {% else %}
-        <ul>
-            {% for option in data[key] %}
-                {% for dataelement in type[key]["config"]["store"]["data"] %}
-                    {% if dataelement['valeur']==option %}
-                        <li>{{ dataelement['nom'] }}</li>
-                    {% endif %}
-                {% endfor %}
-            {% endfor %}
-        </ul>
+        <p>{{ data[key] }}</p>
     {% endif %}
 {% endif %}
