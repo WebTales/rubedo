@@ -403,7 +403,7 @@ class MediaResource extends AbstractResource
     protected function definePost(VerbDefinitionEntity &$verbDef)
     {
         $verbDef
-            ->setDescription('add a new')
+            ->setDescription('add a new media')
             ->addInputFilter(
                 (new FilterDefinitionEntity())
                     ->setDescription('File')
@@ -454,7 +454,7 @@ class MediaResource extends AbstractResource
             ->addInputFilter(
                 (new FilterDefinitionEntity())
                     ->setKey('limit')
-                    ->setDescription('How much contents to return')
+                    ->setDescription('How much media to return')
                     ->setFilter('int')
             )
             ->addInputFilter(

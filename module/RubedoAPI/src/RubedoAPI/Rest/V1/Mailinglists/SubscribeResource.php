@@ -119,7 +119,7 @@ class SubscribeResource extends AbstractResource
     {
         $this
             ->definition
-            ->setName('SubscribeToMailingList')
+            ->setName('Subscribe To MailingList')
             ->setDescription('Subscribe to a mailing list')
             ->editVerb('post', function (VerbDefinitionEntity &$definition) {
                 $this->definePost($definition);

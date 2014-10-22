@@ -43,10 +43,12 @@ class PersistResource extends AbstractResource
             ->setDescription('Persist a shopping cart')
             ->editVerb('post', function (VerbDefinitionEntity &$entity) {
                 $entity
+                    ->setName('Persist cart')
                     ->setDescription('Persist cart from cart ID into current user')
                     ->identityRequired()
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setName('Shopping cart token')
                             ->setDescription('Shopping cart token')
                             ->setKey('shoppingCartToken')
                             ->setRequired()

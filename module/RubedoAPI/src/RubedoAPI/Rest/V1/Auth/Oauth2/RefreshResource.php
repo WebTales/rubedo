@@ -36,12 +36,13 @@ class RefreshResource extends AbstractResource
         parent::__construct();
         $this->definition
             ->setName('Refresh Oauth2 token')
-            ->setDescription('')
+            ->setDescription('Refresh Oauth2 token')
             ->editVerb('post', function (VerbDefinitionEntity &$entity) {
                 $entity
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('Create new token from refresh token')
+                            ->setName('Create new token')
                             ->setKey('refresh_token')
                             ->setRequired()
                     );
