@@ -326,12 +326,12 @@ class UsersResource extends AbstractResource
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
-                    ->setDescription('Fields')
+                    ->setDescription('Fields names returned with user')
                     ->setKey('fields')
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
-                    ->setDescription('User')
+                    ->setDescription('The user')
                     ->setKey('user')
                     ->setRequired()
             );
@@ -348,7 +348,7 @@ class UsersResource extends AbstractResource
             ->setDescription('Get informations about a user')
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
-                    ->setDescription('Users')
+                    ->setDescription('The user')
                     ->setKey('user')
                     ->setRequired()
             );
