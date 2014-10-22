@@ -105,7 +105,7 @@ class PagesResource extends AbstractResource
                     )
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
-                            ->setDescription('title')
+                            ->setDescription('Title for the page')
                             ->setKey('title')
                             ->setRequired()
                     );
