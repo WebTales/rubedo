@@ -85,14 +85,14 @@ class UsertypesResource extends AbstractResource
     {
         $this
             ->definition
-            ->setName('UserTypes')
+            ->setName('User types')
             ->setDescription('Deal with user types')
             ->editVerb('get', function (VerbDefinitionEntity &$definition) {
                 $this->defineGet($definition);
             });
         $this
             ->entityDefinition
-            ->setName('UserType')
+            ->setName('User type')
             ->setDescription('Deal with user type')
             ->editVerb('get', function (VerbDefinitionEntity &$definition) {
                 $this->defineGetEntity($definition);
@@ -107,11 +107,11 @@ class UsertypesResource extends AbstractResource
     protected function defineGet(VerbDefinitionEntity &$definition)
     {
         $definition
-            ->setDescription('Get a list of content types')
+            ->setDescription('Get a list of user types')
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
                     ->setKey('userTypes')
-                    ->setDescription('List of user types')
+                    ->setDescription('The list of user types')
             );
     }
 
