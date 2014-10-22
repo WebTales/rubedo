@@ -58,7 +58,7 @@ class TranslationsResource extends AbstractResource
         $this
             ->definition
             ->setName('Translations')
-            ->setDescription('Translations')
+            ->setDescription('Deal with translations')
             ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $this->defineGet($entity);
             });
@@ -79,7 +79,7 @@ class TranslationsResource extends AbstractResource
             })
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
-                    ->setDescription('Translations')
+                    ->setDescription('Array of keys with translations')
                     ->setKey('translations')
                     ->setRequired()
             );
