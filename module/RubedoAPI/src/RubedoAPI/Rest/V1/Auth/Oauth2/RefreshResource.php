@@ -42,7 +42,6 @@ class RefreshResource extends AbstractResource
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('Create new token from refresh token')
-                            ->setName('Create new token')
                             ->setKey('refresh_token')
                             ->setRequired()
                     );

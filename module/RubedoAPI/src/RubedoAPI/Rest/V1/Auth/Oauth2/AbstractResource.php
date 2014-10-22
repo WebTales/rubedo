@@ -39,7 +39,6 @@ abstract class AbstractResource extends \RubedoAPI\Rest\V1\AbstractResource
                         (new FilterDefinitionEntity())
                             ->setKey('token')
                             ->setRequired()
-                            ->setName('Token')
                             ->setDescription('Token authentication (required)')
                     );
             });

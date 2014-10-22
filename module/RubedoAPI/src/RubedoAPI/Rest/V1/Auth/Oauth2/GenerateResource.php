@@ -42,7 +42,6 @@ class GenerateResource extends AbstractResource
                     ->setDescription('')
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setName('User to log in')
                             ->setDescription('User to log in')
                             ->setKey('PHP_AUTH_USER')
                             ->setRequired()
@@ -50,7 +49,6 @@ class GenerateResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setName('Password for the user')
                             ->setDescription('Password for the user')
                             ->setKey('PHP_AUTH_PW')
                             ->setRequired()
