@@ -36,6 +36,7 @@ class SearchResource extends GlobalSearch
             ->setDescription('Deal with contents')
             ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $entity
+                    ->setName('Get a list of contents')
                     ->setDescription('Get a list of contents using Elastic Search');
             });
     }

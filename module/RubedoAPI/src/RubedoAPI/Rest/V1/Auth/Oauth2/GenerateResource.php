@@ -36,12 +36,13 @@ class GenerateResource extends AbstractResource
         parent::__construct();
         $this->definition
             ->setName('Generate token')
-            ->setDescription('')
+            ->setDescription('Generate token by user and password')
             ->editVerb('post', function (VerbDefinitionEntity &$entity) {
                 $entity
                     ->setDescription('')
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setName('User to log in')
                             ->setDescription('User to log in')
                             ->setKey('PHP_AUTH_USER')
                             ->setRequired()
@@ -49,6 +50,7 @@ class GenerateResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setName('Password for the user')
                             ->setDescription('Password for the user')
                             ->setKey('PHP_AUTH_PW')
                             ->setRequired()
