@@ -181,17 +181,17 @@ return array(
             ),
             'may_terminate' => true
         ),
-        'customTheme' => array(
+        'extensionPath' => array(
             'type' => 'Segment',
             'options' => array(
-                'route' => '/theme/custom/:id/:version/theme.css',
+                'route' => '/extension-path/:name/:filepath{*}',
                 'defaults' => array(
                     '__NAMESPACE__' => 'Rubedo\\Frontoffice\\Controller',
-                    'controller' => 'Css',
+                    'controller' => 'ExtensionPath',
                     'action' => 'index'
                 )
             ),
             'may_terminate' => true
-        )
+        ),
     )
 );

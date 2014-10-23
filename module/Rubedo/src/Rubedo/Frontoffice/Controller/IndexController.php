@@ -251,6 +251,22 @@ class IndexController extends AbstractActionController
                 }
             }
         }
+        if (isset($config['extension_paths'])) {
+            foreach ($config['extension_paths'] as $extensionName => $extension) {
+                if (!isset($extension['path'])) {
+                    continue;
+                }
+                $extensionPath = '/extension-path/' . $extensionName . '/';
+                if (isset ($extension['css'])) {
+                    foreach ($extension['css'] as $extensionCss) {
+                        $siteResources['internalStyles'][] = $extensionPath . $extensionCss;
+                    }
+                    foreach ($extension['js'] as $extensionJs) {
+                        $siteResources['internalScripts'][] = $extensionPath . $extensionJs;
+                    }
+                }
+            }
+        }
         $this->viewData = array(
             'siteResources' => $siteResources,
             'activateMagic' => (isset($config['rubedo_config']['activateMagic']) && ($config['rubedo_config']['activateMagic'] == "1")) ? true : false,

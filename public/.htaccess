@@ -43,6 +43,7 @@ RewriteRule ^backoffice/(.*)  /components/webtales/rubedo-backoffice-ui/www/$1 [
 #  non image, js or css requests are sent to Rubedo
 ####################################################################
 RewriteRule ^theme/.* /index.php [L]
+RewriteRule ^extension-path/.* /index.php [L]
 RewriteRule ^generate-image/.* /index.php [L]
 RewriteRule ^access-dam/.* /index.php [L]
 RewriteRule ^user-avatar/.* /index.php [L]

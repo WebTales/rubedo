@@ -26,6 +26,7 @@ return array(
     'Rubedo\\Frontoffice\\Controller\\XhrEdit' => 'Rubedo\\Frontoffice\\Controller\\XhrEditController',
     'Rubedo\\Frontoffice\\Controller\\Tiny' => 'Rubedo\\Frontoffice\\Controller\\TinyController',
     'Rubedo\\Frontoffice\\Controller\\Theme' => 'Rubedo\\Frontoffice\\Controller\\ThemeController',
+    'Rubedo\\Frontoffice\\Controller\\ExtensionPath' => 'Rubedo\\Frontoffice\\Controller\\ExtensionPathController',
     'Rubedo\\Frontoffice\\Controller\\Queue' => 'Rubedo\\Frontoffice\\Controller\\QueueController',
     'Rubedo\\Frontoffice\\Controller\\Css' => 'Rubedo\\Frontoffice\\Controller\\CssController'
 );
