@@ -1,7 +1,7 @@
-{{ 'Notification.Orders.ShopNotification.Hello'|fotrans }} <br />
-{{ 'Notification.Orders.ShopNotification.Body'|fotrans }}<br />
+{{ 'Notification.Orders.ShopNotification.Hello'|botrans([], workingLanguage) }} <br />
+{{ 'Notification.Orders.ShopNotification.Body'|botrans([], workingLanguage) }}<br />
 
-<strong>{{ 'Blocks.OrderDetails.BillingAddress'|fotrans }}</strong><br />
+<strong>{{ 'Blocks.OrderDetails.BillingAddress'|botrans([], workingLanguage) }}</strong><br />
 {% if billingAddress.company is not empty  %}
     <strong>{{ billingAddress.company }}</strong><br />
 {% endif %}
@@ -23,7 +23,7 @@
     {{ billingAddress.regionState }} {{ billingAddress.country|getCountryName }}<br />
 {% endif %}
 <br/>
-<strong>{{ 'Blocks.OrderDetails.ShippingAddress'|fotrans }}</strong><br />
+<strong>{{ 'Blocks.OrderDetails.ShippingAddress'|botrans([], workingLanguage) }}</strong><br />
 {% if shippingAddress.company is not empty  %}
     <strong>{{ shippingAddress.company }}</strong><br />
 {% endif %}
@@ -49,10 +49,10 @@
 <table>
     <thead>
     <tr>
-        <th>{{ 'Blocks.OrderDetails.Table.Name'|fotrans }}</th>
-        <th>{{ 'Blocks.OrderDetails.Table.Cost'|fotrans }}</th>
-        <th>{{ 'Blocks.OrderDetails.Table.Amount'|fotrans }}</th>
-        <th>{{ 'Blocks.OrderDetails.Table.Price'|fotrans }}</th>
+        <th>{{ 'Blocks.OrderDetails.Table.Name'|botrans([], workingLanguage) }}</th>
+        <th>{{ 'Blocks.OrderDetails.Table.Cost'|botrans([], workingLanguage) }}</th>
+        <th>{{ 'Blocks.OrderDetails.Table.Amount'|botrans([], workingLanguage) }}</th>
+        <th>{{ 'Blocks.OrderDetails.Table.Price'|botrans([], workingLanguage) }}</th>
     </tr>
     </thead>
     <tbody>
@@ -69,7 +69,7 @@
         {% endfor %}
         <tr>
             <td>
-                {{ 'Blocks.OrderDetails.Table.ShippingMethod'|fotrans }} : {{ shipper.name }}<br />
+                {{ 'Blocks.OrderDetails.Table.ShippingMethod'|botrans([], workingLanguage) }} : {{ shipper.name }}<br />
                 <small>{{ shipper.hRDelay }} {{ shipper.hRUnit }}</small>
             </td>
             <td colspan="2"></td>
@@ -78,17 +78,17 @@
     </tbody>
     <tfoot>
         <tr>
-            <th>{{ 'Blocks.OrderDetails.Table.ShippingTax'|fotrans }}</th>
+            <th>{{ 'Blocks.OrderDetails.Table.ShippingTax'|botrans([], workingLanguage) }}</th>
             <td colspan="2"></td>
             <td>{{ shippingTax|number_format(2) }} €</td>
         </tr>
         <tr>
-            <th>{{ 'Blocks.OrderDetails.Table.Taxes'|fotrans }}</th>
+            <th>{{ 'Blocks.OrderDetails.Table.Taxes'|botrans([], workingLanguage) }}</th>
             <td colspan="2"></td>
             <td>{{ finalTaxes|number_format(2) }} €</td>
         </tr>
         <tr>
-            <th>{{ 'Blocks.OrderDetails.Table.TotalPrice'|fotrans }}</th>
+            <th>{{ 'Blocks.OrderDetails.Table.TotalPrice'|botrans([], workingLanguage) }}</th>
             <td colspan="2"></td>
             <td>{{ finalPrice|number_format(2) }} €</td>
         </tr>

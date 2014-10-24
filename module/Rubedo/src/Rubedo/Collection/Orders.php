@@ -133,6 +133,8 @@ class Orders extends AbstractCollection
         /** @var \Rubedo\Collection\Sites $sitesCollection */
         $sitesCollection = Manager::getService('Sites');
         $data['site'] = $sitesCollection->findById($data['siteId']);
+        $workingLanguage = isset($user['workingLanguage'])?$user['workingLanguage']:null;
+        $data['workingLanguage'] = &$workingLanguage;
 
         /** @var \Rubedo\Mail\Mailer $mailer */
         $mailer = Manager::getService('Mailer');
@@ -152,9 +154,9 @@ class Orders extends AbstractCollection
         /** @var \Rubedo\Internationalization\Translate $translateService */
         $translateService = Manager::getService('Translate');
         if ($event->getName() === self::POST_CREATE_ORDERS) {
-            $subject = $translateService->translateInWorkingLanguage('Notification.Orders.CustomerNotification.Create.Subject');
+            $subject = $translateService->getTranslation('Notification.Orders.CustomerNotification.Create.Subject', $workingLanguage);
         } else {
-            $subject = $translateService->translateInWorkingLanguage('Notification.Orders.CustomerNotification.Update.Subject');
+            $subject = $translateService->getTranslation('Notification.Orders.CustomerNotification.Update.Subject', $workingLanguage);
         }
         $message->setSubject($subject);
         /** @var \Rubedo\Templates\FrontOfficeTemplates $foTemplates */
@@ -174,15 +176,15 @@ class Orders extends AbstractCollection
         if (empty($data['siteId'])) {
             return false;
         }
-        /** @var Sites $sitesCollection */
+        /** @var \Rubedo\Collection\Sites $sitesCollection */
         $sitesCollection = Manager::getService('Sites');
         $site = $sitesCollection->findById($data['siteId']);
-
+        $data['site'] = &$site;
         if (empty($site['ecommerceNotificationEmails'])) {
             return false;
         }
 
-        /** @var Users $usersCollection */
+        /** @var \Rubedo\Collection\Users $usersCollection */
         $usersCollection = Manager::getService('Users');
         $user = $usersCollection->findById($data['userId']);
         $data['user'] = &$user;
@@ -191,9 +193,10 @@ class Orders extends AbstractCollection
         $config = Manager::getService('Config');
         /** @var \Rubedo\Internationalization\Translate $translateService */
         $translateService = Manager::getService('Translate');
-        $subject = $translateService->translateInWorkingLanguage(
+        $subject = $translateService->getTranslation(
             'Notification.Orders.ShopNotification.Create.Subject',
-            '',
+            $data['site']['defaultLanguage'],
+            'en',
             array('%site%' => $site['title'])
         );
         /** @var \Rubedo\Templates\FrontOfficeTemplates $foTemplates */
