@@ -157,10 +157,11 @@ class ProtectedResource extends AbstractResource
     {
         $this
             ->definition
-            ->setDescription('Send an email with tinyURL')
+            ->setDescription('Send an email with tinyURL link on media protected')
             ->setName('Send email')
             ->editVerb('post', function (VerbDefinitionEntity &$verbDef) {
                 $verbDef
+                    ->setDescription('Send an email with tinyURL link on media protected')
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('Mailing list ID')
@@ -192,6 +193,7 @@ class ProtectedResource extends AbstractResource
             })
             ->editVerb('get', function (VerbDefinitionEntity &$verbDef) {
                 $verbDef
+                    ->setDescription('Get a media protected')
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('Introduction content ID')

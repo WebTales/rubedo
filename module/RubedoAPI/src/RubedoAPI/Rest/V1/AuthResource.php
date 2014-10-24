@@ -39,6 +39,7 @@ class AuthResource extends AbstractResource
             ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $entity
                     ->identityRequired()
+                    ->setDescription('Login in the Rubedo API')
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('My rights')

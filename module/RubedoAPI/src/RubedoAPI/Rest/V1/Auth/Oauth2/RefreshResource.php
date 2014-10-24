@@ -39,6 +39,7 @@ class RefreshResource extends AbstractResource
             ->setDescription('Refresh Oauth2 token')
             ->editVerb('post', function (VerbDefinitionEntity &$entity) {
                 $entity
+                    ->setDescription('Refresh Oauth2 token')
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('Create new token from refresh token')

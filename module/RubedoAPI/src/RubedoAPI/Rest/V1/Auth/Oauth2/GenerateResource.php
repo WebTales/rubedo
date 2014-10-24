@@ -39,7 +39,7 @@ class GenerateResource extends AbstractResource
             ->setDescription('Generate token by user and password')
             ->editVerb('post', function (VerbDefinitionEntity &$entity) {
                 $entity
-                    ->setDescription('')
+                    ->setDescription('Generate token by user and password')
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('User to log in')
