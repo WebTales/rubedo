@@ -52,7 +52,7 @@ abstract class AbstractController extends AbstractActionController
 
     /**
      * service for handling orders
-     *
+     * @var \Rubedo\Collection\Orders
      */
     protected $ordersService;
 
