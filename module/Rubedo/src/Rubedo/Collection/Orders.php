@@ -125,12 +125,12 @@ class Orders extends AbstractCollection
     public function sendCustomerNotification(\Zend\EventManager\Event $event)
     {
         $data = $event->getParam('data');
-        /** @var Users $usersCollection */
+        /** @var \Rubedo\Collection\Users $usersCollection */
         $usersCollection = Manager::getService('Users');
         $user = $usersCollection->findById($data['userId']);
         $data['user'] = &$user;
 
-        /** @var Sites $usersCollection */
+        /** @var \Rubedo\Collection\Sites $sitesCollection */
         $sitesCollection = Manager::getService('Sites');
         $data['site'] = $sitesCollection->findById($data['siteId']);
 
