@@ -82,11 +82,21 @@
     <?php if ($this->angularLocale): ?>
         <script src="/components/angular/angular.js/i18n/angular-locale_<?php echo $this->angularLocale; ?>.js"></script>
     <?php endif; ?>
+    <!--internal angular modules scripts-->
+    <?php foreach($this->siteResources['angularModulesPaths'] as $angularModulePath): ?>
+        <script type="text/javascript" src="<?php echo $angularModulePath; ?>"></script>
+    <?php endforeach; ?>
      <script type="text/javascript">
         window.rubedoConfig={
-            siteTheme:"<?php echo $this->siteTheme; ?>"
+            siteTheme:"<?php echo $this->siteTheme; ?>",
+            extensionAngularModules:<?php if(isset($this->siteResources['angularModules'])){
+            echo json_encode($this->siteResources['angularModules']);
+            } else {
+            echo 'false';
+            } ?>
         };
      </script>
+
     <!--frontoffice scripts-->
     <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>
     <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoFields/rubedoFields.js"></script>

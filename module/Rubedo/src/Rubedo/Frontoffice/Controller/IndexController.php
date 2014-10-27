@@ -242,12 +242,18 @@ class IndexController extends AbstractActionController
             $propagatedSiteTheme = $themeName;
             if (isset($theme['css'])) {
                 foreach ($theme['css'] as $css) {
-                    $siteResources['internalStyles'][] = $prepend . $css;
+                    $siteResources['internalStyles'][] = strpos($css, '//') === false? $prepend . $css : $css;
                 }
             }
             if (isset($theme['js'])) {
                 foreach ($theme['js'] as $js) {
-                    $siteResources['internalScripts'][] = $prepend . $js;
+                    $siteResources['internalScripts'][] = strpos($js, '//') === false? $prepend . $js : $js;
+                }
+            }
+            if (isset($theme['angularModules'])) {
+                foreach ($theme['angularModules'] as $angularModule => $angularModulePath) {
+                    $siteResources['angularModulesPaths'][] = strpos($angularModulePath, '//') === false? $prepend . $angularModulePath : $angularModulePath;
+                    $siteResources['angularModules'][] = $angularModule;
                 }
             }
         }
@@ -259,10 +265,18 @@ class IndexController extends AbstractActionController
                 $extensionPath = '/extension-path/' . $extensionName . '/';
                 if (isset ($extension['css'])) {
                     foreach ($extension['css'] as $extensionCss) {
-                        $siteResources['internalStyles'][] = $extensionPath . $extensionCss;
+                        $siteResources['internalStyles'][] = strpos($extensionCss, '//') === false? $extensionPath . $extensionCss : $extensionCss;
                     }
+                }
+                if (isset ($extension['js'])){
                     foreach ($extension['js'] as $extensionJs) {
-                        $siteResources['internalScripts'][] = $extensionPath . $extensionJs;
+                        $siteResources['internalScripts'][] = strpos($extensionJs, '//') === false? $extensionPath . $extensionJs : $extensionJs;
+                    }
+                }
+                if (isset ($extension['angularModules'])){
+                    foreach ($extension['angularModules'] as $angularModule => $angularModulePath) {
+                        $siteResources['angularModulesPaths'][] = strpos($angularModulePath, '//') === false? $extensionPath . $angularModulePath : $angularModulePath;
+                        $siteResources['angularModules'][] = $angularModule;
                     }
                 }
             }
