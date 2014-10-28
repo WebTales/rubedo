@@ -83,9 +83,9 @@
         <script src="/components/angular/angular.js/i18n/angular-locale_<?php echo $this->angularLocale; ?>.js"></script>
     <?php endif; ?>
     <!--internal angular modules scripts-->
-    <?php foreach($this->siteResources['angularModulesPaths'] as $angularModulePath): ?>
+    <?php if (isset($this->siteResources['angularModulesPaths'])){ foreach($this->siteResources['angularModulesPaths'] as $angularModulePath): ?>
         <script type="text/javascript" src="<?php echo $angularModulePath; ?>"></script>
-    <?php endforeach; ?>
+    <?php endforeach; } ?>
      <script type="text/javascript">
         window.rubedoConfig={
             siteTheme:"<?php echo $this->siteTheme; ?>",
