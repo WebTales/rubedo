@@ -251,6 +251,12 @@ class IndexController extends AbstractActionController
                 }
             }
             if (isset($theme['angularModules'])) {
+                if(!isset($siteResources['angularModulesPaths'])){
+                    $siteResources['angularModulesPaths'] = array();
+                }
+                if(!isset($siteResources['angularModules'])){
+                    $siteResources['angularModules'] = array();
+                }
                 foreach ($theme['angularModules'] as $angularModule => $angularModulePath) {
                     $siteResources['angularModulesPaths'][] = strpos($angularModulePath, '//') === false? $prepend . $angularModulePath : $angularModulePath;
                     $siteResources['angularModules'][] = $angularModule;
@@ -274,6 +280,12 @@ class IndexController extends AbstractActionController
                     }
                 }
                 if (isset ($extension['angularModules'])){
+                    if(!isset($siteResources['angularModulesPaths'])){
+                        $siteResources['angularModulesPaths'] = array();
+                    }
+                    if(!isset($siteResources['angularModules'])){
+                        $siteResources['angularModules'] = array();
+                    }
                     foreach ($extension['angularModules'] as $angularModule => $angularModulePath) {
                         $siteResources['angularModulesPaths'][] = strpos($angularModulePath, '//') === false? $extensionPath . $angularModulePath : $angularModulePath;
                         $siteResources['angularModules'][] = $angularModule;
