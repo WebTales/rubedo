@@ -188,7 +188,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         $returnArray = parent::update($obj, $options, $live);
 
         if ($returnArray["success"]) {
-            //$this->indexContentType($returnArray['data']);
+            $this->indexContentType($returnArray['data']);
         }
 
         return $returnArray;
