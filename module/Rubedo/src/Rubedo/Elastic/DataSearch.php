@@ -802,8 +802,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             $elasticaFacetUserName = new \Elastica\Facet\Terms ('userName');
             $elasticaFacetUserName->setField('first_letter');
 
-            // $elasticaFacetUserName->setSize(5);
-            // $elasticaFacetUserName->setOrder('count');
+           $elasticaFacetUserName->setSize(25);
 
             // Apply filters from other facets
             $facetFilter = $this->_getFacetFilter('userName');
