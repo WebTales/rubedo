@@ -18,9 +18,11 @@
 namespace RubedoAPI\Entities\API\Definition;
 
 
+use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIFilterException;
 use RubedoAPI\Exceptions\APIRequestException;
+use RubedoAPI\Traits\LazyServiceManager;
 use Zend\Stdlib\JsonSerializable;
 
 /**
@@ -29,6 +31,7 @@ use Zend\Stdlib\JsonSerializable;
  */
 class VerbDefinitionEntity implements JsonSerializable
 {
+    use LazyServiceManager;
     /**
      * @var string
      */
@@ -178,6 +181,15 @@ class VerbDefinitionEntity implements JsonSerializable
     public function getRights()
     {
         return $this->rights;
+    }
+
+    public function checkRights()
+    {
+        foreach ($this->getRights() as $right) {
+            if (!$this->getAclService()->hasAccess($right)) {
+                throw new APIAuthException('User access denied ("' . $right . '")', 403, true);
+            }
+        }
     }
 
     /**

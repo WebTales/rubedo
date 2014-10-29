@@ -118,6 +118,7 @@ abstract class AbstractResource implements IResource
             return $this->optionsAction();
         $verbDefinition = $this->getDefinition()->getVerb($method);
         $params = $verbDefinition->filterInput($params);
+        $verbDefinition->checkRights();
         $this->getCurrentLocalizationAPIService()->injectLocalization($params);
 
         return $verbDefinition->filterOutput(
@@ -145,6 +146,7 @@ abstract class AbstractResource implements IResource
             return $this->optionsEntityAction();
         $verbDefinition = $this->getEntityDefinition()->getVerb($method);
         $params = $verbDefinition->filterInput($params);
+        $verbDefinition->checkRights();
         $this->getCurrentLocalizationAPIService()->injectLocalization($params);
 
         return $verbDefinition->filterOutput(
