@@ -412,4 +412,11 @@ class Users extends AbstractCollection implements IUsers
             "used" => false
         );
     }
+    public function removePasswordFromExclude()
+    {
+        $this->_dataService->removeFromExcludeFieldList(array(
+            'password'
+        ));
+        return $this;
+    }
 }

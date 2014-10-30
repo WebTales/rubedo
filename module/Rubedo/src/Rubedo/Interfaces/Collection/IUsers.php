@@ -52,4 +52,9 @@ interface IUsers extends IAbstractCollection
     public function findValidatingUsersByWorkspace($workspace);
 
     public function getAdminUsers();
+
+    /**
+     * @return $this
+     */
+    public function removePasswordFromExclude();
 }
