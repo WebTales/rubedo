@@ -70,18 +70,23 @@ trait LazyServiceManager
 
     public function __call($method, $arguments)
     {
-        if (!isset($this->callCache[$method])) {
-            $matches = array();
+        if (!isset($this->callCache[$method]) || (!empty($arguments) && $arguments[0])){
             if (preg_match('/^get(.+)APICollection$/', $method, $matches)) {
-                $this->callCache[$method] = Manager::getService('API\\Collection\\' . $matches[1]);
+                $call = Manager::getService('API\\Collection\\' . $matches[1]);
             } elseif (preg_match('/^get(.+)APIService$/', $method, $matches)) {
-                $this->callCache[$method] = Manager::getService('API\\Services\\' . $matches[1]);
+                $call = Manager::getService('API\\Services\\' . $matches[1]);
             } elseif (preg_match('/^get(.+)(Service|Collection)$/', $method, $matches)) {
-                $this->callCache[$method] = Manager::getService($matches[1]);
+                $call = Manager::getService($matches[1]);
             } else {
                 throw new APIControllerException('method "' . $method . " not found.", 500);
             }
+            if (empty($arguments) || !$arguments[0]) {
+                $this->callCache[$method] = $call;
+            }
+            $res = $call;
+        } else {
+            $res = $this->callCache[$method];
         }
-        return $this->callCache[$method];
+        return $res;
     }
 } 
