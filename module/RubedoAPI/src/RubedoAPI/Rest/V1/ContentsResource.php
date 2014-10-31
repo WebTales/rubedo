@@ -386,7 +386,11 @@ class ContentsResource extends AbstractResource
         }
 
         $content = array_replace_recursive($content, $data);
-        return $this->getContentsCollection()->update($content, array(), false);
+        $update = $this->getContentsCollection()->update($content, array(), false);
+        return [
+            'success' => $update['success'],
+            'version' => $update['data']['version'],
+        ];
     }
 
     /**
@@ -703,6 +707,12 @@ class ContentsResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('The content')
                     ->setKey('content')
+                    ->setRequired()
+            )
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('The content')
+                    ->setKey('version')
                     ->setRequired()
             );
     }
