@@ -121,7 +121,7 @@
     <snap-drawer ng-if="rubedo.current.user.rights.canEdit" class="rubedo-admin-drawer">
         <ng-include src="rubedo.themePath+'/templates/admin/admin.html'"></ng-include>
     </snap-drawer>
-    <button ng-if="rubedo.current.user.rights.canEdit" ng-click="rubedo.toggleAdminPanel()" class="btn btn-default rubedo-admin-btn">
+    <button title="Admin" ng-if="rubedo.current.user.rights.canEdit" ng-click="rubedo.toggleAdminPanel()" class="btn btn-default rubedo-admin-btn">
         <span ng-class="rubedo.adminBtnIconClass"></span>
     </button>
     <snap-content snap-options="rubedo.snapOpts" class="rubedo-page-holder">
