@@ -122,7 +122,7 @@
         <ng-include src="rubedo.themePath+'/templates/admin/admin.html'"></ng-include>
     </snap-drawer>
     <button ng-if="rubedo.current.user.rights.canEdit" ng-click="rubedo.toggleAdminPanel()" class="btn btn-default rubedo-admin-btn">
-        <img alt="Admin" title="Admin" ng-src="{{rubedo.themePath}}/img/salamander.png">
+        <span ng-class="rubedo.adminBtnIconClass"></span>
     </button>
     <snap-content snap-options="rubedo.snapOpts" class="rubedo-page-holder">
         <div ng-view></div>
