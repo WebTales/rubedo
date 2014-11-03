@@ -168,8 +168,8 @@ class FoThemesController extends AbstractActionController
 
     protected function getOrCreateDam(\SplFileInfo $file, $directory,$themeId)
     {
-
-        $extension = substr(strchr($file->getFilename(), '.'), 1);
+        $fileNameExplode = explode('.',$file->getFilename());
+        $extension = end($fileNameExplode);
         switch ($extension) {
             case 'css':
                 $mimeType = 'text/css';
