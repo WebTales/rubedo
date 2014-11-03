@@ -117,7 +117,7 @@
     <!--base href for angular routing-->
     <base href="/">
 </head>
-<body>
+<body ng-class="rubedo.current.page.pageProperties.bodyClass">
     <snap-drawer ng-if="rubedo.current.user.rights.canEdit" class="rubedo-admin-drawer">
         <ng-include src="rubedo.themePath+'/templates/admin/admin.html'"></ng-include>
     </snap-drawer>
