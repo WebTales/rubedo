@@ -56,6 +56,8 @@ class HtmlPurifier extends HtmlCleaner
                 "_top"
             ));
             $config->set('HTML.Attr.Name.UseCDATA', true);
+            $def = $config->getHTMLDefinition(true);
+            $def->addAttribute('a', 'rubedo-page-link', 'CDATA');
             self::$_purifier = new \HTMLPurifier($config);
         }
         $html = self::$_purifier->purify($html);
