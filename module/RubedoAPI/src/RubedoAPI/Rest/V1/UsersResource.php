@@ -35,7 +35,7 @@ class UsersResource extends AbstractResource
     /**
      * @var array
      */
-    protected $toInjectIntoFields = array('name', 'email', 'photo');
+    protected $toInjectIntoFields = array('name', 'email', 'photo','login');
 
     /**
      * {@inheritdoc}
@@ -60,7 +60,9 @@ class UsersResource extends AbstractResource
             throw new APIEntityException('User not found', 404);
         }
         foreach ($this->toInjectIntoFields as $fieldToInject) {
-            $user['fields'][$fieldToInject] = $user[$fieldToInject];
+            if (isset($user[$fieldToInject])){
+                $user['fields'][$fieldToInject] = $user[$fieldToInject];
+            }
         }
         if (!empty($user['fields']['photo'])){
             $user['photoUrl']=$this->getUrlAPIService()->userAvatar($user['id'], 100, 100, 'boxed');
