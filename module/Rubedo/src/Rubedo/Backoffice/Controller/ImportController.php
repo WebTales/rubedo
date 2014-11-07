@@ -19,6 +19,7 @@ namespace Rubedo\Backoffice\Controller;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
+use Zend\Console\Prompt\Number;
 
 /**
  * Controller providing data import for csv
@@ -117,6 +118,133 @@ class ImportController extends DataAccessController
         return mb_convert_encoding($string, "UTF-8", $encoding);
     }
 
+    /**
+     * Create new content type
+     *
+     * @param string $options
+     *            Options
+     * @return String id of the created content type
+     */
+    protected function createContentType ($options)
+    {
+    	$CTfields = array();
+    	foreach ($options['importAsField'] as $key => $value) {
+    		if ($value['protoId']!='text' && $value['protoId']!='summary') {
+    			if ($value['cType'] == "localiserField") {
+    				$value['newName'] = "position";
+    			}
+    			$newFieldForCT = array(
+    					"cType" => $value['cType'],
+    					"config" => array(
+    							"name" => $value['newName'],
+    							"fieldLabel" => $value['label'],
+    							"allowBlank" => ! $value['mandatory'],
+    							"localizable" => $value['localizable'],
+    							"searchable" => $value['searchable'],
+    							"multivalued" => false,
+    							"tooltip" => "",
+    							"labelSeparator" => " "
+    					),
+    					"protoId" => $value['protoId'],
+    					"openWindow" => null
+    			);
+    			// For products only
+    			if ($options['isProduct']) {
+    				$newFieldForCT['config']['useAsVariation'] = isset($value['useAsVariation']) ? $value['useAsVariation'] : false;
+    			}
+    			$CTfields[] = $newFieldForCT;
+    		}
+    	}
+    	
+    	$newCTi18n = array();
+    	$newCTi18n[$options['workingLanguage']] = array(
+    			"type" => $options['ContentTypeType']
+    	);
+    	$contentTypeParams = array(
+    			"dependant" => false,
+    			"code"=>$options['ContentTypeType'],
+    			"dependantTypes" => array(),
+    			"type" => $options['ContentTypeType'],
+    			"fields" => $CTfields,
+    			"vocabularies" => $options['vocabularies'],
+    			"workspaces" => $options['ContentTypeWorkspaces'],
+    			"workflow" => $options['ContentTypeWorkflow'],
+    			"activateDisqus" => false,
+    			"nativeLanguage" => $options['workingLanguage'],
+    			"i18n" => $newCTi18n
+    	);
+    		
+    	// For products only
+    	if ($options['isProduct']) {
+    		$productTypeParams = array(
+    				"canOrderNotInStock" => false,
+    				"manageStock" => true,
+    				"notifyForQuantityBelow" => 1,
+    				"outOfStockLimit" => 1,
+    				"preparationDelay" => 0,
+    				"productType" => "configurable",
+    				"resupplyDelay" => 0,
+    				"shippers" => ""
+    		);
+    		$contentTypeParams = array_merge($contentTypeParams, $productTypeParams);
+    	}
+    		
+    	$contentType = Manager::getService('ContentTypes')->create($contentTypeParams);
+    	return $contentType['data']['id'];    	
+    }
+    
+    /**
+     * Create new vocabularies
+     *
+     * @param string $options
+     *            Options
+     * @return array ids of the created vocabularies
+     */
+    protected function createTaxonomy ($options)
+    {
+
+    	$newTaxos = array();
+    	$newTaxos[]= "navigation";
+		$taxonomyService = Manager::getService('Taxonomy');
+		foreach ($options['importAsTaxo'] as $key => $value) {
+			$newTaxoi18n = array();
+			$newTaxoi18n[$options['workingLanguage']] = array(
+					"name" => $value['newName'],
+					"description" => "",
+					"helpText" => "",
+					"locale" => $options['workingLanguage']
+			);
+			
+			// translate vocabulary if terms are translated
+			foreach ($options['importAsTaxoTranslation'] as $transKey => $transValue) {
+				if ($transValue["translatedElement"] == $value['csvIndex']) {
+					$newTaxoLang=$transValue["translateToLanguage"];
+					$newTaxoi18n[$newTaxoLang] = array(
+							"name" => $value['newName'],
+							"description" => "",
+							"helpText" => "",
+							"locale" => $newTaxoLang
+					);
+				}
+			}
+			$newTaxoParams = array(
+					"name" => $value['newName'],
+					"description" => "",
+					"helpText" => "",
+					"expandable" => false,
+					"multiSelect" => true,
+					"mandatory" => $value['mandatory'],
+					"nativeLanguage" => $options['workingLanguage'],
+					"i18n" => $newTaxoi18n
+			);
+			$newTaxo = $taxonomyService->create($newTaxoParams);
+			$newTaxos[]= $newTaxo['data']['id'];
+		}
+		
+		return $newTaxos;
+
+    }
+    
     public function analyseAction ()
     {
         $separator = $this->params()->fromPost('separator', ";");
@@ -200,13 +328,14 @@ class ImportController extends DataAccessController
 		$options['userEncoding'] = $this->params()->fromPost('encoding');
 		$options['workingLanguage'] = $this->params()->fromPost('workingLanguage', 'en');
 		$options['importKey'] = (string) new \MongoId();
+		$options['importMode'] = $this->params()->fromPost('importMode', 'insert');
+		$options['typeId'] = isset($configs['contentTypeId']) ? $configs['contentTypeId'] : null;
 		
 		if (! isset($options['userEncoding'])) {
 			throw new \Rubedo\Exceptions\Server("Missing parameter encoding", "Exception96", "encoding");
 		}
 		
 		$returnArray = array();
-		$taxonomyService = Manager::getService('Taxonomy');
 		$brokenLines = array();
 	
 		$fileInfos = $this->params()->fromFiles('csvFile');
@@ -217,22 +346,13 @@ class ImportController extends DataAccessController
 			$mimeType = mime_content_type($fileInfos['tmp_name']);
 			$contentType = isset($mimeType) ? $mimeType : $fileInfos['type'];
 	
-	
 			if (($contentType != "text/plain") && ($contentType!= "text/csv")) {
 				$returnArray['success'] = false;
 				$returnArray['message'] = "Le fichier doit doit être au format CSV.";
 			} else {
 				// receive params
 				$configs = Json::decode($this->params()->fromPost('configs', "[ ]"), Json::TYPE_ARRAY);
-				
-				// Get import mode : insert or update
-				$options['typeId'] = isset($configs['contentTypeId']) ? $configs['contentTypeId'] : null;
-				if (is_null($options['typeId'])) {
-					$options['importMode'] = 'insert';
-				} else {
-					$options['importMode'] = 'update';
-				}
-				
+							
 				// Get general params
 				$options['isProduct'] = isset($configs['isProduct']) ? $configs['isProduct'] : false;
 				$options['vocabularies'] = array();
@@ -254,111 +374,14 @@ class ImportController extends DataAccessController
 
 				if ($options['importMode'] == 'insert') {
 					
-					$newTaxos = array();
-					$options['vocabularies'][] = "navigation";
-					foreach ($options['importAsTaxo'] as $key => $value) {
-						$newTaxoi18n = array();
-						$newTaxoi18n[$options['workingLanguage']] = array(
-								"name" => $value['newName'],
-								"description" => "",
-								"helpText" => "",
-								"locale" => $options['workingLanguage']
-						);
-						
-						// translate vocabulary if terms are translated
-						foreach ($options['importAsTaxoTranslation'] as $transKey => $transValue) {
-							if ($transValue["translatedElement"] == $value['csvIndex']) {
-								$newTaxoLang=$transValue["translateToLanguage"];
-								$newTaxoi18n[$newTaxoLang] = array(
-										"name" => $value['newName'],
-										"description" => "",
-										"helpText" => "",
-										"locale" => $newTaxoLang
-								);
-							}
-						}
-						$newTaxoParams = array(
-								"name" => $value['newName'],
-								"description" => "",
-								"helpText" => "",
-								"expandable" => false,
-								"multiSelect" => true,
-								"mandatory" => $value['mandatory'],
-								"nativeLanguage" => $options['workingLanguage'],
-								"i18n" => $newTaxoi18n
-						);
-						$newTaxo = $taxonomyService->create($newTaxoParams);
-						$newTaxos[] = $newTaxo;
-						$options['vocabularies'][] = $newTaxo['data']['id'];
-						
+					// Create vocabularies : TODO update
+					$options['vocabularies'] = $this->createTaxonomy ($options);
+										
+					// create content type if needed
+					if (is_null($options['typeId'])) {
+						$options['typeId'] = $this->createContentType($options);
 					}
 					
-					// create content type
-					$CTfields = array();
-					foreach ($options['importAsField'] as $key => $value) {
-						if ($value['protoId']!='text' && $value['protoId']!='summary') {
-							if ($value['cType'] == "localiserField") {
-								$value['newName'] = "position";
-							}
-							$newFieldForCT = array(
-									"cType" => $value['cType'],
-									"config" => array(
-											"name" => $value['newName'],
-											"fieldLabel" => $value['label'],
-											"allowBlank" => ! $value['mandatory'],
-											"localizable" => $value['localizable'],
-											"searchable" => $value['searchable'],
-											"multivalued" => false,
-											"tooltip" => "",
-											"labelSeparator" => " "
-									),
-									"protoId" => $value['protoId'],
-									"openWindow" => null
-							);
-							// For products only
-							if ($options['isProduct']) {
-								$newFieldForCT['config']['useAsVariation'] = isset($value['useAsVariation']) ? $value['useAsVariation'] : false;
-							}
-							$CTfields[] = $newFieldForCT;
-						}
-					}
-		
-					$newCTi18n = array();
-					$newCTi18n[$options['workingLanguage']] = array(
-							"type" => $configs['ContentTypeType']
-					);
-					$contentTypeParams = array(
-							"dependant" => false,
-							"code"=>$configs['ContentTypeType'],
-							"dependantTypes" => array(),
-							"type" => $configs['ContentTypeType'],
-							"fields" => $CTfields,
-							"vocabularies" => $options['vocabularies'],
-							"workspaces" => $configs['ContentTypeWorkspaces'],
-							"workflow" => $configs['ContentTypeWorkflow'],
-							"activateDisqus" => false,
-							"nativeLanguage" => $options['workingLanguage'],
-							"i18n" => $newCTi18n
-					);
-					
-					// For products only 
-					if ($options['isProduct']) {
-						$productTypeParams = array(
-							"canOrderNotInStock" => false,
-							"manageStock" => true,
-							"notifyForQuantityBelow" => 1,
-							"outOfStockLimit" => 1,
-							"preparationDelay" => 0,
-							"productType" => "configurable",
-							"resupplyDelay" => 0,
-							"shippers" => ""
-						);
-						$contentTypeParams = array_merge($contentTypeParams, $productTypeParams);
-					}
-					
-					$contentType = Manager::getService('ContentTypes')->create($contentTypeParams);
-					$options['typeId'] = $contentType['data']['id'];
-				
 				} else { // Update mode, populate importAsFields
 					
 					$contentType = Manager::getService("ContentTypes")->findById($options['typeId']);
@@ -405,4 +428,3 @@ class ImportController extends DataAccessController
 		return $response;
 	}
 }
-
