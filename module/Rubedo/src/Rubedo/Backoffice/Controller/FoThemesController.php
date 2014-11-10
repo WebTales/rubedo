@@ -170,12 +170,14 @@ class FoThemesController extends AbstractActionController
     {
         $fileNameExplode = explode('.',$file->getFilename());
         $extension = end($fileNameExplode);
+        if ($extension == 'php')
+            return;
         switch ($extension) {
             case 'css':
                 $mimeType = 'text/css';
                 break;
             case 'js':
-                $mimeType = 'text/javascript';
+                $mimeType = 'application/javascript';
                 break;
             default:
                 $mimeType = mime_content_type($file->getPathname());
