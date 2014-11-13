@@ -153,11 +153,9 @@ class DamController extends DataAccessController
             $fieldConfig = $field['config'];
             $name = $fieldConfig['name'];
             
-            $uploadResult = $this->_uploadFile($name, $damType['mainFileType']);
+            $uploadResult = $this->_uploadFile($name, $fieldConfig['fileType']);
             if (! is_array($uploadResult)) {
                 $obj['fields'][$name] = $uploadResult;
-            } else {
-                return $this->_returnJson($uploadResult);
             }
             
             if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
@@ -270,7 +268,14 @@ class DamController extends DataAccessController
     protected function _uploadFile($name, $fileType, $returnFullResult = false, $setMimeType = false)
     {
         $fileInfos = $this->params()->fromFiles($name);
-        
+
+        if (empty($fileInfos['tmp_name'])){
+            return(array(
+                "success"=>false,
+                "message"=>"No file uploaded for this field : ".$name
+            ));
+        }
+
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         
         if (($name == 'originalFileId')||($setMimeType)) {
