@@ -235,7 +235,7 @@ class IndexController extends AbstractActionController
             }
         }
         $themeName = strtolower($theme);
-        $propagatedSiteTheme="default";
+        $propagatedSiteTheme=$themeName;
         if (isset($config['templates']['themes'][$themeName])) {
             $theme = $config['templates']['themes'][$themeName];
             $prepend = '/theme/' . $themeName;
