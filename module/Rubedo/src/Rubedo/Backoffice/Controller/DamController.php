@@ -236,7 +236,7 @@ class DamController extends DataAccessController
             $obj['target'] = $targets;
             $obj['fields']['target'] = $targets;
         }
-        $uploadResult = $this->_uploadFile('file', $damType['mainFileType'], true);
+        $uploadResult = $this->_uploadFile('file', $damType['mainFileType'], true,true);
         if ($uploadResult['success']) {
             $properName = explode(".", $uploadResult['data']['text']);
             $obj['title'] = $properName[0];
@@ -267,13 +267,13 @@ class DamController extends DataAccessController
         return new JsonModel($returnArray);
     }
 
-    protected function _uploadFile($name, $fileType, $returnFullResult = false)
+    protected function _uploadFile($name, $fileType, $returnFullResult = false, $setMimeType = false)
     {
         $fileInfos = $this->params()->fromFiles($name);
         
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         
-        if ($name == 'originalFileId') {
+        if (($name == 'originalFileId')||($setMimeType)) {
             $this->_mimeType = $mimeType;
         }
         
