@@ -208,14 +208,14 @@ class Import extends AbstractCollection
 
     	// Processing Import data taxonomy and localisation fields
     	$this->preProcess ();
-
-    	// Transform taxonomy terms into id
-    	$this->turnTermsToId ();
-    	
+   	
     	if ($this->_importMode == 'insert') { // INSERT mode
 
 	       	// write taxonomy terms
 	    	$this->writeTaxonomy ();
+	    	
+	    	// Transform taxonomy terms into id
+	    	$this->turnTermsToId ();
 	    	
 	    	// Extract contents to ImportContents collection
 	    	$this->extractContentsToInsert ();
@@ -224,6 +224,9 @@ class Import extends AbstractCollection
 	    	$response = $this->writeContents();
 	   
     	} else { // UPDATE mode
+    		
+    		// Transform taxonomy terms into id
+    		$this->turnTermsToId ();
 
     		// Extract contents to ImportContents collection
     		$this->extractContentsToUpdate ();
@@ -897,21 +900,24 @@ class Import extends AbstractCollection
 	 */
 	protected function turnTermsToId () {
 		
-		foreach($this->_importAsTaxo as $taxo) {
+		foreach($this->_importAsTaxo as $key => $taxo) {
 			
 			$code = "db.Import.ensureIndex({col".$taxo['csvIndex'].":1});";
 			$response = $this->_dataService->execute($code);
 			
-			$code = "db.ImportTaxo.find().snapshot().forEach(
+			$vocabularyId = $this->_vocabularies[$key+1];
+			
+			$code="db.TaxonomyTerms.find({'vocabularyId':'".$vocabularyId."'}).forEach(
 			function(e) {
-				var text = e._id;
-				var id = e.value._id;
+				var text = e.text;
+				var id = e._id;
 				db.Import.update({col".$taxo['csvIndex'].": text},{\$set: {\"col".$taxo['csvIndex'].".\$\" : id.str}},{ multi: true });
 			})";
+
 			$response = $this->_dataService->execute($code);
 			if ($response['ok']!=1) {
 				throw new \Rubedo\Exceptions\Server("Turning Terms to id error");
-			}
+			}			
 
 		}
 		
