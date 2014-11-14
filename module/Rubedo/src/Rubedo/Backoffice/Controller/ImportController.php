@@ -194,7 +194,7 @@ class ImportController extends DataAccessController
     }
     
     /**
-     * Create new vocabularies
+     * Create new vocabularies if they do not exist
      *
      * @param string $options
      *            Options
@@ -207,40 +207,50 @@ class ImportController extends DataAccessController
     	$newTaxos[]= "navigation";
 		$taxonomyService = Manager::getService('Taxonomy');
 		foreach ($options['importAsTaxo'] as $key => $value) {
-			$newTaxoi18n = array();
-			$newTaxoi18n[$options['workingLanguage']] = array(
-					"name" => $value['newName'],
-					"description" => "",
-					"helpText" => "",
-					"locale" => $options['workingLanguage']
-			);
+
+			$taxonomy = $taxonomyService->findByName($value['newName']);
 			
-			// translate vocabulary if terms are translated
-			foreach ($options['importAsTaxoTranslation'] as $transKey => $transValue) {
-				if ($transValue["translatedElement"] == $value['csvIndex']) {
-					$newTaxoLang=$transValue["translateToLanguage"];
-					$newTaxoi18n[$newTaxoLang] = array(
-							"name" => $value['newName'],
-							"description" => "",
-							"helpText" => "",
-							"locale" => $newTaxoLang
-					);
+			if ($taxonomy) { // If vocabulary already exists
+				
+				$newTaxos[] = $taxonomy['id'];
+				
+			} else { // Create a new one if necessary						
+			
+				$newTaxoi18n = array();
+				$newTaxoi18n[$options['workingLanguage']] = array(
+						"name" => $value['newName'],
+						"description" => "",
+						"helpText" => "",
+						"locale" => $options['workingLanguage']
+				);
+				
+				// translate vocabulary if terms are translated
+				foreach ($options['importAsTaxoTranslation'] as $transKey => $transValue) {
+					if ($transValue["translatedElement"] == $value['csvIndex']) {
+						$newTaxoLang=$transValue["translateToLanguage"];
+						$newTaxoi18n[$newTaxoLang] = array(
+								"name" => $value['newName'],
+								"description" => "",
+								"helpText" => "",
+								"locale" => $newTaxoLang
+						);
+					}
 				}
+				$newTaxoParams = array(
+						"name" => $value['newName'],
+						"description" => "",
+						"helpText" => "",
+						"expandable" => false,
+						"multiSelect" => true,
+						"mandatory" => $value['mandatory'],
+						"nativeLanguage" => $options['workingLanguage'],
+						"i18n" => $newTaxoi18n
+				);
+				$newTaxo = $taxonomyService->create($newTaxoParams);
+				$newTaxos[]= $newTaxo['data']['id'];
+				
 			}
-			$newTaxoParams = array(
-					"name" => $value['newName'],
-					"description" => "",
-					"helpText" => "",
-					"expandable" => false,
-					"multiSelect" => true,
-					"mandatory" => $value['mandatory'],
-					"nativeLanguage" => $options['workingLanguage'],
-					"i18n" => $newTaxoi18n
-			);
-			$newTaxo = $taxonomyService->create($newTaxoParams);
-			$newTaxos[]= $newTaxo['data']['id'];
 		}
-		
 		return $newTaxos;
 
     }
@@ -323,12 +333,12 @@ class ImportController extends DataAccessController
 	{
 		set_time_limit(5000);
 		$options = array();
-		
 		$options['separator'] = $this->params()->fromPost('separator', ";");
 		$options['userEncoding'] = $this->params()->fromPost('encoding');
 		$options['workingLanguage'] = $this->params()->fromPost('workingLanguage', 'en');
 		$options['importKey'] = (string) new \MongoId();
-		$options['importMode'] = $this->params()->fromPost('importMode', 'insert');
+		//$options['importMode'] = $this->params()->fromPost('importMode', 'insert');
+		$options['importMode'] = "insert";
 		$options['typeId'] = isset($configs['contentTypeId']) ? $configs['contentTypeId'] : null;
 		
 		if (! isset($options['userEncoding'])) {
@@ -356,7 +366,7 @@ class ImportController extends DataAccessController
 				// Get general params
 				$options['isProduct'] = isset($configs['isProduct']) ? $configs['isProduct'] : false;
 				$options['vocabularies'] = array();
-				
+
 				// Params for insert mode
 				if ($options['importMode'] == "insert") {
 					$options['importAsField'] = Json::decode($this->params()->fromPost('inportAsField', "[ ]"), Json::TYPE_ARRAY);
@@ -371,12 +381,11 @@ class ImportController extends DataAccessController
 				$options = array_merge($options,$configs);
 				
 				// INSERT MODE : create vocabularies and content type
-
 				if ($options['importMode'] == 'insert') {
-					
-					// Create vocabularies : TODO update
+	
+					// Create or update vocabularies
 					$options['vocabularies'] = $this->createTaxonomy ($options);
-										
+
 					// create content type if needed
 					if (is_null($options['typeId'])) {
 						$options['typeId'] = $this->createContentType($options);
