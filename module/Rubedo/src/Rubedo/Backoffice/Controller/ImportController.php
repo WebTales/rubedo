@@ -337,7 +337,7 @@ class ImportController extends DataAccessController
 		$options['userEncoding'] = $this->params()->fromPost('encoding');
 		$options['workingLanguage'] = $this->params()->fromPost('workingLanguage', 'en');
 		$options['importKey'] = (string) new \MongoId();
-		$options['importMode'] = $this->params()->fromPost('importMode', 'insert');
+		$options['importMode'] = $this->params()->fromPost('importMode', 'update');
 		$options['typeId'] = isset($configs['contentTypeId']) ? $configs['contentTypeId'] : null;
 		
 		if (! isset($options['userEncoding'])) {
