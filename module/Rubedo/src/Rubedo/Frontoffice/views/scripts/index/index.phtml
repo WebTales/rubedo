@@ -26,7 +26,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title ng-bind-template="{{rubedo.current.page.title}}"></title>
     <!--css-->
-    <link rel="stylesheet" href="/components/jtrussell/angular-snap.js-bower/angular-snap.min.css">
+    <link rel="stylesheet" href="/components/jtrussell/angular-snap.js-bower/angular-snap-only.min.css">
     <link rel="stylesheet" href="/components/twbs/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/theme/<?php echo $this->siteTheme; ?>/css/rubedo.css">
     <link href='/components/jquery/fullCalendar/fullcalendar.css' rel='stylesheet' />
@@ -119,7 +119,7 @@
     <base href="/">
 </head>
 <body ng-class="rubedo.current.page.pageProperties.bodyClass">
-    <snap-drawer ng-if="rubedo.current.user.rights.canEdit" class="rubedo-admin-drawer">
+    <snap-drawer ng-if="rubedo.current.user.rights.canEdit" class="rubedo-admin-drawer" style="display: none;">
         <ng-include src="rubedo.themePath+'/templates/admin/admin.html'"></ng-include>
     </snap-drawer>
     <div class="btn-group-vertical  rubedo-admin-btn" ng-if="rubedo.current.user.rights.canEdit">
