@@ -967,7 +967,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             case 'geo' :
             	if (isset($geoPrecision)) $geoAgreggation->setPrecision($geoPrecision);
             	$agf = new \Elastica\Aggregation\Filter('agf');
-            	$agf->setPostFilter($globalFilter);
+            	$agf->setFilter($globalFilter);
             	$agf->addAggregation($geoAgreggation);
             	$elasticaQuery->addAggregation($agf);
                 $search->addIndex(self::$_content_index);
