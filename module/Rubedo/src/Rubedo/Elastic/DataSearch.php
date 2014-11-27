@@ -662,7 +662,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             foreach ($this->_globalFilterList as $filter) {
                 $globalFilter->addFilter($filter);
             }
-            $elasticaQuery->setFilter($globalFilter);
+            $elasticaQuery->setPostFilter($globalFilter);
         }
 
         // Define the objectType facet (content, dam or user)
@@ -967,7 +967,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             case 'geo' :
             	if (isset($geoPrecision)) $geoAgreggation->setPrecision($geoPrecision);
             	$agf = new \Elastica\Aggregation\Filter('agf');
-            	$agf->setFilter($globalFilter);
+            	$agf->setPostFilter($globalFilter);
             	$agf->addAggregation($geoAgreggation);
             	$elasticaQuery->addAggregation($agf);
                 $search->addIndex(self::$_content_index);
