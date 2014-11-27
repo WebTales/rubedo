@@ -314,6 +314,22 @@ class DataIndex extends DataAbstract implements IDataIndex
                                     }
                                 }
                                 break;
+                           case 'numberfield' :
+	                           $config = array(
+									'type' => 'float',
+	                           		'store' => $store
+	                           	);
+	                            if ($notAnalyzed) {
+	                            	$config ['index'] = 'not_analyzed';
+	                            }
+	                            if (!$field ['config'] ['localizable']) {
+	                            	$mapping ['fields'] ['properties'] [$name] = $config;
+	                            } else {
+	                            	foreach ($activeLanguages as $lang) {
+	                            		$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+	                            	}
+	                            }
+                            	break;                                          
                             case 'document' :
                                 $config = array(
                                     'type' => 'attachment',
