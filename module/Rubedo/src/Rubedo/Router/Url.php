@@ -797,6 +797,44 @@ class Url implements IUrl
         return self::$avatarUrls[$userId];
     }
 
+    public function userAPIAvatar($user = array(), $width = null, $height = null, $mode = 'morph')
+    {
+        if (!isset($user)||!is_array($user)){
+            return " ";
+        }
+        $userId=$user['id'];
+        if (!isset(self::$avatarUrls[$userId])) {
+            if (!$user || !isset($user['photo']) || empty($user['photo'])) {
+                return " ";
+            }
+            $fileId = $user['photo'];
+            $fileService = Manager::getService('Images');
+            $obj = $fileService->findById($fileId);
+            if (!$obj instanceof \MongoGridFSFile) {
+                return " ";
+            }
+            $meta = $obj->file;
+            $params = array(
+                'filename' => $meta['filename'],
+                'version' => $meta['version'],
+                'userId' => $userId,
+                'width' => $width,
+                'height' => $height,
+                'mode' => $mode,
+            );
+
+            $options = array(
+                'name' => 'avatar',
+            );
+
+            $router = Manager::getService('Router');
+            $url = $router->assemble($params, $options);
+            $url = $this->staticUrl($url);
+            self::$avatarUrls[$userId] = $url;
+        }
+        return self::$avatarUrls[$userId];
+    }
+
     public function slugify($fragmentToSlug)
     {
         $clean = preg_replace('/[^a-zA-Z0-9\/_|+ -]/', '', $fragmentToSlug);
