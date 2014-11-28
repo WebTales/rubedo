@@ -47,25 +47,34 @@ class ChangephotoResource extends AbstractResource
      * @param $params
      * @return array
      * @throws \RubedoAPI\Exceptions\APIEntityException
-     * @throws \RubedoAPI\Exceptions\APIRequestException
+     * @throws \RubedoAPI\Exceptions\APIAuthException
      */
     public function postAction($params)
     {
         //for now change only your own photo
         if ($this->getCurrentUserAPIService()->getCurrentUser()['id'] != $params['userId']) {
-            throw new APIAuthException('You have no suffisants rights', 403);
+            throw new APIAuthException('You have insufficient rights', 403);
         }
         $user = $this->getUsersCollection()->findById($params['userId']);
         if (empty($user)) {
             throw new APIEntityException('User not found', 404);
         }
         $newFileId=$this->uploadFile($params['file']);
+        if (isset($user['photo'])){
+            $oldFile=$this->getFilesCollection()->findById($user['photo']);
+            if ($oldFile){
+                $this->getFilesCollection()->destroy(array(
+                    "id"=>$user['photo'],
+                    "version"=>1
+                ));
+            }
+        }
         $user['photo']=$newFileId;
         $updatedUser=$this->getUsersCollection()->update($user);
         if (!$updatedUser['success']){
             return($updatedUser);
         }
-        $userPhotoUrl=$this->getUrlAPIService()->userAvatar($user['id'], 100, 100, 'boxed');
+        $userPhotoUrl=$this->getUrlAPIService()->userAPIAvatar($user, 100, 100, 'boxed');
         return(array(
             "success"=>true,
             "photoUrl"=>$userPhotoUrl
