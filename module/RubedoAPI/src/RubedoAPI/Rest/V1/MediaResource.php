@@ -289,13 +289,15 @@ class MediaResource extends AbstractResource
      * @param $id
      * @return array
      */
-    public function getEntityAction($id)
+    public function getEntityAction($id, $params)
     {
         $media = $this->getDamCollection()->findById($id);
         $media['url'] = $this->getUrlAPIService()->mediaUrl($media['id']);
+        $intro = isset($params['contentId']) ? (new \RubedoAPI\Rest\V1\ContentsResource())->getEntityAction($params['contentId'], $params) : null;
         return array(
             'success' => true,
-            'media' => $media
+            'media' => $media,
+            'intro' => $intro
         );
     }
 
@@ -504,11 +506,21 @@ class MediaResource extends AbstractResource
     {
         $verbDef
             ->setDescription('Get a media')
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Content id')
+                    ->setKey('contentId')
+            )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
                     ->setDescription('Media')
                     ->setKey('media')
                     ->setRequired()
+            )
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Introduction')
+                    ->setKey('intro')
             );
     }
 
