@@ -162,6 +162,12 @@ class PagesResource extends AbstractResource
             throw new APIEntityException('Page not found', 404);
         }
         $lastMatchedNode['blocks'] = $this->getBlocksCollection()->getListByPage($lastMatchedNode['id'])['data'];
+
+        //Translate block titles
+        foreach($lastMatchedNode["blocks"] as $keyBlock => $block) {
+            $lastMatchedNode["blocks"][$keyBlock]["blockData"] = $this->localizeTitle($block["blockData"]);
+        }
+
         $languagesWithFlag = array();
         foreach ($site['languages'] as $lang) {
             $localeDetail = $this->getLanguagesCollection()->findByLocale($lang);
