@@ -204,7 +204,7 @@ class SearchResource extends AbstractResource
         $query::setIsFrontEnd(true);
         $query->init();
 
-        $results = $query->search($params, $this->searchOption);
+        $results = $query->search($params);
 
         $this->injectDataInResults($results, $queryParams);
 
@@ -330,9 +330,14 @@ class SearchResource extends AbstractResource
                 if (in_array($activeFacet['id'], $this->searchParamsArray)) {
                     $results['activeFacets'][$key]['operator'] = 'and';
                 } else {
-                    $taxonomy = $taxonomyService->findById($activeFacet['id']);
-                    $results['activeFacets'][$key]['operator'] = isset($taxonomy['facetOperator']) ? strtolower(
-                        $taxonomy['facetOperator']) : 'and';
+                    //Todo regex MongoId
+                    try{
+                        $taxonomy = $taxonomyService->findById($activeFacet['id']);
+                        $results['activeFacets'][$key]['operator'] = isset($taxonomy['facetOperator']) ? strtolower(
+                            $taxonomy['facetOperator']) : 'and';
+                    } catch(\Exception $e){
+                        $results['activeFacets'][$key]['operator'] = 'and';
+                    }
                 }
             }
 
