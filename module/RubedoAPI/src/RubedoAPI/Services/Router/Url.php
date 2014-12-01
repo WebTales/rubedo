@@ -39,6 +39,7 @@ class Url extends \Rubedo\Router\Url
      * @param null $defaultPage
      * @return string
      * @throws \RubedoAPI\Exceptions\APIServiceException
+     * @todo Fix taxonomy for the search block (line 55 to 65) because we make 1 request by content
      */
     public function displayUrlApi($content, $type = "default", $site, $page, $locale, $defaultPage = null)
     {
@@ -49,6 +50,18 @@ class Url extends \Rubedo\Router\Url
         if ($defaultPage && $type == "default") {
             $pageId = $defaultPage;
             $pageValid = true;
+        }
+
+        if (isset($content['taxonomy.navigation']) && $content['taxonomy.navigation'] !== "" && !$pageValid) {
+            $dbContent = Manager::getService("Contents")->findById($content["id"], true ,false);
+
+            if(isset($dbContent["taxonomy"]["navigation"])){
+                if(isset($content["taxonomy"]["navigation"])) {
+                    array_merge($content["taxonomy"]["navigation"], $dbContent["taxonomy"]["navigation"]);
+                } else {
+                    $content["taxonomy"]["navigation"] = $dbContent["taxonomy"]["navigation"];
+                }
+            }
         }
 
         if (isset($content['taxonomy']['navigation']) && $content['taxonomy']['navigation'] !== "" && !$pageValid) {
