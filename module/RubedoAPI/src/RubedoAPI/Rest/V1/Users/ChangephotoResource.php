@@ -60,7 +60,7 @@ class ChangephotoResource extends AbstractResource
             throw new APIEntityException('User not found', 404);
         }
         $newFileId=$this->uploadFile($params['file']);
-        if (isset($user['photo'])){
+        if (isset($user['photo'])&&!empty($user['photo'])&&$user['photo']!=""){
             $oldFile=$this->getFilesCollection()->findById($user['photo']);
             if ($oldFile){
                 $this->getFilesCollection()->destroy(array(
