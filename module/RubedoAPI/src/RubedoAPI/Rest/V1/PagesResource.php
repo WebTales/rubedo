@@ -212,6 +212,10 @@ class PagesResource extends AbstractResource
             $lastMatchedNode['title'] = isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'])?
                 $lastMatchedNode['i18n'][$params['lang']->getLocale()]['title']:$lastMatchedNode['i18n'][$params['lang']->getFallback()]['title'];
         }
+        if(!isset($lastMatchedNode['description'])){
+            $lastMatchedNode['description'] = isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'])?
+                $lastMatchedNode['i18n'][$params['lang']->getLocale()]['description']:$lastMatchedNode['i18n'][$params['lang']->getFallback()]['description'];
+        }
         $output = array(
             'success' => true,
             'site' => $this->outputSiteMask($site),
