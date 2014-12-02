@@ -204,7 +204,7 @@ class SearchResource extends AbstractResource
         $query::setIsFrontEnd(true);
         $query->init();
 
-        $results = $query->search($params);
+        $results = $query->search($params, $this->searchOption);
 
         $this->injectDataInResults($results, $queryParams);
 
