@@ -1049,7 +1049,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                         $data ['availableLanguages'] [0]
                     );
                 } else {
-                    $resultData = $data ['availableLanguages'] [0];
+                    $resultData['availableLanguages'] = $data ['availableLanguages'] [0];
                 }
             }
 
