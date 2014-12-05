@@ -22,6 +22,7 @@ use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Entities\API\Language;
 use RubedoAPI\Exceptions\APIEntityException;
+use Zend\Debug\Debug;
 
 /**
  * Class PagesResource
@@ -171,7 +172,16 @@ class PagesResource extends AbstractResource
         $languagesWithFlag = array();
         foreach ($site['languages'] as $lang) {
             $localeDetail = $this->getLanguagesCollection()->findByLocale($lang);
-            $languagesWithFlag[$lang] = array('lang' => $lang, 'label' => (isset($localeDetail['label']) ? $localeDetail['label'] : $lang), 'flagCode' => (isset($localeDetail['flagCode']) ? $localeDetail['flagCode'] : ''));
+
+            if(isset($localeDetail['ownLabel']) && !empty($localeDetail['ownLabel'])) {
+                $label = $localeDetail['ownLabel'];
+            } elseif(isset($localeDetail['label']) && !empty($localeDetail['label'])) {
+                $label = $localeDetail['label'];
+            } else {
+                $label = $lang;
+            }
+
+            $languagesWithFlag[$lang] = array('lang' => $lang, 'label' => $label, 'flagCode' => (isset($localeDetail['flagCode']) ? $localeDetail['flagCode'] : ''));
         }
         $site['languages'] = $languagesWithFlag;
         $wasFiltered = AbstractCollection::disableUserFilter();
