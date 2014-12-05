@@ -469,7 +469,9 @@ class Import extends AbstractCollection
     		$reduceCode = "function(key, values) { return {key: values[0]} }";
     	} else {
     		$reduceCode = "function(key, values) {
+
     			var value = values[0];
+
     			var productProperties = {
     				sku : value.baseSku,
 					basePrice: value.basePrice,
@@ -488,7 +490,7 @@ class Import extends AbstractCollection
     					sku: v.sku,
     					id: oid.valueOf()
 					};";
-    		
+
     		// add variation fields
     		foreach ($this->_importAsField as $key => $value) {    		
     			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
@@ -502,25 +504,60 @@ class Import extends AbstractCollection
     			
     			productProperties['variations'] = variations;	
     			value['productProperties'] = productProperties;
-    				
-    			delete value['baseSku'];
-    			delete value['basePrice'];
-    			delete value['sku'];
-    			delete value['price'];
-    			delete value['stock'];";
-    		
-    		foreach ($this->_importAsField as $key => $value) {
-    			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
-    				$reduceCode.="delete value['".$value['newName']."'];";
-    			}
-    		}
-    				
-    		$reduceCode.="	return value;
+				return value;
     			
     		};";	
     	}
     	
     	$reduce = new \MongoCode($reduceCode);
+
+    	$finalizeCode = "function(key,value) {
+
+    		if (value['productProperties']==null) {
+    			
+    			value['productProperties'] = {
+    				sku : value.baseSku,
+					basePrice: value.basePrice,
+					preparationDelay: value.preparationDelay,
+					canOrderNotInStock: false,
+					outOfStockLimit: 1,
+					notifyForQuantityBelow : 1,
+					resupplyDelay : 1,
+    			};
+    			oid = ObjectId();
+    			var variation = {
+    				price: value.price,
+    				stock: value.stock,
+    				sku: value.sku,
+    				id: oid.valueOf()
+				};
+    	";		
+    		
+    	// add variation fields
+    	foreach ($this->_importAsField as $key => $value) {    		
+    		if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    			$finalizeCode.="variation['".$value['newName']."']=value['".$value['newName']."'];";    				
+    		}	   			
+    	}
+
+   		$finalizeCode.= "
+   			value['productProperties']['variations']=[variation];
+	   		};
+    		delete value['baseSku'];
+    		delete value['basePrice'];
+    		delete value['sku'];
+    		delete value['price'];
+    		delete value['stock'];	
+    	";
+    	
+    	foreach ($this->_importAsField as $key => $value) {
+    		if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    			$finalizeCode.="delete value['".$value['newName']."'];";
+    		}
+    	}		
+		$finalizeCode .="return (value);}";
+    	
+    	$finalize = new \MongoCode($finalizeCode);
     	
     	// global JavaScript variables passed to map, reduce and finalize functions
     	$scope = array(
@@ -538,11 +575,12 @@ class Import extends AbstractCollection
     			"scope" => $scope, // scope
     			"out" => array("replace" => "ImportContents") // out
     	);
-    	
+    	if ($this->_isProduct) $params["finalize"] = $finalize;
+
     	$response = $this->_dataService->command($params);
 
     	if ($response['ok']!=1) {
-				throw new \Rubedo\Exceptions\Server("Extracting Contents error");
+				throw new \Rubedo\Exceptions\Server($response);
 			}
 		
     	return true;
@@ -1098,4 +1136,3 @@ class Import extends AbstractCollection
     }
 
 }
-
