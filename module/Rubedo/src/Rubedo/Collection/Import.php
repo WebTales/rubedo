@@ -302,125 +302,124 @@ class Import extends AbstractCollection
      * Extract contents to insert from Import
      * to ImportContents collection
      */
-    protected function extractContentsToInsert()
-    {
+    protected function extractContentsToInsert () {
+    	
+    	// Create fields
+    	$fields = array();
+    	
+    	foreach ($this->_importAsField as $key => $value) {
+    		
+    		// Fields that are not product variations
+	    	if (!isset($value['useAsVariation']) || ($value['useAsVariation'] == false)) {
+	    			
+		    	switch ($value['protoId']) {
+		    		case 'text':
+		    			$textFieldIndex = $value['csvIndex'];
+		    			$fields['text'] = 'this.col'.$value['csvIndex'];
+		    			break;
+		    		case 'summary':
+		    			$fields['summary'] = 'this.col'.$value['csvIndex'];
+		    			break;
+		    		default:
+		    			if ($value['cType']!='localiserField') {
+		    				$fields[$value['newName']] = 'this.col'.$value['csvIndex'];
+		    			} else {
+			   				$fields['position'] = array(
+			    				'address' => '',
+			    				'altitude' => '',
+			   					'lat' => 'this.col'.$value['csvIndex'].'[0]',
+			   					'lon' => 'this.col'.$value['csvIndex'].'[1]',
+			    				'location' => array(
+			    					'type' => 'Point',
+			    					'coordinates' => array('this.col'.$value['csvIndex'].'[1]','this.col'.$value['csvIndex'].'[0]')
+			    				)
+			   				);
+		    			}
+		    			break;
+		    	}
+	    	}
+    	}
 
-        // Create fields
-        $fields = array();
+    	// Copy in i18n
+    	$contenti18n = array(
+    			$this->_workingLanguage => array(
+    					'fields' => $fields,
+    					'locale' => $this->_workingLanguage
+    			)
+    	);
 
-        foreach ($this->_importAsField as $key => $value) {
-
-            // Fields that are not product variations
-            if (!isset($value['useAsVariation']) || ($value['useAsVariation'] == false)) {
-
-                switch ($value['protoId']) {
-                    case 'text':
-                        $textFieldIndex = $value['csvIndex'];
-                        $fields['text'] = 'this.col' . $value['csvIndex'];
-                        break;
-                    case 'summary':
-                        $fields['summary'] = 'this.col' . $value['csvIndex'];
-                        break;
-                    default:
-                        if ($value['cType'] != 'localiserField') {
-                            $fields[$value['newName']] = 'this.col' . $value['csvIndex'];
-                        } else {
-                            $fields['position'] = array(
-                                'address' => '',
-                                'altitude' => '',
-                                'lat' => 'this.col' . $value['csvIndex'] . '[0]',
-                                'lon' => 'this.col' . $value['csvIndex'] . '[1]',
-                                'location' => array(
-                                    'type' => 'Point',
-                                    'coordinates' => array('this.col' . $value['csvIndex'] . '[1]', 'this.col' . $value['csvIndex'] . '[0]')
-                                )
-                            );
-                        }
-                        break;
-                }
-            }
-        }
-
-        // Copy in i18n
-        $contenti18n = array(
-            $this->_workingLanguage => array(
-                'fields' => $fields,
-                'locale' => $this->_workingLanguage
-            )
-        );
-
-        // Add translations
-        $languages = array();
-        foreach ($this->_importAsFieldTranslation as $fieldKey => $value) {
-
-            foreach ($this->_importAsField as $key => $importedField) {
-                if ($importedField["csvIndex"] == $value["translatedElement"]) {
-                    $importedFieldKey = $key;
-                    break;
-                }
-            }
-            $translatedElement = $this->_importAsField[$importedFieldKey];
-            switch ($translatedElement['protoId']) {
-                case 'text':
-                    $fieldName = "text";
-                    break;
-                case 'summary':
-                    $fieldName = "summary";
-                    break;
-                default:
-                    $fieldName = $translatedElement["newName"];
-                    break;
-            }
-            if (!isset($contenti18n[$value["translateToLanguage"]]["locale"])) {
-                $contenti18n[$value["translateToLanguage"]]["locale"] = $value["translateToLanguage"];
-            }
-            $contenti18n[$value["translateToLanguage"]]["fields"][$fieldName] = 'this.col' . $value['csvIndex'];
-            if (!isset($languages[$value["translateToLanguage"]])) {
-                $languages[] = $value["translateToLanguage"];
-            }
-        }
-
-        // Unset translation with empty text (title)
-        foreach ($languages as $lang) {
-            if (isset($contenti18n[$lang]["fields"]["text"]) && trim($contenti18n[$lang]["fields"]["text"]) == "") {
-                unset($contenti18n[$lang]);
-            }
-        }
-
-        // add taxonomy
-
-        $taxonomy = array();
-        $taxonomy['navigation'] = $this->_navigationTaxonomy;
-
-        foreach ($this->_importAsTaxo as $key => $value) {
-            $taxonomy[$this->_vocabularies[$key + 1]] = 'this.col' . $value['csvIndex'];
-        }
-
-        $live = array(
-            'text' => 'this.col' . $textFieldIndex,
-            'summary' => isset($summaryFieldIndex) ? 'this.col.' . $summaryFieldIndex : '',
-            'fields' => $fields,
-            'status' => 'published',
-            'writeWorkspace' => 'global',
-            'startPublicationDate' => '',
-            'endPublicationDate' => '',
-            'nativeLanguage' => $this->_workingLanguage,
-            'readOnly' => false,
-            'i18n' => $contenti18n,
-            'taxonomy' => $taxonomy
-        );
-
-        // json encode of live array
-
-        $live = Json::encode($live);
-
-        // gets rid off "" around javascript vars
-
-        $patterns = array('/\"(this.col[^\"]*)\"/');
-        $replace = array('\1');
-        $live = preg_replace($patterns, $replace, $live);
-
-        $mapCode = "function() {
+    	// Add translations
+    	$languages = array();
+    	foreach ($this->_importAsFieldTranslation as $fieldKey => $value) {
+    	
+    		foreach ($this->_importAsField as $key => $importedField) {
+    			if ($importedField["csvIndex"] == $value["translatedElement"]) {
+    				$importedFieldKey = $key;
+    				break;
+    			}
+    		}
+    		$translatedElement = $this->_importAsField[$importedFieldKey];
+    		switch ($translatedElement['protoId']) {
+    			case 'text':
+    				$fieldName = "text";
+    				break;
+    			case 'summary':
+    				$fieldName = "summary";
+    				break;
+    			default:
+    				$fieldName = $translatedElement["newName"];
+    				break;
+    		}
+    		if (! isset($contenti18n[$value["translateToLanguage"]]["locale"])) {
+    			$contenti18n[$value["translateToLanguage"]]["locale"] = $value["translateToLanguage"];
+    		}
+    		$contenti18n[$value["translateToLanguage"]]["fields"][$fieldName] = 'this.col'.$value['csvIndex'];
+    		if (! isset($languages[$value["translateToLanguage"]])) {
+    			$languages[] = $value["translateToLanguage"];
+    		}
+    	}
+    	
+    	// Unset translation with empty text (title)
+    	foreach ($languages as $lang) {
+    		if (isset($contenti18n[$lang]["fields"]["text"]) && trim($contenti18n[$lang]["fields"]["text"]) == "") {
+    			unset($contenti18n[$lang]);
+    		}
+    	}
+    	
+    	// add taxonomy
+    	
+    	$taxonomy = array();
+    	$taxonomy['navigation'] = $this->_navigationTaxonomy;
+    	
+    	foreach ($this->_importAsTaxo as $key => $value) {
+    		$taxonomy[$this->_vocabularies[$key+1]] = 'this.col'.$value['csvIndex'];
+    	}
+    	
+    	$live = array(
+    			'text' => 'this.col'.$textFieldIndex,
+    			'summary' => isset($summaryFieldIndex) ? 'this.col.'.$summaryFieldIndex : '',
+    			'fields' => $fields,
+    			'status' =>  'published',
+    			'writeWorkspace' =>  'global',
+    			'startPublicationDate' =>  '',
+    			'endPublicationDate' =>  '',
+    			'nativeLanguage' =>  $this->_workingLanguage,
+    			'readOnly' => false,
+    			'i18n' => $contenti18n,
+    			'taxonomy' => $taxonomy
+    	);
+    	
+    	// json encode of live array
+    	
+    	$live = Json::encode($live);
+    	
+    	// gets rid off "" around javascript vars
+    	
+    	$patterns = array ('/\"(this.col[^\"]*)\"/');
+    	$replace = array('\1');
+    	$live = preg_replace($patterns, $replace, $live);
+    	
+    	$mapCode =	"function() {
     		var value = {
  				online: true,
 				version: '1',
@@ -436,41 +435,43 @@ class Import extends AbstractCollection
 					login: currentUser['login'],
 					fullName: currentUser['fullName']
 				},
-				text: this.col" . $textFieldIndex . ",
+				text: this.col".$textFieldIndex.",
 				typeId: typeId,
 				target: target,
-				live: " . $live . ",
-				workspace: " . $live;
+				live: ".$live.",
+				workspace: ".$live;
+			
+    	
+    	if ($this->_isProduct) {
+    		$mapCode.=",isProduct:true, 
+    				baseSku: this.col".$this->_productOptions['baseSkuFieldIndex'].",
+    				basePrice: this.col".$this->_productOptions['basePriceFieldIndex'].",
+    				sku: this.col".$this->_productOptions['skuFieldIndex'].",
+    				price: this.col".$this->_productOptions['priceFieldIndex'].",
+    				stock: this.col".$this->_productOptions['stockFieldIndex'].",
+    				preparationDelay: this.col".$this->_productOptions['preparationDelayFieldIndex'];
+    				// add variation fields
+    				foreach ($this->_importAsField as $key => $value) {
+    					if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    						$mapCode.=",'".$value['newName']."': this.col".$value['csvIndex'];
+    					}
+    				}
+    	}
 
+    	$mapCode.= "};";
+		$mapKey = $this->_isProduct ? "this.col".$this->_productOptions['baseSkuFieldIndex'] : "this._id";
 
-        if ($this->_isProduct) {
-            $mapCode .= ",isProduct:true,
-    				baseSku: this.col" . $this->_productOptions['baseSkuFieldIndex'] . ",
-    				basePrice: this.col" . $this->_productOptions['basePriceFieldIndex'] . ",
-    				sku: this.col" . $this->_productOptions['skuFieldIndex'] . ",
-    				price: this.col" . $this->_productOptions['priceFieldIndex'] . ",
-    				stock: this.col" . $this->_productOptions['stockFieldIndex'] . ",
-    				preparationDelay: this.col" . $this->_productOptions['preparationDelayFieldIndex'];
-            // add variation fields
-            foreach ($this->_importAsField as $key => $value) {
-                if (isset($value['useAsVariation']) && $value['useAsVariation']) {
-                    $mapCode .= ",'" . $value['newName'] . "': this.col" . $value['csvIndex'];
-                }
-            }
-        }
+		$mapCode.="emit(".$mapKey.", value);};";
 
-        $mapCode .= "};";
-        $mapKey = $this->_isProduct ? "this.col" . $this->_productOptions['baseSkuFieldIndex'] : "this._id";
+    	$map = new \MongoCode($mapCode);
+    	
+    	if (!$this->_isProduct) {
+    		$reduceCode = "function(key, values) { return {key: values[0]} }";
+    	} else {
+    		$reduceCode = "function(key, values) {
 
-        $mapCode .= "emit(" . $mapKey . ", value);};";
-
-        $map = new \MongoCode($mapCode);
-
-        if (!$this->_isProduct) {
-            $reduceCode = "function(key, values) { return {key: values[0]} }";
-        } else {
-            $reduceCode = "function(key, values) {
     			var value = values[0];
+
     			var productProperties = {
     				sku : value.baseSku,
 					basePrice: value.basePrice,
@@ -490,63 +491,99 @@ class Import extends AbstractCollection
     					id: oid.valueOf()
 					};";
 
-            // add variation fields
-            foreach ($this->_importAsField as $key => $value) {
-                if (isset($value['useAsVariation']) && $value['useAsVariation']) {
-                    $reduceCode .= "variation['" . $value['newName'] . "']=v['" . $value['newName'] . "'];";
-                }
-            }
-
-            $reduceCode .= "
+    		// add variation fields
+    		foreach ($this->_importAsField as $key => $value) {    		
+    			if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    				$reduceCode.="variation['".$value['newName']."']=v['".$value['newName']."'];";    				
+    			}	   			
+    		}
+    		
+    		$reduceCode.="
     				variations.push(variation);
     			});
     			
     			productProperties['variations'] = variations;	
     			value['productProperties'] = productProperties;
-    				
-    			delete value['baseSku'];
-    			delete value['basePrice'];
-    			delete value['sku'];
-    			delete value['price'];
-    			delete value['stock'];";
-
-            foreach ($this->_importAsField as $key => $value) {
-                if (isset($value['useAsVariation']) && $value['useAsVariation']) {
-                    $reduceCode .= "delete value['" . $value['newName'] . "'];";
-                }
-            }
-
-            $reduceCode .= "	return value;
+				return value;
     			
-    		};";
-        }
+    		};";	
+    	}
+    	
+    	$reduce = new \MongoCode($reduceCode);
 
-        $reduce = new \MongoCode($reduceCode);
+    	$finalizeCode = "function(key,value) {
 
-        // global JavaScript variables passed to map, reduce and finalize functions
-        $scope = array(
-            "currentTime" => $this->currentTime,
-            "currentUser" => $this->currentUser,
-            "typeId" => $this->_typeId,
-            "target" => $this->_target
-        );
+    		if (value['productProperties']==null) {
+    			
+    			value['productProperties'] = {
+    				sku : value.baseSku,
+					basePrice: value.basePrice,
+					preparationDelay: value.preparationDelay,
+					canOrderNotInStock: false,
+					outOfStockLimit: 1,
+					notifyForQuantityBelow : 1,
+					resupplyDelay : 1,
+    			};
+    			oid = ObjectId();
+    			var variation = {
+    				price: value.price,
+    				stock: value.stock,
+    				sku: value.sku,
+    				id: oid.valueOf()
+				};
+    	";		
+    		
+    	// add variation fields
+    	foreach ($this->_importAsField as $key => $value) {    		
+    		if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    			$finalizeCode.="variation['".$value['newName']."']=value['".$value['newName']."'];";    				
+    		}	   			
+    	}
 
-        $params = array(
-            "mapreduce" => "Import", // collection
-            "query" => array("importKey" => $this->_importKeyValue), // query
-            "map" => $map, // map
-            "reduce" => $reduce, // reduce
-            "scope" => $scope, // scope
-            "out" => array("replace" => "ImportContents") // out
-        );
+   		$finalizeCode.= "
+   			value['productProperties']['variations']=[variation];
+	   		};
+    		delete value['baseSku'];
+    		delete value['basePrice'];
+    		delete value['sku'];
+    		delete value['price'];
+    		delete value['stock'];	
+    	";
+    	
+    	foreach ($this->_importAsField as $key => $value) {
+    		if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+    			$finalizeCode.="delete value['".$value['newName']."'];";
+    		}
+    	}		
+		$finalizeCode .="return (value);}";
+    	
+    	$finalize = new \MongoCode($finalizeCode);
+    	
+    	// global JavaScript variables passed to map, reduce and finalize functions
+    	$scope = array(
+    			"currentTime" => $this->currentTime,
+    			"currentUser" => $this->currentUser,
+    			"typeId" => $this->_typeId,
+    			"target" => $this->_target
+    	);
+    	
+    	$params = array(
+    			"mapreduce" => "Import", // collection
+    			"query" => array("importKey" => $this->_importKeyValue), // query
+    			"map" => $map, // map
+    			"reduce" => $reduce, // reduce
+    			"scope" => $scope, // scope
+    			"out" => array("replace" => "ImportContents") // out
+    	);
+    	if ($this->_isProduct) $params["finalize"] = $finalize;
 
-        $response = $this->_dataService->command($params);
+    	$response = $this->_dataService->command($params);
 
-        if ($response['ok'] != 1) {
-            throw new \Rubedo\Exceptions\Server("Extracting Contents error");
-        }
-
-        return true;
+    	if ($response['ok']!=1) {
+				throw new \Rubedo\Exceptions\Server($response);
+			}
+		
+    	return true;
 
     }
 
