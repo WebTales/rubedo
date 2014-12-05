@@ -24,6 +24,7 @@ use WebTales\MongoFilters\CompositeFilter;
 use WebTales\MongoFilters\Filter;
 use WebTales\MongoFilters\IFilter;
 use WebTales\MongoFilters\InUidFilter;
+use Zend\Debug\Debug;
 use Zend\EventManager\EventInterface;
 use Zend\Json\Json;
 
@@ -477,18 +478,39 @@ class Contents extends WorkflowAbstractCollection implements IContents
         return $obj;
     }
 
+    /**
+     * Clean HTML to prevent inclusions
+     *
+     * @param $obj Contain the content
+     * @param $name Contain the name of the concerned field
+     * @return array Return the object with clean html
+     */
     protected function filterCKEField($obj, $name)
     {
         $cleanerService = Manager::getService('HtmlCleaner');
 
-        if (isset($obj['fields'][$name])) {
+        if (isset($obj['fields'][$name]) && !is_array($obj['fields'][$name])) {
             $obj['fields'][$name] = $cleanerService->clean($obj['fields'][$name]);
+        } else if (isset($obj['fields'][$name]) && is_array($obj['fields'][$name])) {
+            $tempArray = array();
+            foreach($obj['fields'][$name] as $field) {
+                $tempArray[] = $cleanerService->clean($field);
+            }
+            $obj['fields'][$name] = $tempArray;
+            unset($tempArray);
         }
 
         if (isset($obj['i18n'])) {
             foreach ($obj['i18n'] as $locale => $data) {
-                if (isset($data['fields'][$name])) {
-                    $obj['i18n'][$locale]['fields'][$name] = $cleanerService->clean($obj['i18n'][$locale]['fields'][$name]);
+                if (isset($data['fields'][$name]) && !is_array($data['fields'][$name])) {
+                    $obj['i18n'][$locale]['fields'][$name] = $cleanerService->clean($data['fields'][$name]);
+                } elseif (isset($data['fields'][$name]) && is_array($data['fields'][$name])) {
+                    $tempArray = array();
+                    foreach($data['fields'][$name] as $field) {
+                        $tempArray[] = $cleanerService->clean($field);
+                    }
+                    $obj['i18n'][$locale]['fields'][$name] = $tempArray;
+                    unset($tempArray);
                 }
             }
         }
