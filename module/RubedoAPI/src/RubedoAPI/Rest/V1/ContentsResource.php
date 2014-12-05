@@ -158,12 +158,10 @@ class ContentsResource extends AbstractResource
 
             $nbItems = $unorderedContentArray['count'];
         } else {
-            $ismagic = false;
             if (!empty($params['fingerprint'])) {
-                $ismagic = true;
                 $this->getSessionService()->set('fingerprint', $params['fingerprint']);
             }
-            $contentArray = $this->getContentList($filters, $this->setPaginationValues($params), $ismagic);
+            $contentArray = $this->getContentList($filters, $this->setPaginationValues($params), isset($params['ismagic'])?(bool)$params['ismagic']:false);
             $nbItems = $contentArray['count'];
         }
         return [
@@ -623,6 +621,11 @@ class ContentsResource extends AbstractResource
                     ->setKey('limit')
                     ->setDescription('How much contents to return')
                     ->setFilter('int')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('ismagic')
+                    ->setDescription('Enable magic queries')
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
