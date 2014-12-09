@@ -24,6 +24,7 @@ use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
 use WebTales\MongoFilters\Filter;
+use Zend\Debug\Debug;
 
 
 /**
@@ -63,6 +64,7 @@ class ContentsResource extends AbstractResource
         $queryId = &$params['queryId'];
         $this->getQueriesCollection()->setCurrentPage((string) $params['pageId']);
         $filters = $this->getQueriesCollection()->getFilterArrayById($queryId);
+        $ismagic = false;
 
         if (isset($params['date']) && isset($params['dateFieldName'])) {
             if (isset($params['endDate'])) {
@@ -161,7 +163,10 @@ class ContentsResource extends AbstractResource
             if (!empty($params['fingerprint'])) {
                 $this->getSessionService()->set('fingerprint', $params['fingerprint']);
             }
-            $contentArray = $this->getContentList($filters, $this->setPaginationValues($params), isset($params['ismagic'])?(bool)$params['ismagic']:false);
+            if(isset($params['ismagic']) && $params['ismagic'] == "true") {
+                $ismagic = true;
+            }
+            $contentArray = $this->getContentList($filters, $this->setPaginationValues($params), $ismagic);
             $nbItems = $contentArray['count'];
         }
         return [
