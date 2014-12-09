@@ -23,11 +23,15 @@ cache
 library/Zend
 .zfproject.xml
 
+config/autoload/local.php.bak
+config/autoload/local.php.false
+
 build
 .buildpath
 
 /public/theme
 /public/generate-image
+/public/google*.html
 
 /vendor
 # Composer
