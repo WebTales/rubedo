@@ -269,10 +269,37 @@ class DamController extends DataAccessController
     {
         $fileInfos = $this->params()->fromFiles($name);
 
-        if (empty($fileInfos['tmp_name'])){
+        if(isset($fileInfos["error"]) && $fileInfos["error"] != UPLOAD_ERR_OK) {
+            switch ($fileInfos["error"]) {
+                case UPLOAD_ERR_INI_SIZE:
+                    $msg = "The server does not allow you to upload a file bigger than " . ini_get('upload_max_filesize');
+                    break;
+                case UPLOAD_ERR_FORM_SIZE:
+                    $msg = "You can not upload a file bigger than the form allow you to do";
+                    break;
+                case UPLOAD_ERR_PARTIAL:
+                    $msg = "The uploaded file was only partially uploaded";
+                    break;
+                case UPLOAD_ERR_NO_FILE:
+                    $msg = "No file uploaded for this field : ".$name;
+                    break;
+                case UPLOAD_ERR_NO_TMP_DIR:
+                    $msg = "Missing a temporary folder";
+                    break;
+                case UPLOAD_ERR_CANT_WRITE:
+                    $msg = "Failed to write file to disk";
+                    break;
+                case UPLOAD_ERR_EXTENSION:
+                    $msg = "A PHP extension stopped the file upload";
+                    break;
+                default :
+                    $msg = "No file uploaded for this field : ".$name;
+                    break;
+            }
+
             return(array(
                 "success"=>false,
-                "message"=>"No file uploaded for this field : ".$name
+                "msg"=>$msg
             ));
         }
 
