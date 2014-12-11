@@ -1584,5 +1584,13 @@ class DataAccess implements IDataAccess
     {
     	$this->_collection->insert($obj, array("w"=>0));
     }
+
+    /**
+     * Rapid simple update using fire and forget
+     */
+    public function directUpdate(array $data, IFilter $updateCond)
+    {
+        $this->_collection->update($updateCond->toArray(), $data, array("w"=>0));
+    }
     
 }
