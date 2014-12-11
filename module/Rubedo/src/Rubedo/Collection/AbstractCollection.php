@@ -872,5 +872,16 @@ abstract class AbstractCollection implements IAbstractCollection
         return $this->_collectionName;
     }
 
+    public function getAggregation($pipeline=array()){
+        $response = $this->_dataService->aggregate($pipeline);
+        if (!$response['ok']){
+            throw new \Rubedo\Exceptions\Server($response['errmsg']);
+        }
+        return array(
+            "data" => $response['result'],
+            "count" => count($response['result'])
+        );
+    }
+
 }
 	
