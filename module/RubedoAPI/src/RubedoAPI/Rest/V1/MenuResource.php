@@ -44,6 +44,11 @@ class MenuResource extends AbstractResource
     private $excludeFromMenuCondition;
 
     /**
+     * @var array
+     */
+    private $urlOptions;
+
+    /**
      * { @inheritdoc }
      */
     public function __construct()
@@ -70,6 +75,11 @@ class MenuResource extends AbstractResource
                             ->setDescription('Locale for the menu')
                             ->setFilter('string')
                     )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('menuLevel')
+                            ->setDescription('Level limit')
+                    )
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('menu')
@@ -88,55 +98,22 @@ class MenuResource extends AbstractResource
      */
     public function getAction($params)
     {
+        $rootPage = $this->pageService->findById($params['pageId']);
+        $menu = array_intersect_key($rootPage, array_flip(array('title', 'id', 'text')));
+        $levelLimit = isset($params["menuLevel"]) ? $params["menuLevel"] : 1;
         $this->excludeFromMenuCondition = Filter::factory('Not')->setName('excludeFromMenu')->setValue(true);
-        $urlOptions = array(
+        $this->urlOptions = array(
             'encode' => true,
             'reset' => true
         );
-        $rootPage = $this->pageService->findById($params['pageId']);
-        $startLevel = 1;
-        $levelOnePages = $this->_getPagesByLevel($rootPage['id'], $startLevel);
-        $menu = array_intersect_key($rootPage, array_flip(array('title', 'id', 'text')));
+
+        $menu["pages"] = $this->_getPagesByLevel($rootPage['id'], $levelLimit, 1, $params["menuLocale"]);
+        
         $menu['url'] = $this->getContext()->url()->fromRoute('rewrite', array(
             'pageId' => $menu['id'],
             'locale' => $params['menuLocale']
-        ), $urlOptions);
+        ), $this->urlOptions);
 
-        foreach ($levelOnePages as &$page) {
-            $tempArray = array();
-            $tempArray['url'] = $this->getContext()->url()->fromRoute('rewrite', array(
-                'pageId' => $page['id'],
-                'locale' => $params['menuLocale']
-            ), $urlOptions);
-
-            if (isset($page['title'])){
-            $tempArray['title'] = $page['title'];
-            }
-            $tempArray['text'] = $page['text'];
-            $tempArray['id'] = $page['id'];
-            $levelTwoPages = $this->pageService->readChild($page['id'], $this->excludeFromMenuCondition);
-
-            if (count($levelTwoPages)) {
-
-                $tempArray['pages'] = array();
-                foreach ($levelTwoPages as $subPage) {
-                    $tempSubArray = array();
-                    $tempSubArray['url'] = $this->getContext()->url()->fromRoute('rewrite', array(
-                        'pageId' => $subPage['id'],
-                        "locale" => $params['menuLocale']
-                    ), $urlOptions);
-
-                    if (isset($subPage['title'])){
-                        $tempSubArray['title'] = $subPage['title'];
-                    }
-                    $tempSubArray['text'] = $subPage['text'];
-                    $tempSubArray['id'] = $subPage['id'];
-                    $tempArray['pages'][] = $tempSubArray;
-                }
-            }
-
-            $menu['pages'][] = $tempArray;
-        }
         return [
             'success' => true,
             'menu' => $menu,
@@ -149,19 +126,37 @@ class MenuResource extends AbstractResource
      * @param $rootPage
      * @param $targetLevel
      * @param int $currentLevel
+     * @param $locale
      * @return array
      */
-    protected function _getPagesByLevel($rootPage, $targetLevel, $currentLevel = 1)
+    protected function _getPagesByLevel($rootPage, $targetLevel, $currentLevel = 1, $locale)
     {
         $pages = $this->pageService->readChild($rootPage, $this->excludeFromMenuCondition);
+
         if ($currentLevel == $targetLevel) {
+            foreach ($pages as $key => $page) {
+                $pages[$key]["url"] = $this->getContext()->url()->fromRoute('rewrite', array(
+                    'pageId' => $page['id'],
+                    'locale' => $locale
+                ), $this->urlOptions);
+            }
+
             return $pages;
         }
-        foreach ($pages as $page) {
-            if (in_array($page['id'], $this->rootline)) {
-                return $this->_getPagesByLevel($page['id'], $targetLevel, $currentLevel + 1);
+
+        foreach ($pages as $key => $page) {
+            $pages[$key]["url"] = $this->getContext()->url()->fromRoute('rewrite', array(
+                'pageId' => $page['id'],
+                'locale' => $locale
+            ), $this->urlOptions);
+
+            $nextLevel = $this->_getPagesByLevel($page['id'], $targetLevel, $currentLevel + 1, $locale);
+
+            if(is_array($nextLevel) && !empty($nextLevel)) {
+                $pages[$key]["pages"] = $nextLevel;
             }
         }
-        return array();
+
+        return $pages;
     }
 }
