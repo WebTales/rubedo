@@ -212,7 +212,7 @@ class UsersResource extends AbstractResource
             || empty($user['email'])
             || empty($user['name'])
         ) {
-            throw new APIEntityException('User not consistent', 400);
+            throw new APIEntityException('User not consistent: ' . json_encode($user), 400);
         }
         $createdUser = $this->getUsersCollection()->create($user);
 

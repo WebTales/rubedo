@@ -107,6 +107,9 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
             'usertype' => new \MongoId(),
             'fields' => array(
                 'password' => 'foo',
+                'login' => 'bar',
+                'email' => 'email@test.fr',
+                'name' => 'foobar'
             ),
         ));
     }
@@ -152,6 +155,9 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
             'usertype' => new \MongoId(),
             'fields' => array(
                 'password' => 'foo',
+                'login' => 'bar',
+                'email' => 'email@test.fr',
+                'name' => 'foobar'
             ),
         ));
         $this->assertArrayHasKey('success', $result);

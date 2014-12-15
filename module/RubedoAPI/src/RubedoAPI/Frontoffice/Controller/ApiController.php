@@ -48,7 +48,12 @@ class ApiController extends AbstractActionController
                 }
             );
             $namespacesToSearch = array();
-            foreach ($this->getServiceLocator()->get('ModuleManager')->getLoadedModules() as $module) {
+
+            $serviceLocator = $this->getServiceLocator();
+
+            $loadedModules = $serviceLocator ? $serviceLocator->get('ModuleManager')->getLoadedModules() : array();
+
+            foreach ($loadedModules as $module) {
                 $moduleConfig = $module->getConfig();
                 $namespacesToSearch = array_merge($namespacesToSearch, isset($moduleConfig['namespaces_api'])?$moduleConfig['namespaces_api']:array());
             }

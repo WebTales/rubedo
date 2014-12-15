@@ -20,7 +20,7 @@ namespace RubedoAPITest\Rest\V1;
 use Rubedo\Services\Manager;
 use RubedoAPI\Rest\V1\MediatypesResource;
 
-class UsertypesResourceTest extends \PHPUnit_Framework_TestCase
+class MediatypesResourceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \RubedoAPI\Rest\V1\MediatypesResource
