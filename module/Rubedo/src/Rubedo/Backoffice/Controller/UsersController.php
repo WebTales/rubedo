@@ -18,7 +18,6 @@ namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
-use Zend\Debug\Debug;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 
@@ -132,14 +131,15 @@ class UsersController extends DataAccessController
         $filePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName;
         $csvResource = fopen($filePath, 'w+');
         $fieldsArray = array(
-            "email",
-            "name"
+            "email"=>null,
+            "name"=>null
         );
         $headerArray = array(
             "email"=>"Email",
             "name"=>"Name"
         );
-        $fieldsArray[]="createTime";
+        $fieldsArray["createTime"]=null;
+        $multivaluedFieldsArray=array();
         $headerArray["createTime"]="Creation";
         $exportableFieldTypes=[
             "Ext.form.field.Text",
@@ -155,8 +155,11 @@ class UsersController extends DataAccessController
         ];
         foreach ($userType['fields'] as $typeField){
             if (in_array($typeField['cType'],$exportableFieldTypes)){
-                $fieldsArray[]=$typeField['config']['name'];
+                $fieldsArray[$typeField['config']['name']]=$typeField['cType'];
                 $headerArray[$typeField['config']['name']]=$typeField['config']['fieldLabel'];
+                if (isset($typeField['config']['multivalued'])&&$typeField['config']['multivalued']){
+                    $multivaluedFieldsArray[]=$typeField['config']['name'];
+                }
             }
         }
         $taxoService=Manager::getService("Taxonomy");
@@ -173,7 +176,7 @@ class UsersController extends DataAccessController
             }
         }
         $csvLine = array();
-        foreach ($fieldsArray as $field) {
+        foreach ($fieldsArray as $field=>$fieldType) {
             $csvLine[] = $headerArray[$field];
         }
         foreach ($taxoFieldsArray as $field) {
@@ -183,7 +186,7 @@ class UsersController extends DataAccessController
 
         foreach ($users['data'] as $user) {
             $csvLine = array();
-            foreach ($fieldsArray as $field) {
+            foreach ($fieldsArray as $field=>$fieldType) {
                 switch ($field) {
                     case 'createTime':
                         $csvLine[] = date('d-m-Y H:i:s',$user["createTime"]);
@@ -195,10 +198,14 @@ class UsersController extends DataAccessController
                     default:
                         if (!isset($user['fields'][$field])){
                             $csvLine[]='';
-                        } elseif (is_array($user['fields'][$field])){
-                            $csvLine[]=implode(", ",$user['fields'][$field]);
+                        } elseif (in_array($field,$multivaluedFieldsArray)&&is_array($user['fields'][$field])) {
+                            $formatedValuesArray=array();
+                            foreach($user['fields'][$field] as $unformatedValue){
+                                $formatedValuesArray[]=$this->formatFieldData($unformatedValue,$fieldType);
+                            }
+                            $csvLine[]=implode(", ",$formatedValuesArray);
                         } else {
-                            $csvLine[]=$user['fields'][$field];
+                            $csvLine[]=$this->formatFieldData($user['fields'][$field],$fieldType);
                         }
                         break;
                 }
@@ -235,5 +242,24 @@ class UsersController extends DataAccessController
         $headers->addHeaderLine('Content-Length', strlen($content));
         $response->setContent($content);
         return $response;
+    }
+
+    protected function formatFieldData($value,$cType=null){
+        switch ($cType) {
+            case 'Ext.form.field.Date':
+                return date('d-m-Y H:i:s',$value);
+                break;
+            case 'Ext.form.RadioGroup':
+            case 'Ext.form.field.ComboBox':
+                if (is_array($value)){
+                    return implode(", ",$value);
+                } else {
+                    return $value;
+                }
+                break;
+            default:
+                return($value);
+                break;
+        }
     }
 }
