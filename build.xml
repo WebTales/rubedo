@@ -1,6 +1,6 @@
 <project name="rubedo" default="main" basedir=".">
     <!-- By default, set rights on applications folders -->
-    <target name="main" depends="set-rights"></target>
+    <target name="main" depends="build"></target>
 
     <!-- Use the prepare-cache action -->
     <target name="set-rights" depends="prepare-cache"></target>
@@ -33,8 +33,8 @@
     </target>
 
     <!-- Launch all the application for the continuous integration -->
-    <target name="build"
-            depends="prepare-build,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpdoc"></target>
+    <target name="build" depends="prepare-build,lint,pdepend,phpcs-ci"></target>
+    <!-- <target name="build" depends="prepare-build,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpdoc"></target> -->
 
     <!--*********************************************************************
     ************ All actions for folders and rights *************************
@@ -105,14 +105,14 @@
         </apply>
     </target>
 
-    <!-- Determine the project size -->
+    <!-- Determine the project size
     <target name="phploc" description="Measure project size using PHPLOC">
         <exec executable="phploc">
-            <arg value="--log-csv"/>
+            <arg value="-log-csv"/> log-csv need 2 -
             <arg value="${project.basedir}/build/logs/phploc.csv"/>
             <arg value="${project.basedir}/module/Rubedo"/>
         </exec>
-    </target>
+    </target> -->
 
     <!-- Calculate software metrics using PHP_Depend -->
     <target name="pdepend" description="Calculate software metrics using PHP_Depend">
@@ -124,7 +124,7 @@
         </exec>
     </target>
 
-    <!-- Perform project mess detection using PHPMD and print human readable output -->
+    <!-- Perform project mess detection using PHPMD and print human readable output
     <target name="phpmd"
             description="Perform project mess detection using PHPMD and print human readable output. ">
         <exec executable="${project.basedir}/vendor/bin/phpmd" passthru="true">
@@ -133,28 +133,28 @@
             <arg value="design,unusedcode"/>
 
         </exec>
-    </target>
+    </target> -->
 
-    <!-- Perform project mess detection using PHPMD -->
+    <!-- Perform project mess detection using PHPMD
     <target name="phpmd-ci"
             description="Perform project mess detection using PHPMD. ">
         <exec executable="${project.basedir}/vendor/bin/phpmd">
             <arg path="${project.basedir}/module/Rubedo"/>
             <arg value="xml"/>
             <arg value="design,unusedcode"/>
-            <arg value="--reportfile"/>
+            <arg value="-reportfile"/> reportfile need 2 - at the begening
             <arg value="${project.basedir}/build/logs/pmd.xml"/>
         </exec>
-    </target>
+    </target> -->
 
-    <!-- Check if the source code respects the PSR2 standards -->
+    <!-- Check if the source code respects the PSR2 standards
     <target name="phpcs"
             description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="${project.basedir}/vendor/bin/phpcs" passthru="true">
-            <arg value="--standard=PSR2"/>
+            <arg value="-standard=PSR2"/> standard need 2 - at the begening
             <arg path="${project.basedir}/module/Rubedo"/>
         </exec>
-    </target>
+    </target> -->
 
     <!-- Check if the source code respects the PSR2 standards -->
     <target name="phpcs-ci"
@@ -167,18 +167,18 @@
         </exec>
     </target>
 
-    <!-- Find duplicate code using PHPCPD -->
+    <!-- Find duplicate code using PHPCPD
     <target name="phpcpd" description="Find duplicate code using PHPCPD">
         <exec executable="phpcpd">
-            <arg value="--log-pmd"/>
+            <arg value="-log-pmd"/> log-pmd need 2 - at the begening
             <arg value="${project.basedir}/build/logs/pmd-cpd.xml"/>
             <arg path="${project.basedir}/module/Rubedo"/>
         </exec>
-    </target>
+    </target> -->
 
-    <!-- Build PHPdoc -->
+    <!-- Build PHPdoc
     <target name="phpdoc" description="Build PHPdoc">
         <exec executable="phpdoc">
         </exec>
-    </target>
+    </target> -->
 </project>
