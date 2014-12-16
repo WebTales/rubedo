@@ -143,15 +143,26 @@ class UsersController extends DataAccessController
         $headerArray["createTime"]="Creation";
         $exportableFieldTypes=[
             "Ext.form.field.Text",
+            "textfield",
             "Ext.form.field.TextArea",
+            "textarea",
+            "textareafield",
             "Ext.form.field.Number",
+            "numberfield",
             "Ext.form.field.ComboBox",
+            "combobox",
             "Ext.form.field.Checkbox",
+            "checkboxfield",
             "Ext.form.RadioGroup",
+            "radiogroup",
             "Ext.form.field.Date",
+            "datefield",
             "Ext.form.field.Time",
+            "timefield",
             "Ext.slider.Single",
-            "Rubedo.view.CKEField"
+            "slider",
+            "Rubedo.view.CKEField",
+            "CKEField",
         ];
         foreach ($userType['fields'] as $typeField){
             if (in_array($typeField['cType'],$exportableFieldTypes)){
@@ -247,10 +258,13 @@ class UsersController extends DataAccessController
     protected function formatFieldData($value,$cType=null){
         switch ($cType) {
             case 'Ext.form.field.Date':
+            case 'datefield':
                 return date('d-m-Y H:i:s',$value);
                 break;
             case 'Ext.form.RadioGroup':
+            case 'radiogroup':
             case 'Ext.form.field.ComboBox':
+            case 'combobox':
                 if (is_array($value)){
                     return implode(", ",$value);
                 } else {
