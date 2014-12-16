@@ -8,7 +8,7 @@
     <!-- Launch test suit for the Rubedo core -->
     <target name="phpunit">
         <exec
-                command="${project.basedir}/vendor/bin/phpunit  --colors --configuration ${project.basedir}/module/Rubedo/test/phpunit.xml"
+                command="${project.basedir}/vendor/bin/phpunit --log-junit ${project.basedir}/build/logs/phpunit-core.xml --colors --configuration ${project.basedir}/module/Rubedo/test/phpunit.xml"
                 dir="${project.basedir}/module/Rubedo/test"
                 passthru="true"
                 />
@@ -17,7 +17,7 @@
     <!-- Launch test suit for the Rubedo API -->
     <target name="phpunit-api">
         <exec
-                command="${project.basedir}/vendor/bin/phpunit  --colors --configuration ${project.basedir}/module/RubedoAPI/test/phpunit.xml.dist"
+                command="${project.basedir}/vendor/bin/phpunit --log-junit ${project.basedir}/build/logs/phpunit-api.xml --colors --configuration ${project.basedir}/module/RubedoAPI/test/phpunit.xml.dist"
                 dir="${project.basedir}/module/RubedoAPI/test"
                 passthru="true"
                 />
@@ -33,7 +33,7 @@
     </target>
 
     <!-- Launch all the application for the continuous integration -->
-    <target name="build" depends="prepare-build,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpunit-api,phpdoc"></target>
+    <target name="build" depends="prepare-build,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpunit-api,phpunit,phpdoc"></target>
 
     <!--*********************************************************************
     ************ All actions for folders and rights *************************
