@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 use Zend\Debug\Debug;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
@@ -292,4 +293,183 @@ class ContentsController extends DataAccessController
             "data" => $updateData
         ));
     }
+
+    public function exportAction(){
+        $params = $this->params()->fromQuery();
+        $filters = Filter::factory();
+        if (!empty($params['startDate'])) {
+            $filters->addFilter(
+                Filter::factory('OperatorTovalue')->setName('createTime')
+                    ->setOperator('$gte')
+                    ->setValue((int)$params['startDate'])
+            );
+        }
+        if (!empty($params['endDate'])) {
+            $filters->addFilter(
+                Filter::factory('OperatorTovalue')->setName('createTime')
+                    ->setOperator('$lte')
+                    ->setValue((int)$params['endDate'])
+            );
+        }
+        $contentType=Manager::getService("ContentTypes")->findById($params['typeId']);
+        $filters->addFilter(
+            Filter::factory('Value')->setName('typeId')
+                ->setValue($params['typeId'])
+        );
+        $contents=$this->_dataService->getOnlineList($filters);
+        $fileName = 'export_rubedo_contents_'.$contentType['type'].'_' . time() . '.csv';
+        $filePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName;
+        $csvResource = fopen($filePath, 'w+');
+        $fieldsArray = array(
+            "text"=>null,
+            "summary"=>null
+        );
+        $headerArray = array(
+            "text"=>"Title",
+            "summary"=>"Summary"
+        );
+        $fieldsArray["createTime"]=null;
+        $multivaluedFieldsArray=array();
+        $headerArray["createTime"]="Creation";
+        $exportableFieldTypes=[
+            "Ext.form.field.Text",
+            "textfield",
+            "Ext.form.field.TextArea",
+            "textarea",
+            "textareafield",
+            "Ext.form.field.Number",
+            "numberfield",
+            "Ext.form.field.ComboBox",
+            "combobox",
+            "Ext.form.field.Checkbox",
+            "checkboxfield",
+            "Ext.form.RadioGroup",
+            "radiogroup",
+            "Ext.form.field.Date",
+            "datefield",
+            "Ext.form.field.Time",
+            "timefield",
+            "Ext.slider.Single",
+            "slider",
+            "Rubedo.view.CKEField",
+            "CKEField",
+        ];
+        foreach ($contentType['fields'] as $typeField){
+            if (in_array($typeField['cType'],$exportableFieldTypes)){
+                $fieldsArray[$typeField['config']['name']]=$typeField['cType'];
+                $headerArray[$typeField['config']['name']]=$typeField['config']['fieldLabel'];
+                if (isset($typeField['config']['multivalued'])&&$typeField['config']['multivalued']){
+                    $multivaluedFieldsArray[]=$typeField['config']['name'];
+                }
+            }
+        }
+        $taxoService=Manager::getService("Taxonomy");
+        $taxoTermsService=Manager::getService("TaxonomyTerms");
+        $taxoHeaderArray=array();
+        $taxoFieldsArray=array();
+        foreach($contentType['vocabularies'] as $vocabId){
+            if (!empty($vocabId)&&$vocabId!="navigation"){
+                $vocabulary=$taxoService->findById($vocabId);
+                if ($vocabulary){
+                    $taxoHeaderArray[$vocabId]=$vocabulary['name'];
+                    $taxoFieldsArray[]=$vocabId;
+                }
+            }
+        }
+        $csvLine = array();
+        foreach ($fieldsArray as $field=>$fieldType) {
+            $csvLine[] = $headerArray[$field];
+        }
+        foreach ($taxoFieldsArray as $field) {
+            $csvLine[] = $taxoHeaderArray[$field];
+        }
+        fputcsv($csvResource, $csvLine, ';');
+
+        foreach ($contents['data'] as $content) {
+            $csvLine = array();
+            foreach ($fieldsArray as $field=>$fieldType) {
+                switch ($field) {
+                    case 'createTime':
+                        $csvLine[] = date('d-m-Y H:i:s',$content["createTime"]);
+                        break;
+                    case 'text':
+                        $csvLine[] = isset($content[$field]) ? $content[$field] : '';
+                        break;
+                    default:
+                        if (!isset($content['fields'][$field])){
+                            $csvLine[]='';
+                        } elseif (in_array($field,$multivaluedFieldsArray)&&is_array($content['fields'][$field])) {
+                            $formatedValuesArray=array();
+                            foreach($content['fields'][$field] as $unformatedValue){
+                                $formatedValuesArray[]=$this->formatFieldData($unformatedValue,$fieldType);
+                            }
+                            $csvLine[]=implode(", ",$formatedValuesArray);
+                        } else {
+                            $csvLine[]=$this->formatFieldData($content['fields'][$field],$fieldType);
+                        }
+                        break;
+                }
+            }
+            foreach ($taxoFieldsArray as $taxoField) {
+                if (!isset($content['taxonomy'][$taxoField])){
+                    $csvLine[]='';
+                } elseif (is_array($content['taxonomy'][$taxoField])) {
+                    $termLabelsArray=array();
+                    foreach($content['taxonomy'][$taxoField] as $taxoTermId){
+                        if (!empty($taxoTermId)){
+                            $foundTerm=$taxoTermsService->findById($taxoTermId);
+                            if ($foundTerm){
+                                $termLabelsArray[]=$foundTerm['text'];
+                            }
+                        }
+                    }
+                    $csvLine[]=implode(", ",$termLabelsArray);
+                } else {
+                    if (!empty($content['taxonomy'][$taxoField])){
+                        $foundTerm=$taxoTermsService->findById($content['taxonomy'][$taxoField]);
+                        if ($foundTerm){
+                            $csvLine[]=$foundTerm['text'];
+                        } else {
+                            $csvLine[]='';
+                        }
+                    } else {
+                        $csvLine[]='';
+                    }
+                }
+            }
+            fputcsv($csvResource, $csvLine, ';');
+        }
+        $content = file_get_contents($filePath);
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-Type', 'text/csv');
+        $headers->addHeaderLine('Content-Disposition', "attachment; filename=\"$fileName\"");
+        $headers->addHeaderLine('Accept-Ranges', 'bytes');
+        $headers->addHeaderLine('Content-Length', strlen($content));
+        $response->setContent($content);
+        return $response;
+    }
+
+    protected function formatFieldData($value,$cType=null){
+        switch ($cType) {
+            case 'Ext.form.field.Date':
+            case 'datefield':
+                return date('d-m-Y H:i:s',$value);
+                break;
+            case 'Ext.form.RadioGroup':
+            case 'radiogroup':
+            case 'Ext.form.field.ComboBox':
+            case 'combobox':
+                if (is_array($value)){
+                    return implode(", ",$value);
+                } else {
+                    return $value;
+                }
+                break;
+            default:
+                return($value);
+                break;
+        }
+    }
+    
 }

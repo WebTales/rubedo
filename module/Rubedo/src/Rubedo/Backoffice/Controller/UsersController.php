@@ -227,16 +227,22 @@ class UsersController extends DataAccessController
                 } elseif (is_array($user['taxonomy'][$taxoField])) {
                     $termLabelsArray=array();
                     foreach($user['taxonomy'][$taxoField] as $taxoTermId){
-                        $foundTerm=$taxoTermsService->findById($taxoTermId);
-                        if ($foundTerm){
-                            $termLabelsArray[]=$foundTerm['text'];
+                        if (!empty($taxoTermId)){
+                            $foundTerm=$taxoTermsService->findById($taxoTermId);
+                            if ($foundTerm){
+                                $termLabelsArray[]=$foundTerm['text'];
+                            }
                         }
                     }
                     $csvLine[]=implode(", ",$termLabelsArray);
                 } else {
-                    $foundTerm=$taxoTermsService->findById($user['taxonomy'][$taxoField]);
-                    if ($foundTerm){
-                        $csvLine[]=$foundTerm['text'];
+                    if (!empty($user['taxonomy'][$taxoField])){
+                        $foundTerm=$taxoTermsService->findById($user['taxonomy'][$taxoField]);
+                        if ($foundTerm){
+                            $csvLine[]=$foundTerm['text'];
+                        } else {
+                            $csvLine[]='';
+                        }
                     } else {
                         $csvLine[]='';
                     }
