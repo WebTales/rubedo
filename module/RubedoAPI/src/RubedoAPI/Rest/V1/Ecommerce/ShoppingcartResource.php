@@ -103,7 +103,7 @@ class ShoppingcartResource extends AbstractResource
 
         return array(
             'success' => true,
-            'shoppingCart' => $shoppingCart,
+            'shoppingCart' => $this->filterShoppingCart($shoppingCart),
         );
     }
 
@@ -115,8 +115,7 @@ class ShoppingcartResource extends AbstractResource
      */
     protected function filterShoppingCart($shoppingCart)
     {
-        $mask = array('id', 'shoppingCart', 'name');
-        return array_intersect_key($shoppingCart, array_flip($mask));
+        return ($shoppingCart);
     }
 
     /**
