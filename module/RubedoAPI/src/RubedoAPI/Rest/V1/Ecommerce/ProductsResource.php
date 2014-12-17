@@ -29,6 +29,25 @@ use WebTales\MongoFilters\Filter;
 class ProductsResource extends ContentsResource
 {
     /**
+     * @var array
+     */
+    protected $returnedEntityFields = array(
+        'id',
+        'text',
+        'version',
+        'createUser',
+        'lastUpdateUser',
+        'fields',
+        'taxonomy',
+        'status',
+        'pageId',
+        'maskId',
+        'locale',
+        'readOnly',
+        'productProperties',
+    );
+
+    /**
      * define verbs
      */
     protected function define()

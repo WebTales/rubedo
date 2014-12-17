@@ -43,6 +43,24 @@ class ContentsResource extends AbstractResource
     protected $otherLocalizableFields = array('text', 'summary');
 
     /**
+     * @var array
+     */
+    protected $returnedEntityFields = array(
+        'id',
+        'text',
+        'version',
+        'createUser',
+        'lastUpdateUser',
+        'fields',
+        'taxonomy',
+        'status',
+        'pageId',
+        'maskId',
+        'locale',
+        'readOnly',
+    );
+
+    /**
      * { @inheritdoc }
      */
     public function __construct()
@@ -445,20 +463,7 @@ class ContentsResource extends AbstractResource
         $content = array_intersect_key(
             $content,
             array_flip(
-                array(
-                    'id',
-                    'text',
-                    'version',
-                    'createUser',
-                    'lastUpdateUser',
-                    'fields',
-                    'taxonomy',
-                    'status',
-                    'pageId',
-                    'maskId',
-                    'locale',
-                    'readOnly',
-                )
+                $this->returnedEntityFields
             )
         );
 
