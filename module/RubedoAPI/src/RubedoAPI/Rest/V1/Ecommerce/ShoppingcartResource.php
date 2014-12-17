@@ -100,9 +100,10 @@ class ShoppingcartResource extends AbstractResource
         } else {
             $shoppingCart = $this->getShoppingCartCollection()->getCurrentCart($params['shoppingCartToken']);
         }
+
         return array(
             'success' => true,
-            'shoppingCart' => $this->filterShoppingCart($shoppingCart),
+            'shoppingCart' => $shoppingCart,
         );
     }
 
