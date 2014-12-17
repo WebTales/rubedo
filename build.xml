@@ -1,6 +1,6 @@
 <project name="rubedo" default="main" basedir=".">
     <!-- By default, indicates all available arguments -->
-    <target name="main" depends="build">
+    <target name="main" depends="help"></target>
 
     <target name="help" depends="">
         <echo msg='Please use an argument to launch an action :' />
