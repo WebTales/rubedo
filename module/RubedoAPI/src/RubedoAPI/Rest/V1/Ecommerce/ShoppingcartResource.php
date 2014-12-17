@@ -115,7 +115,107 @@ class ShoppingcartResource extends AbstractResource
      */
     protected function filterShoppingCart($shoppingCart)
     {
-        return ($shoppingCart);
+        $userTypeId="*";
+        $country="*";
+        $region="*";
+        $postalCode="*";
+        $currentUser = $this->getCurrentUserAPIService()->getCurrentUser();
+        if($currentUser){
+            $userTypeId=$currentUser['typeId'];
+            if (isset($currentUser['shippingAddress']['country'])&&!empty($currentUser['shippingAddress']['country'])){
+                $country=$currentUser['shippingAddress']['country'];
+            }
+            if (isset($currentUser['shippingAddress']['regionState'])&&!empty($currentUser['shippingAddress']['regionState'])){
+                $region=$currentUser['shippingAddress']['regionState'];
+            }
+            if (isset($currentUser['shippingAddress']['postCode'])&&!empty($currentUser['shippingAddress']['postCode'])){
+                $postalCode=$currentUser['shippingAddress']['postCode'];
+            }
+        }
+        return ($this->addCartInfos($shoppingCart,$userTypeId, $country, $region, $postalCode));
+    }
+
+    /**
+     * @param $cart
+     * @param $userTypeId
+     * @param $country
+     * @param $region
+     * @param $postalCode
+     * @return array
+     */
+    protected function addCartInfos($cart, $userTypeId, $country, $region, $postalCode)
+    {
+        $totalPrice = 0;
+        $totalTaxedPrice = 0;
+        $totalItems = 0;
+        $ignoredArray = array('price', 'amount', 'id', 'sku', 'stock', 'basePrice', 'specialOffers');
+        foreach ($cart as &$value) {
+            $myContent = $this->getContentsCollection()->findById($value['productId'], true, false);
+            if ($myContent) {
+                $value['title'] = $myContent['text'];
+                $value['subtitle'] = '';
+                $unitPrice = 0;
+                $taxedPrice = 0;
+                $unitTaxedPrice = 0;
+                $price = 0;
+                foreach ($myContent['productProperties']['variations'] as $variation) {
+                    if ($variation['id'] == $value['variationId']) {
+                        if (array_key_exists('specialOffers', $variation)) {
+                            $variation["price"] = $this->getBetterSpecialOffer($variation['specialOffers'], $variation["price"]);
+                            $value['unitPrice'] = $variation["price"];
+                        }
+                        $unitPrice = $variation['price'];
+                        $unitTaxedPrice = $this->getTaxesCollection()->getTaxValue($myContent['typeId'], $userTypeId, $country, $region, $postalCode, $unitPrice);
+                        $price = $unitPrice * $value['amount'];
+                        $taxedPrice = $unitTaxedPrice * $value['amount'];
+                        $totalTaxedPrice = $totalTaxedPrice + $taxedPrice;
+                        $totalPrice = $totalPrice + $price;
+                        $totalItems = $totalItems + $value['amount'];
+                        foreach ($variation as $varkey => $varvalue) {
+                            if (!in_array($varkey, $ignoredArray)) {
+                                $value['subtitle'] .= ' ' . $varvalue;
+                            }
+                        }
+                    }
+                }
+                $value['price'] = $price;
+                $value['unitPrice'] = $unitPrice;
+                $value['unitTaxedPrice'] = $unitTaxedPrice;
+                $value['taxedPrice'] = $taxedPrice;
+            }
+        }
+        return array(
+            'cart' => $cart,
+            'totalPrice' => $totalPrice,
+            'totalTaxedPrice' => $totalTaxedPrice,
+            'totalItems' => $totalItems
+        );
+    }
+
+    /**
+     * @param $offers
+     * @param $basePrice
+     * @return mixed
+     */
+    protected function getBetterSpecialOffer($offers, $basePrice)
+    {
+        $actualDate = new \DateTime();
+        foreach ($offers as $offer) {
+            $beginDate = $offer['beginDate'];
+            $endDate = $offer['endDate'];
+            $offer['beginDate'] = new \DateTime();
+            $offer['beginDate']->setTimestamp($beginDate);
+            $offer['endDate'] = new \DateTime();
+            $offer['endDate']->setTimestamp($endDate);
+            if (
+                $offer['beginDate'] <= $actualDate
+                && $offer['beginDate'] <= $actualDate
+                && $basePrice > $offer['price']
+            ) {
+                $basePrice = $offer['price'];
+            }
+        }
+        return $basePrice;
     }
 
     /**
