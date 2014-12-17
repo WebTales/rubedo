@@ -16,7 +16,7 @@
  */
 namespace RubedoTest\User;
 use Rubedo\Services\Manager;
-use Rubedo\User\AuthAdapter;
+use Rubedo\User\Authentication\Adapter\CoreAdapter;
 use Zend\Authentication\Result;
 
 
@@ -65,7 +65,7 @@ class AuthAdapterTest extends \PHPUnit_Framework_TestCase
         $mockService->expects($this->once())->method('checkPassword')->with($this->equalTo('expected'), $this->equalTo($password), $this->equalTo('grainDeSel'))->will($this->returnValue(true));
         Manager::setMockService('Hash', $mockService);
 
-        $authAdapter = new AuthAdapter($login, $password);
+        $authAdapter = new CoreAdapter($login, $password);
         $result = $authAdapter->authenticate();
 
         unset($user['password']);
@@ -93,7 +93,7 @@ class AuthAdapterTest extends \PHPUnit_Framework_TestCase
         $login = "johnDoe";
         $password = "verySecret";
 
-        $authAdapter = new AuthAdapter($login, $password);
+        $authAdapter = new CoreAdapter($login, $password);
         $result = $authAdapter->authenticate();
 
         $this->assertInstanceOf('\Zend\Authentication\Result', $result);
@@ -117,7 +117,7 @@ class AuthAdapterTest extends \PHPUnit_Framework_TestCase
         $login = "johnDoe";
         $password = "verySecret";
 
-        $authAdapter = new AuthAdapter($login, $password);
+        $authAdapter = new CoreAdapter($login, $password);
         $result = $authAdapter->authenticate();
         $this->assertInstanceOf('\Zend\Authentication\Result', $result);
         $this->assertEquals(null, $result->getIdentity());

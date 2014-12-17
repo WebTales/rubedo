@@ -756,12 +756,10 @@ class ContentsTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(array(
                 "success" => true
             )));
-        $this->mockDataIndexService->expects($this->once())
-            ->method('deleteContent');
 
         $obj = array(
-            "id" => "test",
-            "typeId" => "50c0c8669a199d930f000001",
+            "id" => new \MongoId(),
+            "typeId" => new \MongoId(),
             "fields" => array(
                 'text' => 'test',
                 'summary' => 'test',
@@ -771,9 +769,9 @@ class ContentsTest extends \PHPUnit_Framework_TestCase
         );
 
         $contents = new Contents();
-        AbstractCollection::disableUserFilter(false);
-        $result = $contents->destroy($obj);
         AbstractCollection::disableUserFilter(true);
+        $result = $contents->destroy($obj);
+        AbstractCollection::disableUserFilter(false);
 
         $this->assertTrue($result['success']);
     }

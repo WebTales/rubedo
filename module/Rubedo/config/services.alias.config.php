@@ -14,4 +14,5 @@
  */
 return array(
     'AuthenticationService' => 'Rubedo\\User\\Authentication\\AuthenticationService',
+    'CurrentUser' => 'Rubedo\\User\\CurrentUser',
 );
