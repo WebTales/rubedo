@@ -42,7 +42,7 @@
         <exec executable="${project.basedir}/vendor/bin/phpunit" passthru="true">
             <arg value="--colors"/>
             <arg value="--configuration"/>
-            <arg path="${project.basedir}/tests/phpunit.xml"/>
+            <arg path="${project.basedir}/test/phpunit.xml"/>
             <arg value="--log-junit"/>
             <arg path="${project.basedir}/build/logs/phpunit.xml"/>
             <arg value="--coverage-html"/>
@@ -106,7 +106,11 @@
 
     <!-- Delete build dirs -->
     <target name="clean-build" description="Cleanup build artifacts">
-        <delete dir="${project.basedir}/build"/>
+        <delete dir="${project.basedir}/build/api"/>
+        <delete dir="${project.basedir}/build/code-browser"/>
+        <delete dir="${project.basedir}/build/coverage"/>
+        <delete dir="${project.basedir}/build/logs"/>
+        <delete dir="${project.basedir}/build/pdepend"/>
     </target>
 
     <!--*********************************************************************
