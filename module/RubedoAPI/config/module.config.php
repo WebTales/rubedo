@@ -58,7 +58,7 @@ return array(
             'API\\Services\\CurrentLocalization' => 'RubedoAPI\\Services\\Internationalization\\Current',
             'API\\Services\\Translation' => 'RubedoAPI\\Services\\Internationalization\\Translate',
             'CurrentLocalization' => 'RubedoAPI\\Services\\Internationalization\\Current',
-            'CurrentUser' => 'RubedoAPI\\Services\\User\\CurrentUser',
+            'CurrentUserAPI' => 'RubedoAPI\\Services\\User\\CurrentUser',
             'API\\Collection\\ShoppingCart' => 'RubedoAPI\\Collection\\ShoppingCart',
             'ShoppingCart' => 'RubedoAPI\\Collection\\ShoppingCart',
         ),

@@ -41,6 +41,20 @@
     ************ All actions for unit tests *********************************
     **********************************************************************-->
 
+    <target name="phpunit-all" description="Launch test suit">
+        <exec executable="${project.basedir}/vendor/bin/phpunit" passthru="true">
+            <arg value="--colors"/>
+            <arg value="--configuration"/>
+            <arg path="${project.basedir}/tests/phpunit.xml"/>
+            <arg value="--log-junit"/>
+            <arg path="${project.basedir}/build/logs/phpunit-core.xml"/>
+            <arg value="--coverage-html"/>
+            <arg path="${project.basedir}/build/coverage/core"/>
+            <arg value="--coverage-clover"/>
+            <arg path="${project.basedir}/build/logs/coverage-core.xml"/>
+        </exec>
+    </target>
+
     <!-- Launch test suit for the Rubedo core -->
     <target name="phpunit-core" description="Launch test suit for the Rubedo core">
         <exec executable="${project.basedir}/vendor/bin/phpunit" passthru="true">
