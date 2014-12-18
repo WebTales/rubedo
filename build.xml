@@ -31,56 +31,24 @@
     <!-- Clear cache and build folders -->
     <target name="clear" depends="clean-cache,clean-build,prepare-cache,prepare-build"></target>
 
-    <!-- Use the prepare-cache action -->
-    <target name="phpunit" depends="phpunit-core,phpunit-api"></target>
-
     <!-- Launch all the application for the continuous integration -->
-    <target name="build" depends="clean-build,prepare-build,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpunit-api,phpunit-core,phpdoc"></target>
+    <target name="build" depends="clean-build,prepare-build,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpunit,phpdoc"></target>
 
     <!--*********************************************************************
-    ************ All actions for unit tests *********************************
+    ************ Action for the test suit ***********************************
     **********************************************************************-->
 
-    <target name="phpunit-all" description="Launch test suit">
+    <target name="phpunit" description="Launch test suit">
         <exec executable="${project.basedir}/vendor/bin/phpunit" passthru="true">
             <arg value="--colors"/>
             <arg value="--configuration"/>
             <arg path="${project.basedir}/tests/phpunit.xml"/>
             <arg value="--log-junit"/>
-            <arg path="${project.basedir}/build/logs/phpunit-core.xml"/>
+            <arg path="${project.basedir}/build/logs/phpunit.xml"/>
             <arg value="--coverage-html"/>
-            <arg path="${project.basedir}/build/coverage/core"/>
+            <arg path="${project.basedir}/build/coverage"/>
             <arg value="--coverage-clover"/>
-            <arg path="${project.basedir}/build/logs/coverage-core.xml"/>
-        </exec>
-    </target>
-
-    <!-- Launch test suit for the Rubedo core -->
-    <target name="phpunit-core" description="Launch test suit for the Rubedo core">
-        <exec executable="${project.basedir}/vendor/bin/phpunit" passthru="true">
-            <arg value="--colors"/>
-            <arg value="--configuration"/>
-            <arg path="${project.basedir}/module/Rubedo/test/phpunit.xml"/>
-            <arg value="--log-junit"/>
-            <arg path="${project.basedir}/build/logs/phpunit-core.xml"/>
-            <arg value="--coverage-html"/>
-            <arg path="${project.basedir}/build/coverage/core"/>
-            <arg value="--coverage-clover"/>
-            <arg path="${project.basedir}/build/logs/coverage-core.xml"/>
-        </exec>
-    </target>
-
-    <target name="phpunit-api" description="Launch test suit for the Rubedo API">
-        <exec executable="${project.basedir}/vendor/bin/phpunit" passthru="true">
-            <arg value="--colors"/>
-            <arg value="--configuration"/>
-            <arg path="${project.basedir}/module/RubedoAPI/test/phpunit.xml.dist"/>
-            <arg value="--log-junit"/>
-            <arg path="${project.basedir}/build/logs/phpunit-api.xml"/>
-            <arg value="--coverage-html"/>
-            <arg path="${project.basedir}/build/coverage/api"/>
-            <arg value="--coverage-clover"/>
-            <arg path="${project.basedir}/build/logs/coverage-api.xml"/>
+            <arg path="${project.basedir}/build/logs/coverage.xml"/>
         </exec>
     </target>
 
@@ -123,8 +91,6 @@
         <mkdir dir="${project.basedir}/build/api"/>
         <mkdir dir="${project.basedir}/build/code-browser"/>
         <mkdir dir="${project.basedir}/build/coverage"/>
-        <mkdir dir="${project.basedir}/build/coverage/core"/>
-        <mkdir dir="${project.basedir}/build/coverage/api"/>
         <mkdir dir="${project.basedir}/build/logs"/>
         <mkdir dir="${project.basedir}/build/pdepend"/>
         <mkdir dir="${project.basedir}/build/phpdoc"/>
@@ -133,8 +99,6 @@
         <chmod file="${project.basedir}/build/api" mode="777"/>
         <chmod file="${project.basedir}/build/code-browser" mode="777"/>
         <chmod file="${project.basedir}/build/coverage" mode="777"/>
-        <chmod file="${project.basedir}/build/coverage/core" mode="777"/>
-        <chmod file="${project.basedir}/build/coverage/api" mode="777"/>
         <chmod file="${project.basedir}/build/logs" mode="777"/>
         <chmod file="${project.basedir}/build/pdepend" mode="777"/>
         <chmod file="${project.basedir}/build/phpdoc" mode="777"/>
