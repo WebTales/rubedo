@@ -19,7 +19,7 @@ class ShoppingCart extends \Rubedo\Collection\ShoppingCart {
         }
 
         $tempCart = $this->findById($shoppingCartToken, true);
-        return $tempCart ? $tempCart[static::KEY] : array();
+        return $tempCart ? $tempCart : array();
     }
 
     public function setCurrentCart($cart, $shoppingCartToken = null)

@@ -59,7 +59,7 @@ class ShoppingcartResource extends AbstractResource
         }
         return array(
             'success' => true,
-            'shoppingCart' => $this->filterShoppingCart($cartUpdate),
+            'shoppingCart' => $this->filterShoppingCart($cartUpdate,isset($params['includeDetail'])),
         );
     }
 
@@ -83,7 +83,7 @@ class ShoppingcartResource extends AbstractResource
         }
         return array(
             'success' => true,
-            'shoppingCart' => $this->filterShoppingCart($cartUpdate),
+            'shoppingCart' => $this->filterShoppingCart($cartUpdate,isset($params['includeDetail'])),
         );
     }
 
@@ -103,7 +103,7 @@ class ShoppingcartResource extends AbstractResource
 
         return array(
             'success' => true,
-            'shoppingCart' => $this->filterShoppingCart($shoppingCart),
+            'shoppingCart' => $this->filterShoppingCart($shoppingCart,isset($params['includeDetail'])),
         );
     }
 
@@ -113,8 +113,12 @@ class ShoppingcartResource extends AbstractResource
      * @param $shoppingCart
      * @return array
      */
-    protected function filterShoppingCart($shoppingCart)
+    protected function filterShoppingCart($shoppingCart,$includeDetail=null)
     {
+        $mask = array('id', 'shoppingCart', 'detailedCart');
+        if (!$includeDetail){
+            return array_intersect_key($shoppingCart, array_flip($mask));
+        }
         $userTypeId="*";
         $country="*";
         $region="*";
@@ -132,7 +136,8 @@ class ShoppingcartResource extends AbstractResource
                 $postalCode=$currentUser['shippingAddress']['postCode'];
             }
         }
-        return ($this->addCartInfos($shoppingCart,$userTypeId, $country, $region, $postalCode));
+        $shoppingCart['detailedCart']=$this->addCartInfos($shoppingCart['shoppingCart'],$userTypeId, $country, $region, $postalCode);
+        return array_intersect_key($shoppingCart, array_flip($mask));
     }
 
     /**
@@ -274,6 +279,11 @@ class ShoppingcartResource extends AbstractResource
                     ->setKey('amount')
                     ->setFilter('int')
             )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Include cart detail')
+                    ->setKey('includeDetail')
+            )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
                     ->setDescription('Cart items')
@@ -295,6 +305,11 @@ class ShoppingcartResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('Shopping cart token')
                     ->setKey('shoppingCartToken')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Include cart detail')
+                    ->setKey('includeDetail')
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
