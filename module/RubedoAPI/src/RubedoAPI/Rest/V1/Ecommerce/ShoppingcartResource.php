@@ -159,6 +159,7 @@ class ShoppingcartResource extends AbstractResource
             if ($myContent) {
                 $value['title'] = $myContent['text'];
                 $value['subtitle'] = '';
+                $value['variationProperties']=array();
                 $unitPrice = 0;
                 $taxedPrice = 0;
                 $unitTaxedPrice = 0;
@@ -179,6 +180,7 @@ class ShoppingcartResource extends AbstractResource
                         foreach ($variation as $varkey => $varvalue) {
                             if (!in_array($varkey, $ignoredArray)) {
                                 $value['subtitle'] .= ' ' . $varvalue;
+                                $value['variationProperties'][$varkey]=$varvalue;
                             }
                         }
                     }
