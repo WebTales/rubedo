@@ -1167,7 +1167,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 
                         $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.DataType", 'Data type');
                         foreach ($temp ['terms'] as $key => $value) {
-                            $temp ['terms'] [$key] ['label'] = strtoupper($value ["term"]);
+                            $temp ['terms'] [$key] ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.".strtoupper($value ["term"]), strtoupper($value ["term"]));
                         }
                         break;
 
