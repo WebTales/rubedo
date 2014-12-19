@@ -14,6 +14,7 @@
  */
 namespace Rubedo\Internationalization;
 
+use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
 use Rubedo\Interfaces\Internationalization\ITranslate;
 use Zend\Json\Json;
@@ -91,12 +92,18 @@ class Translate implements ITranslate
      * translate a label given by its code and its default value
      * 
      * @param string $code            
-     * @param string $defaultLabel            
+     * @param string $defaultLabel
      * @return string
      */
     public function translate ($code, $defaultLabel = '')
     {
-        $language = Manager::getService('CurrentUser')->getLanguage();
+        $isFrontEnd = AbstractCollection::getIsFrontEnd();
+
+        if($isFrontEnd) {
+            $language = Manager::getService("CurrentLocalization")->getCurrentLocalization();
+        } else {
+            $language = Manager::getService('CurrentUser')->getLanguage();
+        }
         if ($language === null) {
             $language = self::$defaultLanguage;
         }
