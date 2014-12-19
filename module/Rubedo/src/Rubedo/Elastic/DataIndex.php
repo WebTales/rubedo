@@ -160,10 +160,10 @@ class DataIndex extends DataAbstract implements IDataIndex
 
             // add mapping for autocomplete in every active language
             foreach ($activeLanguages as $lang) {
-            	$locale = in_array($lang ['locale'],$activeAnalysers) ? $lang ['locale'] : 'default';
+                $locale = in_array($lang ['locale'], $activeAnalysers) ? $lang ['locale'] : 'default';
                 $generic_mapping ['autocomplete_' . $lang ['locale']] = array(
                     'type' => 'completion',
-                    'index_analyzer' => $locale. '_analyzer',
+                    'index_analyzer' => $locale . '_analyzer',
                     'search_analyzer' => $locale . '_analyzer',
                     'payloads' => true,
                     'preserve_position_increments' => false
@@ -314,22 +314,22 @@ class DataIndex extends DataAbstract implements IDataIndex
                                     }
                                 }
                                 break;
-                           case 'numberfield' :
-	                           $config = array(
-									'type' => 'float',
-	                           		'store' => $store
-	                           	);
-	                            if ($notAnalyzed) {
-	                            	$config ['index'] = 'not_analyzed';
-	                            }
-	                            if (!$field ['config'] ['localizable']) {
-	                            	$mapping ['fields'] ['properties'] [$name] = $config;
-	                            } else {
-	                            	foreach ($activeLanguages as $lang) {
-	                            		$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
-	                            	}
-	                            }
-                            	break;                                          
+                            case 'numberfield' :
+                                $config = array(
+                                    'type' => 'float',
+                                    'store' => $store
+                                );
+                                if ($notAnalyzed) {
+                                    $config ['index'] = 'not_analyzed';
+                                }
+                                if (!$field ['config'] ['localizable']) {
+                                    $mapping ['fields'] ['properties'] [$name] = $config;
+                                } else {
+                                    foreach ($activeLanguages as $lang) {
+                                        $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+                                    }
+                                }
+                                break;
                             case 'document' :
                                 $config = array(
                                     'type' => 'attachment',
@@ -818,7 +818,8 @@ class DataIndex extends DataAbstract implements IDataIndex
         $type = new \Elastica\Type(self::$_dam_index, $typeId);
         try {
             $type->deleteById($id);
-        } catch (\Exception $e) {} // Ignore not found error
+        } catch (\Exception $e) {
+        } // Ignore not found error
     }
 
     /**
@@ -1010,7 +1011,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'i18n' => $data['i18n'],
             'writeWorkspace' => $data['writeWorkspace'],
             'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string)($data['lastUpdateTime'] *
-                    1000) : 0,
+                1000) : 0,
             'createUser' => $data['createUser'],
             'availableLanguages' => array_keys($data['i18n']),
             'fileSize' => isset($data['fileSize']) ? (integer)$data['fileSize'] : 0,
@@ -1144,7 +1145,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'text' => $data['name'],
             'email' => $data['email'],
             'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string)($data['lastUpdateTime'] *
-                    1000) : 0,
+                1000) : 0,
             'fields' => $data['fields'],
             'photo' => $photo
         );

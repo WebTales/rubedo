@@ -493,7 +493,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $obj['fields'][$name] = $cleanerService->clean($obj['fields'][$name]);
         } else if (isset($obj['fields'][$name]) && is_array($obj['fields'][$name])) {
             $tempArray = array();
-            foreach($obj['fields'][$name] as $field) {
+            foreach ($obj['fields'][$name] as $field) {
                 $tempArray[] = $cleanerService->clean($field);
             }
             $obj['fields'][$name] = $tempArray;
@@ -506,7 +506,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                     $obj['i18n'][$locale]['fields'][$name] = $cleanerService->clean($data['fields'][$name]);
                 } elseif (isset($data['fields'][$name]) && is_array($data['fields'][$name])) {
                     $tempArray = array();
-                    foreach($data['fields'][$name] as $field) {
+                    foreach ($data['fields'][$name] as $field) {
                         $tempArray[] = $cleanerService->clean($field);
                     }
                     $obj['i18n'][$locale]['fields'][$name] = $tempArray;

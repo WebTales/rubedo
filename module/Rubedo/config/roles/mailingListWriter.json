@@ -1,10 +1,10 @@
 {
-    "id":"mailingListWriter",
-    "label":{
-        "fr":"Edition des listes de diffusion",
-        "en":"Can write mailing lists"
+    "id": "mailingListWriter",
+    "label": {
+        "fr": "Edition des listes de diffusion",
+        "en": "Can write mailing lists"
     },
-    "rights":[
+    "rights": [
         "write.ui.mailingLists",
         "execute.controller.mailinglists.create.backoffice",
         "execute.controller.mailinglists.update.backoffice",
@@ -13,7 +13,7 @@
         "execute.controller.mailinglists.unsubscribe-users.backoffice",
         "execute.controller.mailinglists.import-users.backoffice"
     ],
-    "includes":[
+    "includes": [
         "mailingListReader"
     ]
 }

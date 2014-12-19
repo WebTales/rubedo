@@ -1,10 +1,10 @@
 {
-    "id":"queryReader",
-    "label":{
-    	"fr":"Consultation des requettes",
-    	"en":"Can read queries"
+    "id": "queryReader",
+    "label": {
+        "fr": "Consultation des requettes",
+        "en": "Can read queries"
     },
-    "rights":[
+    "rights": [
         "read.ui.queries",
         "execute.controller.queries.index.backoffice",
         "execute.controller.taxonomyterms.index.backoffice"

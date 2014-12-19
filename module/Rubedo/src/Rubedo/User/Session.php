@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -44,9 +44,9 @@ class Session implements ISession
      *
      * @return \Zend\Session\Container
      */
-    public function getSessionObject ()
+    public function getSessionObject()
     {
-        if (! $this->_sessionObject instanceof SessionContainer) {
+        if (!$this->_sessionObject instanceof SessionContainer) {
             $this->_sessionObject = new SessionContainer(static::$_sessionName);
         }
         return $this->_sessionObject;
@@ -55,10 +55,10 @@ class Session implements ISession
     /**
      * Set the session object with name and value params
      *
-     * @param string $name            
-     * @param string $value            
+     * @param string $name
+     * @param string $value
      */
-    public function set ($name, $value)
+    public function set($name, $value)
     {
         $this->getSessionObject()->$name = $value;
     }
@@ -77,13 +77,13 @@ class Session implements ISession
         $config = Manager::getService('Application')->getConfig();
         $cookieName = $config['session']['name'];
         if (isset($_COOKIE[$cookieName])) {
-            if (! isset($this->getSessionObject()->$name)) {
+            if (!isset($this->getSessionObject()->$name)) {
                 $this->getSessionObject()->$name = $defaultValue;
                 return $defaultValue;
             } else {
                 return $this->getSessionObject()->$name;
             }
-        } else{
+        } else {
             return $defaultValue;
         }
     }

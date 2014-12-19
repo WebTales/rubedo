@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -21,6 +21,7 @@ use Zend\Form\Form;
 use Zend\Form\Element\Password;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Number;
+
 /**
  * Form for DB Config
  *
@@ -30,20 +31,21 @@ use Zend\Form\Element\Number;
  */
 class MailConfigForm extends BootstrapForm
 {
-    public static function getForm($params){
-        
+    public static function getForm($params)
+    {
+
         $serverNameField = (new Text('server'))
-            ->setAttribute('Required',true)
+            ->setAttribute('Required', true)
             ->setValue(isset($params['server']) ? $params['server'] : null)
             ->setLabel('Server Name')
             ->setAttribute('class', 'form-control');
-        
+
         $serverPortField = (new Number('port'))
-            ->setAttribute('Required',true)
+            ->setAttribute('Required', true)
             ->setValue(isset($params['port']) ? $params['port'] : null)
             ->setLabel('Server Port')
             ->setAttribute('class', 'form-control');
-        
+
         $sslField = (new Checkbox('ssl'))
             ->setValue(isset($params['ssl']) ? $params['ssl'] : null)
             ->setLabel('Use SSL')
@@ -53,20 +55,20 @@ class MailConfigForm extends BootstrapForm
             ->setValue(isset($params['username']) ? $params['username'] : null)
             ->setLabel('User name')
             ->setAttribute('class', 'form-control');
-        
+
         $passwordField = (new Password('password'))
             ->setValue(isset($params['password']) ? $params['password'] : null)
             ->setLabel('Password')
             ->setAttribute('class', 'form-control');
 
-        
+
         $dbForm = (new Form())
             ->add($serverNameField)
             ->add($serverPortField)
             ->add($sslField)
             ->add($loginField)
             ->add($passwordField);
-        
+
         return self::setForm($dbForm);
     }
 }

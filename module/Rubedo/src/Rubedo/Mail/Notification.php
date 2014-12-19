@@ -15,6 +15,7 @@ namespace Rubedo\Mail;
 
 use Rubedo\Interfaces\Mail\INotification, Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+
 /**
  * Mailer Service
  *
@@ -40,9 +41,9 @@ class Notification implements INotification
      *
      * @return the $sendNotification
      */
-    public static function getSendNotification ()
+    public static function getSendNotification()
     {
-        if (! isset(self::$sendNotificationFlag)) {
+        if (!isset(self::$sendNotificationFlag)) {
             self::lazyloadConfig();
         }
         return Notification::$sendNotificationFlag;
@@ -50,21 +51,21 @@ class Notification implements INotification
 
     /**
      *
-     * @param boolean $sendNotification            
+     * @param boolean $sendNotification
      */
-    public static function setSendNotification ($sendNotification)
+    public static function setSendNotification($sendNotification)
     {
         Notification::$sendNotificationFlag = $sendNotification;
     }
 
-    public function __construct ()
+    public function __construct()
     {
-        if (! isset(self::$sendNotificationFlag)) {
+        if (!isset(self::$sendNotificationFlag)) {
             self::lazyloadConfig();
         }
     }
 
-    public function getOptions ($name, $defaultValue = null)
+    public function getOptions($name, $defaultValue = null)
     {
         if (isset(self::$options[$name])) {
             return self::$options[$name];
@@ -73,26 +74,26 @@ class Notification implements INotification
         }
     }
 
-    public static function setOptions ($name, $value)
+    public static function setOptions($name, $value)
     {
         Notification::$options[$name] = $value;
     }
 
-    public function getNewMessage ()
+    public function getNewMessage()
     {
         $this->mailService = Manager::getService('Mailer');
-        
+
         $message = $this->mailService->getNewMessage();
         $message->setFrom(array(
             $this->getOptions('fromEmailNotification') => 'Rubedo'
         ));
-        
+
         return $message;
     }
 
-    public function notify ($obj, $notificationType)
+    public function notify($obj, $notificationType)
     {
-        if (! self::$sendNotificationFlag) {
+        if (!self::$sendNotificationFlag) {
             return;
         }
         switch ($notificationType) {
@@ -108,14 +109,14 @@ class Notification implements INotification
         }
     }
 
-    protected function directUrl ($id)
+    protected function directUrl($id)
     {
         return ($this->getOptions('isBackofficeSsl') ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'] . '/backoffice/?content=' . $id;
     }
 
-    protected function notifyPublished ($obj)
+    protected function notifyPublished($obj)
     {
-        if (! isset($obj["lastPendingUser"])) {
+        if (!isset($obj["lastPendingUser"])) {
             return;
         }
         $userIdArray = array(
@@ -127,9 +128,9 @@ class Notification implements INotification
         return $this->sendNotification($userIdArray, $obj, $template, $subject);
     }
 
-    protected function notifyRefused ($obj)
+    protected function notifyRefused($obj)
     {
-        if (! isset($obj["lastPendingUser"])) {
+        if (!isset($obj["lastPendingUser"])) {
             return;
         }
         $userIdArray = array(
@@ -141,7 +142,7 @@ class Notification implements INotification
         return $this->sendNotification($userIdArray, $obj, $template, $subject);
     }
 
-    protected function notifyPending ($obj)
+    protected function notifyPending($obj)
     {
         $userIdArray = Manager::getService('Users')->findValidatingUsersByWorkspace($obj['writeWorkspace']);
         if (count($userIdArray) === 0) {
@@ -164,7 +165,7 @@ class Notification implements INotification
      *
      * @return bool success or failure
      */
-    protected function sendNotification ($userIdArray, $obj, $template, $subject, $hideTo = false)
+    protected function sendNotification($userIdArray, $obj, $template, $subject, $hideTo = false)
     {
         $userService = Manager::getService("Users");
         $filter = Filter::factory('InUid')->setValue($userIdArray);
@@ -253,7 +254,7 @@ class Notification implements INotification
         if (!array_key_exists('data', $userArray)) {
             throw new \Rubedo\Exceptions\User('Translating sort is looking for a data key for users.');
         }
-        foreach($userArray['data'] as $user) {
+        foreach ($userArray['data'] as $user) {
             $userByLangArray[$user['language']][] = $user;
         }
         return $userByLangArray;
@@ -262,7 +263,7 @@ class Notification implements INotification
     /**
      * Read configuration from global application config and load it for the current class
      */
-    public static function lazyloadConfig ()
+    public static function lazyloadConfig()
     {
         $config = Manager::getService('config');
         $options = $config['rubedo_config'];

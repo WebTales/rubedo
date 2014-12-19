@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,7 +30,7 @@ use Rubedo\Services\Manager;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class ThemeController extends AbstractActionController
 {
@@ -88,11 +88,11 @@ class ThemeController extends AbstractActionController
             }
         }
 
-        if (!$hasFileInDatabase){
-        
+        if (!$hasFileInDatabase) {
+
             $consolidatedFilePath = Manager::getService('FrontOfficeTemplates')->getFilePath($theme, $filePath);
 
-            if (!$consolidatedFilePath){
+            if (!$consolidatedFilePath) {
                 $consolidatedFilePath = Manager::getService('FrontOfficeTemplates')->getFilePath("default", $filePath);
             }
 
@@ -181,12 +181,12 @@ class ThemeController extends AbstractActionController
         }
 
         $response->getHeaders()->addHeaders($headers);
-        
+
         $response->setStream($stream);
         return $response;
     }
 
-    protected function recursivePathExist ($directories, $directoryExploded)
+    protected function recursivePathExist($directories, $directoryExploded)
     {
         $currentDirName = array_shift($directoryExploded);
         foreach ($directories as $directory) {

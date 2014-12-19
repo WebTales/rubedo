@@ -1,107 +1,107 @@
 {
-	"type":"#ext-gen1069#",
-	"description":"#ext-gen1070#",
-	"configBasique":{
-		"title":"#ext-gen1069#",
-		"bType":"calendar",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
-				{
-					"categorie":"#ext-gen1072#",
-					"champs":[
-						{
-							"type":"Ext.ux.TreePicker",
-							"config":{
-								"fieldLabel":"#ext-gen1073#",
-								"name":"singlePage"
-							}
-						}
-					]
-				},
-				{
-					"categorie":"#ext-gen1068#",
-					"champs":[
-						{
-							"type":"Rubedo.view.queryBuilderField",
-							"config":{
-								"fieldLabel":"#ext-gen1075#",
-								"name":"query"
-							}
-						},
-						{
-							"type":"Ext.form.field.Text",
-							"config":{
-								"fieldLabel":"#ext-gen1076#",
-								"name":"date",
-								"value":"date"
-							}
-						},
-						{
-							"type":"Ext.form.field.Text",
-							"config":{
-								"fieldLabel":"#ext-gen1077#",
-								"name":"endDate",
-								"value":null
-							}
-						},
-						{
-							"type":"Ext.form.field.ComboBox",
-							"isAutoStored":true,
-							"autoStoreData":[
-								{
-									"label":"#ext-gen1079#",
-									"value":"showCal"
-								},
-								{
-									"label":"#ext-gen1080#",
-									"value":"showList"
-								}
-							],
-							"config":{
-								"fieldLabel":"#ext-gen1072#",
-								"name":"display",
-								"multiSelect":true,
-								"allowBlank":false,
-								"forceSelection":true,
-								"editable":false,
-								"value":[
-									"showCal",
-									"showList"
-								]
-							}
-						}
-					]
-				}
-			],
-			"avance":[
+    "type": "#ext-gen1069#",
+    "description": "#ext-gen1070#",
+    "configBasique": {
+        "title": "#ext-gen1069#",
+        "bType": "calendar",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
                 {
-                    "categorie":"Template",
-                    "champs":[
+                    "categorie": "#ext-gen1072#",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Custom template",
-                                "name":"customTemplate",
-                                "defaultTemplateUrl":"blocks/calendar.html",
-                                "twigMode":false
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1073#",
+                                "name": "singlePage"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "categorie": "#ext-gen1068#",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.queryBuilderField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1075#",
+                                "name": "query"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Text",
+                            "config": {
+                                "fieldLabel": "#ext-gen1076#",
+                                "name": "date",
+                                "value": "date"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Text",
+                            "config": {
+                                "fieldLabel": "#ext-gen1077#",
+                                "name": "endDate",
+                                "value": null
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.ComboBox",
+                            "isAutoStored": true,
+                            "autoStoreData": [
+                                {
+                                    "label": "#ext-gen1079#",
+                                    "value": "showCal"
+                                },
+                                {
+                                    "label": "#ext-gen1080#",
+                                    "value": "showList"
+                                }
+                            ],
+                            "config": {
+                                "fieldLabel": "#ext-gen1072#",
+                                "name": "display",
+                                "multiSelect": true,
+                                "allowBlank": false,
+                                "forceSelection": true,
+                                "editable": false,
+                                "value": [
+                                    "showCal",
+                                    "showList"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ],
+            "avance": [
+                {
+                    "categorie": "Template",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/calendar.html",
+                                "twigMode": false
 
                             }
                         }
                     ]
                 }
-			]
-		},
-		"configBloc":{
-			"date":"date",
-			"endDate":null,
-			"display":[
-				"showCal",
-				"showList"
-			]
-		}
-	},
-	"category":"#ext-gen1068#",
-	"bType":"calendar",
-	"id":"512dcb9ec0e051be0e000002"
+            ]
+        },
+        "configBloc": {
+            "date": "date",
+            "endDate": null,
+            "display": [
+                "showCal",
+                "showList"
+            ]
+        }
+    },
+    "category": "#ext-gen1068#",
+    "bType": "calendar",
+    "id": "512dcb9ec0e051be0e000002"
 }

@@ -24,7 +24,7 @@ use WebTales\MongoFilters\Filter;
  * Methods for update tool
  *
  * @author jbourdin
- *        
+ *
  */
 class Update010100 extends Update
 {
@@ -36,7 +36,7 @@ class Update010100 extends Update
      *
      * @return boolean
      */
-    public static function upgrade ()
+    public static function upgrade()
     {
         static::updateAllItems('Pages');
         static::updateAllItems('Masks');
@@ -44,7 +44,7 @@ class Update010100 extends Update
         return true;
     }
 
-    public static function cleanBlocks ()
+    public static function cleanBlocks()
     {
         $service = Manager::getService('Blocks');
         $updateCond = Filter::factory('OperatorToValue')->setName('blockData.bType')
@@ -65,10 +65,10 @@ class Update010100 extends Update
     /**
      * force an update action on each item ofa collection
      *
-     * @param string $collection            
+     * @param string $collection
      * @return boolean
      */
-    public static function updateAllItems ($collection)
+    public static function updateAllItems($collection)
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
         $service = Manager::getService($collection);
@@ -78,7 +78,7 @@ class Update010100 extends Update
                 $service->update($item);
             }
         }
-        
+
         AbstractCollection::disableUserFilter($wasFiltered);
         return true;
     }

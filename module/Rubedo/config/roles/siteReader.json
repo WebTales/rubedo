@@ -1,10 +1,10 @@
 {
-    "id":"siteReader",
-    "label":{
-    	"fr":"Consultation des sites",
-    	"en":"Can read sites"
+    "id": "siteReader",
+    "label": {
+        "fr": "Consultation des sites",
+        "en": "Can read sites"
     },
-    "rights":[
+    "rights": [
         "read.ui.sites",
         "execute.controller.sites.index.backoffice",
         "execute.controller.pages.read-child.backoffice",

@@ -240,7 +240,8 @@ class Files extends AbstractFileCollection implements IFiles
         return $result;
     }
 
-    public function getMainType($mimeType) {
+    public function getMainType($mimeType)
+    {
         if (in_array($mimeType, $this->allowedResourceMimeTypes)) {
             return 'Resource';
         } elseif (in_array($mimeType, $this->_allowedDocumentMimeTypes)) {

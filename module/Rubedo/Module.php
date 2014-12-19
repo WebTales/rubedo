@@ -216,9 +216,9 @@ class Module
             Manager::getService('SecurityLogger'),
             'logAuthenticationEvent'
         ), 10);
-        $eventManager->getSharedManager()->attach('Zend\Mvc\Controller\AbstractActionController', 'dispatch', function($e) {
+        $eventManager->getSharedManager()->attach('Zend\Mvc\Controller\AbstractActionController', 'dispatch', function ($e) {
             list($vendor, $namespace) = explode('\\', get_class($e->getTarget()));
-            $config          = $e->getApplication()->getServiceManager()->get('config');
+            $config = $e->getApplication()->getServiceManager()->get('config');
             if ($vendor == 'ZF' && $namespace == 'Apigility') {
                 $e->getTarget()->layout('layout/layout_apigility');
             }
@@ -278,7 +278,7 @@ class Module
             ->getServiceManager()
             ->get('Config');
 
-        if (!isset($config['installed'])||((!isset($config['installed']['status'])||$config['installed']['status'] !== 'finished') && $controller !== 'Rubedo\Install\Controller\Index')) {
+        if (!isset($config['installed']) || ((!isset($config['installed']['status']) || $config['installed']['status'] !== 'finished') && $controller !== 'Rubedo\Install\Controller\Index')) {
             $routeMatches = $event->getRouteMatch();
             $routeMatches->setParam('controller', 'Rubedo\Install\Controller\Index');
             $routeMatches->setParam('action', 'index');

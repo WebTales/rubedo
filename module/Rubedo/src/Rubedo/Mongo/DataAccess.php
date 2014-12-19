@@ -180,7 +180,8 @@ class DataAccess implements IDataAccess
      *
      * @return string
      */
-    public static function getDefaultDataStream() {
+    public static function getDefaultDataStream()
+    {
         return self::getDefaultMongo() . '/' . self::getDefaultDb();
     }
 
@@ -438,14 +439,15 @@ class DataAccess implements IDataAccess
         if (isset(self::$_dbArray[$mongo . '_' . $dbName]) && self::$_dbArray[$mongo . '_' . $dbName] instanceof \MongoDB) {
             return self::$_dbArray[$mongo . '_' . $dbName];
         } else {
-            $this->_adapter = $this->getAdapter($mongo,  $dbName);
+            $this->_adapter = $this->getAdapter($mongo, $dbName);
             $db = $this->_adapter->$dbName;
             self::$_dbArray[$mongo . '_' . $dbName] = $db;
             return $db;
         }
     }
 
-    public function getDbName() {
+    public function getDbName()
+    {
         return $this->_dbName;
     }
 
@@ -463,7 +465,7 @@ class DataAccess implements IDataAccess
         if ($mongo === null) {
             $mongo = self::getDefaultDataStream();
         } else if ($mongo == self::getDefaultMongo() || preg_match('#^mongodb://.+:\d+$#', $mongo)) {
-            $mongo .= '/' . ($db ?:DataAccess::getDefaultDb());
+            $mongo .= '/' . ($db ?: DataAccess::getDefaultDb());
         }
         if (isset(self::$_adapterArray[$mongo]) && self::$_adapterArray[$mongo] instanceof \MongoClient) {
             return self::$_adapterArray[$mongo];
@@ -582,26 +584,26 @@ class DataAccess implements IDataAccess
         if ($nbItems > 0) {
             try {
                 $cursor->rewind();
-                $currentResult=$cursor->current();
+                $currentResult = $cursor->current();
                 $currentResult['id'] = (string)$currentResult['_id'];
                 unset($currentResult['_id']);
                 if (!isset($currentResult['version'])) {
                     $currentResult['version'] = 1;
                 }
-                $data[]=$currentResult;
-                $incrementor=1;
-                while (($incrementor<$nbItems)&&(($numberOfResults==0)||($incrementor<$numberOfResults))&&($cursor->hasNext())){
+                $data[] = $currentResult;
+                $incrementor = 1;
+                while (($incrementor < $nbItems) && (($numberOfResults == 0) || ($incrementor < $numberOfResults)) && ($cursor->hasNext())) {
                     $cursor->next();
-                    $currentResult=$cursor->current();
+                    $currentResult = $cursor->current();
                     $currentResult['id'] = (string)$currentResult['_id'];
                     unset($currentResult['_id']);
                     if (!isset($currentResult['version'])) {
                         $currentResult['version'] = 1;
                     }
-                    $data[]=$currentResult;
+                    $data[] = $currentResult;
                     $incrementor++;
                 }
-            } catch(\MongoCursorException $e) {
+            } catch (\MongoCursorException $e) {
                 if (strpos($e->getMessage(), 'unauthorized db')) {
                     throw new Server('Unauthorized DB Access', 'Exception102');
                 } else {
@@ -1046,26 +1048,26 @@ class DataAccess implements IDataAccess
         if ($nbItems > 0) {
             try {
                 $cursor->rewind();
-                $currentResult=$cursor->current();
+                $currentResult = $cursor->current();
                 $currentResult['id'] = (string)$currentResult['_id'];
                 unset($currentResult['_id']);
                 if (!isset($currentResult['version'])) {
                     $currentResult['version'] = 1;
                 }
-                $data[]=$currentResult;
-                $incrementor=1;
-                while (($incrementor<$nbItems)&&($cursor->hasNext())){
+                $data[] = $currentResult;
+                $incrementor = 1;
+                while (($incrementor < $nbItems) && ($cursor->hasNext())) {
                     $cursor->next();
-                    $currentResult=$cursor->current();
+                    $currentResult = $cursor->current();
                     $currentResult['id'] = (string)$currentResult['_id'];
                     unset($currentResult['_id']);
                     if (!isset($currentResult['version'])) {
                         $currentResult['version'] = 1;
                     }
-                    $data[]=$currentResult;
+                    $data[] = $currentResult;
                     $incrementor++;
                 }
-            } catch(\MongoCursorException $e) {
+            } catch (\MongoCursorException $e) {
                 if (strpos($e->getMessage(), 'unauthorized db')) {
                     throw new Server('Unauthorized DB Access', 'Exception102');
                 } else {
@@ -1494,7 +1496,8 @@ class DataAccess implements IDataAccess
      *
      * @return bool
      */
-    public function isConnected($mongoConnectionString = null, $db = null) {
+    public function isConnected($mongoConnectionString = null, $db = null)
+    {
         if ($db != null && preg_match('#^mongodb://.+:\d+$#', $mongoConnectionString)) {
             $mongoConnectionString .= '/' . $db;
         }
@@ -1508,46 +1511,50 @@ class DataAccess implements IDataAccess
         }
         return $adapter->getConnections() != [];
     }
+
     /**
      * Performs aggregation on collection
      * @param array $pipeline
      *
      * @return array
      */
-    public function aggregate ($pipeline)
+    public function aggregate($pipeline)
     {
-        $result=$this->_collection->aggregate($pipeline);
+        $result = $this->_collection->aggregate($pipeline);
         return $result;
     }
+
     /**
      * Empty collection
      *
      * @return array
      */
-    public function emptyCollection ()
+    public function emptyCollection()
     {
-    	$return = $this->_collection->remove();
-    	return $return;
+        $return = $this->_collection->remove();
+        return $return;
     }
+
     /**
      * Batch Insert
      *
      * @return array
      */
-    public function batchInsert ($array, $options = array() )
+    public function batchInsert($array, $options = array())
     {
-    	$return = $this->_collection->batchInsert($array,$options);
-    	return $return;
+        $return = $this->_collection->batchInsert($array, $options);
+        return $return;
     }
+
     /**
      * Direct insert
      *
      * @return array
      */
-    public function insert ($obj, $options = array())
+    public function insert($obj, $options = array())
     {
-    	$return = $this->_collection->insert($obj, $options);
-    	return $return;
+        $return = $this->_collection->insert($obj, $options);
+        return $return;
     }
 
     /**
@@ -1556,11 +1563,11 @@ class DataAccess implements IDataAccess
      * @param $params
      * @return array
      */
-    public function command ($params)
+    public function command($params)
     {
-    	$return = $this->_dbName->command($params);
+        $return = $this->_dbName->command($params);
         Events::getEventManager()->trigger(self::POST_COMMAND, $this, array('data' => array('return' => $return, 'params' => $params)));
-    	return $return;
+        return $return;
     }
 
     /**
@@ -1570,19 +1577,19 @@ class DataAccess implements IDataAccess
      * @param array $args
      * @return array
      */
-    public function execute ($code, $args = array())
+    public function execute($code, $args = array())
     {
-    	$return = $this->_dbName->command(array('$eval' => $code, 'args' => $args));
+        $return = $this->_dbName->command(array('$eval' => $code, 'args' => $args));
         Events::getEventManager()->trigger(self::POST_EXECUTE, $this, array('data' => array('return' => $return, 'code' => $code, 'args' => $args)));
-    	return $return;
+        return $return;
     }
 
     /**
-     * Rapid simple creation using fire and forget 
+     * Rapid simple creation using fire and forget
      */
     public function directCreate($obj)
     {
-    	$this->_collection->insert($obj, array("w"=>0));
+        $this->_collection->insert($obj, array("w" => 0));
     }
 
     /**
@@ -1590,7 +1597,7 @@ class DataAccess implements IDataAccess
      */
     public function directUpdate(array $data, IFilter $updateCond)
     {
-        $this->_collection->update($updateCond->toArray(), $data, array("w"=>0));
+        $this->_collection->update($updateCond->toArray(), $data, array("w" => 0));
     }
-    
+
 }

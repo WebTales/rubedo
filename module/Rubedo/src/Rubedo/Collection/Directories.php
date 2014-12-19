@@ -143,7 +143,7 @@ class Directories extends AbstractCollection implements IDirectories
                 $obj = $this->_addReadableProperty($obj);
             }
         }
-        if ($parentId == "root"&&$allowVirtual) {
+        if ($parentId == "root" && $allowVirtual) {
             $result[] = $this->_virtualNotFiledDirectory;
         }
         return $result;
@@ -470,7 +470,7 @@ class Directories extends AbstractCollection implements IDirectories
         return $this->sortAllChildren($parentId, $this->fetchAllChildren($parentId, $filters, $sort, $limit));
     }
 
-    protected function sortAllChildren ($parent, array $children)
+    protected function sortAllChildren($parent, array $children)
     {
         $sortedChildren = array();
         foreach ($children as $child) {

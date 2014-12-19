@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -28,20 +28,21 @@ use WebTales\MongoFilters\Filter;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class ThemesController extends DataAccessController
 {
 
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('Themes');
     }
 
-    protected function _buildFilter($filters = null) {
+    protected function _buildFilter($filters = null)
+    {
         $mongoFilters = parent::_buildFilter($filters);
         $contextExist = Filter::factory('OperatorToValue')
             ->setName('context')

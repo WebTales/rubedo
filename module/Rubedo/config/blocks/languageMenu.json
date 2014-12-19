@@ -1,77 +1,77 @@
 {
-	"type":"#ext-gen1377#",
-	"description":"#ext-gen1378#",
-	"configBasique":{
-		"title":"#ext-gen1377#",
-		"bType":"languageMenu",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
-				{
-					"categorie":"#ext-gen1143#",
-					"champs":[
-						{
-							"type":"Ext.form.field.ComboBox",
-							"isAutoStored":true,
-							"autoStoreData":[
-								{
-									"value":"menu",
-									"label":"#ext-gen1284#"
-								},
-								{
-									"value":"select",
-									"label":"#ext-gen1379#"
-								}
-							],
-							"config":{
-								"fieldLabel":"#ext-gen1072#",
-								"name":"displayAs",
-								"editable":false,
-								"forceSelection":true,
-								"queryMode":"local"
-							}
-						},
-						{
-							"type":"Ext.form.field.Checkbox",
-							"config":{
-								"fieldLabel":"#ext-gen1380#",
-								"name":"showCurrentLanguage"
-							}
-						},
-                        {
-                            "type":"Ext.form.field.Checkbox",
-                            "config":{
-                                "fieldLabel":"#ext-gen1449#",
-                                "name":"showFlags"
-                            }
-                        }
-					]
-				}
-			],
-			"avance":[
+    "type": "#ext-gen1377#",
+    "description": "#ext-gen1378#",
+    "configBasique": {
+        "title": "#ext-gen1377#",
+        "bType": "languageMenu",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
                 {
-                    "categorie":"Template",
-                    "champs":[
+                    "categorie": "#ext-gen1143#",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Custom template",
-                                "name":"customTemplate",
-                                "defaultTemplateUrl":"blocks/languageMenu.html",
-                                "twigMode":false
+                            "type": "Ext.form.field.ComboBox",
+                            "isAutoStored": true,
+                            "autoStoreData": [
+                                {
+                                    "value": "menu",
+                                    "label": "#ext-gen1284#"
+                                },
+                                {
+                                    "value": "select",
+                                    "label": "#ext-gen1379#"
+                                }
+                            ],
+                            "config": {
+                                "fieldLabel": "#ext-gen1072#",
+                                "name": "displayAs",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1380#",
+                                "name": "showCurrentLanguage"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1449#",
+                                "name": "showFlags"
                             }
                         }
                     ]
                 }
-			]
-		},
-		"configBloc":{
-			"displayAs":"select",
-			"showCurrentLanguage":true,
+            ],
+            "avance": [
+                {
+                    "categorie": "Template",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/languageMenu.html",
+                                "twigMode": false
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "configBloc": {
+            "displayAs": "select",
+            "showCurrentLanguage": true,
             "showFlags": true
-		}
-	},
-	"category":"#ext-gen1211#",
-	"bType":"languageMenu",
-	"id":"511e6508c0e051bd12731951"
+        }
+    },
+    "category": "#ext-gen1211#",
+    "bType": "languageMenu",
+    "id": "511e6508c0e051bd12731951"
 }

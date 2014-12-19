@@ -1,10 +1,10 @@
 {
-    "id":"userReader",
-    "label":{
-    	"fr":"Consultation des utilisateurs",
-    	"en":"Can read users"
+    "id": "userReader",
+    "label": {
+        "fr": "Consultation des utilisateurs",
+        "en": "Can read users"
     },
-    "rights":[
+    "rights": [
         "read.ui.users",
         "execute.controller.users.index.backoffice",
         "execute.controller.usertypes.index.backoffice",

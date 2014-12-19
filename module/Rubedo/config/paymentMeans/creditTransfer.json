@@ -1,11 +1,11 @@
 [
     {
-        "type":"Rubedo.view.DCEField",
-        "config":{
-            "fieldLabel":"Displayed payment info",
-            "name":"contentId",
-            "allowedCT":"richText",
-            "addOnly":true
+        "type": "Rubedo.view.DCEField",
+        "config": {
+            "fieldLabel": "Displayed payment info",
+            "name": "contentId",
+            "allowedCT": "richText",
+            "addOnly": true
         }
     }
 ]

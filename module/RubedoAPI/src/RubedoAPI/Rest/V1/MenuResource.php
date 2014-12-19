@@ -108,7 +108,7 @@ class MenuResource extends AbstractResource
         );
 
         $menu["pages"] = $this->_getPagesByLevel($rootPage['id'], $levelLimit, 1, $params["menuLocale"]);
-        
+
         $menu['url'] = $this->getContext()->url()->fromRoute('rewrite', array(
             'pageId' => $menu['id'],
             'locale' => $params['menuLocale']
@@ -152,7 +152,7 @@ class MenuResource extends AbstractResource
 
             $nextLevel = $this->_getPagesByLevel($page['id'], $targetLevel, $currentLevel + 1, $locale);
 
-            if(is_array($nextLevel) && !empty($nextLevel)) {
+            if (is_array($nextLevel) && !empty($nextLevel)) {
                 $pages[$key]["pages"] = $nextLevel;
             }
         }

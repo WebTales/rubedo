@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,7 +29,7 @@ use Zend\View\Model\JsonModel;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class XhrGetMongoIdController extends AbstractActionController
 {
@@ -37,10 +37,10 @@ class XhrGetMongoIdController extends AbstractActionController
     /**
      * return a new string of a generated mongoId
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $MongoId = new \MongoId();
-        $MongoId = (string) $MongoId;
+        $MongoId = (string)$MongoId;
         return new JsonModel(array(
             'mongoID' => $MongoId
         ));

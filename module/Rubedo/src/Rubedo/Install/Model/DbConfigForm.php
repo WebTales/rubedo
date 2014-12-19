@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -16,9 +16,11 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Install\Model;
+
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\Form\Element\Number;
+
 /**
  * Form for DB Config
  *
@@ -29,21 +31,21 @@ use Zend\Form\Element\Number;
 class DbConfigForm extends BootstrapForm
 {
 
-    public static function getForm ($params)
+    public static function getForm($params)
     {
         $serverNameField = (new Text('server'))
-            ->setAttribute('Required',true)
+            ->setAttribute('Required', true)
             ->setValue(isset($params['server']) ? $params['server'] : 'localhost')
             ->setLabel('Server Name')
             ->setAttribute('class', 'form-control');
-        
+
         $serverPortField = (new Number('port'))
-            ->setValue(isset($params['port']) ? $params['port'] :27017)
+            ->setValue(isset($params['port']) ? $params['port'] : 27017)
             ->setLabel('Server Port')
             ->setAttribute('class', 'form-control');
 
         $dbNameField = (new Text('db'))
-            ->setAttribute('Required',true)
+            ->setAttribute('Required', true)
             ->setValue(isset($params['db']) ? $params['db'] : 'rubedo')
             ->setLabel('Db Name')
             ->setAttribute('class', 'form-control');
@@ -78,7 +80,7 @@ class DbConfigForm extends BootstrapForm
         $dbForm->add($serverPasswordField);
 
         $dbForm = self::setForm($dbForm);
-        
+
         return $dbForm;
     }
 }

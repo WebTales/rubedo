@@ -49,7 +49,7 @@ class FrontofficeRoute implements RouteInterface
     protected $locale = null;
 
     protected $uri = null;
-    
+
     /*
      * (non-PHPdoc) @see \Zend\Mvc\Router\RouteInterface::assemble()
      */
@@ -57,38 +57,38 @@ class FrontofficeRoute implements RouteInterface
     {
         // set pageId
         $matched = array();
-        if(isset($this->matchedParams['pageId'])){
-            $matched['pageId']=$this->matchedParams['pageId'];
+        if (isset($this->matchedParams['pageId'])) {
+            $matched['pageId'] = $this->matchedParams['pageId'];
         }
-        if(isset($this->matchedParams['locale'])){
-            $matched['locale']=$this->matchedParams['locale'];
+        if (isset($this->matchedParams['locale'])) {
+            $matched['locale'] = $this->matchedParams['locale'];
         }
         $mergedParams = array_merge($matched, $params);
-        
+
         $encode = isset($options['encode']) ? $options['encode'] : true;
         return Manager::getService('Url')->getUrl($mergedParams, $encode);
     }
-        
-        /*
-     * (non-PHPdoc) @see \Zend\Mvc\Router\RouteInterface::match()
-     */
+
+    /*
+ * (non-PHPdoc) @see \Zend\Mvc\Router\RouteInterface::match()
+ */
     public function match(\Zend\Stdlib\RequestInterface $request)
     {
         try {
             Manager::getService('MongoDataAccess')->getAdapter();
-            
-        }catch(\MongoConnectionException $e){
+
+        } catch (\MongoConnectionException $e) {
             return false;
         }
         //ensure that no url like /dam or /image can match, without complex queries.
-        $frontControllerList = array('dam','image');
-        
+        $frontControllerList = array('dam', 'image');
+
         try {
             if (method_exists($request, 'getUri')) {
                 $this->uri = clone ($request->getUri());
-                $semgentList = explode('/',trim($this->uri->getPath(),'/'));
-                if(isset($semgentList[0])){
-                    if(in_array($semgentList[0], $frontControllerList)){
+                $semgentList = explode('/', trim($this->uri->getPath(), '/'));
+                if (isset($semgentList[0])) {
+                    if (in_array($semgentList[0], $frontControllerList)) {
                         return null;
                     }
                 }
@@ -102,19 +102,19 @@ class FrontofficeRoute implements RouteInterface
         } else {
             $this->matchedParams = $result;
         }
-        
+
         $params = array();
         $params['controller'] = 'Rubedo\\Frontoffice\\Controller\\Index';
         $params['action'] = 'index';
 
         $params = array_merge($params, $this->matchedParams);
-        
-        if (! isset($params['content-id'])) {
+
+        if (!isset($params['content-id'])) {
             $params['content-id'] = $request->getQuery('content-id', null);
         }
-        
+
         $match = new RouteMatch(array_merge($this->defaults, $params));
-        
+
         return $match;
     }
 
@@ -122,7 +122,7 @@ class FrontofficeRoute implements RouteInterface
      * factory(): defined by RouteInterface interface.
      *
      * @see \Zend\Mvc\Router\RouteInterface::factory()
-     * @param array|Traversable $options            
+     * @param array|Traversable $options
      * @return FrontofficeRoute
      * @throws Exception\InvalidArgumentException
      */
@@ -130,7 +130,7 @@ class FrontofficeRoute implements RouteInterface
     {
         return new static();
     }
-    
+
     /*
      * (non-PHPdoc) @see \Zend\Mvc\Router\Http\RouteInterface::getAssembledParams()
      */

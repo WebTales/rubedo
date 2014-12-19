@@ -24,7 +24,7 @@ namespace Rubedo\Update;
  * tool
  *
  * @author jbourdin
- *        
+ *
  */
 class Update010400 extends Update
 {

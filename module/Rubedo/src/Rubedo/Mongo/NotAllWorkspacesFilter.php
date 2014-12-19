@@ -6,7 +6,7 @@ use WebTales\MongoFilters\ValueFilter;
 class NotAllWorkspacesFilter extends ValueFilter
 {
 
-    public function toArray ()
+    public function toArray()
     {
         return array();
     }

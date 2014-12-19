@@ -1,10 +1,10 @@
 {
-    "id":"contentTypeWriter",
-    "label":{
-    	"fr":"Edition des types de contenu",
-    	"en":"Can write content types"
+    "id": "contentTypeWriter",
+    "label": {
+        "fr": "Edition des types de contenu",
+        "en": "Can write content types"
     },
-    "rights":[
+    "rights": [
         "write.ui.contentTypes",
         "execute.controller.contenttypes.update.backoffice",
         "execute.controller.contenttypes.delete.backoffice",
@@ -12,7 +12,7 @@
         "execute.controller.contenttypes.is-changeable.backoffice",
         "execute.controller.contenttypes.is-used.backoffice"
     ],
-    "includes":[
+    "includes": [
         "contentTypeReader"
     ]
 }

@@ -16,12 +16,15 @@
     <![endif]-->
     <meta charset="UTF-8">
     <meta name="fragment" content="!">
-    <meta ng-if="rubedo.current.page.description" name="description" ng-attr-content="{{rubedo.current.page.description}}"/>
-    <meta ng-if="rubedo.current.page.metaKeywords" name="keywords" ng-attr-content="{{ rubedo.current.page.metaKeywords }}">
+    <meta ng-if="rubedo.current.page.description" name="description"
+          ng-attr-content="{{rubedo.current.page.description}}"/>
+    <meta ng-if="rubedo.current.page.metaKeywords" name="keywords"
+          ng-attr-content="{{ rubedo.current.page.metaKeywords }}">
     <meta ng-if="rubedo.current.page.metaRobots" name="robots" ng-attr-content="{{ rubedo.current.page.metaRobots }}">
     <meta ng-if="rubedo.current.page.metaAuthor" name="author" ng-attr-content="{{ rubedo.current.page.metaAuthor }}">
 
-    <link ng-if="rubedo.current.page.contentCanonicalUrl" rel="canonical" ng-href="{{ rubedo.current.page.contentCanonicalUrl }}"/>
+    <link ng-if="rubedo.current.page.contentCanonicalUrl" rel="canonical"
+          ng-href="{{ rubedo.current.page.contentCanonicalUrl }}"/>
 
     <!--mobile meta-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,8 +33,8 @@
     <link rel="stylesheet" href="/components/jtrussell/angular-snap.js-bower/angular-snap-only.min.css">
     <link rel="stylesheet" href="/components/twbs/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/theme/<?php echo $this->siteTheme; ?>/css/rubedo.css">
-    <link href='/components/jquery/fullCalendar/fullcalendar.css' rel='stylesheet' />
-    <link href='/components/jquery/fullCalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <link href='/components/jquery/fullCalendar/fullcalendar.css' rel='stylesheet'/>
+    <link href='/components/jquery/fullCalendar/fullcalendar.print.css' rel='stylesheet' media='print'/>
     <link rel="stylesheet" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.theme.css">
     <link rel="stylesheet" href="/components/vitalets/angular-xeditable/dist/css/xeditable.css">
@@ -82,22 +85,25 @@
         <script src="/components/fingerprintjs/fingerprint.js"></script>
     <?php endif; ?>
     <?php if ($this->angularLocale): ?>
-        <script src="/components/angular/angular.js/i18n/angular-locale_<?php echo $this->angularLocale; ?>.js"></script>
+        <script
+            src="/components/angular/angular.js/i18n/angular-locale_<?php echo $this->angularLocale; ?>.js"></script>
     <?php endif; ?>
     <!--internal angular modules scripts-->
-    <?php if (isset($this->siteResources['angularModulesPaths'])){ foreach($this->siteResources['angularModulesPaths'] as $angularModulePath): ?>
-        <script type="text/javascript" src="<?php echo $angularModulePath; ?>"></script>
-    <?php endforeach; } ?>
-     <script type="text/javascript">
-        window.rubedoConfig={
-            siteTheme:"<?php echo $this->siteTheme; ?>",
+    <?php if (isset($this->siteResources['angularModulesPaths'])) {
+        foreach ($this->siteResources['angularModulesPaths'] as $angularModulePath): ?>
+            <script type="text/javascript" src="<?php echo $angularModulePath; ?>"></script>
+        <?php endforeach;
+    } ?>
+    <script type="text/javascript">
+        window.rubedoConfig = {
+            siteTheme: "<?php echo $this->siteTheme; ?>",
             extensionAngularModules:<?php if(isset($this->siteResources['angularModules'])){
             echo json_encode($this->siteResources['angularModules']);
             } else {
             echo 'false';
             } ?>
         };
-     </script>
+    </script>
 
     <!--frontoffice scripts-->
     <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>
@@ -105,11 +111,11 @@
     <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoBlocks/rubedoBlocks.js"></script>
     <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedo/rubedo.js"></script>
     <!--external resource scripts-->
-    <?php foreach($this->siteResources['externalScripts'] as $externalScript): ?>
+    <?php foreach ($this->siteResources['externalScripts'] as $externalScript): ?>
         <script src="<?php echo $externalScript['url']; ?>"></script>
     <?php endforeach; ?>
     <!--internal resource scripts-->
-    <?php foreach($this->siteResources['internalScripts'] as $internalScript): ?>
+    <?php foreach ($this->siteResources['internalScripts'] as $internalScript): ?>
         <?php if (is_array($internalScript)): ?>
             <script type="text/javascript"> <?php echo $internalScript['code']; ?> </script>
         <?php else: ?>
@@ -120,28 +126,28 @@
     <base href="/">
 </head>
 <body ng-class="rubedo.current.page.pageProperties.bodyClass">
-    <snap-drawer ng-if="rubedo.current.user.rights.canEdit" class="rubedo-admin-drawer" style="display: none;">
-        <ng-include src="rubedo.themePath+'/templates/admin/admin.html'"></ng-include>
-    </snap-drawer>
-    <div class="btn-group-vertical  rubedo-admin-btn" ng-if="rubedo.current.user.rights.canEdit">
-        <button title="Admin"  ng-click="rubedo.toggleAdminPanel()" class="btn btn-default">
-            <span ng-class="rubedo.adminBtnIconClass"></span>
-        </button>
-        <button ng-click="rubedo.persistChanges()"
-                class="btn btn-default"
-                ng-if="rubedo.fieldEditMode&&rubedo.current.user.rights.canEdit"
-                title="Save changes">
-            <span class="glyphicon glyphicon-ok"></span>
-        </button>
-        <button ng-click="rubedo.revertChanges()"
-                class="btn btn-default"
-                ng-if="rubedo.fieldEditMode&&rubedo.current.user.rights.canEdit"
-                title="Discard changes">
-            <span class="glyphicon glyphicon-remove"></span>
-        </button>
-    </div>
-    <snap-content snap-options="rubedo.snapOpts" class="rubedo-page-holder">
-        <div ng-view></div>
-    </snap-content>
+<snap-drawer ng-if="rubedo.current.user.rights.canEdit" class="rubedo-admin-drawer" style="display: none;">
+    <ng-include src="rubedo.themePath+'/templates/admin/admin.html'"></ng-include>
+</snap-drawer>
+<div class="btn-group-vertical  rubedo-admin-btn" ng-if="rubedo.current.user.rights.canEdit">
+    <button title="Admin" ng-click="rubedo.toggleAdminPanel()" class="btn btn-default">
+        <span ng-class="rubedo.adminBtnIconClass"></span>
+    </button>
+    <button ng-click="rubedo.persistChanges()"
+            class="btn btn-default"
+            ng-if="rubedo.fieldEditMode&&rubedo.current.user.rights.canEdit"
+            title="Save changes">
+        <span class="glyphicon glyphicon-ok"></span>
+    </button>
+    <button ng-click="rubedo.revertChanges()"
+            class="btn btn-default"
+            ng-if="rubedo.fieldEditMode&&rubedo.current.user.rights.canEdit"
+            title="Discard changes">
+        <span class="glyphicon glyphicon-remove"></span>
+    </button>
+</div>
+<snap-content snap-options="rubedo.snapOpts" class="rubedo-page-holder">
+    <div ng-view></div>
+</snap-content>
 </body>
 </html>

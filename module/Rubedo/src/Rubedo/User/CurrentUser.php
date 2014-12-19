@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -75,15 +75,15 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    public function getCurrentUser ()
+    public function getCurrentUser()
     {
-        if (! isset(self::$_currentUser)) {
-            if ($this->isAuthenticated()) {               
+        if (!isset(self::$_currentUser)) {
+            if ($this->isAuthenticated()) {
                 $user = $this->_fetchCurrentUser();
                 if ($user === null) {
                     Manager::getService('AuthenticationService')->clearIdentity();
                 }
-                
+
                 self::$_currentUser = $user;
                 if ($user) {
                     $mainWorkspace = $this->getMainWorkspace();
@@ -102,7 +102,7 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    public function getCurrentUserSummary ()
+    public function getCurrentUserSummary()
     {
         if (self::$_isInstallerUser) {
             return self::$_rubedoUser;
@@ -120,7 +120,7 @@ class CurrentUser implements ICurrentUser
      *
      * @return boolean
      */
-    public function isAuthenticated ()
+    public function isAuthenticated()
     {
         $serviceAuth = Manager::getService('AuthenticationService');
         return $serviceAuth->hasIdentity();
@@ -131,13 +131,13 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    protected function _fetchCurrentUser ()
+    protected function _fetchCurrentUser()
     {
         $serviceAuth = Manager::getService('AuthenticationService');
         $sessionUser = $serviceAuth->getIdentity();
-        
+
         $serviceReader = Manager::getService('Users');
-        
+
         $user = $serviceReader->findById($sessionUser['id'], true);
         return $user;
     }
@@ -147,9 +147,9 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    public function getGroups ()
+    public function getGroups()
     {
-        if (! isset(self::$_groups)) {
+        if (!isset(self::$_groups)) {
             $user = $this->getCurrentUser();
             if (is_null($user)) {
                 return array(
@@ -163,7 +163,7 @@ class CurrentUser implements ICurrentUser
                     'data' => array()
                 );
             }
-            
+
             if (count($groupsArray['data']) == 0) {
                 return array(
                     Manager::getService('Groups')->getPublicGroup()
@@ -179,7 +179,7 @@ class CurrentUser implements ICurrentUser
      *
      * @see \Rubedo\Interfaces\User\ICurrentUser::getMainGroup()
      */
-    public function getMainGroup ()
+    public function getMainGroup()
     {
         $user = $this->getCurrentUser();
         if (isset($user['defaultGroup'])) {
@@ -197,10 +197,10 @@ class CurrentUser implements ICurrentUser
      * @param string $newPass
      *            new password
      */
-    public function changePassword ($oldPass, $newPass)
+    public function changePassword($oldPass, $newPass)
     {
         $user = $this->getCurrentUser();
-        
+
         $serviceAuth = Manager::getService('AuthenticationService');
         if ($serviceAuth->forceReAuth($user['login'], $oldPass)) {
             $serviceUser = Manager::getService('Users');
@@ -215,17 +215,17 @@ class CurrentUser implements ICurrentUser
      *
      * @return string
      */
-    public function generateToken ()
+    public function generateToken()
     {
         $sessionService = Manager::getService('Session');
         $hashService = Manager::getService('Hash');
-        
+
         $user = $sessionService->get('user');
-        
+
         $token = $hashService->generateRandomString(20);
         $user['token'] = $hashService->derivatePassword($token, $hashService->generateRandomString(10));
         $sessionService->set('user', $user);
-        
+
         return $user['token'];
     }
 
@@ -234,13 +234,13 @@ class CurrentUser implements ICurrentUser
      *
      * @return string
      */
-    public function getToken ()
+    public function getToken()
     {
         $sessionService = Manager::getService('Session');
-        
+
         $user = $sessionService->get('user');
         $token = isset($user['token']) ? $user['token'] : "";
-        
+
         if ($token == "") {
             $token = $this->generateToken();
         }
@@ -252,9 +252,9 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    public function getReadWorkspaces ()
+    public function getReadWorkspaces()
     {
-        if (! isset(self::$_readWorkspaces)) {
+        if (!isset(self::$_readWorkspaces)) {
             $wasFiltered = AbstractCollection::disableUserFilter();
             $groupArray = $this->getGroups();
             $workspaceArray = array();
@@ -275,9 +275,9 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    public function getMainWorkspace ()
+    public function getMainWorkspace()
     {
-        if (! isset(self::$_mainWorkspace)) {
+        if (!isset(self::$_mainWorkspace)) {
             $mainGroup = $this->getMainGroup();
             if ($mainGroup == null) {
                 return Manager::getService('Workspaces')->findById('global');
@@ -287,7 +287,7 @@ class CurrentUser implements ICurrentUser
         return self::$_mainWorkspace;
     }
 
-    public function getMainWorkspaceId ()
+    public function getMainWorkspaceId()
     {
         $workspace = $this->getMainWorkspace();
         if ($workspace) {
@@ -302,12 +302,12 @@ class CurrentUser implements ICurrentUser
      *
      * @return array
      */
-    public function getWriteWorkspaces ()
+    public function getWriteWorkspaces()
     {
-        if (! isset(self::$_writeWorkspaces)) {
+        if (!isset(self::$_writeWorkspaces)) {
             $groupArray = $this->getGroups();
             $workspaceArray = array();
-            
+
             foreach ($groupArray as $group) {
                 $workspaceArray = array_unique(array_merge($workspaceArray, Manager::getService('Groups')->getWriteWorkspaces($group['id'])));
             }
@@ -318,7 +318,7 @@ class CurrentUser implements ICurrentUser
                     $workspaceArray[] = $workspace['id'];
                 }
             }
-            
+
             self::$_writeWorkspaces = $workspaceArray;
         }
         return self::$_writeWorkspaces;
@@ -326,23 +326,23 @@ class CurrentUser implements ICurrentUser
 
     /**
      *
-     * @param boolean $_isInstallerUser            
+     * @param boolean $_isInstallerUser
      */
-    public static function setIsInstallerUser ($_isInstallerUser)
+    public static function setIsInstallerUser($_isInstallerUser)
     {
         CurrentUser::$_isInstallerUser = $_isInstallerUser;
     }
 
-    public function getLanguage ()
+    public function getLanguage()
     {
         $user = $this->getCurrentUser();
-        
-        if (isset($user) && isset($user['language']) && ! empty($user['language'])) {
+
+        if (isset($user) && isset($user['language']) && !empty($user['language'])) {
             $lang = $user['language'];
         } else {
             $lang = null;
         }
-        
+
         return $lang;
     }
 }

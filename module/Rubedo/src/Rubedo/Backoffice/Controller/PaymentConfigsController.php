@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,7 +29,7 @@ use Zend\View\Model\JsonModel;
  * @author adobre
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class PaymentConfigsController extends DataAccessController
 {
@@ -37,20 +37,21 @@ class PaymentConfigsController extends DataAccessController
     public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('PaymentConfigs');
     }
 
-    public function getConfigForPaymentMeansAction(){
-        $paymentMeans=$this->params()->fromQuery("paymentMeans", null);
-        if (!$paymentMeans){
+    public function getConfigForPaymentMeansAction()
+    {
+        $paymentMeans = $this->params()->fromQuery("paymentMeans", null);
+        if (!$paymentMeans) {
             return new JsonModel(array(
-                "success"=>false,
-                "msg"=>"Missing required parameter"
+                "success" => false,
+                "msg" => "Missing required parameter"
             ));
         }
-        $result=$this->_dataService->getConfigForPM($paymentMeans);
+        $result = $this->_dataService->getConfigForPM($paymentMeans);
         return new JsonModel($result);
     }
 

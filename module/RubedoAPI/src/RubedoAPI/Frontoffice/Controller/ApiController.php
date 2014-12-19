@@ -55,7 +55,7 @@ class ApiController extends AbstractActionController
 
             foreach ($loadedModules as $module) {
                 $moduleConfig = $module->getConfig();
-                $namespacesToSearch = array_merge($namespacesToSearch, isset($moduleConfig['namespaces_api'])?$moduleConfig['namespaces_api']:array());
+                $namespacesToSearch = array_merge($namespacesToSearch, isset($moduleConfig['namespaces_api']) ? $moduleConfig['namespaces_api'] : array());
             }
             $resourceArray = array('Rest', mb_strtoupper($routes['version']));
             $class = array_pop($routes['api']) . 'Resource';
@@ -63,7 +63,7 @@ class ApiController extends AbstractActionController
                 $resourceArray = array_merge($resourceArray, $routes['api']);
             }
             $resourceArray[] = $class;
-            foreach(array_reverse($namespacesToSearch) as $namespaceWithRest) {
+            foreach (array_reverse($namespacesToSearch) as $namespaceWithRest) {
                 /** @var \RubedoAPI\Interfaces\IResource $resourceObject */
                 $namespacedResource = implode('\\', array_merge(array($namespaceWithRest), $resourceArray));
                 if (class_exists($namespacedResource)) {

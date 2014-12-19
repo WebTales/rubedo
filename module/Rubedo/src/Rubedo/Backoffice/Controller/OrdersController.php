@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,7 +29,7 @@ use WebTales\MongoFilters\Filter;
  * @author adobre
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class OrdersController extends DataAccessController
 {
@@ -80,26 +80,26 @@ class OrdersController extends DataAccessController
         }
 
         fputcsv($csvResource, $csvHeader, ';');
-        foreach($orders['data'] as $order) {
+        foreach ($orders['data'] as $order) {
             $billingA = &$order['billingAddress'];
             $shippingA = &$order['shippingAddress'];
             $product = array_shift($order['detailedCart']['cart']);
             $firstLine = array(
                 $order['orderNumber'], $order['paymentMeans'], $order['status'], $order['finalPrice'], $order['finalTFPrice'],
                 //Billing address
-                isset($billingA['address1'])?$billingA['address1']:'',
-                isset($billingA['address2'])?$billingA['address2']:'',
-                isset($billingA['city'])?$billingA['city']:'',
-                isset($billingA['postCode'])?$billingA['postCode']:'',
-                isset($billingA['country'])?$billingA['country']:'',
-                isset($billingA['regionState'])?$billingA['regionState']:'',
+                isset($billingA['address1']) ? $billingA['address1'] : '',
+                isset($billingA['address2']) ? $billingA['address2'] : '',
+                isset($billingA['city']) ? $billingA['city'] : '',
+                isset($billingA['postCode']) ? $billingA['postCode'] : '',
+                isset($billingA['country']) ? $billingA['country'] : '',
+                isset($billingA['regionState']) ? $billingA['regionState'] : '',
                 //Shipping address
-                isset($shippingA['address1'])?$shippingA['address1']:'',
-                isset($shippingA['address2'])?$shippingA['address2']:'',
-                isset($shippingA['city'])?$shippingA['city']:'',
-                isset($shippingA['postCode'])?$shippingA['postCode']:'',
-                isset($shippingA['country'])?$shippingA['country']:'',
-                isset($shippingA['regionState'])?$shippingA['regionState']:'',
+                isset($shippingA['address1']) ? $shippingA['address1'] : '',
+                isset($shippingA['address2']) ? $shippingA['address2'] : '',
+                isset($shippingA['city']) ? $shippingA['city'] : '',
+                isset($shippingA['postCode']) ? $shippingA['postCode'] : '',
+                isset($shippingA['country']) ? $shippingA['country'] : '',
+                isset($shippingA['regionState']) ? $shippingA['regionState'] : '',
                 $product['title'], $product['subtitle'], $product['amount'], $product['unitTaxedPrice'], $product['unitPrice'], $product['taxedPrice'], $product['price'],
             );
             fputcsv($csvResource, $firstLine, ';');

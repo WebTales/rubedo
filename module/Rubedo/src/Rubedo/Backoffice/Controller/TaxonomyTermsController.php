@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,7 +29,7 @@ use Zend\Json\Json;
  * @author jbourdin, aDobre
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class TaxonomyTermsController extends DataAccessController
 {
@@ -37,24 +37,24 @@ class TaxonomyTermsController extends DataAccessController
     public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('TaxonomyTerms');
     }
 
     public function indexAction()
     {
-        $receivedID=$this->params()->fromQuery('id', null);
-        $postFilter=false;
+        $receivedID = $this->params()->fromQuery('id', null);
+        $postFilter = false;
         $response = array();
-        $response['total']=0;
-        $response['data']=array();
-        if (!empty($receivedID)){
-            $receivedIDArray=explode(", ",$receivedID);
-            $preFilter=Filter::factory('InUid')->setValue($receivedIDArray);
-            $postFilter=Filter::factory('NotInUid')->setValue($receivedIDArray);
+        $response['total'] = 0;
+        $response['data'] = array();
+        if (!empty($receivedID)) {
+            $receivedIDArray = explode(", ", $receivedID);
+            $preFilter = Filter::factory('InUid')->setValue($receivedIDArray);
+            $postFilter = Filter::factory('NotInUid')->setValue($receivedIDArray);
             $preValues = $this->_dataService->getList($preFilter, null, null, null);
-            $response['total'] =$preValues['count'];
+            $response['total'] = $preValues['count'];
             $response['data'] = $preValues['data'];
         }
 
@@ -84,19 +84,20 @@ class TaxonomyTermsController extends DataAccessController
         }
 
         $mongoFilters = $this->_buildFilter($filters);
-        if ($postFilter){
+        if ($postFilter) {
             $mongoFilters->addFilter($postFilter);
         }
         $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit);
 
 
-        $response['total'] =$response['total']+$dataValues['count'];
-        $response['data'] = array_merge($response['data'],$dataValues['data']);
+        $response['total'] = $response['total'] + $dataValues['count'];
+        $response['data'] = array_merge($response['data'], $dataValues['data']);
         $response['success'] = TRUE;
         $response['message'] = 'OK';
 
         return $this->_returnJson($response);
     }
+
     /**
      * Clear orphan terms in the collection
      *
@@ -105,14 +106,14 @@ class TaxonomyTermsController extends DataAccessController
     public function clearOrphanTermsAction()
     {
         $result = $this->_dataService->clearOrphanTerms();
-        
+
         return $this->_returnJson($result);
     }
 
     public function countOrphanTermsAction()
     {
         $result = $this->_dataService->countOrphanTerms();
-        
+
         return $this->_returnJson($result);
     }
 

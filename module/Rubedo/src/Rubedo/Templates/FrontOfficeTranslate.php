@@ -22,7 +22,7 @@ use Rubedo\Services\Manager;
  * Twig extension to handle label translation based on user language.
  *
  * @author jbourdin
- *        
+ *
  */
 class FrontOfficeTranslate extends \Twig_Extension
 {
@@ -33,7 +33,7 @@ class FrontOfficeTranslate extends \Twig_Extension
      * @var string
      */
     protected $lang;
-    
+
     /**
      * Default langage
      *
@@ -44,7 +44,7 @@ class FrontOfficeTranslate extends \Twig_Extension
     /**
      * init class fetching current User Language
      */
-    public function __construct ()
+    public function __construct()
     {
         $this->lang = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         $this->fallbackLang = \Rubedo\Collection\AbstractLocalizableCollection::getFallbackLocale();
@@ -55,7 +55,7 @@ class FrontOfficeTranslate extends \Twig_Extension
      *
      * @return array An array of filters
      */
-    public function getFilters ()
+    public function getFilters()
     {
         return array(
             'fotrans' => new \Twig_Filter_Method($this, 'translate')
@@ -67,7 +67,7 @@ class FrontOfficeTranslate extends \Twig_Extension
      *
      * @return string The extension name
      */
-    public function getName ()
+    public function getName()
     {
         return 'FrontOfficeTranslate';
     }
@@ -79,7 +79,7 @@ class FrontOfficeTranslate extends \Twig_Extension
      *
      * @return string Translated text
      */
-    public function translate ($text, $placeholders = array())
+    public function translate($text, $placeholders = array())
     {
         $label = Manager::getService('Translate')
             ->getTranslation(
@@ -88,7 +88,7 @@ class FrontOfficeTranslate extends \Twig_Extension
                 $this->fallbackLang,
                 $placeholders
             );
-        if (empty($label)){
+        if (empty($label)) {
             return $text;
         }
         return $label;

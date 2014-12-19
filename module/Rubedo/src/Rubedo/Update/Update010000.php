@@ -24,7 +24,7 @@ use Zend\Json\Json;
  * Methods for update tool
  *
  * @author jbourdin
- *        
+ *
  */
 class Update010000 extends Update
 {
@@ -36,13 +36,13 @@ class Update010000 extends Update
      *
      * @return boolean
      */
-    public static function doUpdateTitleContents ()
+    public static function doUpdateTitleContents()
     {
         $success = true;
         $contentPath = APPLICATION_PATH . '/data/default/';
         $contentIterator = new \DirectoryIterator($contentPath);
         foreach ($contentIterator as $directory) {
-            if ($directory->isDot() || ! $directory->isDir()) {
+            if ($directory->isDot() || !$directory->isDir()) {
                 continue;
             }
             if (in_array($directory->getFilename(), array(
@@ -60,7 +60,7 @@ class Update010000 extends Update
                 }
                 if ($file->getExtension() == 'json') {
                     $itemJson = file_get_contents($file->getPathname());
-                    $item = Json::decode($itemJson,Json::TYPE_ARRAY);
+                    $item = Json::decode($itemJson, Json::TYPE_ARRAY);
                     try {
                         switch ($collection) {
                             case 'ContentTypes':
@@ -85,39 +85,39 @@ class Update010000 extends Update
                     } catch (\Rubedo\Exceptions\User $exception) {
                         $result['success'] = true;
                     }
-                    
+
                     $success = $result['success'] && $success;
                 }
             }
         }
-        
+
         return $success;
     }
 
-    public static function upgrade ()
+    public static function upgrade()
     {
         // reset wallpapers and theme collections
         Manager::getService('Wallpapers')->drop();
         Manager::getService('Themes')->drop();
-        
+
         // update default contents with their default Id
         static::doUpdateTitleContents();
-        
+
         // reimport wallpapers and theme
         static::doInsertContents();
-        
+
         // reset user prefs with theme
         static::resetUserTheme();
-        
+
         return true;
     }
 
     /**
      * Set default theme for all Users
-     * 
+     *
      * @return boolean
      */
-    public static function resetUserTheme ()
+    public static function resetUserTheme()
     {
         $filter = Filter::factory('Value')->setName('isDefault')->setValue(true);
         $theme = Manager::getService('Themes')->findOne($filter);

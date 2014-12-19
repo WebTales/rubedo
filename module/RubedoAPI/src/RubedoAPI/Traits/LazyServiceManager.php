@@ -70,7 +70,7 @@ trait LazyServiceManager
 
     public function __call($method, $arguments)
     {
-        if (!isset($this->callCache[$method]) || (!empty($arguments) && $arguments[0])){
+        if (!isset($this->callCache[$method]) || (!empty($arguments) && $arguments[0])) {
             if (preg_match('/^get(.+)APICollection$/', $method, $matches)) {
                 $call = Manager::getService('API\\Collection\\' . $matches[1]);
             } elseif (preg_match('/^get(.+)APIService$/', $method, $matches)) {

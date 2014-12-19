@@ -28,7 +28,7 @@ use Rubedo\Services\Manager;
  *
  * @author
  *         jbourdin
- *        
+ *
  */
 class Update010202 extends Update
 {
@@ -45,7 +45,7 @@ class Update010202 extends Update
     public static function upgrade()
     {
         static::defaultCtypeCode();
-        static ::updateCtypes();
+        static::updateCtypes();
         return true;
     }
 
@@ -72,7 +72,7 @@ class Update010202 extends Update
         );
         $updateCond = Filter::factory('Value')->setName('defaultId')->setValue('51a60bb0c1c3dac60700000e');
         Manager::getService('ContentTypes')->customUpdate($data, $updateCond);
-        
+
         $data = array(
             '$set' => array(
                 'code' => 'event'
@@ -80,7 +80,7 @@ class Update010202 extends Update
         );
         $updateCond = Filter::factory('Value')->setName('defaultId')->setValue('51a60bbdc1c3da9a0a000009');
         Manager::getService('ContentTypes')->customUpdate($data, $updateCond);
-        
+
         $data = array(
             '$set' => array(
                 'code' => 'news'
@@ -106,7 +106,7 @@ class Update010202 extends Update
         );
         $updateCond = Filter::factory('Value')->setName('defaultId')->setValue('51a60bbdc1c3da9a0a000009');
         Manager::getService('ContentTypes')->customUpdate($data, $updateCond);
-        
+
         $data = array(
             '$set' => array(
                 'fields.0.config.localizable' => true
@@ -122,5 +122,5 @@ class Update010202 extends Update
         Manager::getService('ContentTypes')->customUpdate($data, $updateCond, $options);
         return true;
     }
-    
+
 }

@@ -80,7 +80,7 @@ class ContentsResource extends AbstractResource
     {
 
         $queryId = &$params['queryId'];
-        $this->getQueriesCollection()->setCurrentPage((string) $params['pageId']);
+        $this->getQueriesCollection()->setCurrentPage((string)$params['pageId']);
         $filters = $this->getQueriesCollection()->getFilterArrayById($queryId);
         $ismagic = false;
 
@@ -145,13 +145,13 @@ class ContentsResource extends AbstractResource
             $this->productFilter()
         );
 
-        if (!empty($params['requiredFields'])&&is_array($params['requiredFields'])){
-            foreach($params['requiredFields'] as $requiredField){
+        if (!empty($params['requiredFields']) && is_array($params['requiredFields'])) {
+            foreach ($params['requiredFields'] as $requiredField) {
                 $filters['filter']->addFilter(
-                    Filter::factory('OperatorToValue')->setName('fields.'.$requiredField)->setOperator('$exists')->setValue(true)
+                    Filter::factory('OperatorToValue')->setName('fields.' . $requiredField)->setOperator('$exists')->setValue(true)
                 );
                 $filters['filter']->addFilter(
-                    Filter::factory('OperatorToValue')->setName('fields.'.$requiredField)->setOperator('$ne')->setValue("")
+                    Filter::factory('OperatorToValue')->setName('fields.' . $requiredField)->setOperator('$ne')->setValue("")
                 );
             }
         }
@@ -181,7 +181,7 @@ class ContentsResource extends AbstractResource
             if (!empty($params['fingerprint'])) {
                 $this->getSessionService()->set('fingerprint', $params['fingerprint']);
             }
-            if(isset($params['ismagic']) && $params['ismagic'] == "true") {
+            if (isset($params['ismagic']) && $params['ismagic'] == "true") {
                 $ismagic = true;
             }
             $contentArray = $this->getContentList($filters, $this->setPaginationValues($params), $ismagic);
@@ -473,7 +473,7 @@ class ContentsResource extends AbstractResource
             $content['fields'] = array_intersect_key($content['fields'], array_flip($params['fields']));
         }
 
-        if(isset($params['pageId'])&&isset($params['siteId'])){
+        if (isset($params['pageId']) && isset($params['siteId'])) {
             $page = $this->getPagesCollection()->findById($params['pageId']);
             $site = $this->getSitesCollection()->findById($params['siteId']);
             $content['canonicalUrl'] = $this->getUrlAPIService()->displayUrlApi($content, 'canonical', $site,
@@ -499,9 +499,9 @@ class ContentsResource extends AbstractResource
 
         //remove inactive layouts
 
-        if (isset($content['type']['layouts'])){
-            foreach($content['type']['layouts'] as $key => $value){
-                if (!$value['active']){
+        if (isset($content['type']['layouts'])) {
+            foreach ($content['type']['layouts'] as $key => $value) {
+                if (!$value['active']) {
                     unset ($content['type']['layouts'][$key]);
                 }
             }
@@ -509,9 +509,9 @@ class ContentsResource extends AbstractResource
 
         //if site is set filter layouts
 
-        if (isset($content['type']['layouts'])&&isset($params['siteId'])){
-            foreach($content['type']['layouts'] as $key => $value){
-                if ($value['site']!=$params['siteId']){
+        if (isset($content['type']['layouts']) && isset($params['siteId'])) {
+            foreach ($content['type']['layouts'] as $key => $value) {
+                if ($value['site'] != $params['siteId']) {
                     unset ($content['type']['layouts'][$key]);
                 }
             }

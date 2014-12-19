@@ -1,16 +1,16 @@
 {
-    "id":"pageWriter",
-    "label":{
-    	"fr":"Edition des pages",
-    	"en":"Can write pages"
+    "id": "pageWriter",
+    "label": {
+        "fr": "Edition des pages",
+        "en": "Can write pages"
     },
-    "rights":[
+    "rights": [
         "write.ui.pages",
         "execute.controller.pages.create.backoffice",
         "execute.controller.pages.delete.backoffice",
         "execute.controller.pages.update.backoffice"
     ],
-    "includes":[
+    "includes": [
         "pageReader"
     ]
 }

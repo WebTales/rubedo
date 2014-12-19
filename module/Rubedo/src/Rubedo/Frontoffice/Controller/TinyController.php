@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -26,7 +26,7 @@ use Zend\Mvc\Controller\AbstractActionController;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class TinyController extends AbstractActionController
 {
@@ -35,15 +35,15 @@ class TinyController extends AbstractActionController
     {
         $this->tinyUrlService = Manager::getService('TinyUrl');
         $tinyKey = $this->params()->fromQuery('tk');
-        if (! $tinyKey) {
+        if (!$tinyKey) {
             throw new \Rubedo\Exceptions\User('No tiny URL given.', "Exception26");
         } else {
             $tinyUrlObj = $this->tinyUrlService->findById($tinyKey);
-            if (! $tinyUrlObj) {
+            if (!$tinyUrlObj) {
                 throw new \Rubedo\Exceptions\User('Invalid URL key.', "Exception27");
             }
         }
-        
+
         if (isset($tinyUrlObj['url'])) {
             return $this->redirect()->toUrl($tinyUrlObj['url']);
         } else {
@@ -51,8 +51,8 @@ class TinyController extends AbstractActionController
                 'action' => $tinyUrlObj['action'],
                 'controller' => $tinyUrlObj['controller']
             );
-            $options = array('query'=>$tinyUrlObj['params']);
-            return $this->redirect()->toRoute('frontoffice/default', $redirectParams,$options);
+            $options = array('query' => $tinyUrlObj['params']);
+            return $this->redirect()->toRoute('frontoffice/default', $redirectParams, $options);
         }
     }
 }

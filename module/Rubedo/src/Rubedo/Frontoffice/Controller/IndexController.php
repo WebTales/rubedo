@@ -222,7 +222,7 @@ class IndexController extends AbstractActionController
                         ->setValue('.+(css|js)$')
                 );
             $themeFilesToLoad = $DAMService->getList($filters)['data'];
-            foreach($themeFilesToLoad as &$fileToLoad) {
+            foreach ($themeFilesToLoad as &$fileToLoad) {
                 $themeFile = '/'
                     . implode('/', $this->discoverDirNames(array(), $fileToLoad['directory']))
                     . '/' . $fileToLoad['title'];
@@ -235,30 +235,30 @@ class IndexController extends AbstractActionController
             }
         }
         $themeName = strtolower($theme);
-        $propagatedSiteTheme=$themeName;
+        $propagatedSiteTheme = $themeName;
         if (isset($config['templates']['themes'][$themeName])) {
             $theme = $config['templates']['themes'][$themeName];
             $prepend = '/theme/' . $themeName;
             $propagatedSiteTheme = $themeName;
             if (isset($theme['css'])) {
                 foreach ($theme['css'] as $css) {
-                    $siteResources['internalStyles'][] = strpos($css, '//') === false? $prepend . $css : $css;
+                    $siteResources['internalStyles'][] = strpos($css, '//') === false ? $prepend . $css : $css;
                 }
             }
             if (isset($theme['js'])) {
                 foreach ($theme['js'] as $js) {
-                    $siteResources['internalScripts'][] = strpos($js, '//') === false? $prepend . $js : $js;
+                    $siteResources['internalScripts'][] = strpos($js, '//') === false ? $prepend . $js : $js;
                 }
             }
             if (isset($theme['angularModules'])) {
-                if(!isset($siteResources['angularModulesPaths'])){
+                if (!isset($siteResources['angularModulesPaths'])) {
                     $siteResources['angularModulesPaths'] = array();
                 }
-                if(!isset($siteResources['angularModules'])){
+                if (!isset($siteResources['angularModules'])) {
                     $siteResources['angularModules'] = array();
                 }
                 foreach ($theme['angularModules'] as $angularModule => $angularModulePath) {
-                    $siteResources['angularModulesPaths'][] = strpos($angularModulePath, '//') === false? $prepend . $angularModulePath : $angularModulePath;
+                    $siteResources['angularModulesPaths'][] = strpos($angularModulePath, '//') === false ? $prepend . $angularModulePath : $angularModulePath;
                     $siteResources['angularModules'][] = $angularModule;
                 }
             }
@@ -271,23 +271,23 @@ class IndexController extends AbstractActionController
                 $extensionPath = '/extension-path/' . $extensionName . '/';
                 if (isset ($extension['css'])) {
                     foreach ($extension['css'] as $extensionCss) {
-                        $siteResources['internalStyles'][] = strpos($extensionCss, '//') === false? $extensionPath . $extensionCss : $extensionCss;
+                        $siteResources['internalStyles'][] = strpos($extensionCss, '//') === false ? $extensionPath . $extensionCss : $extensionCss;
                     }
                 }
-                if (isset ($extension['js'])){
+                if (isset ($extension['js'])) {
                     foreach ($extension['js'] as $extensionJs) {
-                        $siteResources['internalScripts'][] = strpos($extensionJs, '//') === false? $extensionPath . $extensionJs : $extensionJs;
+                        $siteResources['internalScripts'][] = strpos($extensionJs, '//') === false ? $extensionPath . $extensionJs : $extensionJs;
                     }
                 }
-                if (isset ($extension['angularModules'])){
-                    if(!isset($siteResources['angularModulesPaths'])){
+                if (isset ($extension['angularModules'])) {
+                    if (!isset($siteResources['angularModulesPaths'])) {
                         $siteResources['angularModulesPaths'] = array();
                     }
-                    if(!isset($siteResources['angularModules'])){
+                    if (!isset($siteResources['angularModules'])) {
                         $siteResources['angularModules'] = array();
                     }
                     foreach ($extension['angularModules'] as $angularModule => $angularModulePath) {
-                        $siteResources['angularModulesPaths'][] = strpos($angularModulePath, '//') === false? $extensionPath . $angularModulePath : $angularModulePath;
+                        $siteResources['angularModulesPaths'][] = strpos($angularModulePath, '//') === false ? $extensionPath . $angularModulePath : $angularModulePath;
                         $siteResources['angularModules'][] = $angularModule;
                     }
                 }
@@ -304,7 +304,9 @@ class IndexController extends AbstractActionController
 
         return $viewModel;
     }
-    function discoverDirNames($dirs, $nextDir) {
+
+    function discoverDirNames($dirs, $nextDir)
+    {
         if ($nextDir === 'root') {
             return $dirs;
         }
@@ -312,7 +314,7 @@ class IndexController extends AbstractActionController
         $dirService = Manager::getService('Directories');
         $directory = $dirService->findById($nextDir);
         if ($directory) {
-            array_unshift($dirs,$directory['text']);
+            array_unshift($dirs, $directory['text']);
         }
         return $this->discoverDirNames($dirs, $directory['parentId']);
     }

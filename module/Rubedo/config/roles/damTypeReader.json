@@ -1,10 +1,10 @@
 {
-    "id":"damTypeReader",
-    "label":{
-    	"fr":"Consultation des types de DAM",
-    	"en":"Can read DAM types"
+    "id": "damTypeReader",
+    "label": {
+        "fr": "Consultation des types de DAM",
+        "en": "Can read DAM types"
     },
-    "rights":[
+    "rights": [
         "read.ui.damTypes",
         "execute.controller.damtypes.index.backoffice"
     ]

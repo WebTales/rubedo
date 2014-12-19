@@ -1,104 +1,102 @@
 {
-	"type":"#ext-gen1265#",
-	"description":"#ext-gen1266#",
-	"configBasique":{
-		"title":"#ext-gen1265#",
-		"bType":"video",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
-				{
-					"categorie":"#ext-gen1063#",
-					"champs":[
-						{
-							"type":"Rubedo.view.ImagePickerField",
-							"config":{
-								"fieldLabel":"#ext-gen1269#",
-								"name":"videoFile",
-								"allowedFileType":"Video",
-								"smallMode":true
-							}
-						},
-						{
-							"type":"Ext.form.field.Checkbox",
-							"config":{
-								"fieldLabel":"#ext-gen1193#",
-								"name":"videoAutoPlay",
-								"labelWidth":160,
-								"inputValue":true
-							}
-						},
-						{
-							"type":"Ext.form.field.Checkbox",
-							"config":{
-								"fieldLabel":"#ext-gen1195#",
-								"name":"videoControls",
-								"labelWidth":160,
-								"inputValue":true
-							}
-						},
-						{
-							"type":"Ext.form.field.Checkbox",
-							"config":{
-								"fieldLabel":"#ext-gen1196#",
-								"name":"videoLoop",
-								"labelWidth":160,
-								"inputValue":true
-							}
-						},
-						{
-							"type":"Rubedo.view.ImagePickerField",
-							"config":{
-								"fieldLabel":"#ext-gen1274#",
-								"name":"videoPoster",
-								"smallMode":true,
-								"allowedFileType":"Image"
-							}
-						},
-						{
-							"type":"Ext.form.field.Number",
-							"config":{
-								"fieldLabel":"#ext-gen1089#",
-								"name":"videoWidth",
-								"allowDecimals":false,
-								"minValue":0
-							}
-						},
-						{
-							"type":"Ext.form.field.Number",
-							"config":{
-								"fieldLabel":"#ext-gen1090#",
-								"name":"videoHeight",
-								"allowDecimals":false,
-								"minValue":0
-							}
-						}
-					]
-				}
-			],
-			"avance":[
+    "type": "#ext-gen1265#",
+    "description": "#ext-gen1266#",
+    "configBasique": {
+        "title": "#ext-gen1265#",
+        "bType": "video",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
                 {
-                    "categorie":"Template",
-                    "champs":[
+                    "categorie": "#ext-gen1063#",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Custom template",
-                                "name":"customTemplate",
-                                "defaultTemplateUrl":"blocks/video.html",
-                                "twigMode":false
+                            "type": "Rubedo.view.ImagePickerField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1269#",
+                                "name": "videoFile",
+                                "allowedFileType": "Video",
+                                "smallMode": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1193#",
+                                "name": "videoAutoPlay",
+                                "labelWidth": 160,
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1195#",
+                                "name": "videoControls",
+                                "labelWidth": 160,
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1196#",
+                                "name": "videoLoop",
+                                "labelWidth": 160,
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Rubedo.view.ImagePickerField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1274#",
+                                "name": "videoPoster",
+                                "smallMode": true,
+                                "allowedFileType": "Image"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1089#",
+                                "name": "videoWidth",
+                                "allowDecimals": false,
+                                "minValue": 0
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1090#",
+                                "name": "videoHeight",
+                                "allowDecimals": false,
+                                "minValue": 0
+                            }
+                        }
+                    ]
+                }
+            ],
+            "avance": [
+                {
+                    "categorie": "Template",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/video.html",
+                                "twigMode": false
 
                             }
                         }
                     ]
                 }
-			]
-		},
-		"configBloc":[
-
-		]
-	},
-	"category":"#ext-gen1187#",
-	"bType":"video",
-	"id":"511cda96c0e0517919000000"
+            ]
+        },
+        "configBloc": []
+    },
+    "category": "#ext-gen1187#",
+    "bType": "video",
+    "id": "511cda96c0e0517919000000"
 }

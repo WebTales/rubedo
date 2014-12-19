@@ -1,10 +1,10 @@
 {
-    "id":"userWriter",
-    "label":{
-    	"fr":"Edition des utilisateurs",
-    	"en":"Can write users"
+    "id": "userWriter",
+    "label": {
+        "fr": "Edition des utilisateurs",
+        "en": "Can write users"
     },
-    "rights":[
+    "rights": [
         "write.ui.users",
         "execute.controller.users.update.backoffice",
         "execute.controller.users.change-password.backoffice",
@@ -12,7 +12,7 @@
         "execute.controller.users.create.backoffice",
         "execute.controller.users.index.backoffice"
     ],
-    "includes":[
+    "includes": [
         "userReader"
     ]
 }

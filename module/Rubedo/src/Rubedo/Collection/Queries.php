@@ -110,10 +110,11 @@ class Queries extends AbstractCollection implements IQueries
         )
     );
 
-    protected  $currentPage = null;
+    protected $currentPage = null;
 
-    public function setCurrentPage($pageId){
-        $this->currentPage=$pageId;
+    public function setCurrentPage($pageId)
+    {
+        $this->currentPage = $pageId;
     }
 
     /**

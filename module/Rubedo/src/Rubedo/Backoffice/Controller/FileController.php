@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -33,7 +33,7 @@ use Zend\Http\Request;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class FileController extends AbstractActionController
 {
@@ -46,7 +46,7 @@ class FileController extends AbstractActionController
         $files = array();
         foreach ($data as $value) {
             $metaData = $value->file;
-            $metaData['id'] = (string) $metaData['_id'];
+            $metaData['id'] = (string)$metaData['_id'];
             unset($metaData['_id']);
             $files[] = $metaData;
         }
@@ -60,12 +60,12 @@ class FileController extends AbstractActionController
     {
         Context::setExpectJson();
         $fileInfo = $this->params()->fromFiles('file');
-        
+
         $finfo = new \finfo(FILEINFO_MIME);
         $mimeType = $finfo->file($fileInfo['tmp_name']);
-        
+
         $fileService = Manager::getService('Files');
-        
+
         $obj = array(
             'serverFilename' => $fileInfo['tmp_name'],
             'text' => $fileInfo['name'],
@@ -74,30 +74,30 @@ class FileController extends AbstractActionController
             'mainFileType' => $this->params()->fromPost('mainFileType', null)
         );
         $result = $fileService->create($obj);
-        
+
         return new JsonModel($result);
     }
 
     public function updateAction()
     {
         Context::setExpectJson();
-        $imageUrl=$this->params()->fromQuery("image");
+        $imageUrl = $this->params()->fromQuery("image");
 
 
         $info = pathinfo($imageUrl);
-        
+
         $mimeType = "image/" . strtolower($info['extension']);
-        
+
         $fileService = Manager::getService('Files');
         $originalId = $this->params()->fromQuery("originalId");
-        if(!$originalId){
+        if (!$originalId) {
             throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
         }
         $c = new Client();
         $request = new Request;
         $request->setUri($imageUrl);
         $result = $c->send($request);
-        if(!$result){
+        if (!$result) {
             throw new \Rubedo\Exceptions\Server("Unable to download new image");
         }
         $img = $result->getBody();
@@ -116,7 +116,7 @@ class FileController extends AbstractActionController
         );
 
         $updateResult = $fileService->createBinary($fileObj);
-        
+
         // trigger deletion of cache : sys_get_temp_dir() . '/' . $fileId . '_'
         $directoryIterator = new \DirectoryIterator(sys_get_temp_dir());
         foreach ($directoryIterator as $file) {
@@ -134,14 +134,14 @@ class FileController extends AbstractActionController
     {
         $fileId = $this->params()->fromPost('file-id');
         $version = $this->params()->fromPost('file-version', 1);
-        
+
         if (isset($fileId)) {
             $fileService = Manager::getService('Files');
             $result = $fileService->destroy(array(
                 'id' => $fileId,
                 'version' => $version
             ));
-            
+
             if ($result['success'] == true) {
                 $this->redirect($this->_helper->url('index'));
             }
@@ -160,11 +160,11 @@ class FileController extends AbstractActionController
     public function getMetaAction()
     {
         $fileId = $this->params()->fromQuery('file-id');
-        
+
         if (isset($fileId)) {
             $fileService = Manager::getService('Files');
             $obj = $fileService->findById($fileId);
-            if (! $obj instanceof \MongoGridFSFile) {
+            if (!$obj instanceof \MongoGridFSFile) {
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             return new JsonModel($obj->file);

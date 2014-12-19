@@ -18,6 +18,7 @@ use Rubedo\Collection\AbstractCollection;
 use Rubedo\Services\Manager;
 use Rubedo\Interfaces\Internationalization\ITranslate;
 use Zend\Json\Json;
+
 /**
  * Implement translation for label in Rubedo
  *
@@ -44,9 +45,9 @@ class Translate implements ITranslate
      *
      * @return the $localizationJsonArray
      */
-    public static function getLocalizationJsonArray ()
+    public static function getLocalizationJsonArray()
     {
-        if(!isset(self::$localizationJsonArray)){
+        if (!isset(self::$localizationJsonArray)) {
             self::lazyLoadConfig();
         }
         return Translate::$localizationJsonArray;
@@ -54,9 +55,9 @@ class Translate implements ITranslate
 
     /**
      *
-     * @param multitype: $localizationJsonArray            
+     * @param multitype : $localizationJsonArray
      */
-    public static function setLocalizationJsonArray (array $localizationJsonArray)
+    public static function setLocalizationJsonArray(array $localizationJsonArray)
     {
         Translate::$localizationJsonArray = $localizationJsonArray;
     }
@@ -65,9 +66,9 @@ class Translate implements ITranslate
      *
      * @return the $defaultLanguage
      */
-    public static function getDefaultLanguage ()
+    public static function getDefaultLanguage()
     {
-        if(!isset(self::$localizationJsonArray)){
+        if (!isset(self::$localizationJsonArray)) {
             self::lazyLoadConfig();
         }
         return Translate::$defaultLanguage;
@@ -75,51 +76,20 @@ class Translate implements ITranslate
 
     /**
      *
-     * @param string $defaultLanguage            
+     * @param string $defaultLanguage
      */
-    public static function setDefaultLanguage ($defaultLanguage)
+    public static function setDefaultLanguage($defaultLanguage)
     {
         Translate::$defaultLanguage = $defaultLanguage;
     }
 
-    public function __construct(){
-        if(!isset(self::$localizationJsonArray)){
+    public function __construct()
+    {
+        if (!isset(self::$localizationJsonArray)) {
             self::lazyLoadConfig();
         }
     }
-    
-    /**
-     * translate a label given by its code and its default value
-     * 
-     * @param string $code            
-     * @param string $defaultLabel
-     * @return string
-     */
-    public function translate ($code, $defaultLabel = '')
-    {
-        $isFrontEnd = AbstractCollection::getIsFrontEnd();
 
-        if($isFrontEnd) {
-            $language = Manager::getService("CurrentLocalization")->getCurrentLocalization();
-        } else {
-            $language = Manager::getService('CurrentUser')->getLanguage();
-        }
-        if ($language === null) {
-            $language = self::$defaultLanguage;
-        }
-        
-        $translatedValue = $this->getTranslation($code, $language);
-        if ($translatedValue == null) {
-            $translatedValue = $this->getTranslation($code, 'en');
-        }
-        
-        if ($translatedValue == null) {
-            $translatedValue = $defaultLabel;
-        }
-        
-        return $translatedValue;
-    }
-    
     /**
      * translate a label given by its code and its default value
      *
@@ -127,34 +97,66 @@ class Translate implements ITranslate
      * @param string $defaultLabel
      * @return string
      */
-    public function translateInWorkingLanguage ($code, $defaultLabel = '')
+    public function translate($code, $defaultLabel = '')
+    {
+        $isFrontEnd = AbstractCollection::getIsFrontEnd();
+
+        if ($isFrontEnd) {
+            $language = Manager::getService("CurrentLocalization")->getCurrentLocalization();
+        } else {
+            $language = Manager::getService('CurrentUser')->getLanguage();
+        }
+        if ($language === null) {
+            $language = self::$defaultLanguage;
+        }
+
+        $translatedValue = $this->getTranslation($code, $language);
+        if ($translatedValue == null) {
+            $translatedValue = $this->getTranslation($code, 'en');
+        }
+
+        if ($translatedValue == null) {
+            $translatedValue = $defaultLabel;
+        }
+
+        return $translatedValue;
+    }
+
+    /**
+     * translate a label given by its code and its default value
+     *
+     * @param string $code
+     * @param string $defaultLabel
+     * @return string
+     */
+    public function translateInWorkingLanguage($code, $defaultLabel = '')
     {
         $language = \Rubedo\Collection\AbstractLocalizableCollection::getWorkingLocale();
         if ($language === null) {
             $language = self::$defaultLanguage;
         }
-    
+
         $translatedValue = $this->getTranslation($code, $language);
         if ($translatedValue == null) {
             $translatedValue = $this->getTranslation($code, 'en');
         }
-    
+
         if ($translatedValue == null) {
             $translatedValue = $defaultLabel;
         }
-    
+
         return $translatedValue;
     }
 
     public function getTranslation($code, $language, $fallBack = null, $placeholders = array())
     {
-        if(isset($language)){
+        if (isset($language)) {
             $this->loadLanguage($language);
         }
-        if(isset($fallBack)){
+        if (isset($fallBack)) {
             $this->loadLanguage($fallBack);
         }
-        
+
         $this->loadLanguage('en');
 
         $translated = false;
@@ -190,27 +192,29 @@ class Translate implements ITranslate
         }
         return $stringToReplace;
     }
-    protected function loadLanguage ($language)
+
+    protected function loadLanguage($language)
     {
         if (isset(self::$translationArray[$language])) {
             return true;
         }
         self::$translationArray[$language] = array();
-        
+
         foreach (self::$localizationJsonArray as $jsonFilePath) {
             $realLanguagePath = APPLICATION_PATH . '/' . str_replace('languagekey', $language, $jsonFilePath);
             if (is_file($realLanguagePath)) {
                 $tempJson = file_get_contents($realLanguagePath);
-                $tempArray = Json::decode($tempJson,Json::TYPE_ARRAY);
+                $tempArray = Json::decode($tempJson, Json::TYPE_ARRAY);
                 self::$translationArray[$language] = array_merge(self::$translationArray[$language], $tempArray);
-            } 
+            }
         }
     }
-    
+
     /**
      * Read configuration from global application config and load it for the current class
      */
-    public static function lazyLoadConfig(){
+    public static function lazyLoadConfig()
+    {
         $config = Manager::getService('config');
         $options = $config['localisationfiles'];
         if (isset($options)) {

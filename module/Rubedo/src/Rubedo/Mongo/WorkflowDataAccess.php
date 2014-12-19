@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -61,7 +61,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *            an array
      * @return array
      */
-    protected function _inputObjectFilter ($obj)
+    protected function _inputObjectFilter($obj)
     {
         foreach ($obj as $key => $value) {
             if (in_array($key, $this->_metaDataFields)) {
@@ -70,7 +70,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $obj[$this->_currentWs][$key] = $value;
             unset($obj[$key]);
         }
-        
+
         return $obj;
     }
 
@@ -81,11 +81,11 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *            an array
      * @return array
      */
-    protected function _outputObjectFilter ($obj)
+    protected function _outputObjectFilter($obj)
     {
         if (isset($obj[$this->_currentWs])) {
             foreach ($obj[$this->_currentWs] as $key => $value) {
-                
+
                 $obj[$key] = $value;
             }
             unset($obj['live']);
@@ -94,18 +94,18 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         if (isset($obj['fields']['text'])) {
             $obj['text'] = $obj['fields']['text'];
         }
-        
+
         return $obj;
     }
 
     /**
      * Adapt filter for the workflow
      *
-     * @param \WebTales\MongoFilters\IFilter $filter            
+     * @param \WebTales\MongoFilters\IFilter $filter
      */
-    protected function _adaptFilter (\WebTales\MongoFilters\IFilter $filters)
+    protected function _adaptFilter(\WebTales\MongoFilters\IFilter $filters)
     {
-        switch($this->_currentWs){
+        switch ($this->_currentWs) {
             case 'live':
                 $otherWorkspace = 'workspace';
                 break;
@@ -113,7 +113,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
                 $otherWorkspace = 'live';
                 break;
         }
-        
+
         if ($filters instanceof \WebTales\MongoFilters\ICompositeFilter) { // do recursive adaptation to composite filter
             $filtersArray = $filters->getFilters();
             foreach ($filtersArray as $filter) {
@@ -123,13 +123,13 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $key = $filters->getName();
             //$value = $filters->getValue();
 
-            if (! in_array($key, $this->_metaDataFields) && $key!='createUser.id' && strpos($key, $this->_currentWs) === false && substr($key, 0, 1) != '$') {
-                if(strpos($key, $otherWorkspace)!==false){
+            if (!in_array($key, $this->_metaDataFields) && $key != 'createUser.id' && strpos($key, $this->_currentWs) === false && substr($key, 0, 1) != '$') {
+                if (strpos($key, $otherWorkspace) !== false) {
                     $newKey = str_replace($otherWorkspace, $this->_currentWs, $key);
-                }else{
+                } else {
                     $newKey = $this->_currentWs . "." . $key;
                 }
-                
+
                 $filters->setName($newKey);
             }
         }
@@ -142,15 +142,15 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *            the current sort
      * @return array compatible with the data in mongoDb
      */
-    protected function _adaptSort ($sortArray)
+    protected function _adaptSort($sortArray)
     {
         if (count($sortArray) != 0) {
             $this->clearSort();
-            
+
             foreach ($sortArray as $key => $value) {
                 if ($key == '_id') {
                     $this->addSort(array(
-                        'id' => (string) $value
+                        'id' => (string)$value
                     ));
                     continue;
                 }
@@ -176,12 +176,12 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *            the current included fields
      * @return array compatible with the data in mongoDb
      */
-    protected function _adaptFields ($fieldsArray)
+    protected function _adaptFields($fieldsArray)
     {
         if (count($fieldsArray) != 0) {
             $this->clearFieldList();
             $newArray = array();
-            
+
             foreach ($fieldsArray as $key => $value) {
                 unset($value);
                 if (in_array($key, $this->_metaDataFields)) {
@@ -191,7 +191,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
                     $newArray[] = $newKey;
                 }
             }
-            
+
             unset($fieldsArray);
             $this->addToFieldList($newArray);
         }
@@ -204,12 +204,12 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *            the current excluded fields
      * @return array compatible with the data in mongoDb
      */
-    protected function _adaptExcludeFields ($fieldsArray)
+    protected function _adaptExcludeFields($fieldsArray)
     {
         if (count($fieldsArray) != 0) {
             $this->clearExcludeFieldList();
             $newArray = array();
-            
+
             foreach ($fieldsArray as $key => $value) {
                 unset($value);
                 if (in_array($key, $this->_metaDataFields)) {
@@ -219,7 +219,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
                     $newArray[] = $newKey;
                 }
             }
-            
+
             unset($fieldsArray);
             $this->addToExcludeFieldList($newArray);
         }
@@ -228,7 +228,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
     /**
      * Set the current workspace to workspace
      */
-    public function setWorkspace ()
+    public function setWorkspace()
     {
         $this->_currentWs = 'workspace';
     }
@@ -236,7 +236,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
     /**
      * Set the current workspace to live
      */
-    public function setLive ()
+    public function setLive()
     {
         $this->_currentWs = 'live';
     }
@@ -244,29 +244,29 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
     /**
      * Publish a content
      */
-    public function publish ($objectId)
+    public function publish($objectId)
     {
         $versioningService = \Rubedo\Services\Manager::getService('Versioning');
         $obj = $this->_collection->findOne(array(
             '_id' => $this->getId($objectId)
         ));
-        
+
         if (isset($obj['workspace'])) {
             // define the publish values for the version handling
             $version = $obj;
-            
+
             // copy the workspace into the live
             $obj['live'] = $obj['workspace'];
-            
+
             $updateCond = Filter::factory('Uid')->setValue($objectId);
-            
+
             // update the content with the new values for the live array
             $returnArray = $this->customUpdate($obj, $updateCond);
-            
+
             // if the update is ok, the previous version of the live is stored in Versioning collection
             if ($returnArray['success']) {
                 $result = $versioningService->addVersion($version);
-                if (! $result) {
+                if (!$result) {
                     $returnArray['success'] = false;
                     unset($returnArray['data']);
                 }
@@ -282,7 +282,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
                 'msg' => 'failed to publish'
             );
         }
-        
+
         return $returnArray;
     }
 
@@ -291,7 +291,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *
      * @return array
      */
-    public function read (\WebTales\MongoFilters\IFilter $filters = null)
+    public function read(\WebTales\MongoFilters\IFilter $filters = null)
     {
         // Adaptation of the conditions for the workflow
         $localFilter = $this->getFilters();
@@ -300,22 +300,22 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $this->_adaptFilter($filters);
         }
         $this->_adaptFilter($localFilter);
-        
+
         $sort = $this->getSortArray();
         $this->_adaptSort($sort);
         $includedFields = $this->getFieldList();
         $this->_adaptFields($includedFields);
         $excludedFields = $this->getExcludeFieldList();
         $this->_adaptExcludeFields($excludedFields);
-        
+
         $content = parent::read($filters);
         $count = $content['count'];
         $content = $content['data'];
-        
+
         foreach ($content as $key => $value) {
             $content[$key] = $this->_outputObjectFilter($value);
         }
-        
+
         return array(
             'count' => $count,
             'data' => $content
@@ -327,12 +327,12 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *
      * @return bool
      */
-    public function update (array $obj, $options = array())
+    public function update(array $obj, $options = array())
     {
         $obj = $this->_inputObjectFilter($obj);
-        
+
         $result = parent::update($obj, $options);
-        
+
         if ($result['success']) {
             $result['data'] = $this->_outputObjectFilter($result['data']);
             return $result;
@@ -349,19 +349,19 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *
      * @return array
      */
-    public function create (array $obj, $options = array())
+    public function create(array $obj, $options = array())
     {
         $obj = $this->_inputObjectFilter($obj);
-        
+
         if ($this->_currentWs === 'workspace') {
             $obj['live'] = array();
         } else {
             $obj['workspace'] = array();
         }
         $result = parent::create($obj, $options);
-        
+
         $result['data'] = $this->_outputObjectFilter($result['data']);
-        
+
         return $result;
     }
 
@@ -375,26 +375,26 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
      *            should we wait for a server response
      * @return array
      */
-    public function destroy (array $obj, $options = array())
+    public function destroy(array $obj, $options = array())
     {
         $result = parent::destroy($obj, $options);
-        
+
         return $result;
     }
 
     /**
      * Find an item given by its literral ID
-     * 
-     * @param string $contentId            
+     *
+     * @param string $contentId
      * @return array
      */
-    public function findById ($contentId, $raw = true)
+    public function findById($contentId, $raw = true)
     {
         $filter = Filter::factory('Uid')->setValue($contentId);
         return $this->findOne($filter, $raw);
     }
 
-    public function findOne (\WebTales\MongoFilters\IFilter $value = null, $raw = true)
+    public function findOne(\WebTales\MongoFilters\IFilter $value = null, $raw = true)
     {
         if ($raw) {
             return parent::findOne($value);
@@ -408,16 +408,16 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         $this->_adaptFields($includedFields);
         $excludedFields = $this->getExcludeFieldList();
         $this->_adaptExcludeFields($excludedFields);
-        
+
         $data = parent::findOne($value);
-        
+
         return $this->_outputObjectFilter($data);
     }
-    
-	/* (non-PHPdoc)
+
+    /* (non-PHPdoc)
      * @see \Rubedo\Mongo\DataAccess::count()
      */
-    public function count (\WebTales\MongoFilters\IFilter $filters = null)
+    public function count(\WebTales\MongoFilters\IFilter $filters = null)
     {
         $localFilter = clone $this->getFilters();
         if ($filters) {
@@ -427,6 +427,5 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         return $this->_collection->count($localFilter->toArray());
     }
 
-    
-    
+
 }

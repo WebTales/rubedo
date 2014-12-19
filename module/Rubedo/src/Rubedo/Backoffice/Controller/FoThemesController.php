@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,7 +30,7 @@ use Zend\View\Model\JsonModel;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class FoThemesController extends AbstractActionController
 {
@@ -65,13 +65,14 @@ class FoThemesController extends AbstractActionController
             . 'themeArchive';
         $this->cleanDir($this->unzipDir);
     }
+
     /**
      * The default read Action
      *
      * Return the content of the collection, get filters from the request
      * params, get sort from request params
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $response = Manager::getService('FrontOfficeTemplates')->getAvailableThemes();
         return new JsonModel($response);
@@ -79,14 +80,14 @@ class FoThemesController extends AbstractActionController
 
     /**
      */
-    public function getThemeInfosAction ()
+    public function getThemeInfosAction()
     {
         $themeName = $this->params()->fromQuery('theme', 'default');
         $response = Manager::getService('FrontOfficeTemplates')->getThemeInfos($themeName);
         return new JsonModel($response);
     }
 
-    public function getAvailableAction ()
+    public function getAvailableAction()
     {
         $contextExist = Filter::factory('OperatorToValue')
             ->setName('context')
@@ -121,7 +122,7 @@ class FoThemesController extends AbstractActionController
             $directoryToStore = $this->getTemplateDirectory($dirName, $themeId);
             foreach ($files as $file) {
                 $directory = $this->getVirtualPathId($file->getRealPath(), $directoryToStore);
-                $this->getOrCreateDam($file, $directory,$themeId);
+                $this->getOrCreateDam($file, $directory, $themeId);
             }
 
             $result['success'] = true;
@@ -132,7 +133,8 @@ class FoThemesController extends AbstractActionController
         return new JsonModel($result);
     }
 
-    protected function getVirtualPathId($path, $rootDir) {
+    protected function getVirtualPathId($path, $rootDir)
+    {
         $path = str_replace($this->unzipDir . DIRECTORY_SEPARATOR, '', $path);
         $pathArray = explode(DIRECTORY_SEPARATOR, $path);
         array_pop($pathArray);
@@ -150,7 +152,8 @@ class FoThemesController extends AbstractActionController
         return $lastOccurDir;
     }
 
-    protected function cleanDir ($dir) {
+    protected function cleanDir($dir)
+    {
         try {
             $it = new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS);
             $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::CHILD_FIRST);
@@ -163,12 +166,13 @@ class FoThemesController extends AbstractActionController
             }
         } catch (\UnexpectedValueException $e) {
             mkdir($dir);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
     }
 
-    protected function getOrCreateDam(\SplFileInfo $file, $directory,$themeId)
+    protected function getOrCreateDam(\SplFileInfo $file, $directory, $themeId)
     {
-        $fileNameExplode = explode('.',$file->getFilename());
+        $fileNameExplode = explode('.', $file->getFilename());
         $extension = end($fileNameExplode);
         if ($extension == 'php')
             return;
@@ -236,10 +240,10 @@ class FoThemesController extends AbstractActionController
         $themesCollection = Manager::getService('Themes');
         $theme = $themesCollection->findByName($name);
         if (empty($theme)) {
-            $createdTheme=$themesCollection->create(
+            $createdTheme = $themesCollection->create(
                 array(
-                'context' => 'front',
-                'text' => $name
+                    'context' => 'front',
+                    'text' => $name
                 )
             );
             return ($createdTheme['data']["id"]);

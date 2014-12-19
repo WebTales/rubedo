@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -43,7 +43,7 @@ class BootstrapForm
         foreach ($dbForm as $element) {
             self::setIds($element);
         }
-        
+
         $submitButton = (new Submit('Submit'))
             ->setValue('Submit')
             ->setAttribute('class', 'btn btn-large btn-primary')
@@ -79,7 +79,7 @@ class BootstrapForm
         $element->setLabelAttributes(array(
             'class' => 'control-label'
         ));
-        $element->setAttribute('id',$element->getName());
+        $element->setAttribute('id', $element->getName());
     }
 }
 

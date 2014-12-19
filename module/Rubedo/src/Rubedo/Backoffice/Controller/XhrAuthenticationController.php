@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -48,9 +48,9 @@ class XhrAuthenticationController extends AbstractActionController
         Manager::getService('Session')->getSessionObject()
             ->getManager()
             ->regenerateId(true);
-        
+
         $loginResult = $this->_dataService->coreAuthenticate($login, $password);
-        
+
         if ($loginResult) {
             $response['success'] = true;
         } else {
@@ -67,7 +67,7 @@ class XhrAuthenticationController extends AbstractActionController
     public function logoutAction()
     {
         $this->_dataService->clearIdentity();
-        
+
         $response['success'] = true;
         return new JsonModel($response);
     }
@@ -84,7 +84,7 @@ class XhrAuthenticationController extends AbstractActionController
         $sessionName = $sessionDataService->getSessionName();
         $cookie = $this->getRequest()->getCookie();
         if (isset($cookie->$sessionName)) {
-            
+
             // get data from sessions collection without using session handler : do not renew lifetime
             $sessionData = $sessionDataService->findById($cookie->$sessionName);
             $modified = $sessionData["modified"];
@@ -92,11 +92,11 @@ class XhrAuthenticationController extends AbstractActionController
             $lifetime = $sessionData["lifetime"];
             $time = max(0, $lifetime + $modifiedTstamp - time());
             $status = $time > 0;
-            
+
             // check if a user is stored
             if ($status) {
                 $decodedSessionData = $sessionDataService->decode($sessionData["data"]);
-                if (isset($decodedSessionData['Zend_Auth']) && ! empty($decodedSessionData['Zend_Auth']->storage)) {
+                if (isset($decodedSessionData['Zend_Auth']) && !empty($decodedSessionData['Zend_Auth']->storage)) {
                     $status = true;
                 } else {
                     $status = false;
@@ -107,7 +107,7 @@ class XhrAuthenticationController extends AbstractActionController
             $status = false;
             $time = 0;
         }
-        
+
         return new JsonModel(array(
             'time' => $time,
             'status' => $status

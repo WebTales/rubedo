@@ -1,15 +1,15 @@
 {
-    "id":"userTypesReader",
+    "id": "userTypesReader",
     "label": {
         "fr": "Visualisation des types d'utilisateur",
         "en": "Can read user types"
     },
-    "rights":[
+    "rights": [
         "read.ui.userTypes",
         "execute.controller.usertypes.is-used.backoffice",
         "execute.controller.usertypes.index.backoffice"
     ],
-    "includes":[
+    "includes": [
         "userReader"
     ]
 }

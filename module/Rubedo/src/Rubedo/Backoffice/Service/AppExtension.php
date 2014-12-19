@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -35,23 +35,23 @@ class AppExtension
      *
      * @return the $config
      */
-    public function getConfig ()
+    public function getConfig()
     {
         return AppExtension::$config;
     }
 
     /**
      *
-     * @param field_type $config            
+     * @param field_type $config
      */
-    public static function setConfig ($config)
+    public static function setConfig($config)
     {
         AppExtension::$config = $config;
     }
 
-    public function __construct ()
+    public function __construct()
     {
-        if (! isset(self::$config)) {
+        if (!isset(self::$config)) {
             self::lazyloadConfig();
         }
     }
@@ -59,20 +59,20 @@ class AppExtension
     /**
      * Return the real path name of the given application
      *
-     * @param string $extensionName            
+     * @param string $extensionName
      * @return string
      */
-    public function getBasePath ($extensionName)
+    public function getBasePath($extensionName)
     {
         $config = $this->getConfig();
-        if (! isset($config[$extensionName])) {
+        if (!isset($config[$extensionName])) {
             throw new \Rubedo\Exceptions\Server('Unknown application');
         } else {
             return $config[$extensionName]['basePath'];
         }
     }
 
-    public function getGlobalBlocksJson ()
+    public function getGlobalBlocksJson()
     {
         $globalArray = array();
         foreach ($this->getConfig() as $appConfig) {
@@ -85,7 +85,7 @@ class AppExtension
     /**
      * Read configuration from global application config and load it for the current class
      */
-    public static function lazyloadConfig ()
+    public static function lazyloadConfig()
     {
         $config = Manager::getService('config');
         self::setConfig($config['appExtension']);

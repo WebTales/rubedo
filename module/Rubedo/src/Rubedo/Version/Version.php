@@ -7,9 +7,9 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
- * 
+ *
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -60,9 +60,9 @@ final class Version
      * @return int -1 if the $version is older,
      *         0 if they are the same,
      *         and +1 if $version is newer.
-     *        
+     *
      */
-    public static function compareVersion ($version)
+    public static function compareVersion($version)
     {
         $version = strtolower($version);
         $version = preg_replace('/(\d)pr(\d?)/', '$1a$2', $version);
@@ -74,7 +74,7 @@ final class Version
      *
      * @return string
      */
-    public static function getVersion ()
+    public static function getVersion()
     {
         return self::VERSION;
     }
@@ -98,46 +98,44 @@ final class Version
      *            Version Service with which to retrieve the version
      * @return string
      */
-    public static function getLatest ($service = self::VERSION_SERVICE_GITHUB)
+    public static function getLatest($service = self::VERSION_SERVICE_GITHUB)
     {
         if (null === static::$latestVersion) {
             static::$latestVersion = 'not available';
             if ($service == self::VERSION_SERVICE_GITHUB) {
                 $url = 'https://api.github.com/repos/webtales/rubedo/git/refs/tags';
-                
+
                 $ch = curl_init();
-                
+
                 // Configuration de l'URL et d'autres options
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_HEADER, 0);
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
                 curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36");
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-                
+
                 $result = curl_exec($ch);
                 curl_close($ch);
-                
+
                 if ($result === false) {
                     return null;
                 }
-                $apiResponse = Json::decode($result,Json::TYPE_ARRAY);
+                $apiResponse = Json::decode($result, Json::TYPE_ARRAY);
                 if (isset($apiResponse['message'])) {
                     return null;
                 }
                 // Simplify the API response into a simple array of version numbers
-                $tags = array_map(function  ($tag)
-                {
+                $tags = array_map(function ($tag) {
                     return substr($tag['ref'], 10); // Reliable because we're filtering on 'refs/tags/release-'
                 }, $apiResponse);
-                
+
                 // Fetch the latest version number from the array
-                static::$latestVersion = array_reduce($tags, function  ($a, $b)
-                {
+                static::$latestVersion = array_reduce($tags, function ($a, $b) {
                     return version_compare($a, $b, '>') ? $a : $b;
                 });
             }
         }
-        
+
         return static::$latestVersion;
     }
 
@@ -148,20 +146,20 @@ final class Version
      *
      * @return bool
      */
-    public static function isLatest ()
+    public static function isLatest()
     {
         return static::compareVersion(static::getLatest()) < 1;
     }
 
-    public static function getComponentsVersion ()
+    public static function getComponentsVersion()
     {
         $componentsArray = array();
         $componentsArray['phpComponents'] = array(
             'MongoDriver' => \MongoClient::VERSION
         );
-        
+
         if (is_file(APPLICATION_PATH . '/composer.lock')) {
-            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/composer.lock'),Json::TYPE_ARRAY);
+            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/composer.lock'), Json::TYPE_ARRAY);
             foreach ($phpComponentsArray['packages'] as $package) {
                 if ($package['name'] == 'bombayworks/zendframework1') {
                     continue;
@@ -169,18 +167,18 @@ final class Version
                 $componentsArray['phpComponents'][$package['name']] = $package['version'];
             }
         }
-        
+
         $componentsArray['frontComponents'] = array();
         if (is_file(APPLICATION_PATH . '/composer.front.lock')) {
-            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/composer.front.lock'),Json::TYPE_ARRAY);
+            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/composer.front.lock'), Json::TYPE_ARRAY);
             foreach ($phpComponentsArray['packages'] as $package) {
                 $componentsArray['frontComponents'][$package['name']] = $package['version'];
             }
         }
-        
+
         $componentsArray['extensions'] = array();
         if (is_file(APPLICATION_PATH . '/composer.extensions.lock')) {
-            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/composer.extensions.lock'),Json::TYPE_ARRAY);
+            $phpComponentsArray = Json::decode(file_get_contents(APPLICATION_PATH . '/composer.extensions.lock'), Json::TYPE_ARRAY);
             foreach ($phpComponentsArray['packages'] as $package) {
                 $componentsArray['extensions'][$package['name']] = $package['version'];
             }
@@ -188,12 +186,12 @@ final class Version
         return $componentsArray;
     }
 
-    public static function getMongoServerVersion ()
+    public static function getMongoServerVersion()
     {
         return Manager::getService('MongoDataAccess')->getMongoServerVersion();
     }
 
-    public static function getESServerVersion ()
+    public static function getESServerVersion()
     {
         $esService = Manager::getService('ElasticDataIndex');
         $esService->init();

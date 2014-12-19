@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,7 +30,7 @@ use Zend\Json\Json;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class CurrentUserController extends AbstractActionController
 {
@@ -66,8 +66,8 @@ class CurrentUserController extends AbstractActionController
     {
         $currentUserService = Manager::getService('CurrentUser');
         $response = $currentUserService->getCurrentUser();
-        
-        if (! is_null($response)) {
+
+        if (!is_null($response)) {
             $newResponse['success'] = true;
             $newResponse['data'] = $response;
         } else {
@@ -83,14 +83,14 @@ class CurrentUserController extends AbstractActionController
     {
         $usersService = Manager::getService('Users');
         $data = $this->params()->fromPost('data');
-        
-        if (! is_null($data)) {
+
+        if (!is_null($data)) {
             $insertData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($insertData)) {
                 $result = $this->_auth->getIdentity();
                 if ($result) {
                     $userId = $result['id'];
-                    
+
                     if ($userId === $insertData['id']) {
                         $returnArray = $usersService->update($insertData);
                     } else {
@@ -117,7 +117,7 @@ class CurrentUserController extends AbstractActionController
                 "msg" => 'No Data'
             );
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return new JsonModel($returnArray);
@@ -130,7 +130,7 @@ class CurrentUserController extends AbstractActionController
     {
         $oldPassword = $this->params()->fromPost('oldPassword');
         $newPassword = $this->params()->fromPost('newPassword');
-        
+
         if (is_string($oldPassword) && is_string($newPassword)) {
             $currentUserService = Manager::getService('CurrentUser');
             $result = $currentUserService->changePassword($oldPassword, $newPassword);
@@ -152,8 +152,8 @@ class CurrentUserController extends AbstractActionController
     {
         $response = array();
         $response['token'] = $this->_currentUserService->getToken();
-        
-        if (mb_strlen($response['token']) != 128 && ! ctype_alnum($response['token'])) {
+
+        if (mb_strlen($response['token']) != 128 && !ctype_alnum($response['token'])) {
             $this->getResponse()->setStatusCode(500);
         } else {
             return new JsonModel($response);

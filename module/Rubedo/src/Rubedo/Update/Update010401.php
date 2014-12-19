@@ -24,7 +24,7 @@ namespace Rubedo\Update;
  * tool
  *
  * @author jbourdin
- *        
+ *
  */
 class Update010401 extends Update
 {
@@ -38,10 +38,10 @@ class Update010401 extends Update
      *
      * @return boolean
      */
-    public static function upgrade ()
+    public static function upgrade()
     {
         return true;
     }
 
-    
+
 }

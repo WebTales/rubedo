@@ -23,7 +23,7 @@ use Rubedo\Services\Events;
  *
  * @author jbourdin
  * @todo implement lifetime and cache names
- *      
+ *
  */
 class MongoCache extends AbstractAdapter
 {
@@ -34,7 +34,7 @@ class MongoCache extends AbstractAdapter
 
     protected $_dataService;
 
-    public function __construct ($options = null)
+    public function __construct($options = null)
     {
         parent::__construct($options);
         $this->_dataService = Manager::getService('Cache');
@@ -43,10 +43,10 @@ class MongoCache extends AbstractAdapter
     /**
      * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalGetItem()
      */
-    protected function internalGetItem (&$normalizedKey, &$success = null, &$casToken = null)
+    protected function internalGetItem(&$normalizedKey, &$success = null, &$casToken = null)
     {
         $obj = $this->_dataService->findByCacheId($normalizedKey);
-        
+
         if ($obj) {
             $success = true;
             Events::getEventManager()->trigger(self::CACHE_HIT, null, array(
@@ -65,10 +65,10 @@ class MongoCache extends AbstractAdapter
     /**
      * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalGetMetadata()
      */
-    protected function internalGetMetadata (&$normalizedKey)
+    protected function internalGetMetadata(&$normalizedKey)
     {
         $obj = $this->_dataService->findByCacheId($normalizedKey);
-        
+
         if ($obj) {
             unset($obj['data']);
             return $obj;
@@ -80,7 +80,7 @@ class MongoCache extends AbstractAdapter
     /**
      * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalRemoveItem()
      */
-    protected function internalRemoveItem (&$normalizedKey)
+    protected function internalRemoveItem(&$normalizedKey)
     {
         return $this->_dataService->deleteByCacheId($normalizedKey);
     }
@@ -88,31 +88,31 @@ class MongoCache extends AbstractAdapter
     /**
      * (non-PHPdoc) @see \Zend\Cache\Storage\Adapter\AbstractAdapter::internalSetItem()
      */
-    protected function internalSetItem (&$normalizedKey, &$value)
+    protected function internalSetItem(&$normalizedKey, &$value)
     {
         $obj = array();
         $obj['data'] = $value;
         $obj['cacheId'] = $normalizedKey;
-        
+
         $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
         $currentTime = $currentTimeService->getCurrentTime();
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
-        
-        if (strpos($normalizedKey,"htmlcleaner")!==FALSE){
-            $ttl=60;
+
+        if (strpos($normalizedKey, "htmlcleaner") !== FALSE) {
+            $ttl = 60;
         } else {
             $ttl = $this->options->getTtl();
         }
         $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $ttl;
-        
+
         // if ($specificLifetime) {
         // $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $specificLifetime;
         // } elseif ($this->getOption('lifetime')) {
         // $lifetime = $this->getOption('lifetime');
         // $obj['expire'] = Manager::getService('CurrentTime')->getCurrentTime() + $lifetime;
         // }
-        
+
         return $this->_dataService->upsertByCacheId($obj, $normalizedKey);
     }
 
@@ -120,5 +120,5 @@ class MongoCache extends AbstractAdapter
     {
         return $this->_dataService->drop();
     }
-    
+
 }

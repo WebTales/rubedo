@@ -18,9 +18,9 @@ namespace Rubedo\Domains;
 
 /**
  * Generic interface of domain validator class
- * 
+ *
  * @author jbourdin
- *        
+ *
  */
 interface IDomains
 {
@@ -28,10 +28,10 @@ interface IDomains
     /**
      * Check if a value is valid for the current domain
      *
-     * @param mixed $value            
+     * @param mixed $value
      * @return boolean
      */
-    public static function isValid ($value);
+    public static function isValid($value);
 }
 
 ?>

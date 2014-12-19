@@ -22,7 +22,7 @@ namespace Rubedo\Domains;
  * Should be a string of at most 256 caracters
  *
  * @author jbourdin
- *        
+ *
  */
 class DName implements IDomains
 {
@@ -30,13 +30,13 @@ class DName implements IDomains
     /**
      * Check if a value is valid for the current domain
      *
-     * @param mixed $value            
+     * @param mixed $value
      * @return boolean
      * @see Rubedo\Domains\IDomains::isValid()
      */
-    public static function isValid ($value)
+    public static function isValid($value)
     {
-        if (! is_string($value)) {
+        if (!is_string($value)) {
             return false;
         }
         if (mb_strlen($value, 'UTF-8') > 256) {

@@ -22,20 +22,22 @@ namespace Rubedo\Update;
  * Methods for update tool
  *
  * @author jbourdin
- *        
+ *
  */
-class Update010201 extends Update {
-	protected static $toVersion = '1.2.2';
-	
-	/**
-	 * do the upgrade
-	 *
-	 * @return boolean
-	 */
-	public static function upgrade() {
-       
+class Update010201 extends Update
+{
+    protected static $toVersion = '1.2.2';
+
+    /**
+     * do the upgrade
+     *
+     * @return boolean
+     */
+    public static function upgrade()
+    {
+
         return true;
     }
 
- 
+
 }

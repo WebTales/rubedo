@@ -1,15 +1,15 @@
 {
-    "id":"contentReviewer",
-    "label":{
-    	"fr":"Validation des contenus",
-    	"en":"Can review contents"
+    "id": "contentReviewer",
+    "label": {
+        "fr": "Validation des contenus",
+        "en": "Can review contents"
     },
-    "rights":[
+    "rights": [
         "write.ui.contents",
         "execute.controller.contents.@dot*",
         "write.frontoffice.contents"
     ],
-    "includes":[
+    "includes": [
         "contentWriter"
     ]
 }

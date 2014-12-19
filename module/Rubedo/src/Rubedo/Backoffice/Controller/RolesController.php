@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -28,7 +28,7 @@ use Zend\View\Model\JsonModel;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class RolesController extends AbstractActionController
 {
@@ -42,7 +42,7 @@ class RolesController extends AbstractActionController
     public function indexAction()
     {
         $response = Manager::getService('Acl')->getAvailaibleRoles();
-        
+
         return new JsonModel($response);
     }
 

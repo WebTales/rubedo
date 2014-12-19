@@ -59,25 +59,25 @@ class ChangephotoResource extends AbstractResource
         if (empty($user)) {
             throw new APIEntityException('User not found', 404);
         }
-        $newFileId=$this->uploadFile($params['file']);
-        if (isset($user['photo'])&&!empty($user['photo'])&&$user['photo']!=""){
-            $oldFile=$this->getFilesCollection()->findById($user['photo']);
-            if ($oldFile){
+        $newFileId = $this->uploadFile($params['file']);
+        if (isset($user['photo']) && !empty($user['photo']) && $user['photo'] != "") {
+            $oldFile = $this->getFilesCollection()->findById($user['photo']);
+            if ($oldFile) {
                 $this->getFilesCollection()->destroy(array(
-                    "id"=>$user['photo'],
-                    "version"=>1
+                    "id" => $user['photo'],
+                    "version" => 1
                 ));
             }
         }
-        $user['photo']=$newFileId;
-        $updatedUser=$this->getUsersCollection()->update($user);
-        if (!$updatedUser['success']){
-            return($updatedUser);
+        $user['photo'] = $newFileId;
+        $updatedUser = $this->getUsersCollection()->update($user);
+        if (!$updatedUser['success']) {
+            return ($updatedUser);
         }
-        $userPhotoUrl=$this->getUrlAPIService()->userAPIAvatar($user, 100, 100, 'boxed');
-        return(array(
-            "success"=>true,
-            "photoUrl"=>$userPhotoUrl
+        $userPhotoUrl = $this->getUrlAPIService()->userAPIAvatar($user, 100, 100, 'boxed');
+        return (array(
+            "success" => true,
+            "photoUrl" => $userPhotoUrl
         ));
 
     }

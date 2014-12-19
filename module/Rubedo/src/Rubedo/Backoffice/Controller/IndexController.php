@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -36,27 +36,27 @@ class IndexController extends AbstractExtLoaderController
     public function indexAction()
     {
         $this->_auth = Manager::getService('AuthenticationService');
-        
-        if (! $this->_auth->hasIdentity()) {
+
+        if (!$this->_auth->hasIdentity()) {
             $redirectParams = array(
                 'action' => 'index',
                 'controller' => 'login'
             );
-            
+
             if ($this->params()->fromQuery('content')) {
                 $redirectParams['content'] = $this->params()->fromQuery('content');
             }
             return $this->redirect()->toRoute(null, $redirectParams);
         }
-        
-        if (! Manager::getService('Acl')->hasAccess('ui.backoffice')) {
+
+        if (!Manager::getService('Acl')->hasAccess('ui.backoffice')) {
             $redirectParams = array(
                 'action' => 'index',
                 'controller' => 'logout'
             );
             return $this->redirect()->toRoute(null, $redirectParams);
         }
-        
+
         return $this->loadExtApps();
     }
 }

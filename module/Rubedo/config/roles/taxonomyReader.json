@@ -1,10 +1,10 @@
 {
-    "id":"taxonomyReader",
-    "label":{
-    	"fr":"Consultation des taxonomies",
-    	"en":"Can read taxonomies"
+    "id": "taxonomyReader",
+    "label": {
+        "fr": "Consultation des taxonomies",
+        "en": "Can read taxonomies"
     },
-    "rights":[
+    "rights": [
         "read.ui.taxonomy",
         "execute.controller.taxonomy.index.backoffice",
         "execute.controller.taxonomyterms.read-child.backoffice"

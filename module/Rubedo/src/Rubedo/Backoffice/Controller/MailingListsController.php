@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -31,7 +31,7 @@ use Zend\Json\Json;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class MailingListsController extends DataAccessController
 {
@@ -39,106 +39,111 @@ class MailingListsController extends DataAccessController
     public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('MailingList');
     }
 
-    public function subscribeUsersAction(){
-        $userEmailArray=$this->params()->fromPost("userEmailArray","[ ]");
-        $userEmailArray=Json::decode($userEmailArray, Json::TYPE_ARRAY);
-        $mlId=$this->params()->fromPost("mlId",null);
-        $result=array();
-        $result['success']=true;
-        foreach ($userEmailArray as $userEmail){
-            $resultInter=$this->_dataService->subscribe($mlId,$userEmail);
-            $result['success']==$result['success']&&$resultInter['success'];
+    public function subscribeUsersAction()
+    {
+        $userEmailArray = $this->params()->fromPost("userEmailArray", "[ ]");
+        $userEmailArray = Json::decode($userEmailArray, Json::TYPE_ARRAY);
+        $mlId = $this->params()->fromPost("mlId", null);
+        $result = array();
+        $result['success'] = true;
+        foreach ($userEmailArray as $userEmail) {
+            $resultInter = $this->_dataService->subscribe($mlId, $userEmail);
+            $result['success'] == $result['success'] && $resultInter['success'];
         }
         return $this->_returnJson($result);
     }
 
-    public function unsubscribeUsersAction(){
-        $userEmailArray=$this->params()->fromPost("userEmailArray","[ ]");
-        $userEmailArray=Json::decode($userEmailArray, Json::TYPE_ARRAY);
-        $mlId=$this->params()->fromPost("mlId",null);
-        $result=array();
-        $result['success']=true;
-        foreach ($userEmailArray as $userEmail){
-            $resultInter=$this->_dataService->unSubscribe($mlId,$userEmail);
-            $result['success']==$result['success']&&$resultInter;
+    public function unsubscribeUsersAction()
+    {
+        $userEmailArray = $this->params()->fromPost("userEmailArray", "[ ]");
+        $userEmailArray = Json::decode($userEmailArray, Json::TYPE_ARRAY);
+        $mlId = $this->params()->fromPost("mlId", null);
+        $result = array();
+        $result['success'] = true;
+        foreach ($userEmailArray as $userEmail) {
+            $resultInter = $this->_dataService->unSubscribe($mlId, $userEmail);
+            $result['success'] == $result['success'] && $resultInter;
         }
         return $this->_returnJson($result);
     }
 
-    public function getUsersAction(){
+    public function getUsersAction()
+    {
         $usersService = Manager::getService('Users');
         $params = $this->params()->fromQuery();
-        $sortJson =$this->params()->fromQuery("sort",null);
+        $sortJson = $this->params()->fromQuery("sort", null);
         if (isset($sortJson)) {
             $sort = Json::decode($sortJson, Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
-        $filters =  Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.'.$params['id'].'.status') ->setValue(true));
-        $results=$usersService->getList($filters, $sort, (($params['page']-1) * $params['limit']), intval($params['limit']));
-        $results['total']=$results['count'];
+        $filters = Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.' . $params['id'] . '.status')->setValue(true));
+        $results = $usersService->getList($filters, $sort, (($params['page'] - 1) * $params['limit']), intval($params['limit']));
+        $results['total'] = $results['count'];
         return $this->_returnJson($results);
     }
-    
-    public function getUnsubscribedUsersAction(){
+
+    public function getUnsubscribedUsersAction()
+    {
         $usersService = Manager::getService('Users');
         $params = $this->params()->fromQuery();
-        $sortJson =$this->params()->fromQuery("sort",null);
+        $sortJson = $this->params()->fromQuery("sort", null);
         if (isset($sortJson)) {
             $sort = Json::decode($sortJson, Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
-        $filters =  Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.'.$params['id'].'.status') ->setValue(false));
-        $results=$usersService->getList($filters, $sort, (($params['page']-1) * $params['limit']), intval($params['limit']));
-        $results['total']=$results['count'];
+        $filters = Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.' . $params['id'] . '.status')->setValue(false));
+        $results = $usersService->getList($filters, $sort, (($params['page'] - 1) * $params['limit']), intval($params['limit']));
+        $results['total'] = $results['count'];
         return $this->_returnJson($results);
     }
-    
-    public function exportUsersAction(){
+
+    public function exportUsersAction()
+    {
         $usersService = Manager::getService('Users');
         $fileName = 'export_csv_' . date('Ymd') . '.csv';
         $filePath = sys_get_temp_dir() . '/' . $fileName;
         $csvResource = fopen($filePath, 'w+');
         $params = $this->params()->fromQuery();
-        $filters =  Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.'.$params['id'].'.status') ->setValue(true));
-        $list=$usersService->getList($filters);
+        $filters = Filter::factory()->addFilter(Filter::factory('Value')->setName('mailingLists.' . $params['id'] . '.status')->setValue(true));
+        $list = $usersService->getList($filters);
         $fieldsArray = array(
             "email",
             "name"
         );
         $headerArray = array(
-            "email"=>"Email",
-            "name"=>"Name"
+            "email" => "Email",
+            "name" => "Name"
         );
-        
+
         $filters2 = Filter::factory();
         $filters2->addFilter(Filter::factory('Value')->setName('UTType')
             ->setValue("email"));
         $emailUserType = Manager::getService("UserTypes")->findOne($filters2);
-        foreach ($emailUserType['fields'] as $typeField){
-            if (($typeField['cType']=='Ext.form.field.Text')||($typeField['cType']=='Ext.form.field.TextArea')){
-                $fieldsArray[]=$typeField['config']['name'];
-                $headerArray[$typeField['config']['name']]=$typeField['config']['fieldLabel'];
+        foreach ($emailUserType['fields'] as $typeField) {
+            if (($typeField['cType'] == 'Ext.form.field.Text') || ($typeField['cType'] == 'Ext.form.field.TextArea')) {
+                $fieldsArray[] = $typeField['config']['name'];
+                $headerArray[$typeField['config']['name']] = $typeField['config']['fieldLabel'];
             }
         }
-        $fieldsArray[]="subscription";
-        $headerArray["subscription"]="Date of subscription";
+        $fieldsArray[] = "subscription";
+        $headerArray["subscription"] = "Date of subscription";
         $csvLine = array();
-        
+
         foreach ($fieldsArray as $field) {
             $csvLine[] = $headerArray[$field];
         }
         fputcsv($csvResource, $csvLine, ';');
-        
+
         foreach ($list['data'] as $client) {
             $csvLine = array();
-        
+
             foreach ($fieldsArray as $field) {
                 switch ($field) {
                     case 'subscription':
@@ -155,7 +160,7 @@ class MailingListsController extends DataAccessController
             }
             fputcsv($csvResource, $csvLine, ';');
         }
-        
+
         $content = file_get_contents($filePath);
         $response = $this->getResponse();
         $headers = $response->getHeaders();
@@ -163,16 +168,17 @@ class MailingListsController extends DataAccessController
         $headers->addHeaderLine('Content-Disposition', "attachment; filename=\"$fileName\"");
         $headers->addHeaderLine('Accept-Ranges', 'bytes');
         $headers->addHeaderLine('Content-Length', strlen($content));
-        
+
         $response->setContent(utf8_decode($content));
         return $response;
     }
-    
-    public function importUsersAction(){
-        $mlId=$this->params()->fromPost("id",null);
+
+    public function importUsersAction()
+    {
+        $mlId = $this->params()->fromPost("id", null);
         $returnArray = array();
         $fileInfos = $this->params()->fromFiles('csvFile');
-        if (! isset($fileInfos)) {
+        if (!isset($fileInfos)) {
             $returnArray['success'] = false;
             $returnArray['message'] = "Pas de fichier reçu.";
             $this->getResponse()->setStatusCode(500);
@@ -180,43 +186,43 @@ class MailingListsController extends DataAccessController
         }
         $mimeType = mime_content_type($fileInfos['tmp_name']);
         $contentType = isset($mimeType) ? $mimeType : $fileInfos['type'];
-        if (($contentType != "text/plain") && ($contentType!= "text/csv")&& ($contentType!= "text/x-c")) {
+        if (($contentType != "text/plain") && ($contentType != "text/csv") && ($contentType != "text/x-c")) {
             $returnArray['success'] = false;
             $returnArray['message'] = "Le fichier doit doit être au format CSV.";
             $this->getResponse()->setStatusCode(500);
             return new JsonModel($returnArray);
         }
-        $fieldsArray=array();
+        $fieldsArray = array();
         $filters2 = Filter::factory();
         $filters2->addFilter(Filter::factory('Value')->setName('UTType')
             ->setValue("email"));
         $emailUserType = Manager::getService("UserTypes")->findOne($filters2);
-        foreach ($emailUserType['fields'] as $typeField){
-            if (($typeField['cType']=='Ext.form.field.Text')||($typeField['cType']=='Ext.form.field.TextArea')){
-                $fieldsArray[]=$typeField['config']['name'];
+        foreach ($emailUserType['fields'] as $typeField) {
+            if (($typeField['cType'] == 'Ext.form.field.Text') || ($typeField['cType'] == 'Ext.form.field.TextArea')) {
+                $fieldsArray[] = $typeField['config']['name'];
             }
         }
         $recievedFile = fopen($fileInfos['tmp_name'], 'r');
         // Read the first line to start at the second line
         fgetcsv($recievedFile, 1000000, ';', '"', '\\');
         $lineCounter = 0;
-        $success=true;
+        $success = true;
         while (($currentLine = fgetcsv($recievedFile, 1000000, ';', '"', '\\')) !== false) {
-            if ((isset($currentLine[1]))&&(isset($currentLine[2]))){
-                $myFields=array();
-                foreach ($fieldsArray as $key => $value){
-                    if (isset($currentLine[$key+2])) {
-                        $myFields[$value]=$currentLine[$key+2];
+            if ((isset($currentLine[1])) && (isset($currentLine[2]))) {
+                $myFields = array();
+                foreach ($fieldsArray as $key => $value) {
+                    if (isset($currentLine[$key + 2])) {
+                        $myFields[$value] = $currentLine[$key + 2];
                     }
                 }
-                $resultInter=$this->_dataService->subscribe($mlId,$currentLine[0], true, $currentLine[1], $myFields);
-            } else if (isset($currentLine[1])){
-                $resultInter=$this->_dataService->subscribe($mlId,$currentLine[0], true, $currentLine[1]);
+                $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0], true, $currentLine[1], $myFields);
+            } else if (isset($currentLine[1])) {
+                $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0], true, $currentLine[1]);
             } else {
-                $resultInter=$this->_dataService->subscribe($mlId,$currentLine[0]);
+                $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0]);
             }
-            $success==$success&&$resultInter['success'];
-            $lineCounter=$lineCounter+1;
+            $success == $success && $resultInter['success'];
+            $lineCounter = $lineCounter + 1;
         }
         fclose($recievedFile);
         $returnArray['importedContentsCount'] = $lineCounter;
@@ -228,5 +234,5 @@ class MailingListsController extends DataAccessController
         $response->setContent($content);
         return $response;
     }
-    
+
 }

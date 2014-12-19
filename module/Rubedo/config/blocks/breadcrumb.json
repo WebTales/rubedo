@@ -1,37 +1,33 @@
 {
-	"type":"#ext-gen1278#",
-	"description":"#ext-gen1279#",
-	"configBasique":{
-		"title":"#ext-gen1278#",
-		"bType":"breadcrumb",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
-
-			],
-			"avance":[
+    "type": "#ext-gen1278#",
+    "description": "#ext-gen1279#",
+    "configBasique": {
+        "title": "#ext-gen1278#",
+        "bType": "breadcrumb",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [],
+            "avance": [
                 {
-                    "categorie":"Template",
-                    "champs":[
+                    "categorie": "Template",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Custom template",
-                                "name":"customTemplate",
-                                "defaultTemplateUrl":"blocks/breadcrumb.html",
-                                "twigMode":false
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/breadcrumb.html",
+                                "twigMode": false
 
                             }
                         }
                     ]
                 }
-			]
-		},
-		"configBloc":[
-
-		]
-	},
-	"category":"#ext-gen1277#",
-	"bType":"breadcrumb",
-	"id":"506441f8c64804d514044000"
+            ]
+        },
+        "configBloc": []
+    },
+    "category": "#ext-gen1277#",
+    "bType": "breadcrumb",
+    "id": "506441f8c64804d514044000"
 }

@@ -1,49 +1,47 @@
 {
-	"type":"#ext-gen1101#",
-	"description":"#ext-gen1102#",
-	"configBasique":{
-		"title":"#ext-gen1101#",
-		"bType":"contentDetail",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
-				{
-					"categorie":"#ext-gen1104#",
-					"champs":[
-						{
-							"type":"Rubedo.view.DCEField",
-							"config":{
-								"fieldLabel":"#ext-gen1105#",
-								"name":"contentId",
-								"chooseOnly":true
-							}
-						}
-					]
-				}
-			],
-			"avance":[
+    "type": "#ext-gen1101#",
+    "description": "#ext-gen1102#",
+    "configBasique": {
+        "title": "#ext-gen1101#",
+        "bType": "contentDetail",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
                 {
-                    "categorie":"Template",
-                    "champs":[
+                    "categorie": "#ext-gen1104#",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Custom template",
-                                "name":"customTemplate",
-                                "defaultTemplateUrl":"blocks/contentDetail.html",
-                                "twigMode":false
+                            "type": "Rubedo.view.DCEField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1105#",
+                                "name": "contentId",
+                                "chooseOnly": true
+                            }
+                        }
+                    ]
+                }
+            ],
+            "avance": [
+                {
+                    "categorie": "Template",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/contentDetail.html",
+                                "twigMode": false
 
                             }
                         }
                     ]
                 }
-			]
-		},
-		"configBloc":[
-
-		]
-	},
-	"category":"#ext-gen1068#",
-	"bType":"contentDetail",
-	"id":"506441f8c64804d514000001"
+            ]
+        },
+        "configBloc": []
+    },
+    "category": "#ext-gen1068#",
+    "bType": "contentDetail",
+    "id": "506441f8c64804d514000001"
 }

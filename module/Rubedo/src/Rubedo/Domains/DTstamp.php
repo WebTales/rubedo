@@ -22,7 +22,7 @@ namespace Rubedo\Domains;
  * Should be an Timestamp
  *
  * @author jbourdin
- *        
+ *
  */
 class DTstamp implements IDomains
 {
@@ -30,16 +30,16 @@ class DTstamp implements IDomains
     /**
      * Check if a value is valid for the current domain
      *
-     * @param mixed $value            
+     * @param mixed $value
      * @return boolean
      * @see Rubedo\Domains\IDomains::isValid()
      */
-    public static function isValid ($value)
+    public static function isValid($value)
     {
-        if (! is_int($value)) {
+        if (!is_int($value)) {
             return false;
         } else {
-            if ((string) intval($value) != $value) {
+            if ((string)intval($value) != $value) {
                 return false;
             }
         }

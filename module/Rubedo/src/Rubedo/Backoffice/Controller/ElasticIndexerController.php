@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,21 +29,21 @@ use Zend\View\Model\JsonModel;
  * @author aDobre
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class ElasticIndexerController extends AbstractActionController
 {
 
     public function indexAction()
     {
-        
+
         // get params
         $params = $this->params()->fromQuery();
-        
+
         // get option : all, dam, content
-        
+
         $option = isset($params['option']) ? $params['option'] : 'all';
-        
+
         $es = Manager::getService('ElasticDataIndex');
         $es->init();
         $return = $es->indexAll($option);

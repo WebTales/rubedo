@@ -20,6 +20,7 @@ namespace Rubedo\Update;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\Json\Json;
+
 /**
  * Methods
  * for
@@ -35,16 +36,16 @@ class Update020000 extends Update
     protected static $toVersion = '2.1.0';
 
 
-    public static function doCreateDefaultUserTypes ()
+    public static function doCreateDefaultUserTypes()
     {
         $success = true;
         $contentPath = APPLICATION_PATH . '/data/default/';
         $contentIterator = new \DirectoryIterator($contentPath);
         foreach ($contentIterator as $directory) {
-            if ($directory->isDot() || ! $directory->isDir()) {
+            if ($directory->isDot() || !$directory->isDir()) {
                 continue;
             }
-            if ($directory->getFilename()!="UserTypes"){
+            if ($directory->getFilename() != "UserTypes") {
                 continue;
             }
             $collection = ucfirst($directory->getFilename());
@@ -55,7 +56,7 @@ class Update020000 extends Update
                 }
                 if ($file->getExtension() == 'json') {
                     $itemJson = file_get_contents($file->getPathname());
-                    $item = Json::decode($itemJson,Json::TYPE_ARRAY);
+                    $item = Json::decode($itemJson, Json::TYPE_ARRAY);
                     try {
                         switch ($collection) {
                             case 'UserTypes':
@@ -83,73 +84,74 @@ class Update020000 extends Update
         return $success;
     }
 
-    public static function doUpdateUserTypes ()
+    public static function doUpdateUserTypes()
     {
 
         $success = true;
         $publicGroup = Manager::getService('Groups')->findByName('public');
-        $userTypes=Manager::getService('UserTypes')->getList();
-        foreach ($userTypes['data'] as $userType){
-            $userType['defaultGroup']=$publicGroup['id'];
-            $result=Manager::getService('UserTypes')->update($userType);
+        $userTypes = Manager::getService('UserTypes')->getList();
+        foreach ($userTypes['data'] as $userType) {
+            $userType['defaultGroup'] = $publicGroup['id'];
+            $result = Manager::getService('UserTypes')->update($userType);
             $success = $result['success'] && $success;
         }
         return $success;
     }
 
 
-    public static function doUpdateUsers ()
+    public static function doUpdateUsers()
     {
         $success = true;
-        $publicGroup=Manager::getService("Groups")->findByName("public");
+        $publicGroup = Manager::getService("Groups")->findByName("public");
 
-        $filters=Filter::factory();
+        $filters = Filter::factory();
         $filters->addFilter(Filter::factory('Value')->setName('UTType')
             ->setValue("default"));
-        $defaultUserType=Manager::getService("UserTypes")->findOne($filters);
+        $defaultUserType = Manager::getService("UserTypes")->findOne($filters);
 
-        $filters2=Filter::factory();
+        $filters2 = Filter::factory();
         $filters2->addFilter(Filter::factory('Value')->setName('UTType')
             ->setValue("email"));
-        $emailUserType=Manager::getService("UserTypes")->findOne($filters2);
+        $emailUserType = Manager::getService("UserTypes")->findOne($filters2);
 
-        $usersService=Manager::getService("Users");
-        $users=$usersService->getList();
-        foreach ($users['data'] as $user){
-            if (!isset($user['typeId'])){
-                if ((isset($user['groups']))&&(is_array($user['groups']))&&($user['groups']!=array($publicGroup['id']))){
-                    $user['typeId']=$defaultUserType['id'];
-                    if (!isset($user['fields'])){
-                        $user['fields']=array();
+        $usersService = Manager::getService("Users");
+        $users = $usersService->getList();
+        foreach ($users['data'] as $user) {
+            if (!isset($user['typeId'])) {
+                if ((isset($user['groups'])) && (is_array($user['groups'])) && ($user['groups'] != array($publicGroup['id']))) {
+                    $user['typeId'] = $defaultUserType['id'];
+                    if (!isset($user['fields'])) {
+                        $user['fields'] = array();
                         //process proper fields array creation here
                     }
 
                 } else {
-                    $user['typeId']=$emailUserType['id'];
-                    if (!isset($user['name'])){
-                        $user['name']=$user['email'];
+                    $user['typeId'] = $emailUserType['id'];
+                    if (!isset($user['name'])) {
+                        $user['name'] = $user['email'];
                     }
-                    if (!isset($user['login'])){
-                        $user['login']=$user['email'];
+                    if (!isset($user['login'])) {
+                        $user['login'] = $user['email'];
                     }
-                    if (!isset($user['fields'])){
-                        $user['fields']=array();
+                    if (!isset($user['fields'])) {
+                        $user['fields'] = array();
                     }
                 }
 
 
-                if (!isset($user['status'])){
-                    $user['status']="approved";
+                if (!isset($user['status'])) {
+                    $user['status'] = "approved";
                 }
-                if (!isset($user['taxonomy'])){
-                    $user['taxonomy']=array();
+                if (!isset($user['taxonomy'])) {
+                    $user['taxonomy'] = array();
                 }
-                $updateResult=$usersService->update($user);
-                $success=$updateResult['success'] && $success;
+                $updateResult = $usersService->update($user);
+                $success = $updateResult['success'] && $success;
             }
         }
         return $success;
     }
+
     /**
      * do
      * the
@@ -157,7 +159,7 @@ class Update020000 extends Update
      *
      * @return boolean
      */
-    public static function upgrade ()
+    public static function upgrade()
     {
 
         // create default user types

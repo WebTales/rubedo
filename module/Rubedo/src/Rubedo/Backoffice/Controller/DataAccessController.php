@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,7 +30,7 @@ use Zend\Json\Json;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 abstract class DataAccessController extends AbstractActionController
 {
@@ -57,7 +57,8 @@ abstract class DataAccessController extends AbstractActionController
     protected $_prettyJson = true;
 
     public function __construct()
-    {}
+    {
+    }
 
     /**
      * Set the response body with Json content
@@ -104,27 +105,27 @@ abstract class DataAccessController extends AbstractActionController
         } else {
             $limit = null;
         }
-        
+
         $mongoFilters = $this->_buildFilter($filters);
-        
+
         $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit);
-        
+
         $response = array();
         $response['total'] = $dataValues['count'];
         $response['data'] = $dataValues['data'];
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-        
+
         return $this->_returnJson($response);
     }
 
     protected function _buildFilter($filters = null)
     {
-        if (! $filters) {
+        if (!$filters) {
             $filters = array();
         }
         $mongoFilters = Filter::factory();
-        
+
         foreach ($filters as $filter) {
             if (isset($filter['operator']) && $filter['operator'] == 'like') {
                 $mongoFilter = Filter::factory('Regex')->setName($filter['property'])->setValue('/.*' . $filter["value"] . '.*/i');
@@ -168,18 +169,18 @@ abstract class DataAccessController extends AbstractActionController
         } else {
             $sort = null;
         }
-        
+
         $parentId = $this->params()->fromQuery('node', 'root');
-        
+
         $mongoFilters = $this->_buildFilter($filters);
         $dataValues = $this->_dataService->readChild($parentId, $mongoFilters, $sort);
-        
+
         $response = array();
         $response['children'] = array_values($dataValues);
         $response['total'] = count($response['children']);
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-        
+
         return $this->_returnJson($response);
     }
 
@@ -191,12 +192,12 @@ abstract class DataAccessController extends AbstractActionController
     public function deleteChildAction()
     {
         $data = $this->params()->fromPost('data');
-        
-        if (! is_null($data)) {
+
+        if (!is_null($data)) {
             $data = Json::decode($data, Json::TYPE_ARRAY);
-            
+
             if (is_array($data)) {
-                
+
                 $returnArray = $this->_dataService->deleteChild($data);
             } else {
                 $returnArray = array(
@@ -210,10 +211,10 @@ abstract class DataAccessController extends AbstractActionController
                 "msg" => 'Invalid Data'
             );
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
-        
+
         return $this->_returnJson($returnArray);
     }
 
@@ -235,13 +236,13 @@ abstract class DataAccessController extends AbstractActionController
         }
         $mongoFilters = $this->_buildFilter($filters);
         $dataValues = $this->_dataService->readTree($mongoFilters);
-        
+
         $response = array();
         $response["expanded"] = true;
         $response['children'] = $dataValues;
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-        
+
         return $this->_returnJson($response);
     }
 
@@ -251,11 +252,11 @@ abstract class DataAccessController extends AbstractActionController
     public function deleteAction()
     {
         $data = $this->params()->fromPost('data');
-        
-        if (! is_null($data)) {
+
+        if (!is_null($data)) {
             $data = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($data)) {
-                
+
                 $returnArray = $this->_dataService->destroy($data);
             } else {
                 $returnArray = array(
@@ -269,7 +270,7 @@ abstract class DataAccessController extends AbstractActionController
                 "msg" => 'Invalid Data'
             );
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
@@ -281,8 +282,8 @@ abstract class DataAccessController extends AbstractActionController
     public function createAction()
     {
         $data = $this->params()->fromPost('data');
-        
-        if (! is_null($data)) {
+
+        if (!is_null($data)) {
             $insertData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($insertData)) {
                 $returnArray = $this->_dataService->create($insertData);
@@ -298,7 +299,7 @@ abstract class DataAccessController extends AbstractActionController
                 "msg" => 'No Data'
             );
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
@@ -310,11 +311,11 @@ abstract class DataAccessController extends AbstractActionController
     public function updateAction()
     {
         $data = $this->params()->fromPost('data');
-        
-        if (! is_null($data)) {
+
+        if (!is_null($data)) {
             $updateData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($updateData)) {
-                
+
                 $returnArray = $this->_dataService->update($updateData);
             } else {
                 $returnArray = array(
@@ -328,7 +329,7 @@ abstract class DataAccessController extends AbstractActionController
                 "msg" => 'No Data'
             );
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
@@ -342,32 +343,32 @@ abstract class DataAccessController extends AbstractActionController
     public function findOneAction()
     {
         $contentId = $this->params()->fromQuery('id');
-        
-        if (! is_null($contentId)) {
-            
+
+        if (!is_null($contentId)) {
+
             $return = $this->_dataService->findById($contentId);
-            
+
             if (empty($return['id'])) {
-                
+
                 $returnArray = array(
                     'success' => false,
                     "msg" => 'Object not found'
                 );
             } else {
-                
+
                 $returnArray = array(
                     'succes' => true,
                     'data' => $return
                 );
             }
         } else {
-            
+
             $returnArray = array(
                 'success' => false,
                 "msg" => 'Missing param'
             );
         }
-        
+
         return $this->_returnJson($returnArray);
     }
 

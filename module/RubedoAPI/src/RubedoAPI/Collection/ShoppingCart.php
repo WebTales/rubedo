@@ -4,7 +4,8 @@ namespace RubedoAPI\Collection;
 
 use RubedoAPI\Traits\LazyServiceManager;
 
-class ShoppingCart extends \Rubedo\Collection\ShoppingCart {
+class ShoppingCart extends \Rubedo\Collection\ShoppingCart
+{
     use LazyServiceManager;
 
     public function getCurrentCart($shoppingCartToken = null)

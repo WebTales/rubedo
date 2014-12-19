@@ -18,6 +18,7 @@ use Rubedo\Services\Manager;
 use Swift_Mailer;
 use Swift_SmtpTransport;
 use Swift_Message;
+
 /**
  * Mailer Service
  *
@@ -35,34 +36,32 @@ class Mailer implements IMailer
      * @var array
      */
     protected static $options;
-    
-    
-    
+
+
     /**
      * @return the $options
      */
     public function getOptions()
     {
-        if(!isset(self::$options)){
-           self::lazyloadConfig(); 
+        if (!isset(self::$options)) {
+            self::lazyloadConfig();
         }
         return Mailer::$options;
     }
 
 
-    
-	/**
-     * @param multitype: $options
+    /**
+     * @param multitype : $options
      */
     public static function setOptions($options)
     {
         Mailer::$options = $options;
     }
 
-	/**
+    /**
      * (non-PHPdoc) @see \Rubedo\Interfaces\Mail\IMailer::getNewMessage()
      */
-    public function getNewMessage ()
+    public function getNewMessage()
     {
         return Swift_Message::newInstance();
     }
@@ -70,11 +69,11 @@ class Mailer implements IMailer
     /**
      * (non-PHPdoc) @see \Rubedo\Interfaces\Mail\IMailer::sendMessage()
      */
-    public function sendMessage ($message, &$failedRecipients = null)
+    public function sendMessage($message, &$failedRecipients = null)
     {
-        if (! isset($this->_transport)) {
+        if (!isset($this->_transport)) {
             $options = $this->getOptions();
-            if (! isset($options['smtp'])) {
+            if (!isset($options['smtp'])) {
                 throw new \Rubedo\Exceptions\Server('No smtp set in configuration', "Exception66");
             }
             $this->_transport = Swift_SmtpTransport::newInstance($options['smtp']['server'], $options['smtp']['port'], $options['smtp']['ssl'] ? 'ssl' : null);
@@ -82,10 +81,10 @@ class Mailer implements IMailer
                 $this->_transport->setUsername($options['smtp']['username'])->setPassword($options['smtp']['password']);
             }
         }
-        if (! isset($this->_mailer)) {
+        if (!isset($this->_mailer)) {
             $this->_mailer = Swift_Mailer::newInstance($this->_transport);
         }
-        
+
         // Send the message
         return $this->_mailer->send($message, $failedRecipients);
     }
@@ -93,30 +92,31 @@ class Mailer implements IMailer
     /**
      * Read configuration from global application config and load it for the current class
      */
-    public static function lazyloadConfig ()
+    public static function lazyloadConfig()
     {
         $config = Manager::getService('Application')->getConfig();
         if (isset($config['swiftmail'])) {
             self::setOptions($config['swiftmail']);
-        }else{
+        } else {
             self::setOptions(array());
         }
     }
-    
+
     /**
      * Is the service mailer active
-     * 
+     *
      * True if a configuration is available.
-     * 
+     *
      * @return boolean
      */
-    public static function isActive(){
-        if(!isset(self::$options)){
+    public static function isActive()
+    {
+        if (!isset(self::$options)) {
             self::lazyloadConfig();
         }
-        if(count(self::$options)>0){
+        if (count(self::$options) > 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

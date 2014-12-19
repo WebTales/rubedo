@@ -85,7 +85,7 @@ abstract class AbstractCollection implements IAbstractCollection
     protected static $_isFrontEnd = false;
 
     protected $_recList = array();
-    
+
     protected $_sortedRecList = array();
 
     protected function _init()
@@ -158,15 +158,14 @@ abstract class AbstractCollection implements IAbstractCollection
                 $recValues = $this->_dataService->read($filters);
 
                 // Sort recommended items by score
-                usort($recValues['data'], function ($c1,$c2)
-                {
-                	$key1 = $this->_sortedRecList[$c1['id']];
-                	$key2 = $this->_sortedRecList[$c2['id']];
-                	 
-                	return ($key1 > $key2) ? 1 : -1;
-                
+                usort($recValues['data'], function ($c1, $c2) {
+                    $key1 = $this->_sortedRecList[$c1['id']];
+                    $key2 = $this->_sortedRecList[$c2['id']];
+
+                    return ($key1 > $key2) ? 1 : -1;
+
                 });
-                
+
                 // if there is some recommended items
                 $recNumber = $recValues['count'];
 
@@ -872,9 +871,10 @@ abstract class AbstractCollection implements IAbstractCollection
         return $this->_collectionName;
     }
 
-    public function getAggregation($pipeline=array()){
+    public function getAggregation($pipeline = array())
+    {
         $response = $this->_dataService->aggregate($pipeline);
-        if (!$response['ok']){
+        if (!$response['ok']) {
             throw new \Rubedo\Exceptions\Server($response['errmsg']);
         }
         return array(

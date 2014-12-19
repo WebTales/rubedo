@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,7 +29,7 @@ use Zend\Json\Json;
  * @author aDobre
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class UserTypesController extends DataAccessController
 {
@@ -37,15 +37,16 @@ class UserTypesController extends DataAccessController
         'index',
         'find-one'
     );
-    
-    public function __construct ()
+
+    public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('UserTypes');
     }
-    public function isUsedAction ()
+
+    public function isUsedAction()
     {
         $id = $this->params()->fromQuery('id');
         $wasFiltered = AbstractCollection::disableUserFilter();
@@ -53,5 +54,5 @@ class UserTypesController extends DataAccessController
         AbstractCollection::disableUserFilter($wasFiltered);
         return $this->_returnJson($result);
     }
-    
+
 }

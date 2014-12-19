@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,7 +30,7 @@ use Rubedo\Exceptions\User;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class DamController extends DataAccessController
 {
@@ -43,11 +43,11 @@ class DamController extends DataAccessController
     public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('Dam');
     }
-    
+
     /*
      * (non-PHPdoc) @see DataAccessController::indexAction()
      */
@@ -59,7 +59,7 @@ class DamController extends DataAccessController
         $filterArray = Json::decode($jsonFilter, Json::TYPE_ARRAY);
         $tFilterArray = Json::decode($jsonTFilter, Json::TYPE_ARRAY);
         $globalFilterArray = array_merge($tFilterArray, $filterArray);
-        
+
         // call standard method with merge array
         $this->getRequest()
             ->getQuery()
@@ -70,11 +70,11 @@ class DamController extends DataAccessController
     public function getThumbnailAction()
     {
         $mediaId = $this->params()->fromQuery('id', null);
-        if (! $mediaId) {
+        if (!$mediaId) {
             throw new \Rubedo\Exceptions\User('no id given', "Exception7");
         }
         $media = $this->_dataService->findById($mediaId);
-        if (! $media) {
+        if (!$media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
         $version = $this->params()->fromQuery('version', $media['id']);
@@ -98,42 +98,42 @@ class DamController extends DataAccessController
     public function createAction()
     {
         $typeId = $this->params()->fromPost('typeId');
-        if (! $typeId) {
+        if (!$typeId) {
             throw new \Rubedo\Exceptions\User('no type ID Given', "Exception3");
         }
         $damType = Manager::getService('DamTypes')->findById($typeId);
         $damDirectory = $this->params()->fromPost('directory', 'notFiled');
         $nativeLanguage = $this->params()->fromPost('workingLanguage', 'en');
-        if (! $damType) {
+        if (!$damType) {
             throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
         }
         $obj['typeId'] = $damType['id'];
         $obj['directory'] = $damDirectory;
         $obj['mainFileType'] = $damType['mainFileType'];
-        
+
         $title = $this->params()->fromPost('title');
-        if (! $title) {
+        if (!$title) {
             throw new \Rubedo\Exceptions\User('missing title', "Exception10");
         }
-        
+
         $obj['title'] = $title;
         $obj['fields']['title'] = $title;
         $obj['taxonomy'] = Json::decode($this->params()->fromPost('taxonomy', '[]'), Json::TYPE_ARRAY);
-        
+
         $workspace = $this->params()->fromPost('writeWorkspace');
-        if (! is_null($workspace) && $workspace != "") {
+        if (!is_null($workspace) && $workspace != "") {
             $obj['writeWorkspace'] = $workspace;
             $obj['fields']['writeWorkspace'] = $workspace;
         }
-        
+
         $targets = Json::decode($this->params()->fromPost('targetArray'), Json::TYPE_ARRAY);
         if (is_array($targets) && count($targets) > 0) {
             $obj['target'] = $targets;
             $obj['fields']['target'] = $targets;
         }
-        
+
         $fields = $damType['fields'];
-        
+
         foreach ($fields as $field) {
             if ($field['cType'] == 'Ext.form.field.File') {
                 continue;
@@ -141,38 +141,38 @@ class DamController extends DataAccessController
             $fieldConfig = $field['config'];
             $name = $fieldConfig['name'];
             $obj['fields'][$name] = $this->params()->fromPost($name);
-            if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
+            if (!$fieldConfig['allowBlank'] && !$obj['fields'][$name]) {
                 throw new \Rubedo\Exceptions\User('Required field missing: %1$s', 'Exception4', $name);
             }
         }
-        
+
         foreach ($fields as $field) {
             if ($field['cType'] !== 'Ext.form.field.File') {
                 continue;
             }
             $fieldConfig = $field['config'];
             $name = $fieldConfig['name'];
-            
+
             $uploadResult = $this->_uploadFile($name, $fieldConfig['fileType']);
-            if (! is_array($uploadResult)) {
+            if (!is_array($uploadResult)) {
                 $obj['fields'][$name] = $uploadResult;
             }
-            
-            if (! $fieldConfig['allowBlank'] && ! $obj['fields'][$name]) {
+
+            if (!$fieldConfig['allowBlank'] && !$obj['fields'][$name]) {
                 throw new \Rubedo\Exceptions\User('Required field missing: %1$s', 'Exception4', $name);
             }
         }
-        
+
         $uploadResult = $this->_uploadFile('originalFileId', $damType['mainFileType']);
-        if (! is_array($uploadResult)) {
+        if (!is_array($uploadResult)) {
             $obj['originalFileId'] = $uploadResult;
         } else {
             return $this->_returnJson($uploadResult);
         }
-        
+
         $obj['Content-Type'] = $this->_mimeType;
-        
-        if (! $obj['originalFileId']) {
+
+        if (!$obj['originalFileId']) {
             $this->getResponse()->setStatusCode(500);
             return $this->_returnJson(array(
                 'success' => false,
@@ -186,8 +186,8 @@ class DamController extends DataAccessController
         unset($obj['i18n'][$nativeLanguage]['fields']['writeWorkspace']);
         unset($obj['i18n'][$nativeLanguage]['fields']['target']);
         $returnArray = $this->_dataService->create($obj);
-        
-        if (! $returnArray['success']) {
+
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         $content = Json::encode($returnArray);
@@ -197,18 +197,19 @@ class DamController extends DataAccessController
         $response->setContent($content);
         return $response;
     }
+
     /*
      * Method used by Back Office mass uploader for each file
      */
     public function massUploadAction()
     {
         $typeId = $this->params()->fromPost('typeId');
-        if (! $typeId) {
+        if (!$typeId) {
             throw new \Rubedo\Exceptions\User('no type ID Given', "Exception3");
         }
         $damType = Manager::getService('DamTypes')->findById($typeId);
         $nativeLanguage = $this->params()->fromPost('workingLanguage', 'en');
-        if (! $damType) {
+        if (!$damType) {
             throw new \Rubedo\Exceptions\Server('unknown type', "Exception9");
         }
         $obj = array();
@@ -225,7 +226,7 @@ class DamController extends DataAccessController
             $obj['taxonomy'] = $activeFacets;
         }
         $workspace = $this->params()->fromPost('writeWorkspace');
-        if (! is_null($workspace) && $workspace != "") {
+        if (!is_null($workspace) && $workspace != "") {
             $obj['writeWorkspace'] = $workspace;
             $obj['fields']['writeWorkspace'] = $workspace;
         }
@@ -234,7 +235,7 @@ class DamController extends DataAccessController
             $obj['target'] = $targets;
             $obj['fields']['target'] = $targets;
         }
-        $uploadResult = $this->_uploadFile('file', $damType['mainFileType'], true,true);
+        $uploadResult = $this->_uploadFile('file', $damType['mainFileType'], true, true);
         if ($uploadResult['success']) {
             $properName = explode(".", $uploadResult['data']['text']);
             $obj['title'] = $properName[0];
@@ -245,7 +246,7 @@ class DamController extends DataAccessController
             return new JsonModel($uploadResult);
         }
         $obj['Content-Type'] = $this->_mimeType;
-        if (! $obj['originalFileId']) {
+        if (!$obj['originalFileId']) {
             $this->getResponse()->setStatusCode(500);
             return $this->_returnJson(array(
                 'success' => false,
@@ -259,7 +260,7 @@ class DamController extends DataAccessController
         unset($obj['i18n'][$nativeLanguage]['fields']['writeWorkspace']);
         unset($obj['i18n'][$nativeLanguage]['fields']['target']);
         $returnArray = $this->_dataService->create($obj);
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return new JsonModel($returnArray);
@@ -269,7 +270,7 @@ class DamController extends DataAccessController
     {
         $fileInfos = $this->params()->fromFiles($name);
 
-        if(isset($fileInfos["error"]) && $fileInfos["error"] != UPLOAD_ERR_OK) {
+        if (isset($fileInfos["error"]) && $fileInfos["error"] != UPLOAD_ERR_OK) {
             switch ($fileInfos["error"]) {
                 case UPLOAD_ERR_INI_SIZE:
                     $msg = "The server does not allow you to upload a file bigger than " . ini_get('upload_max_filesize');
@@ -281,7 +282,7 @@ class DamController extends DataAccessController
                     $msg = "The uploaded file was only partially uploaded";
                     break;
                 case UPLOAD_ERR_NO_FILE:
-                    $msg = "No file uploaded for this field : ".$name;
+                    $msg = "No file uploaded for this field : " . $name;
                     break;
                 case UPLOAD_ERR_NO_TMP_DIR:
                     $msg = "Missing a temporary folder";
@@ -293,24 +294,24 @@ class DamController extends DataAccessController
                     $msg = "A PHP extension stopped the file upload";
                     break;
                 default :
-                    $msg = "No file uploaded for this field : ".$name;
+                    $msg = "No file uploaded for this field : " . $name;
                     break;
             }
 
-            return(array(
-                "success"=>false,
-                "msg"=>$msg
+            return (array(
+                "success" => false,
+                "msg" => $msg
             ));
         }
 
         $mimeType = mime_content_type($fileInfos['tmp_name']);
-        
-        if (($name == 'originalFileId')||($setMimeType)) {
+
+        if (($name == 'originalFileId') || ($setMimeType)) {
             $this->_mimeType = $mimeType;
         }
-        
+
         $fileService = Manager::getService('Files');
-        
+
         $fileObj = array(
             'serverFilename' => $fileInfos['tmp_name'],
             'text' => $fileInfos['name'],
@@ -319,31 +320,31 @@ class DamController extends DataAccessController
             'mainFileType' => $fileType
         );
         $result = $fileService->create($fileObj);
-        if ((! $result['success']) || ($returnFullResult)) {
+        if ((!$result['success']) || ($returnFullResult)) {
             return $result;
         }
         return $result['data']['id'];
     }
-    
-    public function deleteByDamTypeIdAction ()
+
+    public function deleteByDamTypeIdAction()
     {
         $typeId = $this->getParam('type-id');
-        if (! $typeId) {
+        if (!$typeId) {
             throw new User('This action needs a type-id as argument.', 'Exception3');
         }
         $deleteResult = $this->_dataService->deleteByDamType($typeId);
-    
+
         $this->_returnJson($deleteResult);
     }
 
     /**
      * Do a findOneAction
      */
-    public function findOneAction ()
+    public function findOneAction()
     {
         $contentId = $this->params()->fromQuery('id');
 
-        if (! is_null($contentId)) {
+        if (!is_null($contentId)) {
 
             $return = $this->_dataService->findById($contentId, false, false);
 

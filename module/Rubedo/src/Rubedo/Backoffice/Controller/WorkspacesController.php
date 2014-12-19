@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -28,64 +28,64 @@ use Zend\Json\Json;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class WorkspacesController extends DataAccessController
 {
 
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('Workspaces');
     }
-    
+
     /*
      * (non-PHPdoc) @see DataAccessController::indexAction()
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
+            $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
         $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
-            $sort = Json::decode($sortJson,Json::TYPE_ARRAY);
+            $sort = Json::decode($sortJson, Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
         $startJson = $this->params()->fromQuery('start');
         if (isset($startJson)) {
-            $start = Json::decode($startJson,Json::TYPE_ARRAY);
+            $start = Json::decode($startJson, Json::TYPE_ARRAY);
         } else {
             $start = null;
         }
         $limitJson = $this->params()->fromQuery('limit');
         if (isset($limitJson)) {
-            $limit = Json::decode($limitJson,Json::TYPE_ARRAY);
+            $limit = Json::decode($limitJson, Json::TYPE_ARRAY);
         } else {
             $limit = null;
         }
-        
+
         $mongoFilters = $this->_buildFilter($filters);
-        
+
         $notAll = $this->params()->fromQuery('notAll', false);
         if ($notAll) {
             $mongoFilters->addFilter(new \Rubedo\Mongo\NotAllWorkspacesFilter());
         }
-        
+
         $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit);
-        
+
         $response = array();
         $response['total'] = $dataValues['count'];
         $response['data'] = $dataValues['data'];
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-        
+
         return $this->_returnJson($response);
     }
 }

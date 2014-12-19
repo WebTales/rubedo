@@ -4,7 +4,7 @@
         "fr": "Visualisation des thèmes personnalisés",
         "en": "Can read custom themes"
     },
-    "rights":[
+    "rights": [
         "read.ui.customThemes",
         "execute.controller.customthemes.index.backoffice",
         "execute.controller.customthemes.get-color-palette.backoffice",

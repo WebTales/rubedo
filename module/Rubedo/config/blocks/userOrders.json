@@ -1,37 +1,34 @@
 {
-	"type":"#ext-gen1444#",
-	"description":"",
-    "isECommerce":true,
-	"configBasique":{
-		"title":"#ext-gen1444#",
-		"bType":"userOrders",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
+    "type": "#ext-gen1444#",
+    "description": "",
+    "isECommerce": true,
+    "configBasique": {
+        "title": "#ext-gen1444#",
+        "bType": "userOrders",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
                 {
-                    "categorie":"#ext-gen1287#",
-                    "champs":[
+                    "categorie": "#ext-gen1287#",
+                    "champs": [
                         {
-                            "type":"Ext.ux.TreePicker",
-                            "config":{
-                                "fieldLabel":"#ext-gen1443#",
-                                "name":"orderDetailPage"
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1443#",
+                                "name": "orderDetailPage"
                             }
                         }
                     ]
                 }
 
-			],
-			"avance":[
-
-			]
-		},
-		"configBloc":{
-        }
+            ],
+            "avance": []
+        },
+        "configBloc": {}
 
 
-	},
-	"category":"#ext-gen1431#",
-	"bType":"userOrders",
-	"id":"533187e7f05c1d8810000003"
+    },
+    "category": "#ext-gen1431#",
+    "bType": "userOrders",
+    "id": "533187e7f05c1d8810000003"
 }

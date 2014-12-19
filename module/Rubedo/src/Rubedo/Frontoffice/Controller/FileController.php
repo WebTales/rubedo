@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,7 +29,7 @@ use Rubedo\Services\Manager;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class FileController extends AbstractActionController
 {
@@ -38,25 +38,25 @@ class FileController extends AbstractActionController
     {
         $fileId = $this->params()->fromQuery('file-id');
         $version = $this->params()->fromQuery('version', 1);
-        
+
         if (isset($fileId)) {
-            
+
             $fileService = Manager::getService('Files');
             $obj = $fileService->findById($fileId);
-            if (! $obj instanceof \MongoGridFSFile) {
+            if (!$obj instanceof \MongoGridFSFile) {
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
-            
+
             $filelength = $obj->getSize();
-            $lastByte = (string) $filelength - 1;
-            
+            $lastByte = (string)$filelength - 1;
+
             $meta = $obj->file;
             $filename = $meta['filename'];
             $type = $meta['Content-Type'];
             $doNotDownload = false;
-            
+
             list ($subtype) = explode('/', $type);
-            
+
             switch ($type) {
                 case 'application/pdf':
                     $doNotDownload = true;
@@ -68,11 +68,11 @@ class FileController extends AbstractActionController
             if ($subtype == 'text') {
                 $doNotDownload = true;
             }
-            
+
             if ($subtype == 'image') {
                 $doNotDownload = true;
             }
-            
+
             switch ($this->params()->fromQuery('attachment', null)) {
                 case 'download':
                     $doNotDownload = false;
@@ -83,24 +83,24 @@ class FileController extends AbstractActionController
                 default:
                     break;
             }
-            
+
             $seekStart = 0;
-            $seekEnd = - 1;
+            $seekEnd = -1;
             if (isset($_SERVER['HTTP_RANGE']) || isset($HTTP_SERVER_VARS['HTTP_RANGE'])) {
-                
+
                 $seekRange = isset($HTTP_SERVER_VARS['HTTP_RANGE']) ? substr($HTTP_SERVER_VARS['HTTP_RANGE'], strlen('bytes=')) : substr($_SERVER['HTTP_RANGE'], strlen('bytes='));
                 $range = explode('-', $seekRange);
-                
+
                 if ($range[0] > 0) {
                     $seekStart = intval($range[0]);
                 }
-                
-                $seekEnd = ($range[1] > 0) ? intval($range[1]) : - 1;
+
+                $seekEnd = ($range[1] > 0) ? intval($range[1]) : -1;
             }
-            
+
             $response = new \Zend\Http\Response\Stream();
-            
-            if (! $doNotDownload) {
+
+            if (!$doNotDownload) {
                 $response->getHeaders()->addHeaders(array(
                     'Content-Disposition' => 'attachment; filename="' . $filename
                 ));
@@ -109,14 +109,14 @@ class FileController extends AbstractActionController
                     'Content-Disposition' => 'inline; filename="' . $filename
                 ));
             }
-            
+
             $response->getHeaders()->addHeaders(array(
                 'Content-Type' => $meta['Content-Type']
             ));
-            
+
             $stream = $obj->getResource();
-            
-            if ($seekStart >= 0 && $seekEnd > 0 && ! ($filelength == $seekEnd - $seekStart)) {
+
+            if ($seekStart >= 0 && $seekEnd > 0 && !($filelength == $seekEnd - $seekStart)) {
                 $response->getHeaders()->addHeaders(array(
                     'Content-Length' => $filelength - $seekStart,
                     'Content-Range' => "bytes $seekStart-$seekEnd/$filelength",
@@ -126,7 +126,7 @@ class FileController extends AbstractActionController
                 $response->setStatusCode(206);
                 $response->setReasonPhrase('Partial Content');
                 $response->setContentLength($seekEnd + 1 - $seekStart);
-            } elseif ($seekStart > 0 && $seekEnd == - 1) {
+            } elseif ($seekStart > 0 && $seekEnd == -1) {
                 $response->getHeaders()->addHeaders(array(
                     'Content-Length' => $filelength - $seekStart,
                     'Content-Range' => "bytes $seekStart-$lastByte/$filelength",
@@ -168,7 +168,7 @@ class FileController extends AbstractActionController
             default:
                 break;
         }
-        
+
         $queryString = $this->getRequest()->getQuery();
         $queryString->set('size', 'thumbnail');
         $queryString->set('file-id', null);

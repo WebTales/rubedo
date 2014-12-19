@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -39,7 +39,7 @@ class Events
      *
      * @return \Zend\EventManager\EventManagerInterface
      */
-    public static function getEventManager ()
+    public static function getEventManager()
     {
         return static::$eventManager;
     }
@@ -47,9 +47,9 @@ class Events
     /**
      * Set the event manager
      *
-     * @param \Zend\EventManager\EventManagerInterface $eventManager            
+     * @param \Zend\EventManager\EventManagerInterface $eventManager
      */
-    public static function setEventManager (\Zend\EventManager\EventManagerInterface $eventManager)
+    public static function setEventManager(\Zend\EventManager\EventManagerInterface $eventManager)
     {
         static::$eventManager = $eventManager;
     }

@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -46,12 +46,12 @@ class FileAccess extends DataAccess implements IFileAccess
      * @param string $mongo
      *            connection string to the DB server
      */
-    public function init ($collection = null, $dbName = null, $mongo = null)
+    public function init($collection = null, $dbName = null, $mongo = null)
     {
         unset($collection);
         $mongo = self::$_defaultMongo;
         $dbName = self::$_defaultDb;
-        
+
         $this->_adapter = new \MongoClient($mongo);
         $this->_dbName = $this->_adapter->$dbName;
         $this->_collection = new ProxyGridFs($this->_dbName->getGridFS());
@@ -63,45 +63,45 @@ class FileAccess extends DataAccess implements IFileAccess
      * @see \Rubedo\Interfaces\IDataAccess::read()
      * @return array
      */
-    public function read (\WebTales\MongoFilters\IFilter $filters = null)
+    public function read(\WebTales\MongoFilters\IFilter $filters = null)
     {
         // get the UI parameters
         $LocalFilter = clone $this->getFilters();
-        
+
         // add Read Filters
         if ($filters) {
             $LocalFilter->addFilter($filters);
         }
-        
+
         $sort = $this->getSortArray();
         $firstResult = $this->getFirstResult();
         $numberOfResults = $this->getNumberOfResults();
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
-        
+
         // merge the two fields array to obtain only one array with all the
         // conditions
-        if (! empty($includedFields) && ! empty($excludedFields)) {
+        if (!empty($includedFields) && !empty($excludedFields)) {
             $fieldRule = $includedFields;
         } else {
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
-        
+
         // get the cursor
         $cursor = $this->_collection->find($LocalFilter->toArray(), $fieldRule);
         $nbItems = $cursor->count();
-        
+
         // apply sort, paging, filter
         $cursor->sort($sort);
         $cursor->skip($firstResult);
         $cursor->limit($numberOfResults);
-        
+
         $data = array();
         // switch from cursor to actual array
         foreach ($cursor as $value) {
             $data[] = $value;
         }
-        
+
         // return data as simple array with no keys
         $datas = array_values($data);
         $returnArray = array(
@@ -119,27 +119,27 @@ class FileAccess extends DataAccess implements IFileAccess
      *            search condition
      * @return array
      */
-    public function findOne (\WebTales\MongoFilters\IFilter $localFilter = null)
+    public function findOne(\WebTales\MongoFilters\IFilter $localFilter = null)
     {
         // get the UI parameters
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
-        
+
         // merge the two fields array to obtain only one array with all the
         // conditions
-        if (! empty($includedFields) && ! empty($excludedFields)) {
+        if (!empty($includedFields) && !empty($excludedFields)) {
             $fieldRule = $includedFields;
         } else {
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
-        
+
         $filters = clone $this->getFilters();
         if ($localFilter) {
             $filters->addFilter($localFilter);
         }
-        
+
         $mongoFile = $this->_collection->findOne($filters->toArray(), $fieldRule);
-        
+
         return $mongoFile;
     }
 
@@ -153,46 +153,46 @@ class FileAccess extends DataAccess implements IFileAccess
      *            should we wait for a server response
      * @return array
      */
-    public function create (array $obj, $options = array())
+    public function create(array $obj, $options = array())
     {
         $filename = $obj['serverFilename'];
         $partList = explode('.', $filename);
         $extension = array_pop($partList);
-        
-        if (! $this->_isValidExtension($extension)) {
+
+        if (!$this->_isValidExtension($extension)) {
             return array(
                 'success' => false,
                 'msg' => 'not allowed file extension : ' . $extension
             );
         }
-        
+
         $mimeType = $obj['Content-Type'];
-        if (! $this->_isValidContentType($mimeType)) {
+        if (!$this->_isValidContentType($mimeType)) {
             return array(
                 'success' => false,
                 'msg' => 'not allowed file type : ' . $mimeType
             );
         }
-        
+
         $obj['version'] = 1;
-        
+
         unset($obj['serverFilename']);
-        
+
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
         $obj['lastUpdateUser'] = $currentUser;
         $obj['createUser'] = $currentUser;
-        
+
         $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
         $currentTime = $currentTimeService->getCurrentTime();
-        
+
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
-        
+
         $fileId = $this->_collection->put($filename, $obj);
-        
+
         if ($fileId) {
-            $obj['id'] = (string) $fileId;
+            $obj['id'] = (string)$fileId;
             $returnArray = array(
                 'success' => true,
                 "data" => $obj
@@ -202,66 +202,66 @@ class FileAccess extends DataAccess implements IFileAccess
                 'success' => false
             );
         }
-        
+
         return $returnArray;
     }
 
-    public function createBinary (array $obj, $options = array())
+    public function createBinary(array $obj, $options = array())
     {
-    	
-    	$bites = $obj['bytes'];
 
-    	$filename = $obj['filename'];
-    	$partList = explode('.', $filename);
-    	$extension = array_pop($partList);
-    	
-    	if (! $this->_isValidExtension($extension)) {
-    		return array(
-    				'success' => false,
-    				'msg' => 'not allowed file extension : ' . $extension
-    		);
-    	}
-    	
-    	$mimeType = $obj['Content-Type'];
-    	if (! $this->_isValidContentType($mimeType)) {
-    		return array(
-    				'success' => false,
-    				'msg' => 'not allowed file type : ' . $mimeType
-    		);
-    	}
-    	
-    	$obj['version'] = 1;
-    
-    	unset($obj['bytes']);
-    
-    	$currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
-    	$currentUser = $currentUserService->getCurrentUserSummary();
-    	$obj['lastUpdateUser'] = $currentUser;
-    	$obj['createUser'] = $currentUser;
-    
-    	$currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
-    	$currentTime = $currentTimeService->getCurrentTime();
-    
-    	$obj['createTime'] = $currentTime;
-    	$obj['lastUpdateTime'] = $currentTime;
-    
-    	$fileId = $this->_collection->storeBytes($bites, $obj);
-    
-    	if ($fileId) {
-    		$obj['id'] = (string) $fileId;
-    		$returnArray = array(
-    				'success' => true,
-    				"data" => $obj
-    		);
-    	} else {
-    		$returnArray = array(
-    				'success' => false
-    		);
-    	}
-    
-    	return $returnArray;
-    }    
-    
+        $bites = $obj['bytes'];
+
+        $filename = $obj['filename'];
+        $partList = explode('.', $filename);
+        $extension = array_pop($partList);
+
+        if (!$this->_isValidExtension($extension)) {
+            return array(
+                'success' => false,
+                'msg' => 'not allowed file extension : ' . $extension
+            );
+        }
+
+        $mimeType = $obj['Content-Type'];
+        if (!$this->_isValidContentType($mimeType)) {
+            return array(
+                'success' => false,
+                'msg' => 'not allowed file type : ' . $mimeType
+            );
+        }
+
+        $obj['version'] = 1;
+
+        unset($obj['bytes']);
+
+        $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
+        $currentUser = $currentUserService->getCurrentUserSummary();
+        $obj['lastUpdateUser'] = $currentUser;
+        $obj['createUser'] = $currentUser;
+
+        $currentTimeService = \Rubedo\Services\Manager::getService('CurrentTime');
+        $currentTime = $currentTimeService->getCurrentTime();
+
+        $obj['createTime'] = $currentTime;
+        $obj['lastUpdateTime'] = $currentTime;
+
+        $fileId = $this->_collection->storeBytes($bites, $obj);
+
+        if ($fileId) {
+            $obj['id'] = (string)$fileId;
+            $returnArray = array(
+                'success' => true,
+                "data" => $obj
+            );
+        } else {
+            $returnArray = array(
+                'success' => false
+            );
+        }
+
+        return $returnArray;
+    }
+
     /**
      * Delete objets in the current collection
      *
@@ -270,19 +270,19 @@ class FileAccess extends DataAccess implements IFileAccess
      *            data object
      * @return array
      */
-    public function destroy (array $obj, $options = array())
+    public function destroy(array $obj, $options = array())
     {
         $id = $obj['id'];
         $mongoID = $this->getId($id);
-        
+
         $updateCondition = array(
             '_id' => $mongoID
         );
-        
+
         if (is_array($this->_filters)) {
             $updateCondition = array_merge($this->_filters, $updateCondition);
         }
-        
+
         $resultArray = $this->_collection->remove($updateCondition, $options);
         if ($resultArray['ok'] == 1) {
             if ($resultArray['n'] == 1) {
@@ -301,16 +301,16 @@ class FileAccess extends DataAccess implements IFileAccess
                 "msg" => $resultArray["err"]
             );
         }
-        
+
         return $returnArray;
     }
 
-    public function drop ()
+    public function drop()
     {
         return $this->_collection->drop();
     }
 
-    protected function _isValidContentType ($contentType)
+    protected function _isValidContentType($contentType)
     {
         list ($type) = explode(';', $contentType);
         list ($subtype, $applicationType) = explode('/', $type);
@@ -321,7 +321,7 @@ class FileAccess extends DataAccess implements IFileAccess
         return true;
     }
 
-    protected function _isValidExtension ($extension)
+    protected function _isValidExtension($extension)
     {
         $notAllowed = array(
             'php',

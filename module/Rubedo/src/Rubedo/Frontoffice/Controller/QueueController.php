@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -28,11 +28,11 @@ use Rubedo\Collection\AbstractCollection;
  * @author dfanchon
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class QueueController extends AbstractActionController
 {
-    function indexAction ()
+    function indexAction()
     {
         AbstractCollection::disableUserFilter();
         $params = $this->params()->fromQuery();
@@ -40,7 +40,7 @@ class QueueController extends AbstractActionController
         foreach ($params as $key => $value) {
             switch ($key) {
                 case "service":
-                    if(!in_array($value,array('ElasticDataIndex','ItemRecommendations','UserRecommendations'))){
+                    if (!in_array($value, array('ElasticDataIndex', 'ItemRecommendations', 'UserRecommendations'))) {
                         throw new \Rubedo\Exceptions\Access('can\'t call this service');
                     }
                     $serviceName = $value;
@@ -58,8 +58,8 @@ class QueueController extends AbstractActionController
         }
         $service = \Rubedo\Services\Manager::getService($serviceName);
         $service->init();
- 
-        $callBack = array($service,$methodName);
+
+        $callBack = array($service, $methodName);
         $return = call_user_func_array($callBack, $vars);
         return new JsonModel(array($return));
     }

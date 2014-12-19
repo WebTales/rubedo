@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -27,7 +27,7 @@ use Rubedo\Services\Manager;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class GenericCleaningController extends DataAccessController
 {
@@ -40,16 +40,16 @@ class GenericCleaningController extends DataAccessController
         $pagesService = Manager::getService('Pages');
         $contentsService = Manager::getService('Contents');
         $groupsService = Manager::getService('Groups');
-        
+
         $results = array();
-        
+
         $results['icons'] = $iconsService->clearOrphanIcons();
         $results['personal prefs'] = $personalPrefsService->clearOrphanPrefs();
         $results['taxonomy terms'] = $taxonomyTermsService->clearOrphanTerms();
         $results['pages'] = $pagesService->clearOrphanPages();
         $results['contents'] = $contentsService->clearOrphanContents();
         $results['groups'] = $groupsService->clearOrphanGroups();
-        
+
         return $this->_returnJson($results);
     }
 
@@ -61,16 +61,16 @@ class GenericCleaningController extends DataAccessController
         $pagesService = Manager::getService('Pages');
         $contentsService = Manager::getService('Contents');
         $groupsService = Manager::getService('Groups');
-        
+
         $results = array();
-        
+
         $results['icons'] = $iconsService->countOrphanIcons();
         $results['personal prefs'] = $personalPrefsService->countOrphanPrefs();
         $results['taxonomy terms'] = $taxonomyTermsService->countOrphanTerms();
         $results['pages'] = $pagesService->countOrphanPages();
         $results['contents'] = $contentsService->countOrphanContents();
         $results['groups'] = $groupsService->countOrphanGroups();
-        
+
         return $this->_returnJson($results);
     }
 }

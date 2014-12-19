@@ -1,77 +1,78 @@
 {
-	"type":"#ext-gen1366#",
-	"description":"#ext-gen1367#",
-	"configBasique":{
-		"title":"#ext-gen1366#",
-		"bType":"authentication",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
+    "type": "#ext-gen1366#",
+    "description": "#ext-gen1367#",
+    "configBasique": {
+        "title": "#ext-gen1366#",
+        "bType": "authentication",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
                 {
-                    "categorie":"#ext-gen1287#",
-                    "champs":[
+                    "categorie": "#ext-gen1287#",
+                    "champs": [
                         {
-                            "type":"Ext.ux.TreePicker",
-                            "config":{
-                                "fieldLabel":"#ext-gen1409#",
-                                "name":"profilePage"
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1409#",
+                                "name": "profilePage"
                             }
                         },
                         {
-                            "type":"Ext.ux.TreePicker",
-                            "config":{
-                                "fieldLabel":"Sign up page",
-                                "name":"signUpPage"
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "Sign up page",
+                                "name": "signUpPage"
                             }
-                        },{
-                            "type":"Ext.form.field.ComboBox",
-                            "isAutoStored":true,
-                            "autoStoreData":[
+                        },
+                        {
+                            "type": "Ext.form.field.ComboBox",
+                            "isAutoStored": true,
+                            "autoStoreData": [
                                 {
-                                    "value":"pop-in",
-                                    "label":"#ext-gen1411#"
+                                    "value": "pop-in",
+                                    "label": "#ext-gen1411#"
                                 },
                                 {
-                                    "value":"form",
-                                    "label":"#ext-gen1412#"
+                                    "value": "form",
+                                    "label": "#ext-gen1412#"
                                 }
                             ],
-                            "config":{
-                                "fieldLabel":"#ext-gen1374#",
-                                "name":"displayMode",
-                                "editable":false,
-                                "forceSelection":true,
-                                "queryMode":"local"
+                            "config": {
+                                "fieldLabel": "#ext-gen1374#",
+                                "name": "displayMode",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local"
                             }
                         }
-                        ]
+                    ]
                 }
-			],
-			"avance":[
+            ],
+            "avance": [
                 {
-                    "categorie":"Template",
-                    "champs":[
+                    "categorie": "Template",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Custom template",
-                                "name":"customTemplate",
-                                "defaultTemplateUrl":"blocks/authentication.html",
-                                "twigMode":false
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/authentication.html",
+                                "twigMode": false
 
                             }
                         }
                     ]
                 }
-			]
-		},
-		"configBloc":{
-            "displayMode":"pop-in"
+            ]
+        },
+        "configBloc": {
+            "displayMode": "pop-in"
         }
 
 
-	},
-	"category":"#ext-gen1211#",
-	"bType":"authentication",
-	"id":"511e6508c0e051bd12000001"
+    },
+    "category": "#ext-gen1211#",
+    "bType": "authentication",
+    "id": "511e6508c0e051bd12000001"
 }

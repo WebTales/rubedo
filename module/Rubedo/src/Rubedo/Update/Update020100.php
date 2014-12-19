@@ -20,6 +20,7 @@ namespace Rubedo\Update;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\Json\Json;
+
 /**
  * Methods
  * for
@@ -35,19 +36,19 @@ class Update020100 extends Update
     protected static $toVersion = '2.2.0';
 
 
-    public static function doImportCountries ()
+    public static function doImportCountries()
     {
-        $success=true;
+        $success = true;
         $file = APPLICATION_PATH . '/data/countries.json';
         $json = file_get_contents($file, 'r');
-        $countries=Json::decode($json, Json::TYPE_ARRAY);
+        $countries = Json::decode($json, Json::TYPE_ARRAY);
         $service = Manager::getService('Countries');
-        foreach ($countries as $country){
+        foreach ($countries as $country) {
             $upsertFilter = Filter::factory('Value')->setName('alpha-3')->setValue($country["alpha-3"]);
-            $upserted=$service->create($country, array(
+            $upserted = $service->create($country, array(
                 'upsert' => $upsertFilter
             ));
-            $success= $success&&$upserted['success'];
+            $success = $success && $upserted['success'];
         }
         return $success;
     }
@@ -60,7 +61,7 @@ class Update020100 extends Update
      *
      * @return boolean
      */
-    public static function upgrade ()
+    public static function upgrade()
     {
 
         // import countries

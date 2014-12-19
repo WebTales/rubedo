@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -53,12 +53,12 @@ class LogoutController extends AbstractActionController
     {
         if ($this->_auth->hasIdentity()) {
             $this->_auth->clearIdentity();
-            
+
             $response['success'] = true;
         }
         Manager::getService('Session')->getSessionObject()->getManager()->regenerateId(true);
-        
-        
+
+
         if ($this->getRequest()->isXmlHttpRequest()) {
             return new JsonModel($response);
         } else {
@@ -70,7 +70,8 @@ class LogoutController extends AbstractActionController
         }
     }
 
-    public function confirmLogoutAction ()
-    {}
+    public function confirmLogoutAction()
+    {
+    }
 }
 

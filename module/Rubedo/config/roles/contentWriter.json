@@ -1,10 +1,10 @@
 {
-    "id":"contentWriter",
-    "label":{
-    	"fr":"Rédaction des contenus",
-    	"en":"Can writer contents"
+    "id": "contentWriter",
+    "label": {
+        "fr": "Rédaction des contenus",
+        "en": "Can writer contents"
     },
-    "rights":[
+    "rights": [
         "[a-z]+.ui.contents$",
         "read.ui.contents.[a-z]+",
         "write.ui.contents.draft",
@@ -13,14 +13,16 @@
         "write.ui.contents.refusedToPending",
         "execute.controller.contents.@dot*",
         "execute.controller.versioning.index.backoffice",
-        "execute.controller.taxonomyterms.index.backoffice" ,
+        "execute.controller.taxonomyterms.index.backoffice",
         "execute.controller.contenttypes.get-readable-content-types.backoffice",
         "execute.controller.contentcontributor.index.backoffice",
-        "execute.controller.queries.index.backoffice","exceptionClass",
+        "execute.controller.queries.index.backoffice",
+        "exceptionClass",
         "execute.controller.contenttypes.find-one.backoffice",
-        "execute.controller.queries.update.backoffice","exceptionClass"
+        "execute.controller.queries.update.backoffice",
+        "exceptionClass"
     ],
-    "includes":[
+    "includes": [
         "contentReader"
     ]
 }

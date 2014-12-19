@@ -29,50 +29,50 @@ use Zend\Json\Json;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class ContentTypesController extends DataAccessController
 {
 
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('ContentTypes');
     }
 
-    public function getReadableContentTypesAction ()
+    public function getReadableContentTypesAction()
     {
         return $this->_returnJson($this->_dataService->getReadableContentTypes());
     }
 
-    public function indexAction ()
+    public function indexAction()
     {
         // merge filter and tFilter
         $jsonFilter = $this->params()->fromQuery('filter', '[]');
         $jsonTFilter = $this->params()->fromQuery('tFilter', '[]');
-        $filterArray = Json::decode($jsonFilter,Json::TYPE_ARRAY);
-        $tFilterArray = Json::decode($jsonTFilter,Json::TYPE_ARRAY);
-    
+        $filterArray = Json::decode($jsonFilter, Json::TYPE_ARRAY);
+        $tFilterArray = Json::decode($jsonTFilter, Json::TYPE_ARRAY);
+
         $filters = array_merge($tFilterArray, $filterArray);
         $mongoFilters = $this->_buildFilter($filters);
-    
-        $sort = Json::decode($this->params()->fromQuery('sort', null),Json::TYPE_ARRAY);
-        $start = Json::decode($this->params()->fromQuery('start', null),Json::TYPE_ARRAY);
-        $limit = Json::decode($this->params()->fromQuery('limit', null),Json::TYPE_ARRAY);
-    
+
+        $sort = Json::decode($this->params()->fromQuery('sort', null), Json::TYPE_ARRAY);
+        $start = Json::decode($this->params()->fromQuery('start', null), Json::TYPE_ARRAY);
+        $limit = Json::decode($this->params()->fromQuery('limit', null), Json::TYPE_ARRAY);
+
         $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit, false);
         $response = array();
         $response['total'] = $dataValues['count'];
         $response['data'] = $dataValues['data'];
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-    
+
         return $this->_returnJson($response);
     }
-    
-    public function isUsedAction ()
+
+    public function isUsedAction()
     {
         $id = $this->params()->fromQuery('id');
         $wasFiltered = AbstractCollection::disableUserFilter();
@@ -81,10 +81,10 @@ class ContentTypesController extends DataAccessController
         return $this->_returnJson($result);
     }
 
-    public function isChangeableAction ()
+    public function isChangeableAction()
     {
         $data = $this->params()->fromPost();
-        $newType = Json::decode($data['fields'],Json::TYPE_ARRAY);
+        $newType = Json::decode($data['fields'], Json::TYPE_ARRAY);
         $id = $data['id'];
         $originalType = $this->_dataService->findById($id);
         $originalType = $originalType['fields'];
@@ -92,12 +92,12 @@ class ContentTypesController extends DataAccessController
         $wasFiltered = AbstractCollection::disableUserFilter();
         $isUsedResult = Manager::getService('Contents')->isTypeUsed($id);
         AbstractCollection::disableUserFilter($wasFiltered);
-        if (! $isUsedResult['used']) {
+        if (!$isUsedResult['used']) {
             $resultArray = array(
                 "modify" => "ok"
             );
         } else {
-            
+
             $result = $this->_dataService->isChangeableContentType($originalType, $newType);
             $resultArray = ($result == true) ? array(
                 "modify" => "possible"

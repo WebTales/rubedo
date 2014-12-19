@@ -29,7 +29,7 @@ use Rubedo\Services\Events;
  * tool
  *
  * @author jbourdin
- *        
+ *
  */
 class Install
 {
@@ -101,19 +101,19 @@ class Install
     public static function doInsertContents()
     {
         $defaultLocale = Manager::getService('Languages')->getDefaultLanguage();
-        if (! $defaultLocale) {
+        if (!$defaultLocale) {
             return false;
         }
         \Rubedo\Internationalization\Translate::setDefaultLanguage($defaultLocale);
-        
+
         $translateService = Manager::getService('Translate');
-        
+
         $success = true;
-        
+
         $contentPath = APPLICATION_PATH . '/data/default/';
         $contentIterator = new \DirectoryIterator($contentPath);
         foreach ($contentIterator as $directory) {
-            if ($directory->isDot() || ! $directory->isDir()) {
+            if ($directory->isDot() || !$directory->isDir()) {
                 continue;
             }
             if (in_array($directory->getFilename(), array(
@@ -132,17 +132,18 @@ class Install
                 }
                 if ($file->getExtension() == 'json') {
                     $itemJson = file_get_contents($file->getPathname());
-                    
+
                     $itemJson = preg_replace_callback('/###(.*)###/U', array(
                         'Rubedo\\Update\\Install',
                         'replaceWithTranslation'
                     ), $itemJson);
-                    
+
                     $item = Json::decode($itemJson, Json::TYPE_ARRAY);
-                    
+
                     try {
-                        if (! $collectionService->findOne(Filter::factory('Value')->setName('defaultId')
-                            ->setValue($item['defaultId']))) {
+                        if (!$collectionService->findOne(Filter::factory('Value')->setName('defaultId')
+                            ->setValue($item['defaultId']))
+                        ) {
                             $result = $collectionService->create($item);
                         } else {
                             $result['success'] = true;
@@ -150,7 +151,7 @@ class Install
                     } catch (\Rubedo\Exceptions\User $exception) {
                         $result['success'] = true;
                     }
-                    
+
                     $success = $result['success'] && $success;
                 }
             }
@@ -163,7 +164,7 @@ class Install
         if (is_null(self::$translateService)) {
             $defaultLocale = Manager::getService('Languages')->getDefaultLanguage();
             \Rubedo\Internationalization\Translate::setDefaultLanguage($defaultLocale);
-            
+
             self::$translateService = Manager::getService('Translate');
         }
         if ($matches[1] == 'Locale') {
@@ -179,14 +180,14 @@ class Install
     public function doCreateDefaultsGroups()
     {
         $defaultLocale = Manager::getService('Languages')->getDefaultLanguage();
-        if (! $defaultLocale) {
+        if (!$defaultLocale) {
             return false;
         }
         \Rubedo\Internationalization\Translate::setDefaultLanguage($defaultLocale);
-        
+
         try {
             $adminWorkspaceId = Manager::getService('Workspaces')->getAdminWorkspaceId();
-            if (! $adminWorkspaceId) {
+            if (!$adminWorkspaceId) {
                 Manager::getService('Workspaces')->create(array(
                     'text' => Manager::getService('Translate')->translate("Workspace.admin", 'admin'),
                     'nativeLanguage' => $defaultLocale
@@ -200,7 +201,7 @@ class Install
             // exists
         }
         $adminWorkspaceId = Manager::getService('Workspaces')->getAdminWorkspaceId();
-        
+
         $success = true;
         $groupsJsonPath = APPLICATION_PATH . '/data/default/groups';
         $groupsJson = new \DirectoryIterator($groupsJsonPath);
@@ -210,14 +211,14 @@ class Install
             }
             if ($file->getExtension() == 'json') {
                 $itemJson = file_get_contents($file->getPathname());
-                
+
                 $itemJson = preg_replace_callback('/###(.*)###/U', array(
                     'Rubedo\\Update\\Install',
                     'replaceWithTranslation'
                 ), $itemJson);
-                
+
                 $item = Json::decode($itemJson, Json::TYPE_ARRAY);
-                
+
                 if ($item['name'] == 'admin') {
                     $item['workspace'] = $adminWorkspaceId;
                     $item['inheritWorkspace'] = false;
@@ -226,7 +227,7 @@ class Install
                 $success = $result['success'] && $success;
             }
         }
-        
+
         return $success;
     }
 
@@ -260,7 +261,7 @@ class Install
             $lang['iso3'] = $line[0];
             $lang['label'] = $line[3];
             $lang['labelFr'] = $line[4];
-            
+
             $upsertFilter = Filter::factory('Value')->setName('locale')->setValue($lang['locale']);
             $service->create($lang, array(
                 'upsert' => $upsertFilter
@@ -277,17 +278,17 @@ class Install
      * default
      * language
      *
-     * @param string $locale            
+     * @param string $locale
      * @return boolean
      */
     public function setDefaultRubedoLanguage($locale)
     {
         $service = Manager::getService('Languages');
-        
+
         $options = array(
             'multiple' => true
         );
-        
+
         // ensure
         // only
         // one
@@ -299,7 +300,7 @@ class Install
             )
         );
         $service->customUpdate($data, Filter::factory(), $options);
-        
+
         // set
         // selected
         // language
@@ -315,7 +316,7 @@ class Install
         );
         $filter = Filter::factory('Value')->setName('locale')->setValue($locale);
         $service->customUpdate($data, $filter, $options);
-        
+
         // set
         // default
         // language
@@ -338,7 +339,7 @@ class Install
             'multiple' => true
         );
         Manager::getService('Sites')->customUpdate($data, $updateCond, $options);
-        
+
         // set
         // default
         // working
@@ -359,10 +360,10 @@ class Install
             'multiple' => true
         );
         Manager::getService('Users')->customUpdate($data, $updateCond, $options);
-        
+
         // ensure that localizable collections are now localized
         \Rubedo\Collection\AbstractLocalizableCollection::localizeAllCollection();
-        
+
         return true;
     }
 
@@ -373,7 +374,7 @@ class Install
         $servicesArray = \Rubedo\Interfaces\config::getCollectionServices();
         $result = true;
         foreach ($servicesArray as $service) {
-            if (! Manager::getService($service)->checkIndexes()) {
+            if (!Manager::getService($service)->checkIndexes()) {
                 $result = $result && Manager::getService($service)->ensureIndexes();
             }
         }
@@ -391,7 +392,7 @@ class Install
     {
         $adminGroup = Manager::getService('Groups')->findByName('admin');
         $publicGroup = Manager::getService('Groups')->findByName('public');
-        $result = ! is_null($adminGroup) && ! is_null($publicGroup);
+        $result = !is_null($adminGroup) && !is_null($publicGroup);
         return $result;
     }
 
@@ -420,7 +421,7 @@ class Install
 
     protected function deletedFolderContent($path)
     {
-        if (! is_dir($path)) {
+        if (!is_dir($path)) {
             return;
         }
         $iterator = new \DirectoryIterator($path);

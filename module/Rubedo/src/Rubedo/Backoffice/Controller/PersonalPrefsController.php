@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -27,7 +27,7 @@ use Rubedo\Services\Manager;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class PersonalPrefsController extends DataAccessController
 {
@@ -35,24 +35,24 @@ class PersonalPrefsController extends DataAccessController
     /**
      * Initialise the controller
      */
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
-        
+
         $this->_dataService = Manager::getService('PersonalPrefs');
     }
 
-    public function clearOrphanPrefsAction ()
+    public function clearOrphanPrefsAction()
     {
         $result = $this->_dataService->clearOrphanPrefs();
-        
+
         return $this->_returnJson($result);
     }
 
-    public function countOrphanPrefsAction ()
+    public function countOrphanPrefsAction()
     {
         $result = $this->_dataService->countOrphanPrefs();
-        
+
         return $this->_returnJson($result);
     }
 }

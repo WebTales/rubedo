@@ -1,60 +1,58 @@
 {
-	"type":"#ext-gen1434#",
-	"description":"",
-    "isECommerce":true,
-	"configBasique":{
-		"title":"#ext-gen1434#",
-		"bType":"checkout",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
+    "type": "#ext-gen1434#",
+    "description": "",
+    "isECommerce": true,
+    "configBasique": {
+        "title": "#ext-gen1434#",
+        "bType": "checkout",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
                 {
-                    "categorie":"#ext-gen1287#",
-                    "champs":[
+                    "categorie": "#ext-gen1287#",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.UTCField",
-                            "config":{
-                                "fieldLabel":"#ext-gen1413#",
-                                "name":"userType"
+                            "type": "Rubedo.view.UTCField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1413#",
+                                "name": "userType"
                             }
                         },
                         {
-                            "type":"Rubedo.view.MailingListPickerField",
-                            "config":{
-                                "fieldLabel":"#ext-gen1155#",
-                                "name":"mailingListId",
-                                "multiSelect":true
+                            "type": "Rubedo.view.MailingListPickerField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1155#",
+                                "name": "mailingListId",
+                                "multiSelect": true
                             }
                         },
                         {
-                            "type":"Rubedo.view.DCEField",
-                            "config":{
-                                "fieldLabel":"#ext-gen1435#",
-                                "name":"signupContentId",
-                                "allowedCT":"richText",
-                                "addOnly":true
+                            "type": "Rubedo.view.DCEField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1435#",
+                                "name": "signupContentId",
+                                "allowedCT": "richText",
+                                "addOnly": true
                             }
-                        },{
-                            "type":"Ext.ux.TreePicker",
-                            "config":{
-                                "fieldLabel":"#ext-gen1436#",
-                                "name":"tCPage"
+                        },
+                        {
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1436#",
+                                "name": "tCPage"
                             }
                         }
 
                     ]
                 }
-			],
-			"avance":[
-
-			]
-		},
-		"configBloc":{
-        }
+            ],
+            "avance": []
+        },
+        "configBloc": {}
 
 
-	},
-	"category":"#ext-gen1431#",
-	"bType":"checkout",
-	"id":"53184e22f05c1d2810000001"
+    },
+    "category": "#ext-gen1431#",
+    "bType": "checkout",
+    "id": "53184e22f05c1d2810000001"
 }

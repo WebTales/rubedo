@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -33,7 +33,7 @@ use Zend\View\Model\JsonModel;
  * @author dfanchon
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class ElasticSearchController extends AbstractActionController
 {
@@ -41,7 +41,7 @@ class ElasticSearchController extends AbstractActionController
     protected $_option = 'all';
 
     public function __construct()
-    {        
+    {
         // initialize
         // localized
         // collections
@@ -56,44 +56,44 @@ class ElasticSearchController extends AbstractActionController
         }
     }
 
-    public function indexAction ()
+    public function indexAction()
     {
-        
+
         // get params
         $params = $this->params()->fromQuery();
-        
+
         // get option : all, dam, content, geo
         if (isset($params['option'])) {
             $this->_option = $params['option'];
         }
-        
+
         // search over every sites
         $params['site'] = null;
-        
+
         $query = Manager::getService('ElasticDataSearch');
-        
+
         $query->init();
         if (isset($params['limit'])) {
-            $params['pagesize'] = (int) $params['limit'];
+            $params['pagesize'] = (int)$params['limit'];
         }
         if (isset($params['page'])) {
-            $params['pager'] = (int) $params['page'] - 1;
+            $params['pager'] = (int)$params['page'] - 1;
         }
         if (isset($params['sort'])) {
-            $sort = Json::decode($params['sort'],Json::TYPE_ARRAY);
+            $sort = Json::decode($params['sort'], Json::TYPE_ARRAY);
             $params['orderby'] = ($sort[0]['property'] == 'score') ? '_score' : $sort[0]['property'];
             $params['orderbyDirection'] = $sort[0]['direction'];
         }
-        
+
         $results = $query->search($params, $this->_option);
-        
+
         $results['success'] = true;
         $results['message'] = 'OK';
-        
+
         return new JsonModel($results);
     }
 
-    public function getOptionsAction ()
+    public function getOptionsAction()
     {
         $esOptions = DataAbstract::getOptions();
         $returnArray = array();
@@ -101,16 +101,16 @@ class ElasticSearchController extends AbstractActionController
         $returnArray['data'] = $esOptions;
         return new JsonModel($returnArray);
     }
-    
-    public function getDefaultOperatorsAction ()
+
+    public function getDefaultOperatorsAction()
     {
-        $data=array();
+        $data = array();
         $contentTypesList = Manager::getService("ContentTypes")->getList();
         foreach ($contentTypesList['data'] as $contentType) {
             $fields = $contentType["fields"];
             foreach ($fields as $field) {
                 if (isset($field['config']['useAsFacet']) && $field['config']['useAsFacet']) {
-                    $data[$field['config']['name']]=isset($field['config']['facetOperator']) ? $field['config']['facetOperator'] : "and";
+                    $data[$field['config']['name']] = isset($field['config']['facetOperator']) ? $field['config']['facetOperator'] : "and";
                 }
             }
         }
@@ -119,7 +119,7 @@ class ElasticSearchController extends AbstractActionController
             $fields = $contentType["fields"];
             foreach ($fields as $field) {
                 if (isset($field['config']['useAsFacet']) && $field['config']['useAsFacet']) {
-                    $data[$field['config']['name']]=isset($field['config']['facetOperator']) ? $field['config']['facetOperator'] : "and";
+                    $data[$field['config']['name']] = isset($field['config']['facetOperator']) ? $field['config']['facetOperator'] : "and";
                 }
             }
         }
@@ -128,18 +128,18 @@ class ElasticSearchController extends AbstractActionController
             $fields = $contentType["fields"];
             foreach ($fields as $field) {
                 if (isset($field['config']['useAsFacet']) && $field['config']['useAsFacet']) {
-                    $data[$field['config']['name']]=isset($field['config']['facetOperator']) ? $field['config']['facetOperator'] : "and";
+                    $data[$field['config']['name']] = isset($field['config']['facetOperator']) ? $field['config']['facetOperator'] : "and";
                 }
             }
         }
         $taxonomyList = Manager::getService("Taxonomy")->getList();
-        
+
         foreach ($taxonomyList['data'] as $taxonomy) {
             $data[$taxonomy['id']] = isset(
                 $taxonomy['facetOperator']) ? strtolower(
-                    $taxonomy['facetOperator']) : 'and';
+                $taxonomy['facetOperator']) : 'and';
         }
-        
+
         $returnArray = array();
         $returnArray['success'] = true;
         $returnArray['data'] = $data;

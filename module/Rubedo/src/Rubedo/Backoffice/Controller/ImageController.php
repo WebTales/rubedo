@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,7 +30,7 @@ use Zend\View\Model\JsonModel;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class ImageController extends AbstractActionController
 {
@@ -43,7 +43,7 @@ class ImageController extends AbstractActionController
         $files = array();
         foreach ($data as $value) {
             $metaData = $value->file;
-            $metaData['id'] = (string) $metaData['_id'];
+            $metaData['id'] = (string)$metaData['_id'];
             unset($metaData['_id']);
             $files[] = $metaData;
         }
@@ -54,9 +54,9 @@ class ImageController extends AbstractActionController
     }
 
     function putAction()
-    {        
+    {
         $fileInfo = array_pop($this->params()->fromFiles());
-        
+
         $fileService = Manager::getService('Images');
         $obj = array(
             'serverFilename' => $fileInfo['tmp_name'],
@@ -65,7 +65,7 @@ class ImageController extends AbstractActionController
             'Content-Type' => $fileInfo['type']
         );
         $result = $fileService->create($obj);
-        
+
         return new JsonModel($result);
     }
 
@@ -73,11 +73,11 @@ class ImageController extends AbstractActionController
     {
         $dataJson = $this->params()->fromPost('data', Json::encode(array()));
         $data = Json::decode($dataJson);
-        
+
         if (isset($data['id'])) {
             $fileService = Manager::getService('Images');
             $result = $fileService->destroy($data);
-            
+
             return new JsonModel($result);
         } else {
             throw new \Rubedo\Exceptions\User("No Id Given", "Exception7");
@@ -94,11 +94,11 @@ class ImageController extends AbstractActionController
     function getMetaAction()
     {
         $fileId = $this->params()->fromQuery('file-id');
-        
+
         if (isset($fileId)) {
             $fileService = Manager::getService('Images');
             $obj = $fileService->findById($fileId);
-            if (! $obj instanceof \MongoGridFSFile) {
+            if (!$obj instanceof \MongoGridFSFile) {
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
             return new JsonModel($obj->file);

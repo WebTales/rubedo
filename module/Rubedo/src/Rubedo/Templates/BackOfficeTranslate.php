@@ -22,7 +22,7 @@ Use Rubedo\Services\Manager;
  * Twig extension to handle label translation based on user language.
  *
  * @author jbourdin
- *        
+ *
  */
 class BackOfficeTranslate extends \Twig_Extension
 {
@@ -33,10 +33,10 @@ class BackOfficeTranslate extends \Twig_Extension
      * @var string
      */
     protected $lang;
-    
+
     /**
      * Default langage
-     * 
+     *
      * @var string
      */
     protected $defaultLang = "en";
@@ -44,7 +44,7 @@ class BackOfficeTranslate extends \Twig_Extension
     /**
      * init class fetching current User Language
      */
-    public function __construct ()
+    public function __construct()
     {
         $this->lang = Manager::getService('CurrentUser')->getLanguage();
     }
@@ -54,7 +54,7 @@ class BackOfficeTranslate extends \Twig_Extension
      *
      * @return array An array of filters
      */
-    public function getFilters ()
+    public function getFilters()
     {
         return array(
             'botrans' => new \Twig_Filter_Method($this, 'translate')
@@ -66,7 +66,7 @@ class BackOfficeTranslate extends \Twig_Extension
      *
      * @return string The extension name
      */
-    public function getName ()
+    public function getName()
     {
         return 'BackOfficeTranslate';
     }
@@ -75,17 +75,17 @@ class BackOfficeTranslate extends \Twig_Extension
      * Delegates translation to translate service
      *
      * @param string $text Text to translate
-     * @param array $placeholders  of placeholders and replacement value
+     * @param array $placeholders of placeholders and replacement value
      * @param array $lang If defined, try to translate in this language
      *
      * @return string Translated text
      */
-    public function translate ($text, $placeholders = array(), $lang = null)
+    public function translate($text, $placeholders = array(), $lang = null)
     {
         $label = Manager::getService('Translate')
             ->getTranslation(
                 $text,
-                $lang?:$this->lang,
+                $lang ?: $this->lang,
                 $this->defaultLang,
                 $placeholders
             );

@@ -45,6 +45,7 @@ class Current extends \Rubedo\Internationalization\Current
 
         $this->refreshLocalization($params['lang']);
     }
+
     public function refreshLocalization(Language $lang)
     {
         if ($lang->hasFallback()) {

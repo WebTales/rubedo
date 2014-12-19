@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -27,7 +27,7 @@ use Rubedo\Services\Manager;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class PagesController extends DataAccessController
 {
@@ -46,14 +46,14 @@ class PagesController extends DataAccessController
     public function clearOrphanPagesAction()
     {
         $result = $this->_dataService->clearOrphanPages();
-        
+
         return $this->_returnJson($result);
     }
 
     public function countOrphanPagesAction()
     {
         $result = $this->_dataService->countOrphanPages();
-        
+
         return $this->_returnJson($result);
     }
 
@@ -69,7 +69,7 @@ class PagesController extends DataAccessController
         return $this->_returnJson($result);
     }
 
-    
+
     /**
      * @todo comment what this action do
      * @todo migrate to ZF2
@@ -89,9 +89,9 @@ class PagesController extends DataAccessController
         $page = $this->_dataService->findById($data['id']);
         $params['current-page'] = $data['id'];
         $mask = Manager::getService('Masks')->findById($page['maskId']);
-        
+
         $pageBlocks = array_merge($page['blocks'], $mask['blocks']);
-        
+
         if ($pageBlocks != array()) {
             foreach ($pageBlocks as $block) {
                 switch ($block['bType']) {
@@ -116,23 +116,23 @@ class PagesController extends DataAccessController
                     // Clone global request and override it woth block params
                     $queryString = $this->getRequest()->getQuery();
                     $blockQueryString = clone ($queryString);
-                    
+
                     foreach ($params as $key => $value) {
                         $blockQueryString->set($key, $value);
                     }
                     $this->getRequest()->setQuery($blockQueryString);
-                    
+
                     // run block and get response
                     $result = $this->forward()->dispatch($controller, array(
                         'action' => 'get-contents'
                     ));
-                    
+
                     // set back global query
                     $this->getRequest()->setQuery($queryString);
                     $contentArray[] = $result->getVariables();
                 }
             }
-            if (isset($contentArray) && ! empty($contentArray)) {
+            if (isset($contentArray) && !empty($contentArray)) {
                 foreach ($contentArray as $key => $content) {
                     if ($content["success"] == true) {
                         $total = $total + $content["total"];

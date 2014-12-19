@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -27,7 +27,7 @@ use Zend\View\Model\JsonModel;
  * @author aDobre
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class AppExtensionController extends AbstractActionController
 {
@@ -49,15 +49,15 @@ class AppExtensionController extends AbstractActionController
     {
         $appName = $this->params()->fromRoute('app-name');
         $filePath = $this->params()->fromRoute('filepath');
-        
+
         $basePath = Manager::getService('AppExtension')->getBasePath($appName);
         $consolidatedFilePath = realpath($basePath . '/' . $filePath);
-        if (! $consolidatedFilePath) {
+        if (!$consolidatedFilePath) {
             throw new \Rubedo\Exceptions\NotFound('File does not exist');
         }
-        
+
         $extension = pathinfo($consolidatedFilePath, PATHINFO_EXTENSION);
-        
+
         switch ($extension) {
             case 'php':
                 throw new \Rubedo\Exceptions\NotFound('File does not exist');
@@ -81,18 +81,18 @@ class AppExtensionController extends AbstractActionController
                 }
                 break;
         }
-        
+
         $stream = fopen($consolidatedFilePath, 'r');
-        
+
         $response = new \Zend\Http\Response\Stream();
-        
+
         $response->getHeaders()->addHeaders(array(
             'Content-type' => $mimeType
-        // 'Pragma' => 'Public',
-        // 'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
-        // 'Expires' => date(DATE_RFC822, strtotime("7 day"))
-                ));
-        
+            // 'Pragma' => 'Public',
+            // 'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
+            // 'Expires' => date(DATE_RFC822, strtotime("7 day"))
+        ));
+
         $response->setStream($stream);
         return $response;
     }

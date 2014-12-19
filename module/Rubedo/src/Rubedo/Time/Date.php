@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -42,20 +42,20 @@ class Date implements IDate
      *
      * @see \Rubedo\Interfaces\Time\IDate::convertToTimeStamp()
      */
-    public function convertToTimeStamp ($dateString)
+    public function convertToTimeStamp($dateString)
     {
         $date = new DateTime($dateString);
         return $date->getTimestamp();
     }
 
-    public function convertToYmd ($dateString)
+    public function convertToYmd($dateString)
     {
         $date = new DateTime();
         $date->setTimestamp($dateString);
         return $date->format('Y-m-d');
     }
 
-    public function convertToHis ($dateString)
+    public function convertToHis($dateString)
     {
         $date = new DateTime($dateString);
         $date = date("H:i:s");
@@ -67,17 +67,17 @@ class Date implements IDate
      *
      * @see \Rubedo\Interfaces\Time\IDate::getMonthArray()
      */
-    public function getMonthArray ($timestamp = null)
+    public function getMonthArray($timestamp = null)
     {
-        if (! $timestamp) {
+        if (!$timestamp) {
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
         }
         $dayOfWeekFormat = $this->_sundayIsFirst() ? 'w' : 'N';
-        
+
         // init the year and month info
         $year = date('Y', $timestamp);
         $month = date('m', $timestamp);
-        
+
         // define the first day to display based on the first day of the month
         // and it position in the week
         $firstDayOfMonthTimeStamp = mktime(0, 0, 0, $month, 1, $year);
@@ -91,7 +91,7 @@ class Date implements IDate
         }
         $firstDay->sub(new DateInterval('P' . $offset . 'D'));
         $dayIterator = clone ($firstDay);
-        
+
         // define the last day to display based on the last day of the month and
         // it position in the week
         $days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
@@ -105,23 +105,23 @@ class Date implements IDate
             $offset = 7 - $lastDayOfMonthInWeek;
         }
         $lastDay->add(new DateInterval('P' . $offset . 'D'));
-        
+
         $finalTimestamp = $lastDay->getTimestamp();
-        
+
         $max = 0;
         $aDay = new DateInterval('P1D');
-        
+
         $returnArray = array();
         $currentWeek = 1;
         $previous = 0;
         // iterate day by day up to the last day of the month
         while ((($iterateTimestamp = $dayIterator->getTimestamp()) <= $finalTimestamp) && ($max < 45)) {
-            $max ++;
+            $max++;
             $number = date('d', $iterateTimestamp);
             $dayOfWeek = date($dayOfWeekFormat, $iterateTimestamp);
             $inMonth = (date('m', $iterateTimestamp) == $month);
             if ($previous > intval($dayOfWeek)) {
-                $currentWeek ++;
+                $currentWeek++;
             }
             $returnArray[$currentWeek][$dayOfWeek] = array(
                 'value' => $number,
@@ -133,9 +133,9 @@ class Date implements IDate
         return $returnArray;
     }
 
-    protected function _sundayIsFirst ()
+    protected function _sundayIsFirst()
     {
-        if (! isset(self::$_startOnSunday)) {
+        if (!isset(self::$_startOnSunday)) {
             $lastSunday = $this->convertToTimeStamp('last sunday');
             $number = $this->getLocalised('e', $lastSunday);
             self::$_startOnSunday = $number == '1';
@@ -148,7 +148,7 @@ class Date implements IDate
      *
      * @see \Rubedo\Interfaces\Time\IDate::getShortDayList()
      */
-    public function getShortDayList ()
+    public function getShortDayList()
     {
         $daysOfWeek = array(
             1 => 'Monday',
@@ -176,12 +176,12 @@ class Date implements IDate
      *
      * @see \Rubedo\Interfaces\Time\IDate::getLocalised()
      */
-    public function getLocalised ($format = null, $timestamp = null)
+    public function getLocalised($format = null, $timestamp = null)
     {
-        if (! $timestamp) {
+        if (!$timestamp) {
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
         }
-        
+
         $formatter = new IntlDateFormatter($this->_getLang(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
         if ($format) {
             $formatter->setPattern($format);
@@ -196,12 +196,12 @@ class Date implements IDate
      *
      * @see \Rubedo\Interfaces\Time\IDate::getDefaultDatetime()
      */
-    public function getDefaultDatetime ($timestamp = null)
+    public function getDefaultDatetime($timestamp = null)
     {
-        if (! $timestamp) {
+        if (!$timestamp) {
             $timestamp = Manager::getService('CurrentTime')->getCurrentTime();
         }
-        
+
         $formatter = new IntlDateFormatter($this->_getLang(), IntlDateFormatter::FULL, IntlDateFormatter::SHORT);
         $date = new \DateTime();
         $date->setTimestamp($timestamp);
@@ -213,9 +213,9 @@ class Date implements IDate
      *
      * @return string
      */
-    protected function _getLang ()
+    protected function _getLang()
     {
-        if (! isset(self::$_lang)) {
+        if (!isset(self::$_lang)) {
             self::$_lang = Manager::getService('CurrentLocalization')->getCurrentLocalization();
         }
         return self::$_lang;

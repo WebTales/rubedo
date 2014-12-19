@@ -1,10 +1,10 @@
 {
-    "id":"damReader",
-    "label":{
-    	"fr":"Consultation du DAM",
-    	"en":"Can read DAM contents"
+    "id": "damReader",
+    "label": {
+        "fr": "Consultation du DAM",
+        "en": "Can read DAM contents"
     },
-    "rights":[
+    "rights": [
         "read.ui.dam$",
         "read.ui.directories$",
         "execute.controller.damtypes.index.backoffice",

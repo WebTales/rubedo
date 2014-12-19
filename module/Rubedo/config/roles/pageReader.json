@@ -1,10 +1,10 @@
 {
-    "id":"pageReader",
-    "label":{
-    	"fr":"Consultation des pages",
-    	"en":"Can read pages"
+    "id": "pageReader",
+    "label": {
+        "fr": "Consultation des pages",
+        "en": "Can read pages"
     },
-    "rights":[
+    "rights": [
         "read.ui.pages",
         "execute.controller.pages.index.backoffice",
         "execute.controller.sites.index.backoffice",

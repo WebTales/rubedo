@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -28,7 +28,7 @@ use Zend\View\Model\JsonModel;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class QueriesController extends DataAccessController
 {
@@ -36,7 +36,7 @@ class QueriesController extends DataAccessController
     public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('Queries');
     }
@@ -48,10 +48,10 @@ class QueriesController extends DataAccessController
         if (isset($data['query'])) {
 
             $filters = $this->_dataService->getFilterArrayById($data['query']);
-            $queryRecord=$this->_dataService->findById($data['query']);
+            $queryRecord = $this->_dataService->findById($data['query']);
             if ($filters !== false) {
-                $contentList = $contentsService->getOnlineList($filters['filter'], $filters["sort"], (($data['page']-1) * $data['limit']), intval($data['limit']));
-                if ($queryRecord['type'] === 'manual'  && isset($queryRecord['query']) && is_array($queryRecord['query'])) {
+                $contentList = $contentsService->getOnlineList($filters['filter'], $filters["sort"], (($data['page'] - 1) * $data['limit']), intval($data['limit']));
+                if ($queryRecord['type'] === 'manual' && isset($queryRecord['query']) && is_array($queryRecord['query'])) {
                     $contentOrder = $queryRecord['query'];
                     $keyOrder = array();
                     $contentArray = array();
@@ -70,7 +70,7 @@ class QueriesController extends DataAccessController
                     foreach ($keyOrder as $value) {
                         $contentArray[] = $unorderedContentArray[$value];
                     }
-                    $contentList['data']=$contentArray;
+                    $contentList['data'] = $contentArray;
                 }
             } else {
                 $contentList = array(
@@ -78,8 +78,8 @@ class QueriesController extends DataAccessController
                 );
             }
             if ($contentList["count"] > 0) {
-                $returnArray=array();
-                $returnArray["data"]=array();
+                $returnArray = array();
+                $returnArray["data"] = array();
                 foreach ($contentList['data'] as $content) {
                     $returnArray["data"][] = array(
                         'text' => $content['text'],

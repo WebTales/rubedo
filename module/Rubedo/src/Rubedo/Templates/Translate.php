@@ -6,7 +6,7 @@ class Translate extends \Twig_Extension
 
     protected $lang;
 
-    public function __construct ($lang)
+    public function __construct($lang)
     {
         $this->lang = $lang;
     }
@@ -16,7 +16,7 @@ class Translate extends \Twig_Extension
      *
      * @return array An array of filters
      */
-    public function getFilters ()
+    public function getFilters()
     {
         return array(
             'trans' => new \Twig_Filter_Method($this, 'translate')
@@ -28,7 +28,7 @@ class Translate extends \Twig_Extension
      *
      * @return string The extension name
      */
-    public function getName ()
+    public function getName()
     {
         return 'translate';
     }
@@ -40,7 +40,7 @@ class Translate extends \Twig_Extension
      *            text to translate
      * @return translated text
      */
-    public function translate ($text)
+    public function translate($text)
     {
         throw new \Exception('obsolete method');
     }

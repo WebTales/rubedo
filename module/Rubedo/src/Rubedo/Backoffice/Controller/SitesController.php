@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,25 +29,25 @@ use Zend\Json\Json;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class SitesController extends DataAccessController
 {
 
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('Sites');
     }
 
-    public function deleteAction ()
+    public function deleteAction()
     {
         $data = $this->params()->fromPost('data');
-        
-        if (! is_null($data)) {
-            $data = Json::decode($data,Json::TYPE_ARRAY);
+
+        if (!is_null($data)) {
+            $data = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($data)) {
                 $returnArray = $this->_dataService->destroy($data);
             } else {
@@ -62,25 +62,25 @@ class SitesController extends DataAccessController
                 "msg" => 'Invalid Data'
             );
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
     }
 
-    public function wizardCreateAction ()
+    public function wizardCreateAction()
     {
         $data = $this->params()->fromPost('data');
         $returnArray = array(
             'success' => false,
             "msg" => 'no data recieved'
         );
-        if (! is_null($data)) {
-            $insertData = Json::decode($data,Json::TYPE_ARRAY);
+        if (!is_null($data)) {
+            $insertData = Json::decode($data, Json::TYPE_ARRAY);
             if ((isset($insertData['builtOnEmptySite'])) && ($insertData['builtOnEmptySite'])) {
                 $returnArray = $this->createFromEmpty($insertData);
-            } else 
-                if ((isset($insertData['builtOnModelSiteId'])) && (! empty($insertData['builtOnModelSiteId']))) {
+            } else
+                if ((isset($insertData['builtOnModelSiteId'])) && (!empty($insertData['builtOnModelSiteId']))) {
                     $returnArray = $this->createFromModel($insertData);
                 } else {
                     $returnArray = array(
@@ -89,19 +89,19 @@ class SitesController extends DataAccessController
                     );
                 }
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
     }
-    
-	/**
+
+    /**
      * @param unknown $insertData
      * @return multitype:boolean string |unknown
      */
-    protected function createFromModel ($insertData)
+    protected function createFromModel($insertData)
     {
-        
+
         $returnArray = Manager::getService('Sites')->createFromModel($insertData);
         return ($returnArray);
     }
@@ -110,10 +110,10 @@ class SitesController extends DataAccessController
      * @param unknown $insertData
      * @return multitype:boolean string multitype:boolean string  NULL
      */
-    protected function createFromEmpty ($insertData)
+    protected function createFromEmpty($insertData)
     {
         $returnArray = Manager::getService('Sites')->createFromEmpty($insertData);
         return ($returnArray);
     }
-    
+
 }

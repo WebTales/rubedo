@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,7 +29,7 @@ use Rubedo\Collection\AbstractLocalizableCollection;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class LanguagesController extends DataAccessController
 {
@@ -37,7 +37,7 @@ class LanguagesController extends DataAccessController
     public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('Languages');
     }
@@ -47,14 +47,14 @@ class LanguagesController extends DataAccessController
         $directoryIterator = new \DirectoryIterator(APPLICATION_PATH . '/public/components/webtales/rubedo-localization');
         $boLangDirArray = array();
         foreach ($directoryIterator as $item) {
-            if (! $item->isDir() || $item->isDot() || $item->getFilename() == '.git') {
+            if (!$item->isDir() || $item->isDot() || $item->getFilename() == '.git') {
                 continue;
             }
             $boLangDirArray[] = $item->getFilename();
         }
-        
+
         $boLangFilter = Filter::factory('In')->setName('locale')->setValue($boLangDirArray);
-        
+
         $result = Manager::getService('Languages')->getList($boLangFilter, array(
             array(
                 'property' => 'label',
@@ -89,7 +89,7 @@ class LanguagesController extends DataAccessController
             $lang['iso3'] = $line[0];
             $lang['label'] = $line[3];
             $lang['labelFr'] = $line[4];
-            
+
             $service->create($lang);
         }
         $this->_forward('index');
@@ -111,7 +111,7 @@ class LanguagesController extends DataAccessController
             if ($item->isDir() || $item->isDot()) {
                 continue;
             }
-            
+
             $matches = array();
             if (preg_match('#(.*)\.png#', $item->getFilename(), $matches)) {
                 $flagsArray[] = array(
@@ -120,8 +120,8 @@ class LanguagesController extends DataAccessController
             }
         }
         $result = array(
-            'data'=>$flagsArray);
-        
+            'data' => $flagsArray);
+
         return $this->_returnJson($result);
     }
 }

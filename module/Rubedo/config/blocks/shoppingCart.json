@@ -1,64 +1,63 @@
 {
-	"type":"#ext-gen1438#",
-	"description":"",
-    "isECommerce":true,
-	"configBasique":{
-		"title":"#ext-gen1438#",
-		"bType":"shoppingCart",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
+    "type": "#ext-gen1438#",
+    "description": "",
+    "isECommerce": true,
+    "configBasique": {
+        "title": "#ext-gen1438#",
+        "bType": "shoppingCart",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
                 {
-                    "categorie":"#ext-gen1287#",
-                    "champs":[
+                    "categorie": "#ext-gen1287#",
+                    "champs": [
                         {
-                            "type":"Ext.ux.TreePicker",
-                            "config":{
-                                "fieldLabel":"#ext-gen1439#",
-                                "name":"cartDetailPage"
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1439#",
+                                "name": "cartDetailPage"
                             }
                         },
                         {
-                            "type":"Ext.ux.TreePicker",
-                            "config":{
-                                "fieldLabel":"#ext-gen1440#",
-                                "name":"checkoutPage"
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1440#",
+                                "name": "checkoutPage"
                             }
-                        },{
-                            "type":"Ext.form.field.ComboBox",
-                            "isAutoStored":true,
-                            "autoStoreData":[
+                        },
+                        {
+                            "type": "Ext.form.field.ComboBox",
+                            "isAutoStored": true,
+                            "autoStoreData": [
                                 {
-                                    "value":"detail",
-                                    "label":"#ext-gen1441#"
+                                    "value": "detail",
+                                    "label": "#ext-gen1441#"
                                 },
                                 {
-                                    "value":"button",
-                                    "label":"#ext-gen1442#"
+                                    "value": "button",
+                                    "label": "#ext-gen1442#"
                                 }
                             ],
-                            "config":{
-                                "fieldLabel":"#ext-gen1374#",
-                                "name":"displayMode",
-                                "editable":false,
-                                "forceSelection":true,
-                                "queryMode":"local"
+                            "config": {
+                                "fieldLabel": "#ext-gen1374#",
+                                "name": "displayMode",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local"
                             }
                         }
                     ]
                 }
-			],
-			"avance":[
-
-			]
-		},
-		"configBloc":{
-            "displayMode":"button"
+            ],
+            "avance": []
+        },
+        "configBloc": {
+            "displayMode": "button"
         }
 
 
-	},
-	"category":"#ext-gen1431#",
-	"bType":"shoppingCart",
-	"id":"52fca239f05c1d7416000000"
+    },
+    "category": "#ext-gen1431#",
+    "bType": "shoppingCart",
+    "id": "52fca239f05c1d7416000000"
 }

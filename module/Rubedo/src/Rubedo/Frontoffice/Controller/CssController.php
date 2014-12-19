@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,7 +29,7 @@ use Rubedo\Exceptions\NotFound;
  * @author aDobre
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class CssController extends AbstractActionController
 {
@@ -39,7 +39,7 @@ class CssController extends AbstractActionController
         $customThemeId = $this->params('id');
         $customThemeVersion = $this->params('version');
         $customTheme = Manager::getService('CustomThemes')->findById($customThemeId);
-        if (! $customTheme || $customTheme['version'] != $customThemeVersion) {
+        if (!$customTheme || $customTheme['version'] != $customThemeVersion) {
             throw new NotFound('Custom Theme not Found');
         }
         $less = new \lessc();
@@ -49,22 +49,22 @@ class CssController extends AbstractActionController
         $baseThemeOverrides = Json::decode($customTheme['lessVarsJson'], Json::TYPE_ARRAY);
         $less->setVariables($baseThemeOverrides);
         $compiledCss = $less->compileFile(APPLICATION_PATH . "/public/components/webtales/bootstrap-less/less/bootstrapoverrider.less");
-        
+
         $config = manager::getService('Application')->getConfig();
         if (isset($config['rubedo_config']['minify']) && $config['rubedo_config']['minify'] == true) {
             $compiledCss = \Minify_CSS::minify($compiledCss, array(
                 'preserveComments' => false
             ));
         }
-        
+
         $publicThemePath = APPLICATION_PATH . '/public/theme';
         $composedPath = $publicThemePath . '/custom';
-        if (! file_exists($composedPath)) {
+        if (!file_exists($composedPath)) {
             mkdir($composedPath, 0777);
         }
-        
+
         $composedPath = $composedPath . '/' . $customThemeId . '/' . $customThemeVersion;
-        if (! file_exists($composedPath)) {
+        if (!file_exists($composedPath)) {
             mkdir($composedPath, 0777, true);
         }
         $targetPath = $composedPath . '/theme.css';
@@ -76,14 +76,14 @@ class CssController extends AbstractActionController
             $response = new \Zend\Http\Response();
             $response->setContent($compiledCss);
         }
-        
+
         $response->getHeaders()->addHeaders(array(
             'Content-type' => 'text/css',
             'Pragma' => 'Public',
             'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
             'Expires' => date(DATE_RFC822, strtotime("7 day"))
         ));
-        
+
         return $response;
     }
 }

@@ -1,175 +1,186 @@
 {
-	"type":"#ext-gen1084#",
-	"description":"#ext-gen1085#",
-	"configBasique":{
-		"title":"#ext-gen1084#",
-		"bType":"carrousel",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
+    "type": "#ext-gen1084#",
+    "description": "#ext-gen1085#",
+    "configBasique": {
+        "title": "#ext-gen1084#",
+        "bType": "carrousel",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
 
-				{
-					"categorie":"#ext-gen1068#",
-					"champs":[
-						{
-							"type":"Rubedo.view.queryBuilderField",
-							"config":{
-								"fieldLabel":"#ext-gen1093#",
-								"name":"query"
-							}
-						},
+                {
+                    "categorie": "#ext-gen1068#",
+                    "champs": [
                         {
-                            "type":"Ext.ux.TreePicker",
-                            "config":{
-                                "fieldLabel":"#ext-gen1073#",
-                                "name":"singlePage"
-                            }
-                        },{
-                                "type": "Ext.form.field.Text",
-                                "config": {
-                                    "fieldLabel": "#ext-gen1405#",
-                                    "name": "imageField",
-                                    "value": "image"
-                                }
-                            },{
-                            "type":"Ext.form.field.Checkbox",
-                            "config":{
-                                "fieldLabel":"#ext-gen1447#",
-                                "name":"magicQuery",
-                                "inputValue":true
-                            }
-                        },{
-                            "type":"Ext.form.field.Number",
-                            "config":{
-                                "fieldLabel":"#ext-gen1095#",
-                                "name":"pageSize",
-                                "allowDecimals":false,
-                                "minValue":0
+                            "type": "Rubedo.view.queryBuilderField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1093#",
+                                "name": "query"
                             }
                         },
                         {
-                            "type":"Ext.form.field.Number",
-                            "config":{
-                                "fieldLabel":"#ext-gen1096#",
-                                "allowDecimals":false,
-                                "name":"resultsSkip",
-                                "minValue":1
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1073#",
+                                "name": "singlePage"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Text",
+                            "config": {
+                                "fieldLabel": "#ext-gen1405#",
+                                "name": "imageField",
+                                "value": "image"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1447#",
+                                "name": "magicQuery",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1095#",
+                                "name": "pageSize",
+                                "allowDecimals": false,
+                                "minValue": 0
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1096#",
+                                "allowDecimals": false,
+                                "name": "resultsSkip",
+                                "minValue": 1
                             }
                         }
-					]
-				},
-				{
-					"categorie":"Display options",
-					"champs":[
+                    ]
+                },
+                {
+                    "categorie": "Display options",
+                    "champs": [
 
-						{
-							"type":"Ext.form.field.Checkbox",
-							"config":{
-								"fieldLabel":"Show paging",
-								"name":"showPager",
-								"inputValue":true
-							}
-						},{
-                            "type":"Ext.form.field.Checkbox",
-                            "config":{
-                                "fieldLabel":"Show paging numbers",
-                                "name":"showPagingNumbers",
-                                "inputValue":true
-                            }
-                        },{
-                            "type":"Ext.form.field.Checkbox",
-                            "config":{
-                                "fieldLabel":"Show navigation",
-                                "name":"showNavigation",
-                                "inputValue":true
-                            }
-                        },{
-                            "type":"Ext.form.field.Checkbox",
-                            "config":{
-                                "fieldLabel":"Show caption",
-                                "name":"showCaption",
-                                "inputValue":true
-                            }
-                        },{
-                            "type":"Ext.form.field.Checkbox",
-                            "config":{
-                                "fieldLabel":"Show summary",
-                                "name":"showSummary",
-                                "inputValue":true
-                            }
-                        },{
-                            "type":"Ext.form.field.Checkbox",
-                            "config":{
-                                "fieldLabel":"Autoplay",
-                                "name":"autoPlay",
-                                "inputValue":true
-                            }
-                        },{
-                            "type":"Ext.form.field.Checkbox",
-                            "config":{
-                                "fieldLabel":"Stop on hover",
-                                "name":"stopOnHover",
-                                "inputValue":true
-                            }
-                        },{
-                            "type":"Ext.form.field.Number",
-                            "config":{
-                                "fieldLabel":"#ext-gen1090#",
-                                "name":"imageHeight",
-                                "allowDecimals":false,
-                                "minValue":0
-                            }
-                        },{
-                            "type":"Ext.form.field.Number",
-                            "config":{
-                                "fieldLabel":"Image width",
-                                "name":"imageWidth",
-                                "allowDecimals":false,
-                                "minValue":0
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "Show paging",
+                                "name": "showPager",
+                                "inputValue": true
                             }
                         },
                         {
-                            "type":"Ext.form.field.ComboBox",
-                            "config":{
-                                "fieldLabel":"Image resize mode",
-                                "name":"imageResizeMode",
-                                "editable":false,
-                                "forceSelection":true,
-                                "queryMode":"local",
-                                "store":[
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "Show paging numbers",
+                                "name": "showPagingNumbers",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "Show navigation",
+                                "name": "showNavigation",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "Show caption",
+                                "name": "showCaption",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "Show summary",
+                                "name": "showSummary",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "Autoplay",
+                                "name": "autoPlay",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "Stop on hover",
+                                "name": "stopOnHover",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1090#",
+                                "name": "imageHeight",
+                                "allowDecimals": false,
+                                "minValue": 0
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "Image width",
+                                "name": "imageWidth",
+                                "allowDecimals": false,
+                                "minValue": 0
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.ComboBox",
+                            "config": {
+                                "fieldLabel": "Image resize mode",
+                                "name": "imageResizeMode",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local",
+                                "store": [
                                     "boxed",
                                     "crop",
                                     "morph"
                                 ]
                             }
                         }
-					]
-				}
-			],
-			"avance":[
+                    ]
+                }
+            ],
+            "avance": [
                 {
-                    "categorie":"Template",
-                    "champs":[
+                    "categorie": "Template",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Custom template",
-                                "name":"customTemplate",
-                                "defaultTemplateUrl":"blocks/carousel.html",
-                                "twigMode":false
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/carousel.html",
+                                "twigMode": false
 
                             }
                         }
                     ]
                 }
-			]
-		},
-		"configBloc":{
-		    "imageField":"image"
-		
-		}
-	},
-	"category":"#ext-gen1068#",
-	"bType":"carrousel",
-	"id":"506441f8c64804d514022000"
+            ]
+        },
+        "configBloc": {
+            "imageField": "image"
+
+        }
+    },
+    "category": "#ext-gen1068#",
+    "bType": "carrousel",
+    "id": "506441f8c64804d514022000"
 }

@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -32,17 +32,17 @@ use Zend\View\Model\JsonModel;
 class UpdateController extends AbstractActionController
 {
 
-    public function indexAction ()
+    public function indexAction()
     {
         $rubedoDbVersionService = Manager::getService('RubedoVersion');
-        
+
         $result = array(
-            'needUpdate' => ! $rubedoDbVersionService->isDbUpToDate()
+            'needUpdate' => !$rubedoDbVersionService->isDbUpToDate()
         );
         return new JsonModel($result);
     }
 
-    public function runAction ()
+    public function runAction()
     {
         $result = array(
             'success' => true,

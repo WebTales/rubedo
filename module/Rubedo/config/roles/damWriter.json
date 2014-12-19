@@ -1,10 +1,10 @@
 {
-    "id":"damWriter",
-    "label":{
-    	"fr":"Edition de document du DAM",
-    	"en":"Can write DAM contents"
+    "id": "damWriter",
+    "label": {
+        "fr": "Edition de document du DAM",
+        "en": "Can write DAM contents"
     },
-    "rights":[
+    "rights": [
         "write.ui.dam$",
         "read.ui.dam$",
         "read.ui.directories$",
@@ -14,7 +14,7 @@
         "execute.controller.file.put.backoffice",
         "execute.controller.directories.@dot*.backoffice"
     ],
-    "includes":[
+    "includes": [
         "damReader"
     ]
 }

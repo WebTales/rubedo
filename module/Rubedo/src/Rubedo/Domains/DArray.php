@@ -22,7 +22,7 @@ namespace Rubedo\Domains;
  * Should be an array
  *
  * @author jbourdin
- *        
+ *
  */
 class DArray extends AbstractArray
 {

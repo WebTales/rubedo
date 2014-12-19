@@ -4,7 +4,7 @@
         "fr": "Visualisation des listes de diffusion",
         "en": "Can read mailing lists"
     },
-    "rights":[
+    "rights": [
         "read.ui.mailingLists",
         "execute.controller.mailinglists.index.backoffice",
         "execute.controller.mailinglists.get-unsubscribed-users.backoffice",

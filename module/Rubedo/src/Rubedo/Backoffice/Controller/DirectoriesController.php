@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,7 +30,7 @@ use Zend\Json\Json;
  * @author aDobre
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class DirectoriesController extends DataAccessController
 {
@@ -38,7 +38,7 @@ class DirectoriesController extends DataAccessController
     public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('Directories');
     }
@@ -51,14 +51,14 @@ class DirectoriesController extends DataAccessController
     public function clearOrphanDirectoriesAction()
     {
         $result = $this->_dataService->clearOrphanPages();
-        
+
         return $this->_returnJson($result);
     }
 
     public function countOrphanDirectoriesAction()
     {
         $result = $this->_dataService->countOrphanPages();
-        
+
         return $this->_returnJson($result);
     }
 
@@ -89,11 +89,11 @@ class DirectoriesController extends DataAccessController
         $parentId = $this->params()->fromQuery('node', 'root');
         $themeMode = $this->params()->fromQuery('themeMode', false);
         $mongoFilters = $this->_buildFilter($filters);
-        $allowVirtual=true;
-        if ($parentId=="root"){
-            if ($themeMode){
+        $allowVirtual = true;
+        if ($parentId == "root") {
+            if ($themeMode) {
                 $mongoFilters->addFilter(Filter::factory("Value")->setName("text")->setValue("theme"));
-                $allowVirtual=false;
+                $allowVirtual = false;
             } else {
                 $mongoFilters->addFilter(Filter::factory("OperatorToValue")->setName("text")->setOperator('$ne')->setValue("theme"));
             }
@@ -108,5 +108,5 @@ class DirectoriesController extends DataAccessController
 
         return $this->_returnJson($response);
     }
-   
+
 }

@@ -29,7 +29,7 @@ use WebTales\MongoFilters\Filter;
  */
 class Dam extends AbstractLocalizableCollection implements IDam
 {
-    protected static $nonLocalizableFields = array("Content-Type", "typeId", "taxonomy", "fileSize", "mainFileType", "target", "writeWorkspace", "directory", "readOnly", "originalFileId","loadOnLaunch","themeId");
+    protected static $nonLocalizableFields = array("Content-Type", "typeId", "taxonomy", "fileSize", "mainFileType", "target", "writeWorkspace", "directory", "readOnly", "originalFileId", "loadOnLaunch", "themeId");
     protected static $labelField = 'title';
     protected static $isLocaleFiltered = false;
 
@@ -118,9 +118,9 @@ class Dam extends AbstractLocalizableCollection implements IDam
     protected function _unIndexDam($obj)
     {
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-        if (isset($obj['typeId'])){
-        $ElasticDataIndexService->init();
-        $ElasticDataIndexService->deleteDam($obj['typeId'], $obj['id']);
+        if (isset($obj['typeId'])) {
+            $ElasticDataIndexService->init();
+            $ElasticDataIndexService->deleteDam($obj['typeId'], $obj['id']);
         }
     }
 

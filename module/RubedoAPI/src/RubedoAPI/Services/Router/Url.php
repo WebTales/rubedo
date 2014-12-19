@@ -53,10 +53,10 @@ class Url extends \Rubedo\Router\Url
         }
 
         if (isset($content['taxonomy.navigation']) && $content['taxonomy.navigation'] !== "" && !$pageValid) {
-            $dbContent = Manager::getService("Contents")->findById($content["id"], true ,false);
+            $dbContent = Manager::getService("Contents")->findById($content["id"], true, false);
 
-            if(isset($dbContent["taxonomy"]["navigation"])){
-                if(isset($content["taxonomy"]["navigation"])) {
+            if (isset($dbContent["taxonomy"]["navigation"])) {
+                if (isset($content["taxonomy"]["navigation"])) {
                     array_merge($content["taxonomy"]["navigation"], $dbContent["taxonomy"]["navigation"]);
                 } else {
                     $content["taxonomy"]["navigation"] = $dbContent["taxonomy"]["navigation"];

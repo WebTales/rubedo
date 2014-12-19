@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,7 +30,7 @@ use Zend\Json\Json;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class NestedContentsController extends AbstractActionController
 {
@@ -59,10 +59,10 @@ class NestedContentsController extends AbstractActionController
     {
         // init the data access service
         $this->_dataService = Manager::getService('NestedContents');
-        
+
         $this->_parentId = $this->getRequest()->getParam('parentId');
-        
-        if (! isset($this->_parentId)) {
+
+        if (!isset($this->_parentId)) {
             $response = array();
             $response['success'] = false;
             $response['message'] = 'no parentId Given';
@@ -84,7 +84,7 @@ class NestedContentsController extends AbstractActionController
         $this->getHelper('Layout')->disableLayout();
         $this->getHelper('ViewRenderer')->setNoRender();
         $this->getResponse()->setHeader('Content-Type', "application/json", true);
-        
+
         $returnValue = Json::encode($data);
         if ($this->_prettyJson) {
             $returnValue = Json::prettyPrint($returnValue);
@@ -100,10 +100,10 @@ class NestedContentsController extends AbstractActionController
      */
     public function indexAction()
     {
-        if (! isset($this->_parentId)) {
+        if (!isset($this->_parentId)) {
             return;
         }
-        
+
         $filterJson = $this->getRequest()->getParam('filter');
         if (isset($filterJson)) {
             $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
@@ -116,16 +116,16 @@ class NestedContentsController extends AbstractActionController
         } else {
             $sort = null;
         }
-        
+
         $mongoFilters = $this->_buildFilter($filters);
         $dataValues = $this->_dataService->getList($this->_parentId, $mongoFilters, $sort);
-        
+
         $response = array();
         $response['total'] = count($dataValues);
         $response['data'] = $dataValues;
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-        
+
         return $this->_returnJson($response);
     }
 
@@ -134,16 +134,16 @@ class NestedContentsController extends AbstractActionController
      */
     public function deleteAction()
     {
-        if (! isset($this->_parentId)) {
+        if (!isset($this->_parentId)) {
             return;
         }
-        
+
         $data = $this->getRequest()->getParam('data');
-        
-        if (! is_null($data)) {
+
+        if (!is_null($data)) {
             $data = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($data)) {
-                
+
                 $returnArray = $this->_dataService->destroy($this->_parentId, $data, true);
             } else {
                 $returnArray = array(
@@ -157,7 +157,7 @@ class NestedContentsController extends AbstractActionController
                 "msg" => 'Invalid Data'
             );
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
@@ -168,13 +168,13 @@ class NestedContentsController extends AbstractActionController
      */
     public function createAction()
     {
-        if (! isset($this->_parentId)) {
+        if (!isset($this->_parentId)) {
             return;
         }
-        
+
         $data = $this->getRequest()->getParam('data');
-        
-        if (! is_null($data)) {
+
+        if (!is_null($data)) {
             $insertData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($insertData)) {
                 $returnArray = $this->_dataService->create($this->_parentId, $insertData, true);
@@ -190,7 +190,7 @@ class NestedContentsController extends AbstractActionController
                 "msg" => 'No Data'
             );
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
@@ -201,16 +201,16 @@ class NestedContentsController extends AbstractActionController
      */
     public function updateAction()
     {
-        if (! isset($this->_parentId)) {
+        if (!isset($this->_parentId)) {
             return;
         }
-        
+
         $data = $this->getRequest()->getParam('data');
-        
-        if (! is_null($data)) {
+
+        if (!is_null($data)) {
             $updateData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($updateData)) {
-                
+
                 $returnArray = $this->_dataService->update($this->_parentId, $updateData, true);
             } else {
                 $returnArray = array(
@@ -224,7 +224,7 @@ class NestedContentsController extends AbstractActionController
                 "msg" => 'No Data'
             );
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);

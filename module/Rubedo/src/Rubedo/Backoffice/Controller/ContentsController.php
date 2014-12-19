@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -32,15 +32,15 @@ use Zend\View\Model\JsonModel;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class ContentsController extends DataAccessController
 {
 
-    public function __construct ()
+    public function __construct()
     {
         parent::__construct();
-        
+
         // init the data access service
         $this->_dataService = Manager::getService('Contents');
     }
@@ -51,28 +51,28 @@ class ContentsController extends DataAccessController
      * Return the content of the collection, get filters from the request
      * params, get sort from request params
      */
-    public function indexAction ()
+    public function indexAction()
     {
         // merge filter and tFilter
         $jsonFilter = $this->params()->fromQuery('filter', '[]');
         $jsonTFilter = $this->params()->fromQuery('tFilter', '[]');
-        $filterArray = Json::decode($jsonFilter,Json::TYPE_ARRAY);
-        $tFilterArray = Json::decode($jsonTFilter,Json::TYPE_ARRAY);
-        
+        $filterArray = Json::decode($jsonFilter, Json::TYPE_ARRAY);
+        $tFilterArray = Json::decode($jsonTFilter, Json::TYPE_ARRAY);
+
         $filters = array_merge($tFilterArray, $filterArray);
         $mongoFilters = $this->_buildFilter($filters);
-                
-        $sort = Json::decode($this->params()->fromQuery('sort', null),Json::TYPE_ARRAY);
-        $start = Json::decode($this->params()->fromQuery('start', null),Json::TYPE_ARRAY);
-        $limit = Json::decode($this->params()->fromQuery('limit', null),Json::TYPE_ARRAY);
-        
+
+        $sort = Json::decode($this->params()->fromQuery('sort', null), Json::TYPE_ARRAY);
+        $start = Json::decode($this->params()->fromQuery('start', null), Json::TYPE_ARRAY);
+        $limit = Json::decode($this->params()->fromQuery('limit', null), Json::TYPE_ARRAY);
+
         $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit, false);
         $response = array();
         $response['total'] = $dataValues['count'];
         $response['data'] = $dataValues['data'];
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-        
+
         return $this->_returnJson($response);
     }
 
@@ -81,43 +81,43 @@ class ContentsController extends DataAccessController
      *
      * Return the children of a node
      */
-    public function readChildAction ()
+    public function readChildAction()
     {
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
-            $filters = Json::decode($filterJson,Json::TYPE_ARRAY);
+            $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
         $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
-            $sort = Json::decode($sortJson,Json::TYPE_ARRAY);
+            $sort = Json::decode($sortJson, Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
-        
+
         $parentId = $this->params()->fromQuery('node', 'root');
         $mongoFilters = $this->_buildFilter($filters);
         $dataValues = $this->_dataService->readChild($parentId, $mongoFilters, $sort, false);
-        
+
         $response = array();
         $response['children'] = array_values($dataValues);
         $response['total'] = count($response['children']);
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-        
+
         return $this->_returnJson($response);
     }
 
     /**
      * The create action of the CRUD API
      */
-    public function createAction ()
+    public function createAction()
     {
         $data = $this->params()->fromPost('data');
-        
-        if (! is_null($data)) {
-            $insertData = Json::decode($data,Json::TYPE_ARRAY);
+
+        if (!is_null($data)) {
+            $insertData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($insertData)) {
                 $insertData["target"] = isset($insertData["target"]) ? $insertData["target"] : array();
                 $returnArray = $this->_dataService->create($insertData, array(), false);
@@ -133,7 +133,7 @@ class ContentsController extends DataAccessController
                 "msg" => 'No Data'
             );
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
@@ -142,14 +142,14 @@ class ContentsController extends DataAccessController
     /**
      * The update action of the CRUD API
      */
-    public function updateAction ()
+    public function updateAction()
     {
         $data = $this->params()->fromPost('data');
-        
-        if (! is_null($data)) {
-            $updateData = Json::decode($data,Json::TYPE_ARRAY);
+
+        if (!is_null($data)) {
+            $updateData = Json::decode($data, Json::TYPE_ARRAY);
             if (is_array($updateData)) {
-                
+
                 $returnArray = $this->_dataService->update($updateData, array(), false);
             } else {
                 $returnArray = array(
@@ -163,7 +163,7 @@ class ContentsController extends DataAccessController
                 "msg" => 'No Data'
             );
         }
-        if (! $returnArray['success']) {
+        if (!$returnArray['success']) {
             $this->getResponse()->setStatusCode(500);
         }
         return $this->_returnJson($returnArray);
@@ -172,106 +172,107 @@ class ContentsController extends DataAccessController
     /**
      * Do a findOneAction
      */
-    public function findOneAction ()
+    public function findOneAction()
     {
         $contentId = $this->params()->fromQuery('id');
-        
-        if (! is_null($contentId)) {
-            
+
+        if (!is_null($contentId)) {
+
             $return = $this->_dataService->findById($contentId, false, false);
-            
+
             if (empty($return['id'])) {
-                
+
                 $returnArray = array(
                     'success' => false,
                     "msg" => 'Object not found'
                 );
             } else {
-                
+
                 $returnArray = array(
                     'succes' => true,
                     'data' => $return
                 );
             }
         } else {
-            
+
             $returnArray = array(
                 'success' => false,
                 "msg" => 'Missing param'
             );
         }
-        
+
         return $this->_returnJson($returnArray);
     }
 
     /**
      * Return a list of ordered objects
      */
-    public function getOrderedListAction ()
+    public function getOrderedListAction()
     {
         // merge filter and tFilter
         $jsonFilter = $this->params()->fromQuery('filter', '[]');
         $jsonTFilter = $this->params()->fromQuery('tFilter', '[]');
-        $filterArray = Json::decode($jsonFilter,Json::TYPE_ARRAY);
-        $tFilterArray = Json::decode($jsonTFilter,Json::TYPE_ARRAY);
-        
+        $filterArray = Json::decode($jsonFilter, Json::TYPE_ARRAY);
+        $tFilterArray = Json::decode($jsonTFilter, Json::TYPE_ARRAY);
+
         $filters = array_merge($tFilterArray, $filterArray);
-        $sort = Json::decode($this->params()->fromQuery('sort', null),Json::TYPE_ARRAY);
-        $start = Json::decode($this->params()->fromQuery('start', null),Json::TYPE_ARRAY);
-        $limit = Json::decode($this->params()->fromQuery('limit', null),Json::TYPE_ARRAY);
-        
+        $sort = Json::decode($this->params()->fromQuery('sort', null), Json::TYPE_ARRAY);
+        $start = Json::decode($this->params()->fromQuery('start', null), Json::TYPE_ARRAY);
+        $limit = Json::decode($this->params()->fromQuery('limit', null), Json::TYPE_ARRAY);
+
         $mongoFilters = $this->_buildFilter($filters);
         return new JsonModel($this->_dataService->getOrderedList($mongoFilters, $sort, $start, $limit, false));
     }
 
-    public function clearOrphanContentsAction ()
+    public function clearOrphanContentsAction()
     {
         $result = $this->_dataService->clearOrphanContents();
-        
+
         return $this->_returnJson($result);
     }
 
-    public function countOrphanContentsAction ()
+    public function countOrphanContentsAction()
     {
         $result = $this->_dataService->countOrphanContents();
-        
-        return $this->_returnJson(array("orphanContents"=>$result));
+
+        return $this->_returnJson(array("orphanContents" => $result));
     }
 
-    public function deleteByContentTypeIdAction ()
+    public function deleteByContentTypeIdAction()
     {
         $typeId = $this->params()->fromPost('type-id');
-        if (! $typeId) {
+        if (!$typeId) {
             throw new \Rubedo\Exceptions\User('This action needs a type-id as argument.', 'Exception3');
         }
         $deleteResult = $this->_dataService->deleteByContentType($typeId);
-        
+
         return $this->_returnJson($deleteResult);
     }
 
-    public function getStockAction ()
+    public function getStockAction()
     {
         $typeId = $this->params()->fromQuery('type-id');
-        $workingLanguage=$this->params()->fromQuery('workingLanguage',"en");
-        if (! $typeId) {
+        $workingLanguage = $this->params()->fromQuery('workingLanguage', "en");
+        if (!$typeId) {
             throw new \Rubedo\Exceptions\User('This action needs a type-id as argument.', 'Exception3');
         }
-        $result=Manager::getService("Stock")->getStock($typeId,$workingLanguage);
+        $result = Manager::getService("Stock")->getStock($typeId, $workingLanguage);
         return $this->_returnJson($result);
     }
 
-    public function updateStockAction (){
+    public function updateStockAction()
+    {
         $data = $this->params()->fromPost('data', null);
-        $actionToApply=$this->params()->fromPost('actionToApply', null);
-        $amountToApply=$this->params()->fromPost('amountToApply', null);
-        if ((empty($data))||(empty($actionToApply))||(empty($amountToApply))){
+        $actionToApply = $this->params()->fromPost('actionToApply', null);
+        $amountToApply = $this->params()->fromPost('amountToApply', null);
+        if ((empty($data)) || (empty($actionToApply)) || (empty($amountToApply))) {
             $this->getResponse()->setStatusCode(500);
             return $this->_returnJson(array(
                 'success' => false,
                 "msg" => 'Missing parameters'
             ));
         }
-        $updateData = Json::decode($data,Json::TYPE_ARRAY);
+        $updateData = Json::decode($data, Json::TYPE_ARRAY);
         if (!is_array($updateData)) {
             $this->getResponse()->setStatusCode(500);
             return $this->_returnJson(array(
@@ -279,22 +280,23 @@ class ContentsController extends DataAccessController
                 "msg" => 'Not an array'
             ));
         }
-        if ($actionToApply=="add"){
-            $result=Manager::getService("Stock")->increaseStock($updateData['productId'],$updateData['id'],$amountToApply);
+        if ($actionToApply == "add") {
+            $result = Manager::getService("Stock")->increaseStock($updateData['productId'], $updateData['id'], $amountToApply);
         } else {
-            $result=Manager::getService("Stock")->decreaseStock($updateData['productId'],$updateData['id'],$amountToApply);
+            $result = Manager::getService("Stock")->decreaseStock($updateData['productId'], $updateData['id'], $amountToApply);
         }
-        if (!$result['success']){
+        if (!$result['success']) {
             return $this->_returnJson($result);
         }
-        $updateData['stock']=$result['newStock'];
+        $updateData['stock'] = $result['newStock'];
         return $this->_returnJson(array(
             'success' => true,
             "data" => $updateData
         ));
     }
 
-    public function exportAction(){
+    public function exportAction()
+    {
         $params = $this->params()->fromQuery();
         $filters = Filter::factory();
         if (!empty($params['startDate'])) {
@@ -311,27 +313,27 @@ class ContentsController extends DataAccessController
                     ->setValue((int)$params['endDate'])
             );
         }
-        $contentType=Manager::getService("ContentTypes")->findById($params['typeId']);
+        $contentType = Manager::getService("ContentTypes")->findById($params['typeId']);
         $filters->addFilter(
             Filter::factory('Value')->setName('typeId')
                 ->setValue($params['typeId'])
         );
-        $contents=$this->_dataService->getOnlineList($filters);
-        $fileName = 'export_rubedo_contents_'.$contentType['type'].'_' . time() . '.csv';
+        $contents = $this->_dataService->getOnlineList($filters);
+        $fileName = 'export_rubedo_contents_' . $contentType['type'] . '_' . time() . '.csv';
         $filePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName;
         $csvResource = fopen($filePath, 'w+');
         $fieldsArray = array(
-            "text"=>null,
-            "summary"=>null
+            "text" => null,
+            "summary" => null
         );
         $headerArray = array(
-            "text"=>"Title",
-            "summary"=>"Summary"
+            "text" => "Title",
+            "summary" => "Summary"
         );
-        $fieldsArray["createTime"]=null;
-        $multivaluedFieldsArray=array();
-        $headerArray["createTime"]="Creation";
-        $exportableFieldTypes=[
+        $fieldsArray["createTime"] = null;
+        $multivaluedFieldsArray = array();
+        $headerArray["createTime"] = "Creation";
+        $exportableFieldTypes = [
             "Ext.form.field.Text",
             "textfield",
             "Ext.form.field.TextArea",
@@ -354,30 +356,30 @@ class ContentsController extends DataAccessController
             "Rubedo.view.CKEField",
             "CKEField",
         ];
-        foreach ($contentType['fields'] as $typeField){
-            if (in_array($typeField['cType'],$exportableFieldTypes)){
-                $fieldsArray[$typeField['config']['name']]=$typeField['cType'];
-                $headerArray[$typeField['config']['name']]=$typeField['config']['fieldLabel'];
-                if (isset($typeField['config']['multivalued'])&&$typeField['config']['multivalued']){
-                    $multivaluedFieldsArray[]=$typeField['config']['name'];
+        foreach ($contentType['fields'] as $typeField) {
+            if (in_array($typeField['cType'], $exportableFieldTypes)) {
+                $fieldsArray[$typeField['config']['name']] = $typeField['cType'];
+                $headerArray[$typeField['config']['name']] = $typeField['config']['fieldLabel'];
+                if (isset($typeField['config']['multivalued']) && $typeField['config']['multivalued']) {
+                    $multivaluedFieldsArray[] = $typeField['config']['name'];
                 }
             }
         }
-        $taxoService=Manager::getService("Taxonomy");
-        $taxoTermsService=Manager::getService("TaxonomyTerms");
-        $taxoHeaderArray=array();
-        $taxoFieldsArray=array();
-        foreach($contentType['vocabularies'] as $vocabId){
-            if (!empty($vocabId)&&$vocabId!="navigation"){
-                $vocabulary=$taxoService->findById($vocabId);
-                if ($vocabulary){
-                    $taxoHeaderArray[$vocabId]=$vocabulary['name'];
-                    $taxoFieldsArray[]=$vocabId;
+        $taxoService = Manager::getService("Taxonomy");
+        $taxoTermsService = Manager::getService("TaxonomyTerms");
+        $taxoHeaderArray = array();
+        $taxoFieldsArray = array();
+        foreach ($contentType['vocabularies'] as $vocabId) {
+            if (!empty($vocabId) && $vocabId != "navigation") {
+                $vocabulary = $taxoService->findById($vocabId);
+                if ($vocabulary) {
+                    $taxoHeaderArray[$vocabId] = $vocabulary['name'];
+                    $taxoFieldsArray[] = $vocabId;
                 }
             }
         }
         $csvLine = array();
-        foreach ($fieldsArray as $field=>$fieldType) {
+        foreach ($fieldsArray as $field => $fieldType) {
             $csvLine[] = $headerArray[$field];
         }
         foreach ($taxoFieldsArray as $field) {
@@ -387,53 +389,53 @@ class ContentsController extends DataAccessController
 
         foreach ($contents['data'] as $content) {
             $csvLine = array();
-            foreach ($fieldsArray as $field=>$fieldType) {
+            foreach ($fieldsArray as $field => $fieldType) {
                 switch ($field) {
                     case 'createTime':
-                        $csvLine[] = date('d-m-Y H:i:s',$content["createTime"]);
+                        $csvLine[] = date('d-m-Y H:i:s', $content["createTime"]);
                         break;
                     case 'text':
                         $csvLine[] = isset($content[$field]) ? $content[$field] : '';
                         break;
                     default:
-                        if (!isset($content['fields'][$field])){
-                            $csvLine[]='';
-                        } elseif (in_array($field,$multivaluedFieldsArray)&&is_array($content['fields'][$field])) {
-                            $formatedValuesArray=array();
-                            foreach($content['fields'][$field] as $unformatedValue){
-                                $formatedValuesArray[]=$this->formatFieldData($unformatedValue,$fieldType);
+                        if (!isset($content['fields'][$field])) {
+                            $csvLine[] = '';
+                        } elseif (in_array($field, $multivaluedFieldsArray) && is_array($content['fields'][$field])) {
+                            $formatedValuesArray = array();
+                            foreach ($content['fields'][$field] as $unformatedValue) {
+                                $formatedValuesArray[] = $this->formatFieldData($unformatedValue, $fieldType);
                             }
-                            $csvLine[]=implode(", ",$formatedValuesArray);
+                            $csvLine[] = implode(", ", $formatedValuesArray);
                         } else {
-                            $csvLine[]=$this->formatFieldData($content['fields'][$field],$fieldType);
+                            $csvLine[] = $this->formatFieldData($content['fields'][$field], $fieldType);
                         }
                         break;
                 }
             }
             foreach ($taxoFieldsArray as $taxoField) {
-                if (!isset($content['taxonomy'][$taxoField])){
-                    $csvLine[]='';
+                if (!isset($content['taxonomy'][$taxoField])) {
+                    $csvLine[] = '';
                 } elseif (is_array($content['taxonomy'][$taxoField])) {
-                    $termLabelsArray=array();
-                    foreach($content['taxonomy'][$taxoField] as $taxoTermId){
-                        if (!empty($taxoTermId)){
-                            $foundTerm=$taxoTermsService->findById($taxoTermId);
-                            if ($foundTerm){
-                                $termLabelsArray[]=$foundTerm['text'];
+                    $termLabelsArray = array();
+                    foreach ($content['taxonomy'][$taxoField] as $taxoTermId) {
+                        if (!empty($taxoTermId)) {
+                            $foundTerm = $taxoTermsService->findById($taxoTermId);
+                            if ($foundTerm) {
+                                $termLabelsArray[] = $foundTerm['text'];
                             }
                         }
                     }
-                    $csvLine[]=implode(", ",$termLabelsArray);
+                    $csvLine[] = implode(", ", $termLabelsArray);
                 } else {
-                    if (!empty($content['taxonomy'][$taxoField])){
-                        $foundTerm=$taxoTermsService->findById($content['taxonomy'][$taxoField]);
-                        if ($foundTerm){
-                            $csvLine[]=$foundTerm['text'];
+                    if (!empty($content['taxonomy'][$taxoField])) {
+                        $foundTerm = $taxoTermsService->findById($content['taxonomy'][$taxoField]);
+                        if ($foundTerm) {
+                            $csvLine[] = $foundTerm['text'];
                         } else {
-                            $csvLine[]='';
+                            $csvLine[] = '';
                         }
                     } else {
-                        $csvLine[]='';
+                        $csvLine[] = '';
                     }
                 }
             }
@@ -450,26 +452,27 @@ class ContentsController extends DataAccessController
         return $response;
     }
 
-    protected function formatFieldData($value,$cType=null){
+    protected function formatFieldData($value, $cType = null)
+    {
         switch ($cType) {
             case 'Ext.form.field.Date':
             case 'datefield':
-                return date('d-m-Y H:i:s',$value);
+                return date('d-m-Y H:i:s', $value);
                 break;
             case 'Ext.form.RadioGroup':
             case 'radiogroup':
             case 'Ext.form.field.ComboBox':
             case 'combobox':
-                if (is_array($value)){
-                    return implode(", ",$value);
+                if (is_array($value)) {
+                    return implode(", ", $value);
                 } else {
                     return $value;
                 }
                 break;
             default:
-                return($value);
+                return ($value);
                 break;
         }
     }
-    
+
 }

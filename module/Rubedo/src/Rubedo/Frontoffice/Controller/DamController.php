@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,27 +29,27 @@ use Rubedo\Services\Manager;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class DamController extends AbstractActionController
 {
 
-    public function indexAction ()
+    public function indexAction()
     {
         $mediaId = $this->params()->fromQuery('media-id');
-        
-        if (! $mediaId) {
+
+        if (!$mediaId) {
             throw new \Rubedo\Exceptions\User('no id given', "Exception7");
         }
         $media = Manager::getService('Dam')->findById($mediaId);
-        if (! $media) {
+        if (!$media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
-        
+
         $version = $this->params()->fromQuery('version', $media['id']);
-        
+
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
-        if (! $mediaType) {
+        if (!$mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
         }
         if (isset($mediaType['mainFileType']) && $mediaType['mainFileType'] == 'Image') {
@@ -62,7 +62,7 @@ class DamController extends AbstractActionController
             foreach ($params as $key => $value) {
                 $queryString->set($key, $value);
             }
-            
+
             return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
                 'action' => 'index'
             ));
@@ -76,29 +76,29 @@ class DamController extends AbstractActionController
             foreach ($params as $key => $value) {
                 $queryString->set($key, $value);
             }
-            
+
             return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\File', array(
                 'action' => 'index'
             ));
         }
     }
 
-    public function rewriteAction ()
+    public function rewriteAction()
     {
         $mediaId = $this->params('mediaId');
-        
-        if (! $mediaId) {
+
+        if (!$mediaId) {
             throw new \Rubedo\Exceptions\User('no id given', "Exception7");
         }
         $media = Manager::getService('Dam')->findById($mediaId);
-        if (! $media) {
+        if (!$media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
-        
+
         $version = $this->params('version', $media['id']);
-        
+
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
-        if (! $mediaType) {
+        if (!$mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
         }
         if (isset($mediaType['mainFileType']) && $mediaType['mainFileType'] == 'Image') {
@@ -111,7 +111,7 @@ class DamController extends AbstractActionController
             foreach ($params as $key => $value) {
                 $queryString->set($key, $value);
             }
-            
+
             return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
                 'action' => 'index'
             ));
@@ -125,27 +125,27 @@ class DamController extends AbstractActionController
             foreach ($params as $key => $value) {
                 $queryString->set($key, $value);
             }
-            
+
             return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\File', array(
                 'action' => 'index'
             ));
         }
     }
 
-    public function getThumbnailAction ()
+    public function getThumbnailAction()
     {
         $mediaId = $this->params()->fromQuery('media-id', null);
-        if (! $mediaId) {
+        if (!$mediaId) {
             throw new \Rubedo\Exceptions\User('no id given', "Exception7");
         }
         $media = Manager::getService('Dam')->findById($mediaId);
-        if (! $media) {
+        if (!$media) {
             throw new \Rubedo\Exceptions\NotFound('no media found', "Exception8");
         }
         $version = $this->params()->fromQuery('version', $media['id']);
-        
+
         $mediaType = Manager::getService('DamTypes')->findById($media['typeId']);
-        if (! $mediaType) {
+        if (!$mediaType) {
             throw new \Rubedo\Exceptions\Server('unknown media type', "Exception9");
         }
         if ($mediaType['mainFileType'] == 'Image') {
@@ -157,7 +157,7 @@ class DamController extends AbstractActionController
             foreach ($params as $key => $value) {
                 $queryString->set($key, $value);
             }
-            
+
             return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\Image', array(
                 'action' => 'get-thumbnail'
             ));

@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,19 +30,19 @@ use Zend\View\Model\JsonModel;
  * @author adobre
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class MagicController extends AbstractActionController
 {
-    public function refreshUserRecommendationsAction ()
+    public function refreshUserRecommendationsAction()
     {
-        $result=Manager::getService("UserRecommendations")->build();
+        $result = Manager::getService("UserRecommendations")->build();
         return new JsonModel($result);
     }
 
-    public function refreshItemRecommendationsAction ()
+    public function refreshItemRecommendationsAction()
     {
-        $result=Manager::getService("ItemRecommendations")->build();
+        $result = Manager::getService("ItemRecommendations")->build();
         return new JsonModel($result);
     }
 }

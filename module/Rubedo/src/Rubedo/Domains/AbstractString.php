@@ -23,7 +23,7 @@ namespace Rubedo\Domains;
  * Should be an array or a list
  *
  * @author mgoncalves
- *        
+ *
  */
 abstract class AbstractString implements IDomains
 {
@@ -31,13 +31,13 @@ abstract class AbstractString implements IDomains
     /**
      * Check if a value is valid for the current domain
      *
-     * @param mixed $value            
+     * @param mixed $value
      * @return boolean
      * @see Rubedo\Domains\IDomains::isValid()
      */
-    public static function isValid ($value)
+    public static function isValid($value)
     {
-        if (! is_array($value)) {
+        if (!is_array($value)) {
             return false;
         }
         return true;

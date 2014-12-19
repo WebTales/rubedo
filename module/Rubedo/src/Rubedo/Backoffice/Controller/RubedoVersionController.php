@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -29,7 +29,7 @@ use \Zend\Version\Version as ZendVersion;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class RubedoVersionController extends AbstractActionController
 {
@@ -47,7 +47,7 @@ class RubedoVersionController extends AbstractActionController
             'IsRubedoLatest' => Version::isLatest(),
             'Components' => Version::getComponentsVersion()
         );
-        
+
         return new JsonModel($versionArray);
     }
 }

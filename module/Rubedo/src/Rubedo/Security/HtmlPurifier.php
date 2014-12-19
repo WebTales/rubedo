@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -33,7 +33,7 @@ class HtmlPurifier extends HtmlCleaner
     /**
      * Clean a raw content to become a valid HTML content without threats
      *
-     * @param string $html            
+     * @param string $html
      * @return string
      */
     protected function internalClean($html)
@@ -41,11 +41,11 @@ class HtmlPurifier extends HtmlCleaner
         if (empty($html)) {
             return $html;
         }
-        
-        if (! class_exists('\HTMLPurifier_Config')) {
+
+        if (!class_exists('\HTMLPurifier_Config')) {
             return parent::internalClean($html);
         }
-        if (! isset(self::$_purifier)) {
+        if (!isset(self::$_purifier)) {
             $config = \HTMLPurifier_Config::createDefault();
             $config->set('Core.Encoding', 'UTF-8');
             $config->set('Cache.SerializerPath', APPLICATION_PATH . "/cache/htmlpurifier");
@@ -61,7 +61,7 @@ class HtmlPurifier extends HtmlCleaner
             self::$_purifier = new \HTMLPurifier($config);
         }
         $html = self::$_purifier->purify($html);
-        
+
         return $html;
     }
 }

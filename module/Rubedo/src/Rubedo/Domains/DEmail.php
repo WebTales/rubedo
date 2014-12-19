@@ -22,7 +22,7 @@ namespace Rubedo\Domains;
  * Should be an email
  *
  * @author jbourdin
- *        
+ *
  */
 class DEmail extends AbstractString
 {

@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -37,23 +37,23 @@ class XhrLanguageController extends AbstractActionController
     public function defineLanguageAction()
     {
         $forceLocale = $this->params()->fromQuery('locale', null);
-        
+
         // get current page property
         $this->currentPage = $this->params()->fromQuery('current-page');
         $currentPage = Manager::getService('Pages')->findById($this->currentPage);
-        
+
         if (is_null($currentPage)) {
             throw new \Rubedo\Exceptions\Access('You can not access this page.', "Exception15");
         } else {
             Manager::getService('PageContent')->setCurrentPage($currentPage['id']);
         }
-        
+
         $locale = Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'], $forceLocale);
         $domain = $this->getRequest()->getUri()->getHost();
         if ($domain) {
             $languageCookie = setcookie('locale', $locale, strtotime('+1 year'), '/', $domain);
         }
-        
+
         $response['success'] = $locale;
         return new JsonModel($response);
     }

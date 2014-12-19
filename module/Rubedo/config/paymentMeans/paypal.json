@@ -1,65 +1,65 @@
 [
     {
-        "type":"Ext.form.field.Text",
-        "config":{
-            "fieldLabel":"Endpoint URI",
-            "name":"endpoint",
-            "allowBlank":false,
-            "allowOnlyWhitespace":false
+        "type": "Ext.form.field.Text",
+        "config": {
+            "fieldLabel": "Endpoint URI",
+            "name": "endpoint",
+            "allowBlank": false,
+            "allowOnlyWhitespace": false
         }
     },
     {
-        "type":"Ext.form.field.Text",
-        "config":{
-            "fieldLabel":"Customer redirect URI",
-            "name":"customerRedirect",
-            "allowBlank":false,
-            "allowOnlyWhitespace":false
+        "type": "Ext.form.field.Text",
+        "config": {
+            "fieldLabel": "Customer redirect URI",
+            "name": "customerRedirect",
+            "allowBlank": false,
+            "allowOnlyWhitespace": false
         }
     },
     {
-        "type":"Ext.form.field.Text",
-        "config":{
-            "fieldLabel":"User ID",
-            "name":"userID",
-            "allowBlank":false,
-            "allowOnlyWhitespace":false
+        "type": "Ext.form.field.Text",
+        "config": {
+            "fieldLabel": "User ID",
+            "name": "userID",
+            "allowBlank": false,
+            "allowOnlyWhitespace": false
         }
     },
     {
-        "type":"Ext.form.field.Text",
-        "config":{
-            "fieldLabel":"User password",
-            "name":"userPassword",
-            "allowBlank":false,
-            "allowOnlyWhitespace":false
+        "type": "Ext.form.field.Text",
+        "config": {
+            "fieldLabel": "User password",
+            "name": "userPassword",
+            "allowBlank": false,
+            "allowOnlyWhitespace": false
         }
     },
     {
-        "type":"Ext.form.field.Text",
-        "config":{
-            "fieldLabel":"User signature",
-            "name":"userSignature",
-            "allowBlank":false,
-            "allowOnlyWhitespace":false
+        "type": "Ext.form.field.Text",
+        "config": {
+            "fieldLabel": "User signature",
+            "name": "userSignature",
+            "allowBlank": false,
+            "allowOnlyWhitespace": false
         }
     },
     {
-        "type":"Ext.form.field.Text",
-        "config":{
-            "fieldLabel":"Application ID",
-            "name":"applicationID",
-            "allowBlank":false,
-            "allowOnlyWhitespace":false
+        "type": "Ext.form.field.Text",
+        "config": {
+            "fieldLabel": "Application ID",
+            "name": "applicationID",
+            "allowBlank": false,
+            "allowOnlyWhitespace": false
         }
     },
     {
-        "type":"Ext.form.field.Text",
-        "config":{
-            "fieldLabel":"User email",
-            "name":"userEmail",
-            "allowBlank":false,
-            "allowOnlyWhitespace":false
+        "type": "Ext.form.field.Text",
+        "config": {
+            "fieldLabel": "User email",
+            "name": "userEmail",
+            "allowBlank": false,
+            "allowOnlyWhitespace": false
         }
     }
 ]

@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -77,35 +77,35 @@ class JsonExceptionStrategy extends ExceptionStrategy
      * Create an exception json view model, and set the HTTP status code
      *
      *
-     * @param MvcEvent $e            
+     * @param MvcEvent $e
      * @return void
      */
     public function prepareExceptionViewModel(MvcEvent $e)
     {
         // Do nothing if no error in the event
-        if (! ($error = $e->getError())) {
+        if (!($error = $e->getError())) {
             return;
         }
-        
+
         // Do nothing if the result is a response object
         $result = $e->getResult();
         if ($result instanceof HttpResponse) {
             return;
         }
-        
+
         if ($error != Application::ERROR_EXCEPTION) {
             return;
         }
-        
-        if (! $e->getRequest() instanceof Request) {
+
+        if (!$e->getRequest() instanceof Request) {
             return;
         }
-        if (! ($exception = $e->getParam('exception'))) {
+        if (!($exception = $e->getParam('exception'))) {
             return;
         }
-        
+
         $response = $e->getResponse();
-        if (! $response) {
+        if (!$response) {
             $response = new HttpResponse();
             $e->setResponse($response);
         }
@@ -123,7 +123,7 @@ class JsonExceptionStrategy extends ExceptionStrategy
                 $response->setStatusCode(500);
                 break;
         }
-        
+
         if ($response->getStatusCode() != 200) {
             $serverParams = $e->getRequest()->getServer();
             $context = array(
@@ -135,27 +135,25 @@ class JsonExceptionStrategy extends ExceptionStrategy
                 'class' => get_class($exception),
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine()
-            )
-            ;
-            if ($response->getStatusCode() == 500) {               
+            );
+            if ($response->getStatusCode() == 500) {
                 Manager::getService('Logger')->error($exception->getMessage(), $context);
-            }elseif ($response->getStatusCode() == 403) {
+            } elseif ($response->getStatusCode() == 403) {
                 Manager::getService('SecurityLogger')->error($exception->getMessage(), $context);
-            }else{
+            } else {
                 Manager::getService('Logger')->error($exception->getMessage(), $context);
             }
         }
-        
-        
-        
-        if (! $e->getRequest()->isXmlHttpRequest() && ! Context::getExpectJson()) {
+
+
+        if (!$e->getRequest()->isXmlHttpRequest() && !Context::getExpectJson()) {
             return;
         }
-        
+
         $modelData = $this->serializeException($exception);
         $e->setResult(new JsonModel($modelData));
         $e->setError(false);
-        
+
         $response->getHeaders()->addHeaders(array(
             ContentType::fromString('Content-type: application/json')
         ));
@@ -170,7 +168,7 @@ class JsonExceptionStrategy extends ExceptionStrategy
             $data['file'] = $exception->getFile();
             $data['line'] = $exception->getLine();
         }
-        
+
         return $data;
     }
 }

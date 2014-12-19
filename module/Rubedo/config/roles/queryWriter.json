@@ -1,16 +1,16 @@
 {
-    "id":"queryWriter",
-    "label":{
-    	"fr":"Edition des requettes",
-    	"en":"Can write queries"
+    "id": "queryWriter",
+    "label": {
+        "fr": "Edition des requettes",
+        "en": "Can write queries"
     },
-    "rights":[
+    "rights": [
         "write.ui.queries",
         "execute.controller.queries.create.backoffice",
         "execute.controller.queries.delete.backoffice",
         "execute.controller.queries.update.backoffice"
     ],
-    "includes":[
+    "includes": [
         "queryReader"
     ]
 }

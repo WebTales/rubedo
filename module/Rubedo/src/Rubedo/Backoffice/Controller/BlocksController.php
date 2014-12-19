@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -27,7 +27,7 @@ use Zend\View\Model\JsonModel;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class BlocksController extends AbstractActionController
 {
@@ -37,7 +37,7 @@ class BlocksController extends AbstractActionController
      */
     function indexAction()
     {
-        
+
         $value = Manager::getService('Blocks')->getGlobalBlocksJson();
         return new JsonModel($value);
     }

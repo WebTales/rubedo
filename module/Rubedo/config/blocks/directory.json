@@ -1,136 +1,136 @@
 {
-	"type":"#ext-gen1417#",
-	"description":"#ext-gen1426#",
-	"configBasique":{
-		"title":"#ext-gen1417#",
-		"bType":"directory",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
-				{
-					"categorie":"#ext-gen1063#",
-					"champs":[
-					    {
-							"type":"Ext.form.field.Checkbox",
-							"config":{
-								"fieldLabel":"#ext-gen1064#",
-								"name":"activateSearch",
-								"inputValue":true
-							}
-						},
-						{
-							"type":"Ext.form.field.Checkbox",
-							"config":{
-								"fieldLabel":"#ext-gen1418#",
-								"name":"alphabeticIndex",
-								"inputValue":true
-							}
-						},
-						{
-							"type":"Ext.form.field.ComboBox",
-							"isAutoStored":true,
-							"autoStoreData":[
-								{
-									"value":"list",
-									"label":"#ext-gen1419#"
-								},
-								{
-									"value":"vcard",
-									"label":"#ext-gen1420#"
-								}
-							],
-							"config":{
-								"fieldLabel":"#ext-gen1421#",
-								"name":"userDisplayMode",
-								"editable":false,
-								"forceSelection":true,
-								"queryMode":"local"
-							}
-						},
-						{
-							"type":"Rubedo.view.ESQfield",
-							"config":{
-								"fieldLabel":"#ext-gen1056#",
-								"advancedESQMode":true,
-								"userQueryMode":true,
-								"queryMode":false,
-								"geoQueryMode":false,
-								"damQueryMode":false,
-								"name":"predefinedFacets"
-							}
-						},
-						{
-							"type":"Ext.form.field.Hidden",
-							"config":{
-								"fieldLabel":"#ext-gen1371#",
-								"itemId":"displayedFacetsBrotherField",
-								"name":"displayedFacets"
-							}
-						},
-						{
-							"type":"Ext.ux.TreePicker",
-							"config":{
-								"fieldLabel":"#ext-gen1409#",
-								"name":"profilePage"
-							}
-						}
-					]
-				}
-			],
-			"avance":[
-				{
-					"categorie":"#ext-gen1372#",
-					"champs":[
-						{
-							"type":"Ext.form.field.ComboBox",
-							"isAutoStored":true,
-							"autoStoreData":[
-								{
-									"value":"default",
-									"label":"#ext-gen1375#"
-								},
-								{
-									"value":"checkbox",
-									"label":"#ext-gen1376#"
-								}
-							],
-							"config":{
-								"fieldLabel":"#ext-gen1374#",
-								"name":"displayMode",
-								"editable":false,
-								"forceSelection":true,
-								"queryMode":"local"
-							}
-						}
-					]
-				},
+    "type": "#ext-gen1417#",
+    "description": "#ext-gen1426#",
+    "configBasique": {
+        "title": "#ext-gen1417#",
+        "bType": "directory",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
                 {
-                    "categorie":"Template",
-                    "champs":[
+                    "categorie": "#ext-gen1063#",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Custom template",
-                                "name":"customTemplate",
-                                "defaultTemplateUrl":"blocks/directory.html",
-                                "twigMode":false
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1064#",
+                                "name": "activateSearch",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1418#",
+                                "name": "alphabeticIndex",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.ComboBox",
+                            "isAutoStored": true,
+                            "autoStoreData": [
+                                {
+                                    "value": "list",
+                                    "label": "#ext-gen1419#"
+                                },
+                                {
+                                    "value": "vcard",
+                                    "label": "#ext-gen1420#"
+                                }
+                            ],
+                            "config": {
+                                "fieldLabel": "#ext-gen1421#",
+                                "name": "userDisplayMode",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local"
+                            }
+                        },
+                        {
+                            "type": "Rubedo.view.ESQfield",
+                            "config": {
+                                "fieldLabel": "#ext-gen1056#",
+                                "advancedESQMode": true,
+                                "userQueryMode": true,
+                                "queryMode": false,
+                                "geoQueryMode": false,
+                                "damQueryMode": false,
+                                "name": "predefinedFacets"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Hidden",
+                            "config": {
+                                "fieldLabel": "#ext-gen1371#",
+                                "itemId": "displayedFacetsBrotherField",
+                                "name": "displayedFacets"
+                            }
+                        },
+                        {
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1409#",
+                                "name": "profilePage"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "avance": [
+                {
+                    "categorie": "#ext-gen1372#",
+                    "champs": [
+                        {
+                            "type": "Ext.form.field.ComboBox",
+                            "isAutoStored": true,
+                            "autoStoreData": [
+                                {
+                                    "value": "default",
+                                    "label": "#ext-gen1375#"
+                                },
+                                {
+                                    "value": "checkbox",
+                                    "label": "#ext-gen1376#"
+                                }
+                            ],
+                            "config": {
+                                "fieldLabel": "#ext-gen1374#",
+                                "name": "displayMode",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "categorie": "Template",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/directory.html",
+                                "twigMode": false
 
                             }
                         }
                     ]
                 }
-			]
-		},
-		"configBloc":{
-			"displayedFacets":"['all']",
-			"displayMode":"default",
-			"autoComplete":false,
-			"activateSearch":true,
-			"alphabeticIndex":true,
-			"userDisplayMode":"list"
-		}
-	},
-	"category":"#ext-gen1211#",
-	"bType":"directory",
-	"id":"506441f8c24074d501580197"
+            ]
+        },
+        "configBloc": {
+            "displayedFacets": "['all']",
+            "displayMode": "default",
+            "autoComplete": false,
+            "activateSearch": true,
+            "alphabeticIndex": true,
+            "userDisplayMode": "list"
+        }
+    },
+    "category": "#ext-gen1211#",
+    "bType": "directory",
+    "id": "506441f8c24074d501580197"
 }

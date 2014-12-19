@@ -6,7 +6,8 @@ use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\Authentication\Result;
 
-class CoreAdapter extends AbstractAdapter {
+class CoreAdapter extends AbstractAdapter
+{
 
     /**
      * submited password
@@ -35,7 +36,7 @@ class CoreAdapter extends AbstractAdapter {
      * @throws Zend_Auth_Adapter_Exception If authentication cannot be performed
      * @return Zend_Auth_Result
      */
-    public function authenticate ()
+    public function authenticate()
     {
         $dataService = Manager::getService('MongoDataAccess');
         $dataService->init('Users');
@@ -79,22 +80,22 @@ class CoreAdapter extends AbstractAdapter {
         $valid = $hashService->checkPassword($targetHash, $this->_password, $salt);
 
         $currentTime = Manager::getService('CurrentTime')->getCurrentTime();
-        if ($valid && isset($user['startValidity']) && ! empty($user['startValidity'])) {
+        if ($valid && isset($user['startValidity']) && !empty($user['startValidity'])) {
             $valid = $valid && ($user['startValidity'] <= $currentTime);
-            if (! $valid) {
+            if (!$valid) {
                 $this->_authenticateResultInfo['messages'][] = 'User account is not yet active';
             }
         }
 
-        if ($valid && isset($user['endValidity']) && ! empty($user['endValidity'])) {
+        if ($valid && isset($user['endValidity']) && !empty($user['endValidity'])) {
             $valid = $valid && ($user['endValidity'] > $currentTime);
-            if (! $valid) {
+            if (!$valid) {
                 $this->_authenticateResultInfo['messages'][] = 'User account is no longer active';
             }
         }
-        if ($valid && isset($user['status']) && ! empty($user['status'])) {
-            $valid = $valid && ($user['status']=="approved");
-            if (! $valid) {
+        if ($valid && isset($user['status']) && !empty($user['status'])) {
+            $valid = $valid && ($user['status'] == "approved");
+            if (!$valid) {
                 $this->_authenticateResultInfo['messages'][] = 'User account has not been activated';
             }
         }
@@ -118,12 +119,12 @@ class CoreAdapter extends AbstractAdapter {
      * @param $password string password
      * @throws \Rubedo\Exceptions\Server
      */
-    public function __construct ($name, $password)
+    public function __construct($name, $password)
     {
-        if (! is_string($name)) {
+        if (!is_string($name)) {
             throw new Server('$name should be a string', "Exception40", '$name');
         }
-        if (! is_string($password)) {
+        if (!is_string($password)) {
             throw new Server('$password should be a string', "Exception40", '$password');
         }
         $this->_authenticateResultInfo['identity'] = null;
@@ -138,7 +139,7 @@ class CoreAdapter extends AbstractAdapter {
      *
      * @return Zend_Auth_Result
      */
-    protected function _authenticateCreateAuthResult ()
+    protected function _authenticateCreateAuthResult()
     {
         return new Result($this->_authenticateResultInfo['code'], $this->_authenticateResultInfo['identity'], $this->_authenticateResultInfo['messages']);
     }

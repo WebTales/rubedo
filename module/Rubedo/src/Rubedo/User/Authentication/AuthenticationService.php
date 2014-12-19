@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -100,7 +100,7 @@ class AuthenticationService extends ZendAuthenticationService implements IAuthen
      *            the login of the user
      * @param $password It's
      *            the password of the user
-     *            
+     *
      * @return bool
      */
     public function forceReAuth($login, $password)
@@ -116,7 +116,8 @@ class AuthenticationService extends ZendAuthenticationService implements IAuthen
      * @see \Rubedo\Interfaces\User\IAuthentication::resetExpirationTime()
      */
     public function resetExpirationTime()
-    {}
+    {
+    }
 
     /**
      * (non-PHPdoc)
@@ -124,7 +125,8 @@ class AuthenticationService extends ZendAuthenticationService implements IAuthen
      * @see \Rubedo\Interfaces\User\IAuthentication::getExpirationTime()
      */
     public function getExpirationTime()
-    {}
+    {
+    }
 
     /**
      *
@@ -137,7 +139,7 @@ class AuthenticationService extends ZendAuthenticationService implements IAuthen
 
     /**
      *
-     * @param number $_authLifetime            
+     * @param number $_authLifetime
      */
     public static function setAuthLifetime($_authLifetime)
     {
@@ -157,7 +159,7 @@ class AuthenticationService extends ZendAuthenticationService implements IAuthen
     {
         $authAdapter = new CoreAdapter($login, $password);
         $result = parent::authenticate($authAdapter);
-        if (! $result->isValid()) {
+        if (!$result->isValid()) {
             Events::getEventManager()->trigger(self::FAIL, null, array(
                 'login' => $login,
                 'error' => $result->getMessages()

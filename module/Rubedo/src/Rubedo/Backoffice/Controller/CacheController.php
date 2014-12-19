@@ -7,12 +7,12 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
  * @copyright  Copyright (c) 2012-2014 WebTales (http://www.webtales.fr)
-  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
+ * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Backoffice\Controller;
 
@@ -28,7 +28,7 @@ use Rubedo\Update\Install;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class CacheController extends AbstractActionController
 {
@@ -46,7 +46,7 @@ class CacheController extends AbstractActionController
      * Return the content of the collection, get filters from the request
      * params, get sort from request params
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $countArray = array();
         $countArray['cachedItems'] = Manager::getService('Cache')->count();
@@ -54,7 +54,7 @@ class CacheController extends AbstractActionController
         return new JsonModel($countArray);
     }
 
-    public function clearAction ()
+    public function clearAction()
     {
         $installObject = new Install();
         $installObject->clearConfigCache();

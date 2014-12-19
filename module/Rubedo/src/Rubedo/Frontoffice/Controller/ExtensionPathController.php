@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -28,11 +28,11 @@ class ExtensionPathController extends AbstractActionController
         $filePath = $this->params()->fromRoute('filepath');
         $config = Manager::getService('Application')->getConfig();
         if (
-            !isset (
-                $config['extension_paths'],
-                $config['extension_paths'][$name],
-                $config['extension_paths'][$name]['path']
-            )
+        !isset (
+            $config['extension_paths'],
+            $config['extension_paths'][$name],
+            $config['extension_paths'][$name]['path']
+        )
         ) {
             throw new \Rubedo\Exceptions\NotFound('File does not exist');
         }
@@ -62,7 +62,7 @@ class ExtensionPathController extends AbstractActionController
         );
 
         $response->getHeaders()->addHeaders($headers);
-        
+
         $response->setStream($stream);
         return $response;
     }

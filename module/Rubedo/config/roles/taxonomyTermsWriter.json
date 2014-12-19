@@ -1,16 +1,16 @@
 {
-    "id":"taxonomyTermsWriter",
-    "label":{
-    	"fr":"Edition des termes de taxonomie",
-    	"en":"Can write taxonomy terms"
+    "id": "taxonomyTermsWriter",
+    "label": {
+        "fr": "Edition des termes de taxonomie",
+        "en": "Can write taxonomy terms"
     },
-    "rights":[
+    "rights": [
         "write.ui.taxonomyTerms",
         "execute.controller.taxonomyterms.create.backoffice",
         "execute.controller.taxonomyterms.update.backoffice",
         "execute.controller.taxonomyterms.delete.backoffice"
     ],
-    "includes":[
+    "includes": [
         "taxonomyReader"
     ]
 }

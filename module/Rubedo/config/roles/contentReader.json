@@ -1,10 +1,10 @@
 {
-    "id":"contentReader",
-    "label":{
-    	"fr":"Consultation des contenus",
-    	"en":"Can read contents"
+    "id": "contentReader",
+    "label": {
+        "fr": "Consultation des contenus",
+        "en": "Can read contents"
     },
-    "rights":[
+    "rights": [
         "read.ui.contents",
         "execute.controller.contents.index.backoffice",
         "execute.controller.contents.find-one.backoffice",

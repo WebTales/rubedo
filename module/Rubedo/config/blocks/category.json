@@ -1,97 +1,97 @@
 {
-	"type":"#ext-gen1432#",
-	"description":"",
-    "isECommerce":true,
-	"configBasique":{
-		"title":"#ext-gen1432#",
-		"bType":"category",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
-				{
-					"categorie":"#ext-gen1143#",
-					"champs":[
+    "type": "#ext-gen1432#",
+    "description": "",
+    "isECommerce": true,
+    "configBasique": {
+        "title": "#ext-gen1432#",
+        "bType": "category",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
+                {
+                    "categorie": "#ext-gen1143#",
+                    "champs": [
                         {
-                            "type":"Ext.ux.TreePicker",
-                            "config":{
-                                "fieldLabel":"#ext-gen1288#",
-                                "name":"rootPage"
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1288#",
+                                "name": "rootPage"
                             }
                         },
                         {
-                            "type":"Ext.form.field.Number",
-                            "config":{
-                                "fieldLabel":"#ext-gen1290#",
-                                "name":"menuLevel",
-                                "allowDecimals":false,
-                                "editable":false,
-                                "minValue":0
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1290#",
+                                "name": "menuLevel",
+                                "allowDecimals": false,
+                                "editable": false,
+                                "minValue": 0
                             }
                         },
                         {
-                            "type":"Ext.form.field.Number",
-                            "config":{
-                                "fieldLabel":"#ext-gen1114#",
-                                "name":"nbOfColumns",
-                                "allowDecimals":false,
-                                "editable":false,
-                                "maxValue":4,
-                                "minValue":0
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1114#",
+                                "name": "nbOfColumns",
+                                "allowDecimals": false,
+                                "editable": false,
+                                "maxValue": 4,
+                                "minValue": 0
                             }
                         },
                         {
-                            "type":"Ext.form.field.Number",
-                            "config":{
-                                "fieldLabel":"#ext-gen1204#",
-                                "name":"imageWidth",
-                                "allowDecimals":false,
-                                "minValue":0
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1204#",
+                                "name": "imageWidth",
+                                "allowDecimals": false,
+                                "minValue": 0
                             }
                         },
                         {
-                            "type":"Ext.form.field.Number",
-                            "config":{
-                                "fieldLabel":"#ext-gen1205#",
-                                "name":"imageHeight",
-                                "allowDecimals":false,
-                                "minValue":0
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1205#",
+                                "name": "imageHeight",
+                                "allowDecimals": false,
+                                "minValue": 0
                             }
                         },
                         {
-                            "type":"Ext.form.field.Checkbox",
-                            "config":{
-                                "fieldLabel":"#ext-gen1433#",
-                                "name":"showLevel2Categories",
-                                "inputValue":true
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1433#",
+                                "name": "showLevel2Categories",
+                                "inputValue": true
                             }
                         }
-					]
-				}
-			],
-			"avance":[
-				{
-					"categorie":"#ext-gen1072#",
-					"champs":[
-						{
-							"type":"Ext.form.field.Text",
-							"config":{
-								"fieldLabel":"#ext-gen1082#",
-								"name":"displayType"
-							}
-						}
-					]
-				}
-			]
-		},
-		"configBloc":{
-			"showLevel2Categories":false,
-            "nbOfColumns":1,
-            "menuLevel":1,
-            "imageWidth":100,
-            "imageHeight":100
-		}
-	},
-	"category":"#ext-gen1431#",
-	"bType":"category",
-	"id":"52f4b823f05c1d801b000002"
+                    ]
+                }
+            ],
+            "avance": [
+                {
+                    "categorie": "#ext-gen1072#",
+                    "champs": [
+                        {
+                            "type": "Ext.form.field.Text",
+                            "config": {
+                                "fieldLabel": "#ext-gen1082#",
+                                "name": "displayType"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "configBloc": {
+            "showLevel2Categories": false,
+            "nbOfColumns": 1,
+            "menuLevel": 1,
+            "imageWidth": 100,
+            "imageHeight": 100
+        }
+    },
+    "category": "#ext-gen1431#",
+    "bType": "category",
+    "id": "52f4b823f05c1d801b000002"
 }

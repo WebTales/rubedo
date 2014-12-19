@@ -38,7 +38,7 @@ class Update020200 extends Update
      *
      * @return boolean
      */
-    public static function upgrade ()
+    public static function upgrade()
     {
         return true;
     }

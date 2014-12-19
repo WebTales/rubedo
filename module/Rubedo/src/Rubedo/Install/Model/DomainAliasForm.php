@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -18,6 +18,7 @@ namespace Rubedo\Install\Model;
 
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
+
 /**
  * Form for DB Config
  *
@@ -27,22 +28,23 @@ use Zend\Form\Form;
  */
 class DomainAliasForm extends BootstrapForm
 {
-    public static function getForm(){
-               
+    public static function getForm()
+    {
+
         $domainField = (new Text('domain'))
-            ->setAttribute('Required',true)
+            ->setAttribute('Required', true)
             ->setLabel('Site domain')
             ->setAttribute('class', 'form-control');
-        
+
         $localDomainField = (new Text('localDomain'))
-            ->setAttribute('Required',true)
+            ->setAttribute('Required', true)
             ->setLabel('Local domain')
             ->setAttribute('class', 'form-control');
-        
+
         $dbForm = (new Form())
             ->add($domainField)
             ->add($localDomainField);
-        
+
         return self::setForm($dbForm);
     }
 }

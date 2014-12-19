@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -31,7 +31,7 @@ use Zend\View\Model\JsonModel;
  * @author jbourdin
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class AclController extends AbstractActionController
 {
@@ -45,13 +45,13 @@ class AclController extends AbstractActionController
         $AclArray = array();
         $dataJson = $this->params()->fromPost('data');
         if (isset($dataJson)) {
-            $dataArray = Json::decode($dataJson,Json::TYPE_ARRAY);
+            $dataArray = Json::decode($dataJson, Json::TYPE_ARRAY);
             if (is_array($dataArray)) {
                 $aclService = Manager::getService('Acl');
                 $AclArray = $aclService->accessList(array_keys($dataArray));
             }
         }
-        
+
         return new JsonModel($AclArray);
     }
 }

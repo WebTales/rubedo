@@ -165,7 +165,7 @@ class PagesResource extends AbstractResource
         $lastMatchedNode['blocks'] = $this->getBlocksCollection()->getListByPage($lastMatchedNode['id'])['data'];
 
         //Translate block titles
-        foreach($lastMatchedNode["blocks"] as $keyBlock => $block) {
+        foreach ($lastMatchedNode["blocks"] as $keyBlock => $block) {
             $lastMatchedNode["blocks"][$keyBlock]["blockData"] = $this->localizeTitle($block["blockData"]);
         }
 
@@ -173,9 +173,9 @@ class PagesResource extends AbstractResource
         foreach ($site['languages'] as $lang) {
             $localeDetail = $this->getLanguagesCollection()->findByLocale($lang);
 
-            if(isset($localeDetail['ownLabel']) && !empty($localeDetail['ownLabel'])) {
+            if (isset($localeDetail['ownLabel']) && !empty($localeDetail['ownLabel'])) {
                 $label = $localeDetail['ownLabel'];
-            } elseif(isset($localeDetail['label']) && !empty($localeDetail['label'])) {
+            } elseif (isset($localeDetail['label']) && !empty($localeDetail['label'])) {
                 $label = $localeDetail['label'];
             } else {
                 $label = $lang;
@@ -216,15 +216,15 @@ class PagesResource extends AbstractResource
                 }
             }
         }
-        $termColumn = (!empty($mainColumn))?$mainColumn:null;
+        $termColumn = (!empty($mainColumn)) ? $mainColumn : null;
         $lastMatchedNode['rows'] = array_replace_recursive($mask['rows'], $this->getRowsInfos($blocks, $mask['rows'], $termColumn));
-        if(!isset($lastMatchedNode['title'])){
-            $lastMatchedNode['title'] = isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'])?
-                $lastMatchedNode['i18n'][$params['lang']->getLocale()]['title']:$lastMatchedNode['i18n'][$params['lang']->getFallback()]['title'];
+        if (!isset($lastMatchedNode['title'])) {
+            $lastMatchedNode['title'] = isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title']) ?
+                $lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'] : $lastMatchedNode['i18n'][$params['lang']->getFallback()]['title'];
         }
-        if(!isset($lastMatchedNode['description'])){
-            $lastMatchedNode['description'] = isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'])?
-                $lastMatchedNode['i18n'][$params['lang']->getLocale()]['description']:$lastMatchedNode['i18n'][$params['lang']->getFallback()]['description'];
+        if (!isset($lastMatchedNode['description'])) {
+            $lastMatchedNode['description'] = isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title']) ?
+                $lastMatchedNode['i18n'][$params['lang']->getLocale()]['description'] : $lastMatchedNode['i18n'][$params['lang']->getFallback()]['description'];
         }
         $output = array(
             'success' => true,
@@ -271,7 +271,7 @@ class PagesResource extends AbstractResource
     protected function outputSiteMask($output)
     {
         $output['host'] = $output['text'];
-        $mask = ['id', 'host', 'alias', 'description', 'keywords', 'defaultLanguage', 'languages', 'locale', 'locStrategy', 'homePage', 'author','disqusKey','iframelyKey'];
+        $mask = ['id', 'host', 'alias', 'description', 'keywords', 'defaultLanguage', 'languages', 'locale', 'locStrategy', 'homePage', 'author', 'disqusKey', 'iframelyKey'];
         return array_intersect_key($output, array_flip($mask));
     }
 

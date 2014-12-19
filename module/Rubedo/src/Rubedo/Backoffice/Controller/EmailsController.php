@@ -82,8 +82,8 @@ class EmailsController extends DataAccessController
         $allSendResult = true;
         $count = 0;
         foreach ($users['data'] as $user) {
-            $index = (int) floor($count++/static::NUM_BY_MAIL);
-            $to[$index][$user['email']] = ($user['name']) ? : $user['login'];
+            $index = (int)floor($count++ / static::NUM_BY_MAIL);
+            $to[$index][$user['email']] = ($user['name']) ?: $user['login'];
         }
 
         $html = $this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"], true);

@@ -302,7 +302,7 @@ class FilterDefinitionEntity implements JsonSerializable
         if ($this->isMultivalued())
             $options[] = 'multivalued';
         if (!empty($options))
-            $array['options'] = & $options;
+            $array['options'] = &$options;
         return $array;
     }
 }

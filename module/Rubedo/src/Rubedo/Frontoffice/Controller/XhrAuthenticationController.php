@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -60,7 +60,7 @@ class XhrAuthenticationController extends AbstractActionController
         $login = $this->params()->fromPost('login');
         $password = $this->params()->fromPost('password');
         if ($this->getRequest()->isPost()) {
-            if (! empty($login) && ! empty($password)) {
+            if (!empty($login) && !empty($password)) {
                 try {
                     $this->_auth->coreAuthenticate($login, $password);
                     $response['success'] = true;
@@ -89,7 +89,7 @@ class XhrAuthenticationController extends AbstractActionController
     public function logoutAction()
     {
         $this->_auth->clearIdentity();
-        
+
         $response['success'] = true;
         return new JsonModel($response);
     }
@@ -103,7 +103,7 @@ class XhrAuthenticationController extends AbstractActionController
          * @var $currentUserService \Rubedo\Interfaces\User\ICurrentUser
          */
         $currentUserService = Manager::getService('CurrentUser');
-        
+
         if (!$currentUserService->isAuthenticated()) {
             $response['loggedIn'] = false;
         } else {
@@ -111,7 +111,7 @@ class XhrAuthenticationController extends AbstractActionController
             $user = $currentUserService->getCurrentUserSummary();
             $response['username'] = $user['login'];
         }
-        
+
         return new JsonModel($response);
     }
 
@@ -158,12 +158,13 @@ class XhrAuthenticationController extends AbstractActionController
         return new JsonModel($output);
     }
 
-    public function setFingerprintAction(){
-        $fingerprint=$this->params()->fromPost("fingerprint", null);
-        if (!$fingerprint){
-            return new JsonModel(array("success"=>false));
+    public function setFingerprintAction()
+    {
+        $fingerprint = $this->params()->fromPost("fingerprint", null);
+        if (!$fingerprint) {
+            return new JsonModel(array("success" => false));
         }
-        Manager::getService("Session")->set("fingerprint",$fingerprint);
-        return new JsonModel(array("success"=>true));
+        Manager::getService("Session")->set("fingerprint", $fingerprint);
+        return new JsonModel(array("success" => true));
     }
 }

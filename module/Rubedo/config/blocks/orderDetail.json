@@ -1,24 +1,19 @@
 {
-	"type":"#ext-gen1437#",
-	"description":"",
-    "isECommerce":true,
-	"configBasique":{
-		"title":"#ext-gen1437#",
-		"bType":"orderDetail",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
+    "type": "#ext-gen1437#",
+    "description": "",
+    "isECommerce": true,
+    "configBasique": {
+        "title": "#ext-gen1437#",
+        "bType": "orderDetail",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [],
+            "avance": []
+        },
+        "configBloc": {}
 
-			],
-			"avance":[
-
-			]
-		},
-		"configBloc":{
-        }
-
-	},
-	"category":"#ext-gen1431#",
-	"bType":"orderDetail",
-	"id":"53319f17f05c1d2c1e000010"
+    },
+    "category": "#ext-gen1431#",
+    "bType": "orderDetail",
+    "id": "53319f17f05c1d2c1e000010"
 }

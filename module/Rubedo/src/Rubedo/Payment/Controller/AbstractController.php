@@ -61,15 +61,15 @@ abstract class AbstractController extends AbstractActionController
         if (empty($this->paymentMeans)) {
             throw new \Rubedo\Exceptions\Server("Payment means name is not set");
         }
-        $pmConfig=Manager::getService("PaymentConfigs")->getConfigForPM($this->paymentMeans);
-        if (!$pmConfig['success']){
+        $pmConfig = Manager::getService("PaymentConfigs")->getConfigForPM($this->paymentMeans);
+        if (!$pmConfig['success']) {
             throw new \Rubedo\Exceptions\Server("Unable to retrieve payment means config config");
         }
-        if (!$pmConfig['data']['active']){
+        if (!$pmConfig['data']['active']) {
             throw new \Rubedo\Exceptions\Server("Payment means is not activated");
         }
-        $this->nativePMConfig=$pmConfig['data']['nativePMConfig'];
-        $this->ordersService=Manager::getService("Orders");
+        $this->nativePMConfig = $pmConfig['data']['nativePMConfig'];
+        $this->ordersService = Manager::getService("Orders");
     }
 
     protected function getParamFromQuery($name = null, $default = null)
@@ -107,19 +107,21 @@ abstract class AbstractController extends AbstractActionController
         return $viewModel;
     }
 
-    protected function initOrder (){
-        $orderId=$this->params()->fromPost("order-id", null);
+    protected function initOrder()
+    {
+        $orderId = $this->params()->fromPost("order-id", null);
         if (empty($orderId)) {
             throw new \Rubedo\Exceptions\Server("Missing order param");
         }
-        $order=$this->ordersService->findById($orderId);
+        $order = $this->ordersService->findById($orderId);
         if (empty($order)) {
             throw new \Rubedo\Exceptions\Server("Order not found");
         }
-        $this->currentOrder=$order;
+        $this->currentOrder = $order;
     }
 
-    protected function getOrderPrice (){
+    protected function getOrderPrice()
+    {
         if (empty($this->currentOrder)) {
             throw new \Rubedo\Exceptions\Server("Order not set");
         }

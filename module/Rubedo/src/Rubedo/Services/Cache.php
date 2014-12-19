@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -42,9 +42,9 @@ class Cache
     /**
      * Setter of services parameters, to init them from bootstrap
      *
-     * @param array $options            
+     * @param array $options
      */
-    public static function setOptions ($options)
+    public static function setOptions($options)
     {
         self::$_cacheOptions = $options;
     }
@@ -54,7 +54,7 @@ class Cache
      *
      * @return array array of all the services
      */
-    public static function getOptions ()
+    public static function getOptions()
     {
         return self::$_cacheOptions;
     }
@@ -66,29 +66,29 @@ class Cache
      *            name of the cache called
      * @return StorageFactory instance of the cache
      */
-    public static function getCache ($cacheName = null)
+    public static function getCache($cacheName = null)
     {
         $cache = StorageFactory::factory(array(
             'adapter' => 'Rubedo\\Cache\\MongoCache'
         ));
-        
+
         return $cache;
     }
 
     /**
      * Listener for event on cachable results
      *
-     * @param EventInterface $e            
+     * @param EventInterface $e
      * @return mixed NULL
      */
-    public static function getFromCache (EventInterface $e)
+    public static function getFromCache(EventInterface $e)
     {
         $params = $e->getParams();
-        if (! isset($params['key'])) {
+        if (!isset($params['key'])) {
             throw new Server('This function should receive a key parameter');
         }
         $key = $params['key'];
-        
+
         $cache = Cache::getCache();
         $loaded = false;
         $result = $cache->getItem($key, $loaded);
@@ -103,15 +103,15 @@ class Cache
     /**
      * listener for event to cache current result
      *
-     * @param EventInterface $e            
+     * @param EventInterface $e
      */
-    public static function setToCache (EventInterface $e)
+    public static function setToCache(EventInterface $e)
     {
         $params = $e->getParams();
-        if (! isset($params['key'])) {
+        if (!isset($params['key'])) {
             throw new Server('This function should receive a key parameter');
         }
-        if (! isset($params['result'])) {
+        if (!isset($params['result'])) {
             throw new Server('This function should receive a result parameter');
         }
         $key = $params['key'];
@@ -125,12 +125,12 @@ class Cache
      *
      * Will log the hit and miss
      *
-     * @param EventInterface $e            
+     * @param EventInterface $e
      */
-    public static function logCacheHit (EventInterface $e)
+    public static function logCacheHit(EventInterface $e)
     {
         $params = $e->getParams();
-        if (! isset($params['key'])) {
+        if (!isset($params['key'])) {
             throw new Server('This function should receive a key parameter');
         }
         $e->getName();

@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -15,6 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Payment\Controller;
+
 use Rubedo\Services\Manager;
 use Zend\Debug\Debug;
 use Zend\Json\Json;
@@ -35,92 +36,92 @@ class PaypalController extends AbstractController
     }
 
 
-    public function indexAction ()
+    public function indexAction()
     {
         $this->initOrder();
         $curl = curl_init();
-        curl_setopt($curl,CURLOPT_URL,$this->nativePMConfig['endpoint']);
-        $payload=array(
-            "actionType"=>"PAY",
-            "currencyCode"=>"EUR",
-            "receiverList"=>array(
-                "receiver"=>array(
+        curl_setopt($curl, CURLOPT_URL, $this->nativePMConfig['endpoint']);
+        $payload = array(
+            "actionType" => "PAY",
+            "currencyCode" => "EUR",
+            "receiverList" => array(
+                "receiver" => array(
                     array(
-                        "amount"=>$this->getOrderPrice(),
-                        "email"=>$this->nativePMConfig['userEmail']
+                        "amount" => $this->getOrderPrice(),
+                        "email" => $this->nativePMConfig['userEmail']
                     )
                 )
             ),
-            "returnUrl"=>"http://".$_SERVER['HTTP_HOST']."/payment/paypal/success",
-            "cancelUrl"=>"http://".$_SERVER['HTTP_HOST']."/payment/paypal/cancel",
-            "ipnNotificationUrl"=>"http://".$_SERVER['HTTP_HOST']."/payment/paypal/ipn",
-            "requestEnvelope"=>array(
-                "errorLanguage"=>"en_US",
-                "detailLevel"=>"ReturnAll"
+            "returnUrl" => "http://" . $_SERVER['HTTP_HOST'] . "/payment/paypal/success",
+            "cancelUrl" => "http://" . $_SERVER['HTTP_HOST'] . "/payment/paypal/cancel",
+            "ipnNotificationUrl" => "http://" . $_SERVER['HTTP_HOST'] . "/payment/paypal/ipn",
+            "requestEnvelope" => array(
+                "errorLanguage" => "en_US",
+                "detailLevel" => "ReturnAll"
             )
         );
-        $payload=Json::encode($payload);
+        $payload = Json::encode($payload);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                'Content-type: application/json',
-                'Content-Length: ' . strlen($payload),
-                'X-PAYPAL-SECURITY-USERID: '.$this->nativePMConfig['userID'],
-                'X-PAYPAL-SECURITY-PASSWORD: '.$this->nativePMConfig['userPassword'],
-                'X-PAYPAL-SECURITY-SIGNATURE: '.$this->nativePMConfig['userSignature'],
-                'X-PAYPAL-APPLICATION-ID: '.$this->nativePMConfig['applicationID'],
-                'X-PAYPAL-REQUEST-DATA-FORMAT: JSON',
-                'X-PAYPAL-RESPONSE-DATA-FORMAT: JSON'
+            'Content-type: application/json',
+            'Content-Length: ' . strlen($payload),
+            'X-PAYPAL-SECURITY-USERID: ' . $this->nativePMConfig['userID'],
+            'X-PAYPAL-SECURITY-PASSWORD: ' . $this->nativePMConfig['userPassword'],
+            'X-PAYPAL-SECURITY-SIGNATURE: ' . $this->nativePMConfig['userSignature'],
+            'X-PAYPAL-APPLICATION-ID: ' . $this->nativePMConfig['applicationID'],
+            'X-PAYPAL-REQUEST-DATA-FORMAT: JSON',
+            'X-PAYPAL-RESPONSE-DATA-FORMAT: JSON'
         ));
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload );
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        $result=curl_exec($curl);
+        $result = curl_exec($curl);
         curl_close($curl);
-        $result=Json::decode($result,Json::TYPE_ARRAY);
-        if ($result['responseEnvelope']['ack']!="Success"){
+        $result = Json::decode($result, Json::TYPE_ARRAY);
+        if ($result['responseEnvelope']['ack'] != "Success") {
             throw new \Rubedo\Exceptions\Server("Paykey retrieval error");
         }
-        $this->currentOrder['paypalPayKey']=$result["payKey"];
-        $updatedOrder=$this->ordersService->update($this->currentOrder);
-        if (!$updatedOrder['success']){
+        $this->currentOrder['paypalPayKey'] = $result["payKey"];
+        $updatedOrder = $this->ordersService->update($this->currentOrder);
+        if (!$updatedOrder['success']) {
             throw new \Rubedo\Exceptions\Server("Error updating order");
         }
-        $this->redirect()->toUrl($this->nativePMConfig['customerRedirect']."?cmd=_ap-payment&paykey=".$result["payKey"]);
+        $this->redirect()->toUrl($this->nativePMConfig['customerRedirect'] . "?cmd=_ap-payment&paykey=" . $result["payKey"]);
         return FALSE;
     }
 
-    public function successAction ()
+    public function successAction()
     {
         Debug::dump($this->params()->fromQuery());
         Debug::dump($this->params()->fromPost());
         die("test paypal payment success");
     }
 
-    public function cancelAction ()
+    public function cancelAction()
     {
         Debug::dump($this->params()->fromQuery());
         Debug::dump($this->params()->fromPost());
         die("test paypal payment cancel");
     }
 
-    public function ipnAction ()
+    public function ipnAction()
     {
-        $params=$this->params()->fromPost();
+        $params = $this->params()->fromPost();
         Manager::getService("PaypalIPN")->create(array(
-            "recievedParams"=>$params
+            "recievedParams" => $params
         ));
     }
 
     protected function extractParamsFromString($string)
     {
-        $explodedString=explode("&",$string);
-        $resultArray=array();
-        foreach($explodedString as $value){
-            $exploded=explode("=",$value);
-            $resultArray[$exploded[0]]=urldecode($exploded[1]);
+        $explodedString = explode("&", $string);
+        $resultArray = array();
+        foreach ($explodedString as $value) {
+            $exploded = explode("=", $value);
+            $resultArray[$exploded[0]] = urldecode($exploded[1]);
         }
-        return($resultArray);
+        return ($resultArray);
     }
 
 }

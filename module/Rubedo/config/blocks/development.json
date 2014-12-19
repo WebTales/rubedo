@@ -1,36 +1,33 @@
 {
-    "type":"#ext-gen1445#",
-    "description":"",
-    "configBasique":{
-        "title":"#ext-gen1445#",
-        "bType":"development",
-        "flex":1,
-        "champsConfig":{
-            "simple":[
+    "type": "#ext-gen1445#",
+    "description": "",
+    "configBasique": {
+        "title": "#ext-gen1445#",
+        "bType": "development",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
                 {
-                    "categorie":"Code",
-                    "champs":[
+                    "categorie": "Code",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Template",
-                                "name":"code",
-                                "twigMode":false
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Template",
+                                "name": "code",
+                                "twigMode": false
 
                             }
                         }
                     ]
                 }
             ],
-            "avance":[
-
-            ]
+            "avance": []
         },
-        "configBloc":{
-        }
+        "configBloc": {}
 
     },
-    "category":"#ext-gen1135#",
-    "bType":"development",
-    "id":"530f265ef05c1dd81b000000"
+    "category": "#ext-gen1135#",
+    "bType": "development",
+    "id": "530f265ef05c1dd81b000000"
 }

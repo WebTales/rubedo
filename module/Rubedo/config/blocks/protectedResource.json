@@ -1,65 +1,63 @@
 {
-	"type":"#ext-gen1257#",
-	"description":"#ext-gen1258#",
-	"configBasique":{
-		"title":"#ext-gen1257#",
-		"bType":"protectedResource",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
-				{
-					"categorie":"#ext-gen1063#",
-					"champs":[
-						{
-							"type":"Rubedo.view.MailingListPickerField",
-							"config":{
-								"fieldLabel":"#ext-gen1261#",
-								"name":"mailingListId"
-							}
-						},
-						{
-							"type":"Rubedo.view.ImagePickerField",
-							"config":{
-								"fieldLabel":"#ext-gen1254#",
-								"name":"documentId",
-								"smallMode":true
-							}
-						},
-						{
-							"type":"Rubedo.view.DCEField",
-							"config":{
-								"fieldLabel":"#ext-gen1255#",
-								"name":"introduction",
-								"allowedCT":"richText",
-								"addOnly":true
-							}
-						}
-					]
-				}
-			],
-			"avance":[
+    "type": "#ext-gen1257#",
+    "description": "#ext-gen1258#",
+    "configBasique": {
+        "title": "#ext-gen1257#",
+        "bType": "protectedResource",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
                 {
-                    "categorie":"Template",
-                    "champs":[
+                    "categorie": "#ext-gen1063#",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Custom template",
-                                "name":"customTemplate",
-                                "defaultTemplateUrl":"blocks/mediaProtectedDownload.html",
-                                "twigMode":false
+                            "type": "Rubedo.view.MailingListPickerField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1261#",
+                                "name": "mailingListId"
+                            }
+                        },
+                        {
+                            "type": "Rubedo.view.ImagePickerField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1254#",
+                                "name": "documentId",
+                                "smallMode": true
+                            }
+                        },
+                        {
+                            "type": "Rubedo.view.DCEField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1255#",
+                                "name": "introduction",
+                                "allowedCT": "richText",
+                                "addOnly": true
+                            }
+                        }
+                    ]
+                }
+            ],
+            "avance": [
+                {
+                    "categorie": "Template",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/mediaProtectedDownload.html",
+                                "twigMode": false
 
                             }
                         }
                     ]
                 }
-			]
-		},
-		"configBloc":[
-
-		]
-	},
-	"category":"#ext-gen1187#",
-	"bType":"protectedResource",
-	"id":"516404ecc0e0518d0f000018"
+            ]
+        },
+        "configBloc": []
+    },
+    "category": "#ext-gen1187#",
+    "bType": "protectedResource",
+    "id": "516404ecc0e0518d0f000018"
 }

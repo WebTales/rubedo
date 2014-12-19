@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -20,6 +20,7 @@ use Zend\View\Model\ModelInterface;
 use Zend\View\Resolver\ResolverInterface;
 use Zend\View\Renderer\RendererInterface;
 use Rubedo\Services\Manager;
+
 /**
  * Interface class for Zend_View compatible template engine implementations
  */
@@ -36,16 +37,18 @@ class TwigRenderer implements RendererInterface
      * @return mixed
      */
     public function getEngine()
-    {}
+    {
+    }
 
     /**
      * Set the resolver used to map a template name to a resource the renderer may consume.
      *
-     * @param ResolverInterface $resolver            
+     * @param ResolverInterface $resolver
      * @return RendererInterface
      */
     public function setResolver(ResolverInterface $resolver)
-    {}
+    {
+    }
 
     /**
      * Processes a view script and returns the output.
@@ -58,29 +61,29 @@ class TwigRenderer implements RendererInterface
      */
     public function render($nameOrModel, $values = null)
     {
-        if(!$nameOrModel instanceof TwigViewModel){
+        if (!$nameOrModel instanceof TwigViewModel) {
             return null;
         }
         $model = null;
-        
+
         if ($nameOrModel instanceof ModelInterface) {
             $model = $nameOrModel;
             $template = $model->getTemplate();
-            
+
             if (empty($template)) {
                 throw new \Rubedo\Exceptions\Server(sprintf('%s: received View Model argument, but template is empty', __METHOD__));
             }
-            
-            $values = (array) $model->getVariables();
+
+            $values = (array)$model->getVariables();
         }
-        
+
         return Manager::getService('FrontOfficeTemplates')->render($template, $values);
     }
 
     /**
      * Can the template be rendered?
      *
-     * @param string $name            
+     * @param string $name
      * @return bool
      * @see \ZfcTwig\Twig\Environment::canLoadTemplate()
      */

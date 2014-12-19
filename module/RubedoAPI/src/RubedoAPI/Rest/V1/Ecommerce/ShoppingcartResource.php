@@ -59,7 +59,7 @@ class ShoppingcartResource extends AbstractResource
         }
         return array(
             'success' => true,
-            'shoppingCart' => $this->filterShoppingCart($cartUpdate,isset($params['includeDetail'])),
+            'shoppingCart' => $this->filterShoppingCart($cartUpdate, isset($params['includeDetail'])),
         );
     }
 
@@ -83,7 +83,7 @@ class ShoppingcartResource extends AbstractResource
         }
         return array(
             'success' => true,
-            'shoppingCart' => $this->filterShoppingCart($cartUpdate,isset($params['includeDetail'])),
+            'shoppingCart' => $this->filterShoppingCart($cartUpdate, isset($params['includeDetail'])),
         );
     }
 
@@ -103,7 +103,7 @@ class ShoppingcartResource extends AbstractResource
 
         return array(
             'success' => true,
-            'shoppingCart' => $this->filterShoppingCart($shoppingCart,isset($params['includeDetail'])),
+            'shoppingCart' => $this->filterShoppingCart($shoppingCart, isset($params['includeDetail'])),
         );
     }
 
@@ -113,30 +113,30 @@ class ShoppingcartResource extends AbstractResource
      * @param $shoppingCart
      * @return array
      */
-    protected function filterShoppingCart($shoppingCart,$includeDetail=null)
+    protected function filterShoppingCart($shoppingCart, $includeDetail = null)
     {
         $mask = array('id', 'shoppingCart', 'detailedCart');
-        if (!$includeDetail){
+        if (!$includeDetail) {
             return array_intersect_key($shoppingCart, array_flip($mask));
         }
-        $userTypeId="*";
-        $country="*";
-        $region="*";
-        $postalCode="*";
+        $userTypeId = "*";
+        $country = "*";
+        $region = "*";
+        $postalCode = "*";
         $currentUser = $this->getCurrentUserAPIService()->getCurrentUser();
-        if($currentUser){
-            $userTypeId=$currentUser['typeId'];
-            if (isset($currentUser['shippingAddress']['country'])&&!empty($currentUser['shippingAddress']['country'])){
-                $country=$currentUser['shippingAddress']['country'];
+        if ($currentUser) {
+            $userTypeId = $currentUser['typeId'];
+            if (isset($currentUser['shippingAddress']['country']) && !empty($currentUser['shippingAddress']['country'])) {
+                $country = $currentUser['shippingAddress']['country'];
             }
-            if (isset($currentUser['shippingAddress']['regionState'])&&!empty($currentUser['shippingAddress']['regionState'])){
-                $region=$currentUser['shippingAddress']['regionState'];
+            if (isset($currentUser['shippingAddress']['regionState']) && !empty($currentUser['shippingAddress']['regionState'])) {
+                $region = $currentUser['shippingAddress']['regionState'];
             }
-            if (isset($currentUser['shippingAddress']['postCode'])&&!empty($currentUser['shippingAddress']['postCode'])){
-                $postalCode=$currentUser['shippingAddress']['postCode'];
+            if (isset($currentUser['shippingAddress']['postCode']) && !empty($currentUser['shippingAddress']['postCode'])) {
+                $postalCode = $currentUser['shippingAddress']['postCode'];
             }
         }
-        $shoppingCart['detailedCart']=$this->addCartInfos($shoppingCart['shoppingCart'],$userTypeId, $country, $region, $postalCode);
+        $shoppingCart['detailedCart'] = $this->addCartInfos($shoppingCart['shoppingCart'], $userTypeId, $country, $region, $postalCode);
         return array_intersect_key($shoppingCart, array_flip($mask));
     }
 
@@ -159,7 +159,7 @@ class ShoppingcartResource extends AbstractResource
             if ($myContent) {
                 $value['title'] = $myContent['text'];
                 $value['subtitle'] = '';
-                $value['variationProperties']=array();
+                $value['variationProperties'] = array();
                 $unitPrice = 0;
                 $taxedPrice = 0;
                 $unitTaxedPrice = 0;
@@ -180,7 +180,7 @@ class ShoppingcartResource extends AbstractResource
                         foreach ($variation as $varkey => $varvalue) {
                             if (!in_array($varkey, $ignoredArray)) {
                                 $value['subtitle'] .= ' ' . $varvalue;
-                                $value['variationProperties'][$varkey]=$varvalue;
+                                $value['variationProperties'][$varkey] = $varvalue;
                             }
                         }
                     }

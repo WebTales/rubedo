@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -35,14 +35,14 @@ class ExtFinderController extends AbstractExtLoaderController
      *
      * @todo handle extjs options (debug or not, CDN or not).
      */
-    public function indexAction ()
+    public function indexAction()
     {
         $this->_auth = Manager::getService('AuthenticationService');
-        
-        if (! $this->_auth->getIdentity()) {
+
+        if (!$this->_auth->getIdentity()) {
             return $this->redirect()->toUrl("/backoffice/login");
         }
-        
+
         return $this->loadExtApps();
     }
 }

@@ -1,37 +1,33 @@
 {
-	"type":"#ext-gen1409#",
-	"description":"#ext-gen1427#",
-	"configBasique":{
-		"title":"#ext-gen1409#",
-		"bType":"userProfile",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
-
-			],
-			"avance":[
+    "type": "#ext-gen1409#",
+    "description": "#ext-gen1427#",
+    "configBasique": {
+        "title": "#ext-gen1409#",
+        "bType": "userProfile",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [],
+            "avance": [
                 {
-                    "categorie":"Template",
-                    "champs":[
+                    "categorie": "Template",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Custom template",
-                                "name":"customTemplate",
-                                "defaultTemplateUrl":"blocks/userProfile.html",
-                                "twigMode":false
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/userProfile.html",
+                                "twigMode": false
 
                             }
                         }
                     ]
                 }
-			]
-		},
-		"configBloc":[
-
-		]
-	},
-	"category":"#ext-gen1211#",
-	"bType":"userProfile",
-	"id":"511e6508c0e051bd17894123"
+            ]
+        },
+        "configBloc": []
+    },
+    "category": "#ext-gen1211#",
+    "bType": "userProfile",
+    "id": "511e6508c0e051bd17894123"
 }

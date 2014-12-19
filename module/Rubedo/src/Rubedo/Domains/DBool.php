@@ -22,7 +22,7 @@ namespace Rubedo\Domains;
  * Should be a boolean
  *
  * @author jbourdin
- *        
+ *
  */
 class DBool implements IDomains
 {
@@ -30,13 +30,13 @@ class DBool implements IDomains
     /**
      * Check if a value is valid for the current domain
      *
-     * @param mixed $value            
+     * @param mixed $value
      * @return boolean
      * @see Rubedo\Domains\IDomains::isValid()
      */
-    public static function isValid ($value)
+    public static function isValid($value)
     {
-        if (! is_bool($value)) {
+        if (!is_bool($value)) {
             return false;
         }
         return true;

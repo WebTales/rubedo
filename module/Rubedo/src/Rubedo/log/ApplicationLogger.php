@@ -154,8 +154,8 @@ class ApplicationLogger extends Logger
         $context = array(
             'remote_ip' => $serverParams->get('X-Forwarded-For', $serverParams->get('REMOTE_ADDR')),
             'uri' => Manager::getService('Application')->getRequest()
-                    ->getUri()
-                    ->toString(),
+                ->getUri()
+                ->toString(),
             'type' => 'authentication',
             'event' => $e->getName(),
         );

@@ -22,7 +22,7 @@ namespace Rubedo\Domains;
  * Should be a String
  *
  * @author jbourdin
- *        
+ *
  */
 class DString extends AbstractString
 {

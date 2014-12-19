@@ -15,18 +15,18 @@
 /**
  * Construct the whole configuration from split configurations files.
  */
-$serviceMapArray = include (__DIR__ . '/services.config.php');
-$serviceAliasMapArray = include (__DIR__ . '/services.alias.config.php');
-$sharedService = include (__DIR__ . '/shared.services.config.php');
-$controllerArray = include (__DIR__ . '/controllers.config.php');
-$viewArray = include (__DIR__ . '/views.config.php');
-$localizationConfig = include (__DIR__ . '/localization.config.php');
-$router = include (__DIR__ . '/router.config.php');
-$blocksDefinition = include (__DIR__ . '/blocks.definition.config.php');
-$templateConfig = include (__DIR__ . '/templates.config.php');
-$appExtension = include (__DIR__ . '/app.extensions.config.php');
-$loggerConfig = include (__DIR__ . '/logger.config.php');
-$paymentMeans=include (__DIR__ . '/payment.means.config.php');
+$serviceMapArray = include(__DIR__ . '/services.config.php');
+$serviceAliasMapArray = include(__DIR__ . '/services.alias.config.php');
+$sharedService = include(__DIR__ . '/shared.services.config.php');
+$controllerArray = include(__DIR__ . '/controllers.config.php');
+$viewArray = include(__DIR__ . '/views.config.php');
+$localizationConfig = include(__DIR__ . '/localization.config.php');
+$router = include(__DIR__ . '/router.config.php');
+$blocksDefinition = include(__DIR__ . '/blocks.definition.config.php');
+$templateConfig = include(__DIR__ . '/templates.config.php');
+$appExtension = include(__DIR__ . '/app.extensions.config.php');
+$loggerConfig = include(__DIR__ . '/logger.config.php');
+$paymentMeans = include(__DIR__ . '/payment.means.config.php');
 
 foreach ($serviceMapArray as $key => $value) {
     if (in_array($key, $sharedService)) {

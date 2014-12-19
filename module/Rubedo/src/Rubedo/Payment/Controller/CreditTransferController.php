@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -15,7 +15,9 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Payment\Controller;
+
 use Rubedo\Services\Manager;
+
 /**
  *
  * @author adobre
@@ -32,20 +34,20 @@ class CreditTransferController extends AbstractController
     }
 
 
-    public function indexAction ()
+    public function indexAction()
     {
         $this->initOrder();
         $content = array();
         if ($this->nativePMConfig["contentId"]) {
             $content = Manager::getService('Contents')->findById($this->nativePMConfig["contentId"], true, false);
         }
-        if (! $content) {
+        if (!$content) {
             return $this->sendResponse(array(), "block.html.twig");
         }
         $output = $this->params()->fromQuery();
         $output['contentId'] = $this->nativePMConfig["contentId"];
-        $price=$this->getOrderPrice();
-        $output['price']=$price;
+        $price = $this->getOrderPrice();
+        $output['price'] = $price;
         $toReplace = array('%23', '###price###', '###orderId###');
         $replacedBy = array('#', $price . ' €', $this->currentOrder['orderNumber']);
         $output['text'] = str_replace($toReplace, $replacedBy, $content['fields']['body']);

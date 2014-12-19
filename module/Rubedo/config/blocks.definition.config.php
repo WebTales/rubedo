@@ -161,19 +161,19 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/shoppingCart.json'
     ),
-    'development'=>array(
+    'development' => array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/development.json'
     ),
-    'checkout'=>array(
+    'checkout' => array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/checkout.json'
     ),
-    'userOrders'=>array(
+    'userOrders' => array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/userOrders.json'
     ),
-    'orderDetail'=>array(
+    'orderDetail' => array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/orderDetail.json'
     ),

@@ -7,7 +7,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -96,7 +96,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
 
     /**
      *
-     * @param field_type $config            
+     * @param field_type $config
      */
     public static function setConfig($config)
     {
@@ -108,7 +108,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      */
     public function __construct()
     {
-        if (! isset(self::$config)) {
+        if (!isset(self::$config)) {
             self::lazyloadConfig();
         }
         $this->_init();
@@ -123,7 +123,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     protected function _init()
     {
         $config = $this->getConfig();
-        
+
         $this->options = array(
             'templateDir' => $config['templateDir'],
             'cache' => $config['cache'],
@@ -133,8 +133,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             'rootTemplateDir' => $config['rootTemplateDir']
         );
 
-        $fileSystem = $config['templateDir'].'/customtheme';
-        if ($this->getCurrentTheme()!='customtheme') {
+        $fileSystem = $config['templateDir'] . '/customtheme';
+        if ($this->getCurrentTheme() != 'customtheme') {
             $fileSystem = $config['themes'][$this->getCurrentTheme()]['basePath'];
         }
         $loader = new \Twig_Loader_Filesystem($fileSystem);
@@ -153,7 +153,6 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             ->addExtensions($this->twigString)
             ->addFilters($this->twigString)
             ->addFunctions($this->twigString);
-
 
 
         foreach ($config['namespaces'] as $name => $path) {
@@ -195,7 +194,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      */
     public function getTemplateDir()
     {
-        if (! isset(self::$templateDir)) {
+        if (!isset(self::$templateDir)) {
             $config = $this->getConfig();
             $this->options = array(
                 'templateDir' => $config['templateDir'],
@@ -205,7 +204,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
                 'overrideThemes' => $config['overrideThemes'],
                 'rootTemplateDir' => $config['rootTemplateDir']
             );
-            
+
             self::$templateDir = $this->options['templateDir'];
         }
         return self::$templateDir;
@@ -224,7 +223,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         if (pathinfo($path, PATHINFO_EXTENSION) == 'twig') {
             return $path;
         } else {
-            
+
             if (strpos($path, '@') === 0) {
                 $path = str_replace('@', 'ns-', $path);
             }
@@ -238,7 +237,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         if (strpos($path, 'ns-') === 0) {
             $path = str_replace('ns-', '', $path);
             $segmentArray = explode('/', $path);
-            
+
             $namespace = array_shift($segmentArray);
             $path = implode('/', $segmentArray);
         }
@@ -250,7 +249,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             return false;
         }
         $config = $this->getConfig();
-        if (! isset($config['themes'][$theme])) {
+        if (!isset($config['themes'][$theme])) {
             return false;
         }
         if (isset($config['overrideThemes'][$theme])) {
@@ -259,21 +258,21 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
                 return $dir . '/' . $path;
             }
         }
-        
+
         if ($namespace && isset($config['namespaces'][$namespace])) {
             $dir = $config['namespaces'][$namespace];
             if (is_file($dir . '/' . $path)) {
                 return $dir . '/' . $path;
             }
         }
-        
+
         if (isset($config['themes'][$theme]['basePath'])) {
             $dir = $config['themes'][$theme]['basePath'];
             if (is_file($dir . '/' . $path)) {
                 return $dir . '/' . $path;
             }
         }
-        
+
         if (is_file($config['rootTemplateDir'] . '/' . $path)) {
             return $config['rootTemplateDir'] . '/' . $path;
         } else {
@@ -285,7 +284,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     {
         try {
             $this->_twig->resolveTemplate($path);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             return false;
         }
         return true;
@@ -298,7 +297,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
      */
     public function getCurrentTheme()
     {
-        if (! isset(self::$_currentTheme)) {
+        if (!isset(self::$_currentTheme)) {
             self::$_currentTheme = 'default';
         }
         return self::$_currentTheme;
@@ -327,7 +326,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     /**
      * Set the current theme name
      *
-     * @param string $theme            
+     * @param string $theme
      */
     public function setCurrentTheme($theme)
     {
@@ -452,7 +451,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public function getAvailableThemes()
     {
         $themeInfosArray = array();
-        
+
         // get declared themes
         $config = $this->getConfig();
         foreach ($config['themes'] as $key => $value) {
@@ -461,7 +460,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
                 'label' => $value['label']
             );
         }
-        
+
         // get database custom themes
         $contextExist = Filter::factory('OperatorToValue')
             ->setName('context')
@@ -471,21 +470,21 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
             ->setName('context')
             ->setValue('front');
         $foContextFilters = Filter::factory()
-                ->addFilter($contextExist)
-                ->addFilter($foContext);
+            ->addFilter($contextExist)
+            ->addFilter($foContext);
         $customThemesArray = Manager::getService('Themes')->getList($foContextFilters);
         $customThemesArray = $customThemesArray['data'];
         foreach ($customThemesArray as &$value) {
             $value['label'] = $value['text'];
             $themeInfosArray[] = $value;
         }
-        
+
         $response = array();
         $response['total'] = count($themeInfosArray);
         $response['data'] = $themeInfosArray;
         $response['success'] = TRUE;
         $response['message'] = 'OK';
-        
+
         return $response;
     }
 
@@ -515,7 +514,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public static function getDam($damId)
     {
         $damService = Manager::getService("Dam");
-        
+
         return $damService->findById($damId);
     }
 
@@ -528,8 +527,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public static function getContent($contentId)
     {
         $contentService = Manager::getService("Contents");
-        
-        $return = $contentService->findById($contentId,contentId, true, false);
+
+        $return = $contentService->findById($contentId, contentId, true, false);
         return $return;
     }
 
@@ -556,7 +555,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
     public static function mbucfirst($string)
     {
         $e = 'utf-8';
-        if (function_exists('mb_strtoupper') && function_exists('mb_substr') && ! empty($string)) {
+        if (function_exists('mb_strtoupper') && function_exists('mb_substr') && !empty($string)) {
             $string = mb_strtolower($string, $e);
             $upper = mb_strtoupper($string, $e);
             preg_match('#(.)#us', $upper, $matches);
@@ -567,7 +566,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         return $string;
     }
 
-    public function addExtensions(\Twig_Environment &$twig) {
+    public function addExtensions(\Twig_Environment &$twig)
+    {
         $twig->addExtension(new \Twig_Extension_Debug());
 
         $twig->addExtension(new BackOfficeTranslate());
@@ -577,7 +577,8 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         return $this;
     }
 
-    public function addFilters(\Twig_Environment &$twig) {
+    public function addFilters(\Twig_Environment &$twig)
+    {
         $twig->addFilter('cleanHtml', new \Twig_Filter_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::cleanHtml', array(
             'is_safe' => array(
                 'html'
@@ -585,22 +586,23 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         )));
         $twig->addFilter(new \Twig_SimpleFilter('ucfirst', '\\Rubedo\\Templates\\FrontOfficeTemplates::mbucfirst'));
         $twig->addFilter(new \Twig_SimpleFilter('getCountryName', '\\Rubedo\\Templates\\FrontOfficeTemplates::getCountryName'));
-        $twig->addFilter( new \Twig_SimpleFilter('ensureIsArray', function ($value) {
+        $twig->addFilter(new \Twig_SimpleFilter('ensureIsArray', function ($value) {
             return (array)$value;
         }));
-        $twig->addFilter( new \Twig_SimpleFilter('ensureIsMultivalued', function ($value, $multiple = false) {
+        $twig->addFilter(new \Twig_SimpleFilter('ensureIsMultivalued', function ($value, $multiple = false) {
             if (is_array($value) && ($multiple || !is_numeric(key($value)))) {
                 return array($value);
             }
             return (array)$value;
         }));
-        $twig->addFilter( new \Twig_SimpleFilter('getClass', function ($value) {
+        $twig->addFilter(new \Twig_SimpleFilter('getClass', function ($value) {
             return get_class($value);
         }));
         return $this;
     }
 
-    public function addFunctions(\Twig_Environment &$twig) {
+    public function addFunctions(\Twig_Environment &$twig)
+    {
         $twig->addFunction('url', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::url'));
         $twig->addFunction('displayUrl', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::displayUrl'));
         $twig->addFunction('getPageTitle', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::getPageTitle'));
@@ -619,7 +621,7 @@ class FrontOfficeTemplates implements IFrontOfficeTemplates
         $twig->addFunction('userAvatarThumbnail', new \Twig_Function_Function('\\Rubedo\\Templates\\FrontOfficeTemplates::userAvatarThumbnail'));
         return $this;
     }
-    
+
     /**
      * Read configuration from global application config and load it for the current class
      */

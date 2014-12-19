@@ -45,7 +45,7 @@ class SearchResource extends AbstractResource
         parent::__construct();
         $this->searchOption = 'all';
         $this->searchParamsArray = array('orderby', 'orderbyDirection', 'query', 'objectType', 'type', 'damType', 'userType', 'author',
-            'userName', 'lastupdatetime', 'start', 'limit','searchMode');
+            'userName', 'lastupdatetime', 'start', 'limit', 'searchMode');
         $this
             ->definition
             ->setName('Search')
@@ -331,11 +331,11 @@ class SearchResource extends AbstractResource
                     $results['activeFacets'][$key]['operator'] = 'and';
                 } else {
                     //Todo regex MongoId
-                    try{
+                    try {
                         $taxonomy = $taxonomyService->findById($activeFacet['id']);
                         $results['activeFacets'][$key]['operator'] = isset($taxonomy['facetOperator']) ? strtolower(
                             $taxonomy['facetOperator']) : 'and';
-                    } catch(\Exception $e){
+                    } catch (\Exception $e) {
                         $results['activeFacets'][$key]['operator'] = 'and';
                     }
                 }

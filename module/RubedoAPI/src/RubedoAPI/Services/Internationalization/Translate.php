@@ -19,7 +19,7 @@ class Translate extends \Rubedo\Internationalization\Translate
 {
     public function getTranslations($language)
     {
-        if(isset($language)){
+        if (isset($language)) {
             $this->loadLanguage($language);
         }
 

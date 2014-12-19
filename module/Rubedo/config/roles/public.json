@@ -1,10 +1,10 @@
 {
-    "id":"public",
-    "label":{
-    	"fr":"Acces aux parties publiques",
-    	"en":"Access public areas"
+    "id": "public",
+    "label": {
+        "fr": "Acces aux parties publiques",
+        "en": "Access public areas"
     },
-    "rights":[
+    "rights": [
         "execute.controller.login.index.backoffice",
         "execute.controller.xhrauthentication.login.backoffice",
         "execute.controller.currentuser.get-token.backoffice",
@@ -56,5 +56,5 @@
         "execute.controller.credittransfer.success.payment",
         "execute.controller.credittransfer.cancel.payment",
         "execute.controller.credittransfer.ipn.payment"
- 	]
+    ]
 }

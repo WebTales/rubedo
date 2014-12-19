@@ -1,81 +1,82 @@
 {
-	"type":"#ext-gen1415#",
-	"description":"#ext-gen1430#",
-	"configBasique":{
-		"title":"#ext-gen1415#",
-		"bType":"signUp",
-		"flex":1,
-		"champsConfig":{
-			"simple":[
-				{
-					"categorie":"#ext-gen1063#",
-					"champs":[
-						{
-							"type":"Rubedo.view.UTCField",
-							"config":{
-								"fieldLabel":"#ext-gen1413#",
-								"name":"userType"
-							}
-						},
-						{
-							"type":"Rubedo.view.DCEField",
-							"config":{
-								"fieldLabel":"#ext-gen1255#",
-								"name":"introduction",
-								"allowedCT":"richText",
-								"addOnly":true
-							}
-						},{
-                            "type":"Ext.form.field.Checkbox",
-                            "config":{
-                                "fieldLabel":"#ext-gen1414#",
-                                "name":"collectPassword"
+    "type": "#ext-gen1415#",
+    "description": "#ext-gen1430#",
+    "configBasique": {
+        "title": "#ext-gen1415#",
+        "bType": "signUp",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
+                {
+                    "categorie": "#ext-gen1063#",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.UTCField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1413#",
+                                "name": "userType"
                             }
                         },
                         {
-                            "type":"Rubedo.view.MailingListPickerField",
-                            "config":{
-                                "fieldLabel":"#ext-gen1155#",
-                                "name":"mailingListId",
-                                "multiSelect":true
+                            "type": "Rubedo.view.DCEField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1255#",
+                                "name": "introduction",
+                                "allowedCT": "richText",
+                                "addOnly": true
                             }
                         },
                         {
-                            "type":"Ext.form.field.Checkbox",
-                            "config":{
-                                "fieldLabel":"#ext-gen1162#",
-                                "name":"captcha",
-                                "inputValue":true
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1414#",
+                                "name": "collectPassword"
+                            }
+                        },
+                        {
+                            "type": "Rubedo.view.MailingListPickerField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1155#",
+                                "name": "mailingListId",
+                                "multiSelect": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1162#",
+                                "name": "captcha",
+                                "inputValue": true
                             }
                         }
-					]
-				}
-			],
-			"avance":[
+                    ]
+                }
+            ],
+            "avance": [
                 {
-                    "categorie":"Template",
-                    "champs":[
+                    "categorie": "Template",
+                    "champs": [
                         {
-                            "type":"Rubedo.view.ACEField",
-                            "config":{
-                                "fieldLabel":"Custom template",
-                                "name":"customTemplate",
-                                "defaultTemplateUrl":"blocks/signUp.html",
-                                "twigMode":false
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/signUp.html",
+                                "twigMode": false
 
                             }
                         }
                     ]
                 }
-			]
-		},
-		"configBloc":{
-            "collectPassword":false
+            ]
+        },
+        "configBloc": {
+            "collectPassword": false
         }
 
 
-	},
-	"category":"#ext-gen1211#",
-	"bType":"signUp",
-	"id":"511e6508c0e051bd12123459"
+    },
+    "category": "#ext-gen1211#",
+    "bType": "signUp",
+    "id": "511e6508c0e051bd12123459"
 }

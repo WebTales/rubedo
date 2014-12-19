@@ -23,7 +23,7 @@ use Rubedo\Services\Manager;
  * Methods for update tool
  *
  * @author jbourdin
- *        
+ *
  */
 class Update010200 extends Update
 {
@@ -35,17 +35,17 @@ class Update010200 extends Update
      *
      * @return boolean
      */
-    public static function upgrade ()
+    public static function upgrade()
     {
         static::notFiledDam();
         static::blocksUpdate();
-        static::taxonomiesUpdate(); 
+        static::taxonomiesUpdate();
         return true;
     }
 
     /**
      * Set not filed dam items in the directory 'not filed'
-     * 
+     *
      * @return boolean
      */
     public static function notFiledDam()
@@ -64,20 +64,20 @@ class Update010200 extends Update
         Manager::getService('Dam')->customUpdate($data, $updateCond, $options);
         return true;
     }
-    
+
     /**
      * add new facets options to search blocks
      * @return boolean
      */
-    public static function blocksUpdate ()
+    public static function blocksUpdate()
     {
         // geoSearchResults
         $data = array(
-                '$set' => array(
-                        'blockData.configBloc.displayedFacets' => array(
-                                'all'
-                        ),
-                        'blockData.configBloc.showPlacesSearch' => true
+            '$set' => array(
+                'blockData.configBloc.displayedFacets' => array(
+                    'all'
+                ),
+                'blockData.configBloc.showPlacesSearch' => true
             )
         );
         $updateCond = Filter::factory();
@@ -88,13 +88,13 @@ class Update010200 extends Update
                 ->setValue(false)
         );
         $updateCond->addFilter(
-                Filter::factory('Value')->setName('blockData.bType')
-                    ->setValue('geoSearchResults'));
+            Filter::factory('Value')->setName('blockData.bType')
+                ->setValue('geoSearchResults'));
         $options = array(
-                'multiple' => true
+            'multiple' => true
         );
         Manager::getService('Blocks')->customUpdate($data, $updateCond, $options);
-        
+
         //searchResults
         $data = array(
             '$set' => array(
@@ -113,7 +113,7 @@ class Update010200 extends Update
         Manager::getService('Blocks')->customUpdate($data, $updateCond, $options);
         return true;
     }
-    
+
     /**
      * add facets operator to taxonomies
      * @return boolean
@@ -126,8 +126,8 @@ class Update010200 extends Update
             )
         );
         $updateCond = Filter::factory('OperatorToValue')->setName('facetOperator')
-        ->setOperator('$exists')
-        ->setValue(false);
+            ->setOperator('$exists')
+            ->setValue(false);
         $options = array(
             'multiple' => true
         );

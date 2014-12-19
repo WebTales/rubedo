@@ -8,7 +8,7 @@
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
- * Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
+ * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
  * @package    Rubedo
@@ -30,7 +30,7 @@ use Zend\View\Model\JsonModel;
  * @author adobre
  * @category Rubedo
  * @package Rubedo
- *         
+ *
  */
 class PaymentMeansController extends AbstractActionController
 {
@@ -38,20 +38,20 @@ class PaymentMeansController extends AbstractActionController
     public function indexAction()
     {
         $config = Manager::getService('config');
-        $data=$config['paymentMeans'];
-        $refinedData=array();
-        foreach($data as $key => $value){
-            $value['id']=$key;
+        $data = $config['paymentMeans'];
+        $refinedData = array();
+        foreach ($data as $key => $value) {
+            $value['id'] = $key;
             $pmJsonData = file_get_contents($value['definitionFile']);
             $value['configFields'] = Json::decode($pmJsonData, Json::TYPE_ARRAY);
             unset ($value['definitionFile']);
             unset ($value['controller']);
-            $refinedData[]=$value;
+            $refinedData[] = $value;
         }
         return new JsonModel(array(
-                "data"=>$refinedData,
-                "success"=>true,
-                "total"=>count($refinedData)
+            "data" => $refinedData,
+            "success" => true,
+            "total" => count($refinedData)
         ));
     }
 }

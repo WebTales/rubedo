@@ -1,10 +1,10 @@
 {
-    "id":"backoffice",
-    "label":{
-    	"fr":"Utilisation du back-office",
-    	"en":"Use backoffice"
+    "id": "backoffice",
+    "label": {
+        "fr": "Utilisation du back-office",
+        "en": "Use backoffice"
     },
-    "rights":[
+    "rights": [
         "ui.backoffice",
         "execute.controller.index.@dot*.backoffice",
         "execute.controller.logout.index.backoffice",
