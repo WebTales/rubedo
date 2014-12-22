@@ -251,6 +251,23 @@ class ContentsResource extends AbstractResource
         return $this->getContentsCollection()->create($data, array(), false);
     }
 
+    public function patchAction($params)
+    {
+        $contents=$params['contents'];
+        $versions=array();
+        $success = false;
+        foreach($contents as $content){
+            $params['content'] = $content;
+            $updateContent=$this->patchEntityAction($content['id'],$params);
+            $versions[]=(isset($updateContent['version']) && $updateContent['version'])? $updateContent['version'] : false;
+            $success = $updateContent['success'] ? true : $success;
+        }
+        return[
+            'success' => $success,
+            'versions' => $versions
+        ];
+    }
+
     /**
      * Remove fields if not in content type
      *
@@ -410,7 +427,7 @@ class ContentsResource extends AbstractResource
         $update = $this->getContentsCollection()->update($content, array(), false);
         return [
             'success' => $update['success'],
-            'version' => $update['data']['version'],
+            'version' => isset($update['data'],$update['data']['version'])?$update['data']['version'] : false,
         ];
     }
 
@@ -537,6 +554,9 @@ class ContentsResource extends AbstractResource
             })
             ->editVerb('post', function (VerbDefinitionEntity &$definition) {
                 $this->definePost($definition);
+            })
+            ->editVerb('patch', function (VerbDefinitionEntity &$definition) {
+                $this->definePatch($definition);
             });
         $this
             ->entityDefinition
@@ -665,6 +685,23 @@ class ContentsResource extends AbstractResource
                     ->setMultivalued()
             )
             ->identityRequired();
+    }
+
+    protected function definePatch(VerbDefinitionEntity &$definition)
+    {
+        $definition->setDescription('Patch a list of contents')
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                ->setDescription('Contents to patch')
+                ->setKey('contents')
+            )
+            ->identityRequired()
+            ->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('List of new versions of contents send')
+                    ->setKey('versions')
+                    ->setRequired()
+            );
     }
 
     /**
