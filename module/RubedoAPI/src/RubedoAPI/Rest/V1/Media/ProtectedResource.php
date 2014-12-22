@@ -80,7 +80,7 @@ class ProtectedResource extends AbstractResource
     {
         $media = $this->getDamCollection()->findById($params['mediaId']);
 
-        $intro = isset($params['introContentId']) ? (new \RubedoAPI\Rest\V1\ContentsResource())->getEntityAction($params['introContentId'], $params) : null;
+        $intro = isset($params['introContentId']) && !empty($params['introContentId']) ? (new \RubedoAPI\Rest\V1\ContentsResource())->getEntityAction($params['introContentId'], $params) : null;
         return [
             'success' => true,
             'media' => $media,
@@ -198,7 +198,6 @@ class ProtectedResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setDescription('Introduction content ID')
                             ->setKey('introContentId')
-                            ->setFilter('\MongoId')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())

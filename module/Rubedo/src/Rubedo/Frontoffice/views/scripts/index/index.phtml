@@ -136,13 +136,13 @@
     <button ng-click="rubedo.persistChanges()"
             class="btn btn-default"
             ng-if="rubedo.fieldEditMode&&rubedo.current.user.rights.canEdit"
-            title="Save changes">
+            title="{{rubedo.translate('Edition.Label.SaveChanges','Save changes')}}">
         <span class="glyphicon glyphicon-ok"></span>
     </button>
     <button ng-click="rubedo.revertChanges()"
             class="btn btn-default"
             ng-if="rubedo.fieldEditMode&&rubedo.current.user.rights.canEdit"
-            title="Discard changes">
+            title="{{rubedo.translate('Edition.Label.DiscardChanges','Discard changes')}}">
         <span class="glyphicon glyphicon-remove"></span>
     </button>
 </div>

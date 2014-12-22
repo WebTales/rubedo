@@ -293,7 +293,7 @@ class MediaResource extends AbstractResource
     {
         $media = $this->getDamCollection()->findById($id);
         $media['url'] = $this->getUrlAPIService()->mediaUrl($media['id']);
-        $intro = isset($params['contentId']) ? (new \RubedoAPI\Rest\V1\ContentsResource())->getEntityAction($params['contentId'], $params) : null;
+        $intro = isset($params['contentId']) && !empty($params['contentId']) ? (new \RubedoAPI\Rest\V1\ContentsResource())->getEntityAction($params['contentId'], $params) : null;
         return array(
             'success' => true,
             'media' => $media,
