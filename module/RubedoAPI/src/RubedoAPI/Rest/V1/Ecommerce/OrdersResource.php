@@ -82,7 +82,7 @@ class OrdersResource extends AbstractResource
         if (!isset($pmConfig[$params['paymentMeans']])) {
             throw new APIRequestException('Unknown payment method', 400);
         }
-        $myPaymentMeans = $pmConfig[$params['paymentMeans']];
+        //$myPaymentMeans = $pmConfig[$params['paymentMeans']];
 
         $myCart = $this->getShoppingCartCollection()->getCurrentCart();
         if (empty($myCart)) {

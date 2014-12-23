@@ -208,7 +208,7 @@ class FileAccess extends DataAccess implements IFileAccess
 
     public function createBinary(array $obj, $options = array())
     {
-
+        unset($options); //unused for the moment
         $bites = $obj['bytes'];
 
         $filename = $obj['filename'];

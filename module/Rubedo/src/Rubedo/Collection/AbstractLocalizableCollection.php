@@ -427,6 +427,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 
         // prevent localizable data to be stored in root level
         foreach ($obj as $key => $field) {
+            unset($field);
             if (!in_array($key, $metadataFields) && $key !== static::$labelField) {
                 unset($obj[$key]);
             }
@@ -436,6 +437,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if (isset($obj['i18n'])) {
             foreach ($obj['i18n'] as $locale => $localization) {
                 foreach ($localization as $key => $value) {
+                    unset($value);
                     if (in_array($key, $metadataFields) && $key !== static::$labelField) {
                         unset($obj['i18n'][$locale][$key]);
                     }
@@ -467,6 +469,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             $nativeContent['locale'] = static::$defaultLocale;
         }
         foreach ($obj as $key => $field) {
+            unset($field);
             if (!in_array($key, $this->getMetaDataFields())) {
                 unset($obj[$key]);
             }

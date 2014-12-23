@@ -618,7 +618,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
         $mask = $maskObj;
 
         $searchFirstColumnId = (string)new \MongoId();
-        $searchSecondColumnId = (string)new \MongoId();
+        //$searchSecondColumnId = (string)new \MongoId();
 
         $mask['rows'][0]['id'] = (string)new \MongoId();
         $mask['rows'][1]['id'] = (string)new \MongoId();

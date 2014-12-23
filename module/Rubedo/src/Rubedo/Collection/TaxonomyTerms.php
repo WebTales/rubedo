@@ -572,7 +572,8 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
             ->addFilter(
                 Filter::factory('Value')
                     ->SetName('vocabularyId')
-                    ->setValue($vocabularyId))
+                    ->setValue($vocabularyId)
+            )
             ->addFilter(
                 Filter::factory('Value')
                     ->SetName('text')

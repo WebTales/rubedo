@@ -278,6 +278,7 @@ class UsersResource extends AbstractResource
             $existingFields[] = $field['config']['name'];
         }
         foreach ($fields as $key => $value) {
+            unset($value); //unused
             if (!in_array($key, $existingFields)) {
                 unset ($fields[$key]);
             }

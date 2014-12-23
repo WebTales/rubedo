@@ -266,7 +266,7 @@ class ImportController extends DataAccessController
                         );
 
                         // translate vocabulary if terms are translated
-                        foreach ($options['importAsTaxoTranslation'] as $transKey => $transValue) {
+                        foreach ($options['importAsTaxoTranslation'] as $transValue) {
                             if ($transValue["translatedElement"] == $value['csvIndex']) {
                                 $newTaxoLang = $transValue["translateToLanguage"];
                                 $newTaxoi18n[$newTaxoLang] = array(

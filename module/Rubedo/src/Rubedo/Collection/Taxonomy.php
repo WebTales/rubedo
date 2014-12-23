@@ -304,6 +304,7 @@ class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
         $obj = $this->_addDefaultWorkspace($obj);
         if (isset($origObj['i18n'])) {
             foreach ($origObj['i18n'] as $locale => $value) {
+                unset($value);
                 if (!isset($obj['i18n'][$locale])) {
                     $wasFiltered = AbstractCollection::disableUserFilter();
                     Manager::getService('TaxonomyTerms')->removeI18nByVocabularyId($obj['id'], $locale);

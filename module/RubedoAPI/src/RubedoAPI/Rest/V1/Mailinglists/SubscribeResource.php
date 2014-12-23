@@ -72,6 +72,7 @@ class SubscribeResource extends AbstractResource
                 $existingFields[] = $userTypeField['config']['name'];
             }
             foreach ($params['fields'] as $fieldName => $fieldValue) {
+                unset($fieldValue); //unused
                 if (!in_array($fieldName, $existingFields)) {
                     unset ($params['fields'][$fieldName]);
                 }

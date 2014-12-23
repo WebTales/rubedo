@@ -37,7 +37,7 @@ class FileController extends AbstractActionController
     function indexAction()
     {
         $fileId = $this->params()->fromQuery('file-id');
-        $version = $this->params()->fromQuery('version', 1);
+        //$version = $this->params()->fromQuery('version', 1);
 
         if (isset($fileId)) {
 

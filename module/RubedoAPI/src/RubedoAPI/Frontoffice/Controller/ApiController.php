@@ -43,7 +43,7 @@ class ApiController extends AbstractActionController
             $routes = $this->params()->fromRoute();
             array_walk(
                 $routes['api'],
-                function (&$item, $key) {
+                function (&$item) {
                     $item = ucfirst($item);
                 }
             );

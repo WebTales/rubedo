@@ -218,7 +218,7 @@ class Module
         ), 10);
         $eventManager->getSharedManager()->attach('Zend\Mvc\Controller\AbstractActionController', 'dispatch', function ($e) {
             list($vendor, $namespace) = explode('\\', get_class($e->getTarget()));
-            $config = $e->getApplication()->getServiceManager()->get('config');
+            //$config = $e->getApplication()->getServiceManager()->get('config');
             if ($vendor == 'ZF' && $namespace == 'Apigility') {
                 $e->getTarget()->layout('layout/layout_apigility');
             }
@@ -293,6 +293,7 @@ class Module
         // check access
         if ($controller && strpos($controller, 'RubedoApi') === false) {
             list ($applicationName, $moduleName, $constant, $controllerName) = explode('\\', $controller);
+            unset($applicationName, $constant);
             $controllerName = strtolower($controllerName);
             $moduleName = strtolower($moduleName);
             $ressourceName = 'execute.controller.' . $controllerName . '.' . $action . '.' . $moduleName;

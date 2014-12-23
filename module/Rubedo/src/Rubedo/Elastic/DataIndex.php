@@ -446,8 +446,8 @@ class DataIndex extends DataAbstract implements IDataIndex
         if (isset($data['fields']) && is_array($data['fields'])) {
 
             // get active analysers
-            $activeAnalysers = array_keys(
-                $this::$_content_index_param["index"]["analysis"]["analyzer"]);
+//            $activeAnalysers = array_keys(
+//                $this::$_content_index_param["index"]["analysis"]["analyzer"]);
 
             // get vocabularies
             $vocabularies = $this->_getVocabularies($data);
@@ -604,7 +604,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                             $mapping['fields']['properties'][$name] = $config;
                             break;
                         default:
-                            $_autocomplete = 'autocomplete_nonlocalized';
+                            //$_autocomplete = 'autocomplete_nonlocalized';
                             $_all = 'all_nonlocalized';
                             $config = array(
                                 "type" => "string",
@@ -949,7 +949,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                     $data['target']
                 );
             }
-            foreach ($data['target'] as $key => $target) {
+            foreach ($data['target'] as $target) {
                 $indexData['target'][] = (string)$target;
             }
         }
@@ -1058,7 +1058,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add read workspace
         $indexData['target'] = array();
         if (isset($data['target'])) {
-            foreach ($data['target'] as $key => $target) {
+            foreach ($data['target'] as $target) {
                 $indexData['target'][] = (string)$target;
             }
         }
@@ -1240,8 +1240,8 @@ class DataIndex extends DataAbstract implements IDataIndex
             self::$_dam_index->create(self::$_dam_index_param, true);
         }
 
-        $contentsService = Manager::getService('Contents');
-        $damService = Manager::getService('Dam');
+//        $contentsService = Manager::getService('Contents');
+//        $damService = Manager::getService('Dam');
 
         if ($option == 'all' or $option == 'content') {
 
@@ -1388,7 +1388,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                     // $protocol = isset($_SERVER["HTTPS"]) ? "https://" :
                     // "http://";
                     $protocol = 'http://';
-                    $jobID = $queue->createHttpJob(
+                    $queue->createHttpJob(
                         $protocol . $_SERVER['HTTP_HOST'] .
                         "/queue?service=ElasticDataIndex&class=bulkIndex&Option=$option&id=$id&start=$start&bulkSize=$bulkSize");
                     $start += $bulkSize;

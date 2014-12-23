@@ -275,7 +275,8 @@ class MediaResource extends AbstractResource
         foreach ($type['fields'] as $fieldType) {
             $existingFields[] = $fieldType['config']['name'];
         }
-        foreach ($fields as $fieldName => &$fieldValue) {
+        foreach ($fields as $fieldName => $fieldValue) {
+            unset($fieldValue); //unused
             if (!in_array($fieldName, $existingFields)) {
                 unset($fields[$fieldName]);
             }

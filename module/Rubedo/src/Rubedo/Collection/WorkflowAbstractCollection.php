@@ -74,7 +74,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         $returnArray = parent::update($obj, $options);
         if ($returnArray['success']) {
             if (!$live) {
-                $transitionResult = $this->_transitionEvent($returnArray['data'], $previousStatus);
+                $this->_transitionEvent($returnArray['data'], $previousStatus);
             }
         } else {
             $returnArray = array(
@@ -122,7 +122,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
                     unset($returnArray['data']);
                 }
             } else {
-                $transitionResult = $this->_transitionEvent($returnArray['data'], null);
+                $this->_transitionEvent($returnArray['data'], null);
             }
         } else {
             $returnArray = array(

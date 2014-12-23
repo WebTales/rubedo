@@ -360,6 +360,7 @@ class Url implements IUrl
         }
 
         list ($contentId, $encodedText) = $segments;
+        unset($encodedText);
 
         $wasWithI18n = AbstractLocalizableCollection::getIncludeI18n();
         AbstractLocalizableCollection::setIncludeI18n(true);

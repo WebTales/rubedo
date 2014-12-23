@@ -207,6 +207,7 @@ class MailingList extends AbstractCollection implements IMailingList
         $date = Manager::getService("CurrentTime")->getCurrentTime();
         if ((isset($user["mailingLists"])) && (is_array($user["mailingLists"]))) {
             foreach ($user["mailingLists"] as $key => $value) {
+                unset($value);
                 $user["mailingLists"][$key]['status'] = false;
                 $user["mailingLists"][$key]['date'] = $date;
             }

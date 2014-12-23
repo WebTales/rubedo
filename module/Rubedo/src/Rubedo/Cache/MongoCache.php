@@ -45,6 +45,8 @@ class MongoCache extends AbstractAdapter
      */
     protected function internalGetItem(&$normalizedKey, &$success = null, &$casToken = null)
     {
+        unset($casToken);//unused for the moment
+
         $obj = $this->_dataService->findByCacheId($normalizedKey);
 
         if ($obj) {

@@ -36,11 +36,6 @@ class MenuResource extends AbstractResource
     /**
      * @var array
      */
-    private $rootline;
-
-    /**
-     * @var array
-     */
     private $excludeFromMenuCondition;
 
     /**

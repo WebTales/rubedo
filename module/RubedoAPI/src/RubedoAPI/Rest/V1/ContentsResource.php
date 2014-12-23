@@ -283,6 +283,7 @@ class ContentsResource extends AbstractResource
             }
         }
         foreach ($fields as $key => $value) {
+            unset($value); //unused
             if (!in_array($key, $existingFields)) {
                 unset ($fields[$key]);
             }
@@ -305,6 +306,7 @@ class ContentsResource extends AbstractResource
             }
         }
         foreach ($fields as $key => $value) {
+            unset($value); //unused
             if (!(in_array($key, $existingFields) || in_array($key, $this->otherLocalizableFields))) {
                 unset ($fields[$key]);
             }

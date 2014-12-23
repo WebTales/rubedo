@@ -138,7 +138,7 @@ class Cache extends AbstractCollection implements ICache
             ->setOperator('$lt')
             ->setValue(Manager::getService('CurrentTime')->getCurrentTime());
 
-        $result = $this->_dataService->customDelete($updateCond, $options);
+        $this->_dataService->customDelete($updateCond, $options);
     }
 
     public function deleteByCacheId($id)

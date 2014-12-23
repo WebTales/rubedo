@@ -189,7 +189,7 @@ class Files extends AbstractFileCollection implements IFiles
                 break;
 
             case 'Ilustration':
-            case 'Image' :
+            case 'Image':
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedIllustrationMimeTypes)) {
                     return array(
                         'success' => false,

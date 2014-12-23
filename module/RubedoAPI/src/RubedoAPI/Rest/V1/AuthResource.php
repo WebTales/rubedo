@@ -66,7 +66,7 @@ class AuthResource extends AbstractResource
      * @param $params
      * @return array
      */
-    public function getAction($params)
+    public function getAction()
     {
 
         return array(

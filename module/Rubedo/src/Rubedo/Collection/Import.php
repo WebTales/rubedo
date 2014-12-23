@@ -351,7 +351,7 @@ class Import extends AbstractCollection
 
         // Add translations
         $languages = array();
-        foreach ($this->_importAsFieldTranslation as $fieldKey => $value) {
+        foreach ($this->_importAsFieldTranslation as $value) {
 
             foreach ($this->_importAsField as $key => $importedField) {
                 if ($importedField["csvIndex"] == $value["translatedElement"]) {
@@ -576,8 +576,9 @@ class Import extends AbstractCollection
             "scope" => $scope, // scope
             "out" => array("replace" => "ImportContents") // out
         );
-        if ($this->_isProduct)
+        if ($this->_isProduct) {
             $params["finalize"] = $finalize;
+        }
 
         $response = $this->_dataService->command($params);
 
@@ -606,7 +607,7 @@ class Import extends AbstractCollection
 
                 switch ($value['protoId']) {
                     case 'text':
-                        $textFieldIndex = $value['csvIndex'];
+                        //$textFieldIndex = $value['csvIndex'];
                         $fields['text'] = 'this.col' . $value['csvIndex'];
                         break;
                     case 'summary':
@@ -648,22 +649,30 @@ class Import extends AbstractCollection
 
         if ($this->_isProduct) {
             //$mapCode.=",isProduct:true,";
-            if ($this->_productOptions['textFieldIndex'] != "")
+            if ($this->_productOptions['textFieldIndex'] != "") {
                 $mapCode .= "text: this.col" . $this->_productOptions['textFieldIndex'] . ",";
-            if ($this->_productOptions['summaryFieldIndex'] != "")
+            }
+            if ($this->_productOptions['summaryFieldIndex'] != "") {
                 $mapCode .= "summary: this.col" . $this->_productOptions['summaryFieldIndex'] . ",";
-            if ($this->_productOptions['baseSkuFieldIndex'] != "")
+            }
+            if ($this->_productOptions['baseSkuFieldIndex'] != "") {
                 $mapCode .= "baseSku: this.col" . $this->_productOptions['baseSkuFieldIndex'] . ",";
-            if ($this->_productOptions['basePriceFieldIndex'] != "")
+            }
+            if ($this->_productOptions['basePriceFieldIndex'] != "") {
                 $mapCode .= "basePrice: this.col" . $this->_productOptions['basePriceFieldIndex'] . ",";
-            if ($this->_productOptions['preparationDelayFieldIndex'] != "")
+            }
+            if ($this->_productOptions['preparationDelayFieldIndex'] != "") {
                 $mapCode .= "preparationDelay: this.col" . $this->_productOptions['preparationDelayFieldIndex'] . ",";
-            if ($this->_productOptions['priceFieldIndex'] != "")
+            }
+            if ($this->_productOptions['priceFieldIndex'] != "") {
                 $mapCode .= "price: this.col" . $this->_productOptions['priceFieldIndex'] . ",";
-            if ($this->_productOptions['stockFieldIndex'] != "")
+            }
+            if ($this->_productOptions['stockFieldIndex'] != "") {
                 $mapCode .= "stock: this.col" . $this->_productOptions['stockFieldIndex'] . ",";
-            if ($this->_productOptions['skuFieldIndex'] != "")
+            }
+            if ($this->_productOptions['skuFieldIndex'] != "") {
                 $mapCode .= "sku: this.col" . $this->_productOptions['skuFieldIndex'];
+            }
 
         }
 
@@ -733,12 +742,12 @@ class Import extends AbstractCollection
         $reduce = new \MongoCode($reduceCode);
 
         // global JavaScript variables passed to map, reduce and finalize functions
-        $scope = array(
-            "currentTime" => $this->currentTime,
-            "currentUser" => $this->currentUser,
-            "typeId" => $this->_typeId,
-            "target" => $this->_target
-        );
+//        $scope = array(
+//            "currentTime" => $this->currentTime,
+//            "currentUser" => $this->currentUser,
+//            "typeId" => $this->_typeId,
+//            "target" => $this->_target
+//        );
 
         $params = array(
             "mapreduce" => "Import", // collection
@@ -960,7 +969,7 @@ class Import extends AbstractCollection
     {
 
         foreach ($this->_importAsTaxo as $taxo) {
-
+            unset($taxo);
             $code = "db.ImportTaxo.find().snapshot().forEach(
 			function(foo) {
 				if (foo.value.text > '') {
@@ -1064,7 +1073,7 @@ class Import extends AbstractCollection
 
         // Add other fields
 
-        foreach ($this->_importAsField as $key => $value) {
+        foreach ($this->_importAsField as $value) {
 
             $fieldName = $value['name'];
 

@@ -51,7 +51,7 @@ class XhrLanguageController extends AbstractActionController
         $locale = Manager::getService('CurrentLocalization')->resolveLocalization($currentPage['site'], $forceLocale);
         $domain = $this->getRequest()->getUri()->getHost();
         if ($domain) {
-            $languageCookie = setcookie('locale', $locale, strtotime('+1 year'), '/', $domain);
+            setcookie('locale', $locale, strtotime('+1 year'), '/', $domain);
         }
 
         $response['success'] = $locale;

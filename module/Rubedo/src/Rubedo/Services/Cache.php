@@ -68,6 +68,8 @@ class Cache
      */
     public static function getCache($cacheName = null)
     {
+        unset($cacheName); //Unused for the moment
+
         $cache = StorageFactory::factory(array(
             'adapter' => 'Rubedo\\Cache\\MongoCache'
         ));

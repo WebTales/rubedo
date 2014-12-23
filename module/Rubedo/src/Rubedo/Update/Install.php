@@ -106,7 +106,7 @@ class Install
         }
         \Rubedo\Internationalization\Translate::setDefaultLanguage($defaultLocale);
 
-        $translateService = Manager::getService('Translate');
+        //$translateService = Manager::getService('Translate');
 
         $success = true;
 
@@ -124,7 +124,7 @@ class Install
             }
             $collection = ucfirst($directory->getFilename());
             $collectionService = Manager::getService($collection);
-            $isLocalizable = $collectionService instanceof Rubedo\Collection\AbstractLocalizableCollection;
+            //$isLocalizable = $collectionService instanceof Rubedo\Collection\AbstractLocalizableCollection;
             $itemsJson = new \DirectoryIterator($contentPath . '/' . $directory->getFilename());
             foreach ($itemsJson as $file) {
                 if ($file->isDot() || $file->isDir()) {

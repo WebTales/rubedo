@@ -102,7 +102,7 @@ class FileController extends AbstractActionController
         }
         $img = $result->getBody();
 
-        $removeOldResult = $fileService->destroy(array(
+        $fileService->destroy(array(
             'id' => $originalId,
             'version' => 1
         ));
@@ -115,7 +115,7 @@ class FileController extends AbstractActionController
             '_id' => new \MongoId($originalId)
         );
 
-        $updateResult = $fileService->createBinary($fileObj);
+        $fileService->createBinary($fileObj);
 
         // trigger deletion of cache : sys_get_temp_dir() . '/' . $fileId . '_'
         $directoryIterator = new \DirectoryIterator(sys_get_temp_dir());
