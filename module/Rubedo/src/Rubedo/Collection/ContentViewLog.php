@@ -46,5 +46,4 @@ class ContentViewLog extends AbstractCollection
             "timestamp" => $timestamp
         ));
     }
-
 }

@@ -85,5 +85,4 @@ class PaymentConfigs extends AbstractCollection
         $result = $this->getList($filters);
         return $result;
     }
-
 }

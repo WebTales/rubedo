@@ -50,7 +50,7 @@ class PersonalPrefs extends AbstractCollection implements IPersonalPrefs
         $currentUser = $currentUserService->getCurrentUserSummary();
         $this->_userId = $currentUser['id'];
 
-        $userFilter = Filter::factory('Value');;
+        $userFilter = Filter::factory('Value');
         $userFilter->setName('userId')->setValue($this->_userId);
         $this->_dataService->addFilter($userFilter);
     }

@@ -164,5 +164,4 @@ class Stock extends AbstractCollection
             "success" => true
         );
     }
-
 }

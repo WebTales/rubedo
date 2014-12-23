@@ -882,6 +882,4 @@ abstract class AbstractCollection implements IAbstractCollection
             "count" => count($response['result'])
         );
     }
-
 }
-	

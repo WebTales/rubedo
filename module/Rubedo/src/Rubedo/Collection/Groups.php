@@ -179,8 +179,11 @@ class Groups extends AbstractCollection implements IGroups
     {
         // contentReviewer
         $filters = Filter::factory();
-        $filters->addFilter(Filter::factory('Value')->setName('roles')
-            ->setValue('contentReviewer'));
+        $filters->addFilter(
+            Filter::factory('Value')
+                ->setName('roles')
+            ->setValue('contentReviewer')
+        );
 
         $groupList = $this->getList($filters);
 
@@ -203,11 +206,14 @@ class Groups extends AbstractCollection implements IGroups
         $validatingGroups = Manager::getService('Groups')->getValidatingGroupsId();
 
         $filters = Filter::factory();
-        $filters->addFilter(Filter::factory('In')->setName('writeWorkspaces')
+        $filters->addFilter(
+            Filter::factory('In')
+                ->setName('writeWorkspaces')
             ->setValue(array(
                 $workspace,
                 'all'
-            )));
+            ))
+        );
 
         $groupList = $this->getList($filters);
 
@@ -326,8 +332,11 @@ class Groups extends AbstractCollection implements IGroups
             $groupsIdArray[] = $value['id'];
         }
         $filters = Filter::factory();
-        $filters->addFilter(Filter::factory('NotIn')->setName('parentId')
-            ->setValue($groupsIdArray));
+        $filters->addFilter(
+            Filter::factory('NotIn')
+                ->setName('parentId')
+            ->setValue($groupsIdArray)
+        );
         $orphansArray = $this->getList($filters);
 
         foreach ($orphansArray['data'] as $value) {
@@ -358,11 +367,13 @@ class Groups extends AbstractCollection implements IGroups
         foreach ($arrayId as $stringId) {
             $deleteArray[] = $this->_dataService->getId($stringId);
         }
-        return $this->_dataService->customDelete(array(
-            '_id' => array(
-                '$in' => $deleteArray
+        return $this->_dataService->customDelete(
+            array(
+                '_id' => array(
+                    '$in' => $deleteArray
+                )
             )
-        ));
+        );
     }
 
     public function countOrphanGroups()
@@ -382,8 +393,11 @@ class Groups extends AbstractCollection implements IGroups
         }
 
         $filters = Filter::factory();
-        $filters->addFilter(Filter::factory('NotIn')->setName('parentId')
-            ->setValue($groupsIdArray));
+        $filters->addFilter(
+            Filter::factory('NotIn')
+                ->setName('parentId')
+            ->setValue($groupsIdArray)
+        );
         $orphansArray = $this->getList($filters);
 
         foreach ($orphansArray['data'] as $value) {

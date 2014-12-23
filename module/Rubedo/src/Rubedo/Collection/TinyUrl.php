@@ -97,16 +97,28 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
     public function findByParameters($action, $controller, $module, $params)
     {
         $cond = Filter::factory();
-        $cond->addFilter(Filter::factory('Value')->setName('action')
-            ->setValue($action));
-        $cond->addFilter(Filter::factory('Value')->setName('controller')
-            ->setValue($controller));
-        $cond->addFilter(Filter::factory('Value')->setName('module')
-            ->setValue($module));
+        $cond->addFilter(
+            Filter::factory('Value')
+                ->setName('action')
+                ->setValue($action)
+        );
+        $cond->addFilter(
+            Filter::factory('Value')
+                ->setName('controller')
+                ->setValue($controller)
+        );
+        $cond->addFilter(
+            Filter::factory('Value')
+                ->setName('module')
+                ->setValue($module)
+        );
 
         foreach ($params as $key => $value) {
-            $cond->addFilter(Filter::factory('Value')->setName('params.' . $key)
-                ->setValue($value));
+            $cond->addFilter(
+                Filter::factory('Value')
+                    ->setName('params.' . $key)
+                    ->setValue($value)
+            );
         }
 
         return $this->_dataService->findOne($cond);

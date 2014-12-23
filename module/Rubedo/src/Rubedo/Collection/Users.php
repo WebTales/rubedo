@@ -67,8 +67,11 @@ class Users extends AbstractCollection implements IUsers
             if (!in_array('all', $readWorkspaceArray)) {
                 $filter = Filter::factory();
 
-                $filter->addFilter(Filter::factory('In')->setName('workspace')
-                    ->setValue($readWorkspaceArray));
+                $filter->addFilter(
+                    Filter::factory('In')
+                        ->setName('workspace')
+                        ->setValue($readWorkspaceArray)
+                );
 
                 $this->_dataService->addFilter($filter);
             }

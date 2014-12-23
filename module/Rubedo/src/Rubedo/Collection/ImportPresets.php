@@ -31,5 +31,4 @@ class ImportPresets extends AbstractCollection
         $this->_collectionName = 'ImportPresets';
         parent::__construct();
     }
-
 }

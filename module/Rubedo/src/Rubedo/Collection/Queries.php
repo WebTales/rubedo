@@ -167,9 +167,16 @@ class Queries extends AbstractCollection implements IQueries
      */
     protected function _getFilterArrayForManual($query)
     {
-        $filters = Filter::factory()->addFilter(Filter::factory('InUid')->setValue($query['query']))
-            ->addFilter(Filter::factory('Value')->setName('status')
-                ->setValue('published'));
+        $filters = Filter::factory()
+            ->addFilter(
+                Filter::factory('InUid')
+                    ->setValue($query['query'])
+            )
+            ->addFilter(
+                Filter::factory('Value')
+                    ->setName('status')
+                    ->setValue('published')
+            );
 
         $sort[] = array(
             'property' => 'id',
@@ -207,57 +214,90 @@ class Queries extends AbstractCollection implements IQueries
                     if ($property === "createTime" || $property === "lastUpdateTime") {
                         if ($ruleOperator === 'eq') {
 
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$gt')
-                                ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
+                            $filters->addFilter(
+                                Filter::factory('OperatorToValue')
+                                    ->setName($property)
+                                    ->setOperator('$gt')
+                                    ->setValue($this->_dateService->convertToTimeStamp($value['value']))
+                            );
 
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$lt')
-                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                            $filters->addFilter(
+                                Filter::factory('OperatorToValue')
+                                    ->setName($property)
+                                    ->setOperator('$lt')
+                                    ->setValue($this->_dateService->convertToTimeStamp($nextDate['date']))
+                            );
                         } elseif ($ruleOperator === '$gt') {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator($ruleOperator)
-                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                            $filters->addFilter(
+                                Filter::factory('OperatorToValue')
+                                    ->setName($property)
+                                    ->setOperator($ruleOperator)
+                                    ->setValue($this->_dateService->convertToTimeStamp($nextDate['date']))
+                            );
                         } elseif ($ruleOperator === '$lte') {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$lte')
-                                ->setValue($this->_dateService->convertToTimeStamp($nextDate['date'])));
+                            $filters->addFilter(
+                                Filter::factory('OperatorToValue')
+                                    ->setName($property)
+                                    ->setOperator('$lte')
+                                    ->setValue($this->_dateService->convertToTimeStamp($nextDate['date']))
+                            );
                         } else {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator($ruleOperator)
-                                ->setValue($this->_dateService->convertToTimeStamp($value['value'])));
+                            $filters->addFilter(
+                                Filter::factory('OperatorToValue')
+                                    ->setName($property)
+                                    ->setOperator($ruleOperator)
+                                    ->setValue($this->_dateService->convertToTimeStamp($value['value']))
+                            );
                         }
                     } else {
                         if ($ruleOperator === 'eq') {
 
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$gt')
-                                ->setValue((string)$this->_dateService->convertToTimeStamp($value['value'])));
+                            $filters->addFilter(
+                                Filter::factory('OperatorToValue')
+                                    ->setName($property)
+                                    ->setOperator('$gt')
+                                    ->setValue((string)$this->_dateService->convertToTimeStamp($value['value']))
+                            );
 
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$lt')
-                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
+                            $filters->addFilter(
+                                Filter::factory('OperatorToValue')
+                                    ->setName($property)
+                                    ->setOperator('$lt')
+                                    ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date']))
+                            );
                         } elseif ($ruleOperator === '$gt') {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator($ruleOperator)
-                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
+                            $filters->addFilter(
+                                Filter::factory('OperatorToValue')
+                                    ->setName($property)
+                                    ->setOperator($ruleOperator)
+                                    ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date']))
+                            );
                         } elseif ($ruleOperator === '$lte') {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator('$lte')
-                                ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date'])));
+                            $filters->addFilter(
+                                Filter::factory('OperatorToValue')
+                                    ->setName($property)
+                                    ->setOperator('$lte')
+                                    ->setValue((string)$this->_dateService->convertToTimeStamp($nextDate['date']))
+                            );
                         } else {
-                            $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                                ->setOperator($ruleOperator)
-                                ->setValue((string)$this->_dateService->convertToTimeStamp($value['value'])));
+                            $filters->addFilter(
+                                Filter::factory('OperatorToValue')
+                                    ->setName($property)
+                                    ->setOperator($ruleOperator)
+                                    ->setValue((string)$this->_dateService->convertToTimeStamp($value['value']))
+                            );
                         }
                     }
                 }
                 break;
             case "numberfield":
             case "timefield":
-                $filters->addFilter(Filter::factory('OperatorToValue')->setName($property)
-                    ->setOperator($ruleOperator)
-                    ->setValue($value['value']));
+                $filters->addFilter(
+                    Filter::factory('OperatorToValue')
+                        ->setName($property)
+                        ->setOperator($ruleOperator)
+                        ->setValue($value['value'])
+                );
                 break;
             default:
                 throw new \Rubedo\Exceptions\Server('not implemented ' . $fieldType);
@@ -290,12 +330,18 @@ class Queries extends AbstractCollection implements IQueries
         );
 
         /* Add filters on TypeId and publication */
-        $filters->addFilter(Filter::factory('In')->setName('typeId')
-            ->setValue($query['contentTypes']));
+        $filters->addFilter(
+            Filter::factory('In')
+                ->setName('typeId')
+                ->setValue($query['contentTypes'])
+        );
 
         if ($this->_workspace == 'live') {
-            $filters->addFilter(Filter::factory('Value')->setName('status')
-                ->setValue('published'));
+            $filters->addFilter(
+                Filter::factory('Value')
+                    ->setName('status')
+                    ->setValue('published')
+            );
         }
         // add computed filter for vocabularies rules
         if (is_array($query['vocabularies'])) {
@@ -456,13 +502,17 @@ class Queries extends AbstractCollection implements IQueries
                         $termsArray[] = $taxonomyTerms["id"];
                     }
                     // some of a branch
-                    $filters->addFilter(Filter::factory('In')->setName($this->_workspace . '.taxonomy.' . $key)
-                        ->setValue($termsArray));
+                    $filters->addFilter(
+                        Filter::factory('In')
+                            ->setName($this->_workspace . '.taxonomy.' . $key)
+                            ->setValue($termsArray)
+                    );
                 }
 
                 break;
             case 'all': // include all terms
-                $filters = Filter::factory('OperatorToValue')->setName($this->_workspace . '.taxonomy.' . $key)
+                $filters = Filter::factory('OperatorToValue')
+                    ->setName($this->_workspace . '.taxonomy.' . $key)
                     ->setOperator('$all')
                     ->setValue($value['terms']);
                 break;
@@ -488,7 +538,7 @@ class Queries extends AbstractCollection implements IQueries
 
                 break;
             default:
-                Throw new \Rubedo\Exceptions\Server('Rule "%1$s" not implemented.', "Exception50", $rule);
+                throw new \Rubedo\Exceptions\Server('Rule "%1$s" not implemented.', "Exception50", $rule);
                 break;
         }
 

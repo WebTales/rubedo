@@ -91,7 +91,7 @@ class Files extends AbstractFileCollection implements IFiles
             }
         }
         switch ($fileObj ['mainFileType']) {
-            case 'DocumentOrImage' :
+            case 'DocumentOrImage':
                 if ((!in_array($fileObj ['Content-Type'], $this->_allowedDocumentMimeTypes)) && (!in_array($fileObj ['Content-Type'], $this->_allowedIllustrationMimeTypes))) {
                     return array(
                         'success' => false,
@@ -107,7 +107,7 @@ class Files extends AbstractFileCollection implements IFiles
                     );
                 }
                 break;
-            case 'Document' :
+            case 'Document':
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedDocumentMimeTypes)) {
                     return array(
                         'success' => false,
@@ -116,8 +116,8 @@ class Files extends AbstractFileCollection implements IFiles
                 }
                 break;
 
-            case 'Ilustration' :
-            case 'Image' :
+            case 'Ilustration':
+            case 'Image':
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedIllustrationMimeTypes)) {
                     return array(
                         'success' => false,
@@ -126,7 +126,7 @@ class Files extends AbstractFileCollection implements IFiles
                 }
                 break;
 
-            case 'Video' :
+            case 'Video':
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedVideoMimeTypes)) {
                     return array(
                         'success' => false,
@@ -135,7 +135,7 @@ class Files extends AbstractFileCollection implements IFiles
                 }
                 break;
 
-            case 'Animation' :
+            case 'Animation':
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedAnimationMimeTypes)) {
                     return array(
                         'success' => false,
@@ -144,7 +144,7 @@ class Files extends AbstractFileCollection implements IFiles
                 }
                 break;
 
-            case 'Sound' :
+            case 'Sound':
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedSoundMimeTypes)) {
                     return array(
                         'success' => false,
@@ -152,7 +152,7 @@ class Files extends AbstractFileCollection implements IFiles
                     );
                 }
                 break;
-            default :
+            default:
                 // throw new Rubedo\Exceptions\Server('no main type given');
                 break;
         }
@@ -171,7 +171,7 @@ class Files extends AbstractFileCollection implements IFiles
     public function createBinary(array $fileObj, $options = array())
     {
         switch ($fileObj ['mainFileType']) {
-            case 'Resource' :
+            case 'Resource':
                 if (!in_array($fileObj ['Content-Type'], $this->allowedResourceMimeTypes)) {
                     return array(
                         'success' => false,
@@ -179,7 +179,7 @@ class Files extends AbstractFileCollection implements IFiles
                     );
                 }
                 break;
-            case 'Document' :
+            case 'Document':
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedDocumentMimeTypes)) {
                     return array(
                         'success' => false,
@@ -188,7 +188,7 @@ class Files extends AbstractFileCollection implements IFiles
                 }
                 break;
 
-            case 'Ilustration' :
+            case 'Ilustration':
             case 'Image' :
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedIllustrationMimeTypes)) {
                     return array(
@@ -198,7 +198,7 @@ class Files extends AbstractFileCollection implements IFiles
                 }
                 break;
 
-            case 'Video' :
+            case 'Video':
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedVideoMimeTypes)) {
                     return array(
                         'success' => false,
@@ -207,7 +207,7 @@ class Files extends AbstractFileCollection implements IFiles
                 }
                 break;
 
-            case 'Animation' :
+            case 'Animation':
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedAnimationMimeTypes)) {
                     return array(
                         'success' => false,
@@ -216,7 +216,7 @@ class Files extends AbstractFileCollection implements IFiles
                 }
                 break;
 
-            case 'Sound' :
+            case 'Sound':
                 if (!in_array($fileObj ['Content-Type'], $this->_allowedSoundMimeTypes)) {
                     return array(
                         'success' => false,
@@ -224,7 +224,7 @@ class Files extends AbstractFileCollection implements IFiles
                     );
                 }
                 break;
-            default :
+            default:
                 // throw new Rubedo\Exceptions\Server('no main type given');
                 break;
         }
@@ -258,7 +258,7 @@ class Files extends AbstractFileCollection implements IFiles
         return null;
     }
 
-    public function  findByFileNAme($name)
+    public function findByFileNAme($name)
     {
 
         $filter = Filter::factory('Value')->SetName('filename')->setValue($name);

@@ -99,7 +99,8 @@ class Emails extends AbstractCollection implements IEmails
                                     function ($matches) {
                                         return 'src="' . $this->attachImageFromFiles($matches[2]) . '"';
                                     },
-                                    $component['config']['html']);;
+                                    $component['config']['html']
+                                );
                             }
                             break;
                     }

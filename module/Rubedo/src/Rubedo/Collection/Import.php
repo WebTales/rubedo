@@ -576,7 +576,8 @@ class Import extends AbstractCollection
             "scope" => $scope, // scope
             "out" => array("replace" => "ImportContents") // out
         );
-        if ($this->_isProduct) $params["finalize"] = $finalize;
+        if ($this->_isProduct)
+            $params["finalize"] = $finalize;
 
         $response = $this->_dataService->command($params);
 
@@ -647,14 +648,22 @@ class Import extends AbstractCollection
 
         if ($this->_isProduct) {
             //$mapCode.=",isProduct:true,";
-            if ($this->_productOptions['textFieldIndex'] != "") $mapCode .= "text: this.col" . $this->_productOptions['textFieldIndex'] . ",";
-            if ($this->_productOptions['summaryFieldIndex'] != "") $mapCode .= "summary: this.col" . $this->_productOptions['summaryFieldIndex'] . ",";
-            if ($this->_productOptions['baseSkuFieldIndex'] != "") $mapCode .= "baseSku: this.col" . $this->_productOptions['baseSkuFieldIndex'] . ",";
-            if ($this->_productOptions['basePriceFieldIndex'] != "") $mapCode .= "basePrice: this.col" . $this->_productOptions['basePriceFieldIndex'] . ",";
-            if ($this->_productOptions['preparationDelayFieldIndex'] != "") $mapCode .= "preparationDelay: this.col" . $this->_productOptions['preparationDelayFieldIndex'] . ",";
-            if ($this->_productOptions['priceFieldIndex'] != "") $mapCode .= "price: this.col" . $this->_productOptions['priceFieldIndex'] . ",";
-            if ($this->_productOptions['stockFieldIndex'] != "") $mapCode .= "stock: this.col" . $this->_productOptions['stockFieldIndex'] . ",";
-            if ($this->_productOptions['skuFieldIndex'] != "") $mapCode .= "sku: this.col" . $this->_productOptions['skuFieldIndex'];
+            if ($this->_productOptions['textFieldIndex'] != "")
+                $mapCode .= "text: this.col" . $this->_productOptions['textFieldIndex'] . ",";
+            if ($this->_productOptions['summaryFieldIndex'] != "")
+                $mapCode .= "summary: this.col" . $this->_productOptions['summaryFieldIndex'] . ",";
+            if ($this->_productOptions['baseSkuFieldIndex'] != "")
+                $mapCode .= "baseSku: this.col" . $this->_productOptions['baseSkuFieldIndex'] . ",";
+            if ($this->_productOptions['basePriceFieldIndex'] != "")
+                $mapCode .= "basePrice: this.col" . $this->_productOptions['basePriceFieldIndex'] . ",";
+            if ($this->_productOptions['preparationDelayFieldIndex'] != "")
+                $mapCode .= "preparationDelay: this.col" . $this->_productOptions['preparationDelayFieldIndex'] . ",";
+            if ($this->_productOptions['priceFieldIndex'] != "")
+                $mapCode .= "price: this.col" . $this->_productOptions['priceFieldIndex'] . ",";
+            if ($this->_productOptions['stockFieldIndex'] != "")
+                $mapCode .= "stock: this.col" . $this->_productOptions['stockFieldIndex'] . ",";
+            if ($this->_productOptions['skuFieldIndex'] != "")
+                $mapCode .= "sku: this.col" . $this->_productOptions['skuFieldIndex'];
 
         }
 
@@ -1118,6 +1127,4 @@ class Import extends AbstractCollection
     {
         return mb_convert_encoding($string, "UTF-8", $encoding);
     }
-
 }
-

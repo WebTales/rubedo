@@ -421,18 +421,28 @@ class Pages extends AbstractLocalizableCollection implements IPages
     protected function _clearCacheForPage($obj)
     {
         $pageId = $obj['id'];
-        Manager::getService('UrlCache')->customDelete(Filter::factory('Value')->setName('pageId')
-            ->setValue($pageId), array(
-            'w' => false
-        ));
+        Manager::getService('UrlCache')->customDelete(
+            Filter::factory('Value')
+                ->setName('pageId')
+                ->setValue($pageId),
+            array(
+                'w' => false
+            )
+        );
     }
 
     public function findByNameAndSite($name, $siteId)
     {
-        $filters = Filter::factory()->addFilter(Filter::factory('Value')->setName('site')
-            ->setValue($siteId))
-            ->addFilter(Filter::factory('Value')->setName('text')
-                ->setValue($name));
+        $filters = Filter::factory()->addFilter(
+            Filter::factory('Value')
+                ->setName('site')
+                ->setValue($siteId)
+        )
+        ->addFilter(
+            Filter::factory('Value')
+                ->setName('text')
+                ->setValue($name)
+        );
         return $this->_dataService->findOne($filters);
     }
 

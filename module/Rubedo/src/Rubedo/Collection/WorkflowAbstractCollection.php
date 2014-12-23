@@ -20,7 +20,6 @@ use Rubedo\Interfaces\Collection\IWorkflowAbstractCollection;
 use Rubedo\Services\Events;
 use Rubedo\Services\Manager;
 
-
 // require_once APPLICATION_PATH.'/../Core/Rubedo/Interfaces/Collection/IWorkflowAbstractCollection.php';
 
 /**

@@ -322,7 +322,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 
         // Get faceted fields
         $collection = Manager::getService('ContentTypes');
-        $facetedFields = $collection->GetFacetedFields();
+        $facetedFields = $collection->getFacetedFields();
         foreach ($facetedFields as $facetedField) {
             // get default facet operator from faceted field if not present in block configuration
             if (!isset ($this->_facetOperators [$facetedField ['name']])) {

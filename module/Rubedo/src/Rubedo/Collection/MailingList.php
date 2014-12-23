@@ -117,8 +117,11 @@ class MailingList extends AbstractCollection implements IMailingList
         } else {
             // Make the default skeleton for the user if it's a new user
             $filters = Filter::factory();
-            $filters->addFilter(Filter::factory('Value')->setName('UTType')
-                ->setValue("email"));
+            $filters->addFilter(
+                Filter::factory('Value')
+                    ->setName('UTType')
+                ->setValue("email")
+            );
             $emailUserType = Manager::getService("UserTypes")->findOne($filters);
             $newName = $email;
             if (($userName) && (!empty($userName))) {

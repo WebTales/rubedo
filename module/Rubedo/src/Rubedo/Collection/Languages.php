@@ -129,10 +129,16 @@ class Languages extends AbstractCollection implements ILanguages
     {
         if (!isset(self::$activeLanguages[$locale])) {
             $filters = Filter::factory();
-            $filters->addFilter(Filter::factory('Value')->setValue(true)
-                ->setName('active'));
-            $filters->addFilter(Filter::factory('Value')->setValue($locale)
-                ->setName('locale'));
+            $filters->addFilter(
+                Filter::factory('Value')
+                    ->setValue(true)
+                ->setName('active')
+            );
+            $filters->addFilter(
+                Filter::factory('Value')
+                    ->setValue($locale)
+                ->setName('locale')
+            );
 
             $result = $this->_dataService->findOne($filters);
             self::$activeLanguages[$locale] = !is_null($result);
@@ -156,8 +162,11 @@ class Languages extends AbstractCollection implements ILanguages
     public function getActiveLanguages($siteId = null)
     {
         $filters = Filter::factory();
-        $filters->addFilter(Filter::factory('Value')->setName('active')
-            ->setValue(true));
+        $filters->addFilter(
+            Filter::factory('Value')
+                ->setName('active')
+            ->setValue(true)
+        );
         $result = Manager::getService('Languages')->getList($filters, array(
             array(
                 'property' => 'label',

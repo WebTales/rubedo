@@ -184,12 +184,18 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $startPublicationDateField = (Context::isLive() ? 'live' : 'workspace') . '.startPublicationDate';
             $endPublicationDateField = (Context::isLive() ? 'live' : 'workspace') . '.endPublicationDate';
 
-            $this->_dataService->addFilter(Filter::factory('EmptyOrOperator')->setName($startPublicationDateField)
+            $this->_dataService->addFilter(
+                Filter::factory('EmptyOrOperator')
+                    ->setName($startPublicationDateField)
                 ->setOperator('$lte')
-                ->setValue($now));
-            $this->_dataService->addFilter(Filter::factory('EmptyOrOperator')->setName($endPublicationDateField)
+                ->setValue($now)
+            );
+            $this->_dataService->addFilter(
+                Filter::factory('EmptyOrOperator')
+                    ->setName($endPublicationDateField)
                 ->setOperator('$gte')
-                ->setValue($now));
+                ->setValue($now)
+            );
         }
         $this->initLocaleFilter();
     }
@@ -212,8 +218,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
         if (is_null($filters)) {
             $filters = Filter::factory();
         }
-        $filters->addFilter(Filter::factory('Value')->setName('online')
-            ->setValue(true));
+        $filters->addFilter(
+            Filter::factory('Value')
+                ->setName('online')
+            ->setValue(true)
+        );
 
         $returnArray = $this->getList($filters, $sort, $start, $limit, Context::isLive(), $ismagic);
 
@@ -398,7 +407,6 @@ class Contents extends WorkflowAbstractCollection implements IContents
                 case 'CKEField':
                     $obj = $this->filterCKEField($obj, $fieldConfig['config']['name']);
                     break;
-                default;
             }
         }
 
@@ -491,7 +499,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
         if (isset($obj['fields'][$name]) && !is_array($obj['fields'][$name])) {
             $obj['fields'][$name] = $cleanerService->clean($obj['fields'][$name]);
-        } else if (isset($obj['fields'][$name]) && is_array($obj['fields'][$name])) {
+        } elseif (isset($obj['fields'][$name]) && is_array($obj['fields'][$name])) {
             $tempArray = array();
             foreach ($obj['fields'][$name] as $field) {
                 $tempArray[] = $cleanerService->clean($field);
@@ -955,10 +963,16 @@ class Contents extends WorkflowAbstractCollection implements IContents
     {
         $filterArray = Filter::factory();
 
-        $filterArray->addFilter(Filter::factory('Value')->setName("typeId")
-            ->setValue($typeId));
-        $filterArray->addFilter(Filter::factory('Value')->setName('fields.' . $fieldName)
-            ->setValue($contentId));
+        $filterArray->addFilter(
+            Filter::factory('Value')
+                ->setName("typeId")
+            ->setValue($typeId)
+        );
+        $filterArray->addFilter(
+            Filter::factory('Value')
+                ->setName('fields.' . $fieldName)
+            ->setValue($contentId)
+        );
 
         $sort = Json::decode($sort, Json::TYPE_ARRAY);
 
@@ -1119,9 +1133,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $wasFiltered = parent::disableUserFilter();
         $this->_dataService->clearFilter();
         $this->_dataService->setWorkspace();
-        $items = AbstractCollection::getList(Filter::factory('OperatorToValue')->setName('nativeLanguage')
+        $items = AbstractCollection::getList(
+            Filter::factory('OperatorToValue')
+                ->setName('nativeLanguage')
             ->setOperator('$exists')
-            ->setValue(false));
+            ->setValue(false)
+        );
         if ($items['count'] > 0) {
             foreach ($items['data'] as $item) {
                 if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
@@ -1138,5 +1155,4 @@ class Contents extends WorkflowAbstractCollection implements IContents
 
         parent::disableUserFilter($wasFiltered);
     }
-
 }

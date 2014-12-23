@@ -20,7 +20,6 @@ use Rubedo\Services\Events;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 
-
 /**
  * Class implementing the API to MongoDB for localizable collections
  *
@@ -90,25 +89,37 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         if (static::$isLocaleFiltered) {
             switch (static::$localizationStrategy) {
                 case 'onlyOne':
-                    $this->_dataService->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . static::$workingLocale)
+                    $this->_dataService->addFilter(
+                        Filter::factory('OperatorToValue')
+                            ->setName('i18n.' . static::$workingLocale)
                         ->setOperator('$exists')
-                        ->setValue(true));
+                        ->setValue(true)
+                    );
                     break;
                 case 'fallback':
                     $fallbackLocale = isset(static::$fallbackLocale) ? static::$fallbackLocale : static::$defaultLocale;
                     if ($fallbackLocale != static::$workingLocale) {
                         $orFilter = Filter::factory('Or');
-                        $orFilter->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . static::$workingLocale)
+                        $orFilter->addFilter(
+                            Filter::factory('OperatorToValue')
+                                ->setName('i18n.' . static::$workingLocale)
                             ->setOperator('$exists')
-                            ->setValue(true));
-                        $orFilter->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . $fallbackLocale)
+                            ->setValue(true)
+                        );
+                        $orFilter->addFilter(
+                            Filter::factory('OperatorToValue')
+                                ->setName('i18n.' . $fallbackLocale)
                             ->setOperator('$exists')
-                            ->setValue(true));
+                            ->setValue(true)
+                        );
                         $this->_dataService->addFilter($orFilter);
                     } else {
-                        $this->_dataService->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . static::$workingLocale)
+                        $this->_dataService->addFilter(
+                            Filter::factory('OperatorToValue')
+                                ->setName('i18n.' . static::$workingLocale)
                             ->setOperator('$exists')
-                            ->setValue(true));
+                            ->setValue(true)
+                        );
                     }
 
                     break;
@@ -116,9 +127,12 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
                     $localeArray = Manager::getService('Languages')->getActiveLocales();
                     $orFilter = Filter::factory('Or');
                     foreach ($localeArray as $locale) {
-                        $orFilter->addFilter(Filter::factory('OperatorToValue')->setName('i18n.' . $locale)
+                        $orFilter->addFilter(
+                            Filter::factory('OperatorToValue')
+                                ->setName('i18n.' . $locale)
                             ->setOperator('$exists')
-                            ->setValue(true));
+                            ->setValue(true)
+                        );
                     }
 
                     $this->_dataService->addFilter($orFilter);
@@ -471,9 +485,12 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
     {
         $wasFiltered = parent::disableUserFilter();
         $this->_dataService->clearFilter();
-        $items = parent::getList(Filter::factory('OperatorToValue')->setName('nativeLanguage')
+        $items = parent::getList(
+            Filter::factory('OperatorToValue')
+                ->setName('nativeLanguage')
             ->setOperator('$exists')
-            ->setValue(false));
+            ->setValue(false)
+        );
         if ($items['count'] > 0) {
             foreach ($items['data'] as $item) {
                 if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
@@ -611,4 +628,3 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
         static::$isLocaleFiltered = !static::$isLocaleFiltered;
     }
 }
-	

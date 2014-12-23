@@ -94,5 +94,4 @@ class Orders extends AbstractCollection
         return ($response['result'][0]['latestCode'] + 1);
 
     }
-
 }

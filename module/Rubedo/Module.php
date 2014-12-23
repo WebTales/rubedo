@@ -142,7 +142,7 @@ class Module
         $urlCacheService = Manager::getService('UrlCache');
         $eventManager->attach(Url::PAGE_TO_URL_READ_CACHE_PRE, array(
             $urlCacheService,
-            'PageToUrlReadCacheEvent'
+            'pageToUrlReadCacheEvent'
         ), -100);
 
         $eventManager->attach(array(

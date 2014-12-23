@@ -216,12 +216,18 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
                     $filters = Filter::factory();
                 }
                 if ($rootPage) {
-                    $filters->addFilter(Filter::factory('Value')->setName('site')
-                        ->setValue($rootPage["site"]));
+                    $filters->addFilter(
+                        Filter::factory('Value')
+                            ->setName('site')
+                            ->setValue($rootPage["site"])
+                    );
                 } else {
 
-                    $filters->addFilter(Filter::factory('Value')->setName('site')
-                        ->setValue($parentId));
+                    $filters->addFilter(
+                        Filter::factory('Value')
+                            ->setName('site')
+                            ->setValue($parentId)
+                    );
                     $parentId = 'root';
                 }
 
@@ -338,7 +344,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         if (isset($site['i18n'])) {
             $term['i18n'] = $site['i18n'];
         }
-        $term['locale'] = AbstractLocalizableCollection::getWorkingLocale();;
+        $term['locale'] = AbstractLocalizableCollection::getWorkingLocale();
         $term['id'] = $site['id'];
         $term['vocabularyId'] = 'navigation';
         $term['isNotPage'] = true;
@@ -501,7 +507,8 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      */
     public function getTerm($id, $vocabularyId = null)
     {
-        if (empty($id)) return null;
+        if (empty($id))
+            return null;
         if (!isset(self::$_termsArray[$id])) {
             if ($vocabularyId == null || $vocabularyId != 'navigation') {
                 if ($id == "all") {
@@ -561,10 +568,16 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      */
     public function findByVocabularyIdAndName($vocabularyId, $name)
     {
-        $filters = Filter::factory()->addFilter(Filter::factory('Value')->SetName('vocabularyId')
-            ->setValue($vocabularyId))
-            ->addFilter(Filter::factory('Value')->SetName('text')
-                ->setValue($name));
+        $filters = Filter::factory()
+            ->addFilter(
+                Filter::factory('Value')
+                    ->SetName('vocabularyId')
+                    ->setValue($vocabularyId))
+            ->addFilter(
+                Filter::factory('Value')
+                    ->SetName('text')
+                    ->setValue($name)
+            );
         return $this->_dataService->findOne($filters);
     }
 
@@ -647,10 +660,17 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
             $termsIdArray[] = $value['id'];
         }
 
-        $Filters = Filter::factory('Or')->addFilter(Filter::factory('NotIn')->setName('parentId')
-            ->setValue($termsIdArray))
-            ->addFilter(Filter::factory('NotIn')->setName('vocabularyId')
-                ->setValue($taxonomyIdArray));
+        $Filters = Filter::factory('Or')
+            ->addFilter(
+                Filter::factory('NotIn')
+                    ->setName('parentId')
+                    ->setValue($termsIdArray)
+            )
+            ->addFilter(
+                Filter::factory('NotIn')
+                    ->setName('vocabularyId')
+                    ->setValue($taxonomyIdArray)
+            );
 
         $orphansArray = $this->_dataService->customFind($Filters);
 
@@ -699,10 +719,17 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
             $termsIdArray[] = $value['id'];
         }
 
-        $Filters = Filter::factory('Or')->addFilter(Filter::factory('NotIn')->setName('parentId')
-            ->setValue($termsIdArray))
-            ->addFilter(Filter::factory('NotIn')->setName('vocabularyId')
-                ->setValue($taxonomyIdArray));
+        $Filters = Filter::factory('Or')
+            ->addFilter(
+                Filter::factory('NotIn')
+                    ->setName('parentId')
+                    ->setValue($termsIdArray)
+            )
+            ->addFilter(
+                Filter::factory('NotIn')
+                    ->setName('vocabularyId')
+                    ->setValue($taxonomyIdArray)
+            );
         $orphansArray = $this->_dataService->customFind($Filters);
 
         if ($orphansArray->count() > 0) {

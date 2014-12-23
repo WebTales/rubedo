@@ -161,8 +161,11 @@ class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
         if ($name == 'Navigation') {
             return $this->_virtualNavigationVocabulary;
         }
-        $data = $this->_dataService->findOne(Filter::factory('Value')->setName('name')
-            ->setValue($name));
+        $data = $this->_dataService->findOne(
+            Filter::factory('Value')
+                ->setName('name')
+                ->setValue($name)
+        );
 
         if ($data) {
             $data = $this->_addReadableProperty($data);

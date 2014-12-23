@@ -194,10 +194,17 @@ class NestedContents implements INestedContents
         $data = array(
             '$set' => $updateArray
         );
-        $nestedContentCriteria = Filter::factory('ElemMatch')->addFilter(Filter::factory('Value')->setName('version')
-            ->setValue($oldVersion))
-            ->addFilter(Filter::factory('Value')->setName('id')
-                ->setValue($obj['id']));
+        $nestedContentCriteria = Filter::factory('ElemMatch')
+            ->addFilter(
+                Filter::factory('Value')
+                    ->setName('version')
+                ->setValue($oldVersion)
+            )
+            ->addFilter(
+                Filter::factory('Value')
+                    ->setName('id')
+                ->setValue($obj['id'])
+            );
 
         $updateCond = Filter::factory()->addFilter(Filter::factory('Uid')->setValue($parentContentId))
             ->addFilter($nestedContentCriteria);

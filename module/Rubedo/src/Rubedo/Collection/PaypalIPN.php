@@ -31,5 +31,4 @@ class PaypalIPN extends AbstractCollection
         $this->_collectionName = 'PaypalIPN';
         parent::__construct();
     }
-
 }

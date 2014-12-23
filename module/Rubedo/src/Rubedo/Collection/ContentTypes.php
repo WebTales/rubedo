@@ -285,15 +285,18 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         $contentTypesList = array();
 
         $readWorkspaces = $currentUserService->getReadWorkspaces();
-        $readWorkspaces[] = NULL;
+        $readWorkspaces[] = null;
 
         $filters = Filter::factory();
         if (!in_array("all", $readWorkspaces)) {
             $filter = Filter::factory('In')->setName('workspaces')->setValue($readWorkspaces);
             $filters->addFilter($filter);
         }
-        $filters->addFilter(Filter::factory('Not')->setName('system')
-            ->setValue(true));
+        $filters->addFilter(
+            Filter::factory('Not')
+                ->setName('system')
+            ->setValue(true)
+        );
         $readableContentTypes = $this->getList($filters);
 
         foreach ($readableContentTypes['data'] as $value) {
@@ -330,7 +333,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         return $geolocatedContentTypes;
     }
 
-    public function GetFacetedFields()
+    public function getFacetedFields()
     {
 
         $contentTypesList = $this->getList();
