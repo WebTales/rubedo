@@ -56,7 +56,7 @@ class ShoppingCart extends AbstractCollection implements IShoppingCart
     public function __construct()
     {
         $this->_collectionName = 'TemporaryShoppingCart';
-        $this->currentUserService = Manager::getService("CurrentUserAPI");
+        $this->currentUserService = Manager::getService("CurrentUser");
         $this->usersService = Manager::getService("Users");
         $this->requestService = Manager::getService('Request');
         $this->responseService = Manager::getService('Response');

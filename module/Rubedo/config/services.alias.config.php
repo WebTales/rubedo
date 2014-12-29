@@ -13,6 +13,5 @@
  * @license http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 return array(
-    'AuthenticationService' => 'Rubedo\\User\\Authentication\\AuthenticationService',
-    'CurrentUser' => 'Rubedo\\User\\CurrentUser',
+    'AuthenticationService' => 'Rubedo\\User\\Authentication\\AuthenticationService'
 );
