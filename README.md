@@ -1,17 +1,34 @@
 Rubedo
 ======
 
-An open source PHP CMS, based on Zend Framework &amp; MongoDB : http://www.rubedo-project.org/
+An open source PHP CMS, based on Zend Framework &amp; NoSQL MongoDB and Elasticsearch.
+### http://www.rubedo-project.org/
+    DATA DRIVEN CONTENT AND COMMERCE
 
-Copyright (c) 2013, WebTales (http://www.webtales.fr/).
-All rights reserved.
-licensing@webtales.fr
+Rubedo is a unique big data platform that go beyond traditional content management and commerce
+* Multisite management / Website factory
+* Behavioral targeting
+* Full text and faceted search functionalities
+* Responsive Web design
+* Multilingual
+* Integrated solution
+
 
 Open Source License
 ------------------------------------------------------------------------------------------
 Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
-
 http://www.gnu.org/licenses/gpl.html
+Copyright (c) 2014, WebTales (http://www.webtales.fr/). All rights reserved.
+licensing@webtales.fr
+
+Documentation and Help
+------------------------------------------------------------------------------------------
+* Rubedo Documentation Center http://docs.rubedo-project.org/en/homepage
+* Translation are available on https://crowdin.com/project/rubedo
+* Forum http://forum.rubedo-project.org/
+* Hosting http://www.rubedocloud.com/en/ 
+* Newsletter http://newsletter-rubedo.webtales.fr/en/home
+
 
 
 Installation
