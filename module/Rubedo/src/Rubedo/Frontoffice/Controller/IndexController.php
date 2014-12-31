@@ -107,6 +107,7 @@ class IndexController extends AbstractActionController
 
     /**
      * Main Action : render the Front Office view
+     * @todo Add all API keys (google map, disqus ...) and missing informations from v2.2
      */
     public function indexAction()
     {
@@ -293,8 +294,12 @@ class IndexController extends AbstractActionController
                 }
             }
         }
+
+        $googleAnalyticsKey = isset($this->_site['googleAnalyticsKey']) ? $this->_site['googleAnalyticsKey'] : "";
+
         $this->viewData = array(
             'siteResources' => $siteResources,
+            'googleAnalyticsKey' => $googleAnalyticsKey,
             'activateMagic' => (isset($config['rubedo_config']['activateMagic']) && ($config['rubedo_config']['activateMagic'] == "1")) ? true : false,
             'angularLocale' => $lang,
             'siteTheme' => $propagatedSiteTheme
