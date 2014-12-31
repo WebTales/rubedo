@@ -295,7 +295,7 @@ class IndexController extends AbstractActionController
             }
         }
 
-        $googleAnalyticsKey = isset($this->_site['googleAnalyticsKey']) ? $this->_site['googleAnalyticsKey'] : "";
+        $googleAnalyticsKey = isset($this->_site['googleAnalyticsKey']) ? $this->_site['googleAnalyticsKey'] : false;
 
         $this->viewData = array(
             'siteResources' => $siteResources,
