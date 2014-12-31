@@ -52,6 +52,14 @@
         </exec>
     </target>
 
+    <target name="phpunit-slim" description="Launch test suit without coverage and report">
+        <exec executable="${project.basedir}/vendor/bin/phpunit" passthru="true">
+            <arg value="--colors"/>
+            <arg value="--configuration"/>
+            <arg path="${project.basedir}/test/phpunit.xml"/>
+        </exec>
+    </target>
+
     <!--*********************************************************************
     ************ All actions for folders and rights *************************
     **********************************************************************-->

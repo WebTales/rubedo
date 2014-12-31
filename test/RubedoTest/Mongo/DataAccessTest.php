@@ -2445,4 +2445,41 @@ class DataAccessTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * Test if an exception is fired when the mongo connection var isn't a string
+     * @expectedException \Rubedo\Exceptions\Server
+     */
+    public function testSetDefaultMongoWithBadValue()
+    {
+        $dataAccessObject = new DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $dataAccessObject->setDefaultMongo(array('test_db'));
+    }
+
+    /**
+     * Test if the value returned is well formated
+     */
+    public function testGetDefaultDataStream()
+    {
+        $dataAccessObject = new DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $stream = $dataAccessObject->getDefaultDataStream();
+
+        $this->assertContains("/test_db", $stream);
+    }
+
+    /**
+     *
+     */
+    public function testGetDefaultDbWithoutDefaultDb() {
+        $dataAccessObject = new DataAccess();
+        $dataAccessObject->init('items', 'test_db');
+
+        $dataAccessObject->resetDefaultDb();
+        $db = $dataAccessObject->getDefaultDb();
+
+        $this->assertNotEmpty($db);
+    }
 }

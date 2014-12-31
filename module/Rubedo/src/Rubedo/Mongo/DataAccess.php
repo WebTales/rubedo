@@ -263,6 +263,17 @@ class DataAccess implements IDataAccess
     }
 
     /**
+     * Set the main Database name
+     *
+     * @param string $dbName
+     * @throws \Exception
+     */
+    public static function resetDefaultDb()
+    {
+        self::$_defaultDb = null;
+    }
+
+    /**
      * listener to collection event
      *
      * Will log the request parameter for find, findOne, update, remove, save query
