@@ -9,8 +9,8 @@
         <echo msg='     set-rights      set the good rights on cache and build folders' />
         <echo msg=' ' />
         <echo msg='Specific actions :' />
-        <echo msg='     phpunit-core    launch test suit for the Rubedo core' />
-        <echo msg='     phpunit-api     launch test suit for the Rubedo API' />
+        <echo msg='     phpunit         launch test suit for Rubedo' />
+        <echo msg='     phpunit-slim    launch test suit for Rubedo whithout reporting' />
         <echo msg=' ' />
         <echo msg='     prepare-cache   create cache folders and set rights on it' />
         <echo msg='     clean-cache     delete all cache folders' />
