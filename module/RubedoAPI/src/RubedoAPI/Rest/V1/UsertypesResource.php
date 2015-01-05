@@ -58,9 +58,16 @@ class UsertypesResource extends AbstractResource
      * @param $id
      * @return array
      */
-    public function getEntityAction($id)
+    public function getEntityAction($id, $params)
     {
-        $userType = $this->getUserTypesCollection()->findById($id);
+        $userType = $this->getUserTypesCollection()->findById($id, true, false);
+        if (isset($userType['fields'])) {
+            foreach ($userType['fields'] as &$field) {
+                if (isset($field['config']['i18n'][$params['lang']->getLocale()]['fieldLabel'])) {
+                    $field['config']['fieldLabel'] = $field['config']['i18n'][$params['lang']->getLocale()]['fieldLabel'];
+                }
+            }
+        }
         return array(
             'success' => true,
             'userType' => $userType,
