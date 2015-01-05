@@ -18,14 +18,6 @@
                             }
                         },
                         {
-                            "type": "Ext.form.field.Checkbox",
-                            "config": {
-                                "fieldLabel": "#ext-gen1381#",
-                                "name": "autoComplete",
-                                "inputValue": true
-                            }
-                        },
-                        {
                             "type": "Rubedo.view.ESQfield",
                             "config": {
                                 "fieldLabel": "#ext-gen1056#",
