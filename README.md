@@ -5,7 +5,7 @@ An open source PHP CMS, based on Zend Framework &amp; NoSQL MongoDB and Elastics
 ### http://www.rubedo-project.org/
     DATA DRIVEN CONTENT AND COMMERCE
 
-Rubedo is a unique big data platform that go beyond traditional content management and commerce
+Rubedo is a unique big data platform that goes beyond traditional content management and commerce
 * Multisite management / Website factory
 * Behavioral targeting
 * Full text and faceted search functionalities
