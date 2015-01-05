@@ -31,15 +31,6 @@
                         {
                             "type": "Ext.form.field.Checkbox",
                             "config": {
-                                "fieldLabel": "#ext-gen1195#",
-                                "name": "audioControls",
-                                "labelWidth": 160,
-                                "inputValue": true
-                            }
-                        },
-                        {
-                            "type": "Ext.form.field.Checkbox",
-                            "config": {
                                 "fieldLabel": "#ext-gen1196#",
                                 "name": "audioLoop",
                                 "labelWidth": 160,
