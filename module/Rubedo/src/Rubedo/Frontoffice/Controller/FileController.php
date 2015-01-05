@@ -118,7 +118,7 @@ class FileController extends AbstractActionController
 
             if ($seekStart >= 0 && $seekEnd > 0 && !($filelength == $seekEnd - $seekStart)) {
                 $response->getHeaders()->addHeaders(array(
-                    'Content-Length' => $filelength - $seekStart,
+                    'Content-Length' => $seekEnd + 1 - $seekStart,
                     'Content-Range' => "bytes $seekStart-$seekEnd/$filelength",
                     'Accept-Ranges' => "bytes",
                     'Status' => '206 Partial Content'
