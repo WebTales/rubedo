@@ -25,10 +25,6 @@ return array(
         'maxlifeTime' => 86400,
         'definitionFile' => $blocksPath . '/addThisFollow.json'
     ),
-    'advancedSearchForm' => array(
-        'maxlifeTime' => 86400,
-        'definitionFile' => $blocksPath . '/advancedSearchForm.json'
-    ),
     'unsubscribe' => array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/unsubscribe.json'
