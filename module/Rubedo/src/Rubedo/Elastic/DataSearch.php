@@ -580,7 +580,8 @@ class DataSearch extends DataAbstract implements IDataSearch {
 					) );
 					$elasticaQueryString->setFields ( array (
 							"all_" . $currentLocale,
-							"all_nonlocalized" 
+							"all_nonlocalized",
+							"_all^0.1"
 					) );
 					break;
 				
@@ -594,12 +595,14 @@ class DataSearch extends DataAbstract implements IDataSearch {
 						$elasticaQueryString->setFields ( array (
 								"all_" . $currentLocale,
 								"all_" . $fallBackLocale . "^0.1",
-								"all_nonlocalized^0.1" 
+								"all_nonlocalized^0.1",
+								"_all^0.1"
 						) );
 					} else {
 						$elasticaQueryString->setFields ( array (
 								"all_" . $currentLocale,
-								"all_nonlocalized" 
+								"all_nonlocalized",
+								"_all^0.1"
 						) );
 					}
 					break;
