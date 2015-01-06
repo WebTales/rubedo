@@ -115,7 +115,7 @@
         "configBloc": {
             "style": "Horizontal",
             "displayRootPage": true,
-            "menuLevel": 1,
+            "menuLevel": 2,
             "fallbackRoot": "current"
         }
     },

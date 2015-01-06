@@ -82,7 +82,7 @@
         "configBloc": {
             "sort": "asc",
             "pagesize": 25,
-            "constrainToSite": true
+            "constrainToSite": false
         }
     },
     "category": "#ext-gen1187#",

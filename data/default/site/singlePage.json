@@ -1,23 +1,5 @@
 {
-  "blocks": [
-    {
-      "bType": "contentDetail",
-      "mType": "block",
-      "configBloc": {
-        "contentId": ""
-      },
-      "orderValue": 1,
-      "title": "###NewSite.single.singleBlocTitle###",
-      "responsive": {
-        "phone": true,
-        "tablet": true,
-        "desktop": true,
-        "largeDesktop":true
-      },
-      "flex": 1,
-      "canEdit": true
-    }
-  ],
+  "blocks": [],
   "description": "",
   "excludeFromMenu": false,
   "expandable": false,

@@ -94,7 +94,7 @@
             ]
         },
         "configBloc": {
-            "constrainToSite": true,
+            "constrainToSite": false,
             "displayedFacets": "['all']",
             "displayMode": "default",
             "autoComplete": false

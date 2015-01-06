@@ -187,7 +187,7 @@
         },
         "configBloc": {
             "activateSearch": true,
-            "constrainToSite": true,
+            "constrainToSite": false,
             "zoomOnAddress": 14,
             "zoom": 14,
             "height": 500,

@@ -4,10 +4,11 @@
 	 		"bType" : "navigation" ,
 	 		"mType" : "block" ,
 	 		"orderValue" : 100 ,
-	 		"configBloc" : { 
-	 		    "style" : "Horizontal" ,
-	 		    "displayRootPage" : true ,
-	 		    "menuLevel" : 1
+	 		"configBloc" : {
+			  "style": "Horizontal",
+			  "displayRootPage": true,
+			  "menuLevel": 2,
+			  "fallbackRoot": "current"
 	 		} ,
 	 		"title" : "Menu" ,
 	 		"responsive" : { 

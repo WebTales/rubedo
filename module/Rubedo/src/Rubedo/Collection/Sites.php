@@ -514,8 +514,10 @@ class Sites extends AbstractLocalizableCollection implements ISites
                     "pageURL" => $singlePageObj['pageURL'],
 
                 ));
-                $singlePageObj['blocks'][0]['id'] = (string)new \MongoId();
-                $singlePageObj['blocks'][0]['parentCol'] = $detailSecondColumnId;
+                if(!empty($singlePageObj['blocks'])){
+                    $singlePageObj['blocks'][0]['id'] = (string)new \MongoId();
+                    $singlePageObj['blocks'][0]['parentCol'] = $detailSecondColumnId;
+                }
                 $page = Manager::getService('Pages')->create($singlePageObj);
 
                 /* Create Search Page */
@@ -535,8 +537,10 @@ class Sites extends AbstractLocalizableCollection implements ISites
                 ));
                 $searchPageObj['site'] = $site['data']['id'];
                 $searchPageObj['maskId'] = $searchMaskCreation['data']['id'];
-                $searchPageObj['blocks'][0]['id'] = (string)new \MongoId();
-                $searchPageObj['blocks'][0]['parentCol'] = $searchColumnId;
+                if(!empty($searchPageObj['blocks'])){
+                    $searchPageObj['blocks'][0]['id'] = (string)new \MongoId();
+                    $searchPageObj['blocks'][0]['parentCol'] = $searchColumnId;
+                }
                 $searchPage = Manager::getService('Pages')->create($searchPageObj);
 
                 if ($page['success'] && $homePage['success'] && $searchPage['success']) {
@@ -667,7 +671,9 @@ class Sites extends AbstractLocalizableCollection implements ISites
         $mask["blocks"][0]['configBloc'] = array(
             "useSearchEngine" => true,
             "rootPage" => $homePage,
-            "searchPage" => $searchPage
+            "searchPage" => $searchPage,
+            "menuLevel" => 2,
+            "fallbackRoot" => 'current'
         );
         $updateMaskReturn = Manager::getService('Masks')->update($mask);
 
