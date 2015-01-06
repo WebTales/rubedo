@@ -152,10 +152,11 @@ abstract class AbstractCollection implements IAbstractCollection
 
                 // Add InUid filter to initial query to check if recommended contents are returned by original query
                 $filter = Filter::Factory('InUid')->setValue($this->_recList);
-                $filters->addFilter($filter);
+                $inUidfilters = clone $filters;
+                $inUidfilters->addFilter($filter);
 
                 // Get unsorted recommended items
-                $recValues = $this->_dataService->read($filters);
+                $recValues = $this->_dataService->read($inUidfilters);
 
                 // Sort recommended items by score
                 usort($recValues['data'], function ($c1, $c2) {
