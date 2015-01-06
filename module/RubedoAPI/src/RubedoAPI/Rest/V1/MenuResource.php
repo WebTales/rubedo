@@ -28,10 +28,6 @@ use WebTales\MongoFilters\Filter;
  */
 class MenuResource extends AbstractResource
 {
-    /**
-     * @var static
-     */
-    private $pageService;
 
     /**
      * @var array
@@ -81,8 +77,6 @@ class MenuResource extends AbstractResource
                             ->setDescription('The recursive menu')
                     );
             });
-        $this->pageService = Manager::getService('Pages');
-        $this->urlService = Manager::getService('Url');
     }
 
     /**
@@ -93,7 +87,7 @@ class MenuResource extends AbstractResource
      */
     public function getAction($params)
     {
-        $rootPage = $this->pageService->findById($params['pageId']);
+        $rootPage = $this->getPagesCollection()->findById($params['pageId']);
         $menu = array_intersect_key($rootPage, array_flip(array('title', 'id', 'text')));
         $levelLimit = isset($params["menuLevel"]) ? $params["menuLevel"] : 1;
         $this->excludeFromMenuCondition = Filter::factory('Not')->setName('excludeFromMenu')->setValue(true);
@@ -126,13 +120,13 @@ class MenuResource extends AbstractResource
      */
     protected function _getPagesByLevel($rootPage, $targetLevel, $currentLevel = 1, $locale)
     {
-        $pages = $this->pageService->readChild($rootPage, $this->excludeFromMenuCondition);
+        $pages = $this->getPagesCollection()->readChild($rootPage, $this->excludeFromMenuCondition);
 
         if ($currentLevel == $targetLevel) {
             foreach ($pages as $key => $page) {
                 $pages[$key]["url"] = $this->getContext()->url()->fromRoute('rewrite', array(
                     'pageId' => $page['id'],
-                    'locale' => $locale
+                    'locale' => $page['locale']
                 ), $this->urlOptions);
             }
 
@@ -142,7 +136,7 @@ class MenuResource extends AbstractResource
         foreach ($pages as $key => $page) {
             $pages[$key]["url"] = $this->getContext()->url()->fromRoute('rewrite', array(
                 'pageId' => $page['id'],
-                'locale' => $locale
+                'locale' => $page['locale']
             ), $this->urlOptions);
 
             $nextLevel = $this->_getPagesByLevel($page['id'], $targetLevel, $currentLevel + 1, $locale);
