@@ -58,6 +58,8 @@ class ContentsResource extends AbstractResource
         'maskId',
         'locale',
         'readOnly',
+        'createTime',
+        'lastUpdateTime'
     );
 
     /**
