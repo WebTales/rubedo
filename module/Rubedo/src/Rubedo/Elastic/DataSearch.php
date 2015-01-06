@@ -1234,7 +1234,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                                 // unset facet when count = 0 or total results
                                 // count when display mode is not set to
                                 // checkbox
-                                if ($this->_facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount < $result ['total'])) {
+                                if ($this->_facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount <= $result ['total'])) {
                                     $temp ['ranges'] [$key] ['label'] = $timeLabel [( string )$temp ['ranges'] [$key] ['from']];
                                 } else {
                                     unset ($temp ['ranges'] [$key]);
