@@ -18,6 +18,7 @@
 namespace RubedoAPI\Rest\V1;
 
 use Rubedo\Collection\AbstractLocalizableCollection;
+use Rubedo\Services\Manager;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Exceptions\APIAuthException;
@@ -82,6 +83,9 @@ class ContentsResource extends AbstractResource
 
         if (isset($params['useDraftMode'])){
             Context::setIsDraft(true);
+        }
+        if (isset($params['simulatedTime'])){
+            Manager::getService('CurrentTime')->setSimulatedTime($params['simulatedTime']);
         }
         $queryId = &$params['queryId'];
         $this->getQueriesCollection()->setCurrentPage((string)$params['pageId']);
@@ -631,6 +635,11 @@ class ContentsResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setKey('useDraftMode')
                     ->setDescription('Set to true to preview draft contents')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('simulatedTime')
+                    ->setDescription('Simulate time to view future or past contents')
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
