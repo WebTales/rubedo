@@ -24,8 +24,7 @@ use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
 use WebTales\MongoFilters\Filter;
-use Zend\Debug\Debug;
-
+use Rubedo\Content\Context;
 
 /**
  * Class ContentsResource
@@ -81,6 +80,9 @@ class ContentsResource extends AbstractResource
     public function getAction($params)
     {
 
+        if (isset($params['useDraftMode'])){
+            Context::setIsDraft(true);
+        }
         $queryId = &$params['queryId'];
         $this->getQueriesCollection()->setCurrentPage((string)$params['pageId']);
         $filters = $this->getQueriesCollection()->getFilterArrayById($queryId);
@@ -624,6 +626,11 @@ class ContentsResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setKey('endDateFieldName')
                     ->setDescription('Name of the endDate field for the query')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('useDraftMode')
+                    ->setDescription('Set to true to preview draft contents')
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
