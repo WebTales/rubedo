@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2014, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2013, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2014 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2013 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Backoffice\Controller;
@@ -81,9 +81,14 @@ class EmailsController extends DataAccessController
         $to = array();
         $allSendResult = true;
         $count = 0;
+        $badEmails = array();
         foreach ($users['data'] as $user) {
-            $index = (int)floor($count++ / static::NUM_BY_MAIL);
-            $to[$index][$user['email']] = ($user['name']) ?: $user['login'];
+            if (!$this->validEmailAddress($user['email'])) {
+                $badEmails[] = $user['email'];
+                continue;
+            }
+            $index = (int) floor($count++/static::NUM_BY_MAIL);
+            $to[$index][$user['email']] = ($user['name']) ? : $user['login'];
         }
 
         $html = $this->_dataService->htmlConstructor($mail['text'], $mail["bodyProperties"], $mail["rows"], true);
@@ -104,6 +109,12 @@ class EmailsController extends DataAccessController
             }
         }
 
-        return new JsonModel(array('success' => $allSendResult));
+        return new JsonModel(array('success' => $allSendResult, 'badEmails' => $badEmails));
+    }
+    function validEmailAddress($mail)
+    {
+        $user = '[a-zA-Z0-9_\-\.\+\^!#\$%&*+\/\=\?\`\|\{\}~\']+';
+        $domain = '(?:(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.?)+';
+        return preg_match("/^$user@$domain$/", $mail);
     }
 }
