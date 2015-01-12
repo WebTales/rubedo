@@ -40,7 +40,7 @@ class ElasticSearchController extends AbstractActionController
 
     protected $_option = 'all';
 
-    public function __construct()
+    protected function init()
     {
         // initialize
         // localized
@@ -59,6 +59,8 @@ class ElasticSearchController extends AbstractActionController
     public function indexAction()
     {
 
+        $this->init();
+        
         // get params
         $params = $this->params()->fromQuery();
 
