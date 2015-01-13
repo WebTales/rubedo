@@ -20,6 +20,7 @@ namespace RubedoAPI\Rest\V1;
 
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Class ContenttypesResource
@@ -43,7 +44,9 @@ class ContenttypesResource extends AbstractResource
      */
     public function getAction()
     {
-        $contentTypes = $this->getContentTypesCollection()->getList()['data'];
+        $filter= new Filter();
+        $filter->addFilter(Filter::factory('OperatorToValue')->setName('system')->setOperator('$ne')->setValue(true));
+        $contentTypes = $this->getContentTypesCollection()->getList($filter)['data'];
         foreach ($contentTypes as &$contentType) {
             $contentType = $this->filterContentType($contentType);
         }
