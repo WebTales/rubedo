@@ -668,15 +668,9 @@ class Sites extends AbstractLocalizableCollection implements ISites
 
     protected function _updateMenuForMask($mask, $homePage, $searchPage)
     {
-        $mask["blocks"][0]['configBloc'] = array(
-            "useSearchEngine" => true,
-            "rootPage" => $homePage,
-            "searchPage" => $searchPage,
-            "menuLevel" => 2,
-            "fallbackRoot" => 'current'
-        );
+        $mask["blocks"][0]['configBloc']['rootPage']=$homePage;
+        $mask["blocks"][0]['configBloc']['searchPage']=$searchPage;
         $updateMaskReturn = Manager::getService('Masks')->update($mask);
-
         return $updateMaskReturn;
     }
 

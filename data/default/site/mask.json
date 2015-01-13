@@ -8,7 +8,8 @@
 			  "style": "Horizontal",
 			  "displayRootPage": true,
 			  "menuLevel": 2,
-			  "fallbackRoot": "current"
+			  "fallbackRoot": "current",
+              "useSearchEngine":true
 	 		} ,
 	 		"title" : "Menu" ,
 	 		"responsive" : { 
