@@ -198,7 +198,9 @@ class ContentsResource extends AbstractResource
         return [
             'success' => true,
             'contents' => $this->outputContentsMask($contentArray['data'], $params, $query),
-            'count' => $nbItems
+            'count' => $nbItems,
+            'queryType' => $query['type'],
+            'usedContentTypes' => isset($query["query"]["contentTypes"]) ? $query["query"]["contentTypes"] : array()
         ];
     }
 
@@ -686,6 +688,14 @@ class ContentsResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setKey('count')
                     ->setDescription('Number of all contents')
+            )->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('queryType')
+                    ->setDescription('Query used by content list')
+            )->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('usedContentTypes')
+                    ->setDescription('Query used by content list')
             );
     }
 
