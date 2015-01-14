@@ -1,29 +1,42 @@
 Rubedo
 ======
 
-*Warning* : This branch is not suitable for production or test and may content some problems, like authentication broken...
+An open source PHP CMS, based on Zend Framework &amp; NoSQL MongoDB and Elasticsearch and AngularJS.
+### http://www.rubedo-project.org/
+    DATA DRIVEN CONTENT AND COMMERCE
 
-An open source PHP CMS, based on Zend Framework &amp; MongoDB : http://www.rubedo-project.org/
-
-Copyright (c) 2013, WebTales (http://www.webtales.fr/).
-All rights reserved.
-licensing@webtales.fr
+Rubedo is a unique big data platform that goes beyond traditional content management and commerce
+* Multisite management / Website factory
+* Behavioral targeting
+* Full text and faceted search functionalities
+* Responsive Web design
+* Multilingual
+* Integrated solution
 
 Open Source License
 ------------------------------------------------------------------------------------------
 Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
-
 http://www.gnu.org/licenses/gpl.html
+Copyright (c) 2014, WebTales (http://www.webtales.fr/). All rights reserved.
+licensing@webtales.fr
+
+Documentation and Help
+------------------------------------------------------------------------------------------
+* Rubedo Documentation Center http://docs.rubedo-project.org/en/homepage
+* Translation are available on https://crowdin.com/project/rubedo
+* Forum http://forum.rubedo-project.org/
+* Hosting http://www.rubedocloud.com/en/ 
+* Newsletter http://newsletter-rubedo.webtales.fr/en/home
 
 
 Installation
 ------------------------------------------------------------------------------------------
 ### PreRequisites
 * A full PHP 5.4+ stack (i.e. http://www.zend.com/products/server/)
-* MongoDB (http://www.mongodb.org) 2.4.x (issues reported on 2.6, will be fixed in the next version)
+* MongoDB (http://www.mongodb.org) 2.4.x
 * PHP MongoDB Driver >= 1.4.0
 * intl PHP extension (http://www.php.net/manual/intro.intl.php) which you should use anyway
-* ElasticSearch (http://www.elasticsearch.org), latest version compatible with Elastica PHP client, 1.2.1 at this moment (https://github.com/ruflin/Elastica/)
+* ElasticSearch (http://www.elasticsearch.org) 1.4.x
 * Mapper Attachments Type for ElasticSearch (https://github.com/elasticsearch/elasticsearch-mapper-attachments) 
 * ICU Analysis plugin for ElasticSearch (https://github.com/elasticsearch/elasticsearch-analysis-icu)
 
@@ -46,7 +59,7 @@ Installation
 ### For Developpers
 * You'll need Git!
 * Clone form gitHub to your server `git clone git://github.com/WebTales/rubedo.git`
-* Inside project root, choose the branch you want to use (current or next) : `git checkout next`
+* Inside project root, choose the branch you want to use (v3-stable or v3-dev) : `git checkout v3-dev`
 * Do as in normal install process
 
 
