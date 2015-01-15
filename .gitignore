@@ -32,7 +32,6 @@ build
 /public/theme
 /public/generate-image
 /public/google*.html
-
 /vendor
 # Composer
 /composer.phar
