@@ -33,7 +33,7 @@ Installation
 ------------------------------------------------------------------------------------------
 ### PreRequisites
 * A full PHP 5.4+ stack (i.e. http://www.zend.com/products/server/)
-* MongoDB (http://www.mongodb.org) 2.4.x
+* MongoDB (http://www.mongodb.org) 2.4+
 * PHP MongoDB Driver >= 1.4.0
 * intl PHP extension (http://www.php.net/manual/intro.intl.php) which you should use anyway
 * ElasticSearch (http://www.elasticsearch.org) 1.4.x
