@@ -59,7 +59,9 @@ class ContentsResource extends AbstractResource
         'locale',
         'readOnly',
         'createTime',
-        'lastUpdateTime'
+        'lastUpdateTime',
+        'isProduct',
+        'productProperties'
     );
 
     /**
