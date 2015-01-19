@@ -203,12 +203,12 @@ class Import extends AbstractCollection
 
         // Write file to import into Import collection
         $this->writeImportFile();
+        
+        // Processing Import data taxonomy and localisation fields
+        $this->preProcess();
 
         // Extract taxonomy to ImportTaxonomy collection
         $this->extractTaxonomy();
-
-        // Processing Import data taxonomy and localisation fields
-        $this->preProcess();
 
         if ($this->_importMode == 'insert') { // INSERT mode
 
@@ -930,7 +930,7 @@ class Import extends AbstractCollection
 		foreach ($this->_importAsField as $field) {
 				
 			if (isset($field['cType']) && ($field['cType']=='localiserField')) {
-				$code.= "e.col".$field['csvIndex']."= castToNumber(e.col".$field['csvIndex'].",'float');";
+				$code.= "e.col".$field['csvIndex']."= e.col".$field['csvIndex'].".split(',').map(parseFloat);";
 			}
 			
 			if (isset($field['cType']) && (in_array($field['cType'], array('numberField', 'slider', 'ratingField' )))) {
