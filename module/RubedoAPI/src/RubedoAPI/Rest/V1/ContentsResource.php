@@ -524,6 +524,7 @@ class ContentsResource extends AbstractResource
                     'version',
                     'workflow',
                     'readOnly',
+                    'manageStock'
                 )
             )
         );
