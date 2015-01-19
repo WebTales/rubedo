@@ -919,7 +919,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 $termsArray = array();
 
                 foreach ($terms as $term) {
-                    if ($term == 'all') {
+                    if ($term == 'all' or $term=="") {
                         continue;
                     }
                     $term = $taxonomyTermsService->findById($term);
