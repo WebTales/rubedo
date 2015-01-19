@@ -210,14 +210,14 @@ class Import extends AbstractCollection
         // Processing Import data taxonomy and localisation fields
         $this->preProcess();
 
-        // Transform taxonomy terms into id
-        $this->turnTermsToId();
-
         if ($this->_importMode == 'insert') { // INSERT mode
 
             // write taxonomy terms
             $this->writeTaxonomy();
 
+            // Transform taxonomy terms into id
+            $this->turnTermsToId();
+            
             // Extract contents to ImportContents collection
             $this->extractContentsToInsert();
 
@@ -226,6 +226,9 @@ class Import extends AbstractCollection
 
         } else { // UPDATE mode
 
+        	// Transform taxonomy terms into id
+        	$this->turnTermsToId ();
+        	
             // Extract contents to ImportContents collection
             $this->extractContentsToUpdate();
 
@@ -351,7 +354,7 @@ class Import extends AbstractCollection
 
         // Add translations
         $languages = array();
-        foreach ($this->_importAsFieldTranslation as $value) {
+        foreach ($this->_importAsFieldTranslation as $fieldKey => $value) {
 
             foreach ($this->_importAsField as $key => $importedField) {
                 if ($importedField["csvIndex"] == $value["translatedElement"]) {
@@ -451,12 +454,12 @@ class Import extends AbstractCollection
     				price: this.col" . $this->_productOptions['priceFieldIndex'] . ",
     				stock: this.col" . $this->_productOptions['stockFieldIndex'] . ",
     				preparationDelay: this.col" . $this->_productOptions['preparationDelayFieldIndex'];
-            // add variation fields
-            foreach ($this->_importAsField as $key => $value) {
-                if (isset($value['useAsVariation']) && $value['useAsVariation']) {
-                    $mapCode .= ",'" . $value['newName'] . "': this.col" . $value['csvIndex'];
-                }
-            }
+		            // add variation fields
+		            foreach ($this->_importAsField as $key => $value) {
+		                if (isset($value['useAsVariation']) && $value['useAsVariation']) {
+		                    $mapCode .= ",'" . $value['newName'] . "': this.col" . $value['csvIndex'];
+		                }
+		            }
         }
 
         $mapCode .= "};";
@@ -537,7 +540,7 @@ class Import extends AbstractCollection
         // add variation fields
         foreach ($this->_importAsField as $key => $value) {
             if (isset($value['useAsVariation']) && $value['useAsVariation']) {
-                $finalizeCode .= "variation['" . $value['newName'] . "']=value['" . $value['newName'] . "'];";
+                $finalizeCode.="variation['" . $value['newName'] . "']=value['" . $value['newName'] . "'];";
             }
         }
 
@@ -607,7 +610,7 @@ class Import extends AbstractCollection
 
                 switch ($value['protoId']) {
                     case 'text':
-                        //$textFieldIndex = $value['csvIndex'];
+                        $textFieldIndex = $value['csvIndex'];
                         $fields['text'] = 'this.col' . $value['csvIndex'];
                         break;
                     case 'summary':
@@ -742,12 +745,12 @@ class Import extends AbstractCollection
         $reduce = new \MongoCode($reduceCode);
 
         // global JavaScript variables passed to map, reduce and finalize functions
-//        $scope = array(
-//            "currentTime" => $this->currentTime,
-//            "currentUser" => $this->currentUser,
-//            "typeId" => $this->_typeId,
-//            "target" => $this->_target
-//        );
+		$scope = array(
+			"currentTime" => $this->currentTime,
+			"currentUser" => $this->currentUser,
+			"typeId" => $this->_typeId,
+			"target" => $this->_target
+		);
 
         $params = array(
             "mapreduce" => "Import", // collection
@@ -887,51 +890,74 @@ class Import extends AbstractCollection
     }
 
     /**
-     * Preprocessing Data in Import collection :
-     * Transform the taxononomy comma separated string into array
-     * Transform the localization comma separated lat,lon string into array
-     * Transform prices with comma separtor to dot separator, cast to float
+	 * Preprocessing Data in Import collection :
+	 * Transform the taxononomy comma separated string into array 
+	 * Transform the localization comma separated lat,lon string into array
+	 * Transform prices with comma separtor to dot separator, cast to float 
+	 * Cast stock and prep delay to int    
      */
     protected function preProcess()
     {
+ 	
+    	$code = "var castToNumber = function(e, type) {
+			if (e=='') {
+				return null;
+			} else {
+				switch (type) {
+				case 'float':
+					var response = parseFloat(e.replace(',', '.'));
+					break;
+				case 'int':
+					var response = parseInt(e.replace(',', '.'));
+					break;
+				default:
+					var response = null;
+				}
+				if (!isNaN(response)) {
+					return response;
+				} else {
+					return null;
+				}
+			}
+		};";
+    	
+		$code.= "db.Import.find().snapshot().forEach(function(e){";
+			
+		foreach($this->_importAsTaxo as $taxo) {
+			$code.= "e.col".$taxo['csvIndex']." = e.col".$taxo['csvIndex'].".split(',');";
+		}
+			
+		foreach ($this->_importAsField as $field) {
+				
+			if (isset($field['cType']) && ($field['cType']=='localiserField')) {
+				$code.= "e.col".$field['csvIndex']."= castToNumber(e.col".$field['csvIndex'].",'float');";
+			}
+			
+			if (isset($field['cType']) && (in_array($field['cType'], array('numberField', 'slider', 'ratingField' )))) {
+				$code.= "e.col".$field['csvIndex']."= castToNumber(e.col".$field['csvIndex'].",'int');";
+			}
+		
+		}
 
-        $code = "db.Import.find().snapshot().forEach(function(e){";
+		if ($this->_isProduct) {
+			if (is_integer($this->_productOptions['basePriceFieldIndex'])) {
+				$code.= "e.col".$this->_productOptions['basePriceFieldIndex']."= castToNumber(e.col".$this->_productOptions['basePriceFieldIndex'].",'float');";
+			}
+			if (is_integer($this->_productOptions['priceFieldIndex'])) {			
+				$code.= "e.col".$this->_productOptions['priceFieldIndex']."= castToNumber(e.col".$this->_productOptions['priceFieldIndex'].",'float');";
+			}
+			if (is_integer($this->_productOptions['stockFieldIndex'])) {			
+				$code.= "e.col".$this->_productOptions['stockFieldIndex']."= castToNumber(e.col".$this->_productOptions['stockFieldIndex'].",'int');";
+			}
+			if (is_integer($this->_productOptions['preparationDelayFieldIndex'])) {
+				$code.= "e.col".$this->_productOptions['preparationDelayFieldIndex']."= castToNumber(e.col".$this->_productOptions['preparationDelayFieldIndex'].",'int');";
+			}
+		}
+			
+		$code.= "db.Import.save(e);})";
 
-        foreach ($this->_importAsTaxo as $taxo) {
-            $code .= "e.col" . $taxo['csvIndex'] . " = e.col" . $taxo['csvIndex'] . ".split(',');";
-        }
-
-        foreach ($this->_importAsField as $field) {
-
-            if (isset($field['cType']) && ($field['cType'] == 'localiserField')) {
-                $code .= "e.col" . $field['csvIndex'] . "= e.col" . $field['csvIndex'] . ".split(',').map(parseFloat);";
-            }
-
-            if (isset($field['cType']) && (in_array($field['cType'], array('numberField', 'slider', 'ratingField')))) {
-                $code .= "e.col" . $field['csvIndex'] . "= parseInt(e.col" . $field['csvIndex'] . ".replace(',', '.'));";
-            }
-
-        }
-
-        if ($this->_isProduct) {
-            if ($this->_productOptions['basePriceFieldIndex'] != '') {
-                $code .= "e.col" . $this->_productOptions['basePriceFieldIndex'] . "= parseFloat(e.col" . $this->_productOptions['basePriceFieldIndex'] . ".replace(',', '.'));";
-            }
-            if ($this->_productOptions['priceFieldIndex'] != '') {
-                $code .= "e.col" . $this->_productOptions['priceFieldIndex'] . "= parseFloat(e.col" . $this->_productOptions['priceFieldIndex'] . ".replace(',', '.'));";
-            }
-            if ($this->_productOptions['stockFieldIndex'] != '') {
-                $code .= "e.col" . $this->_productOptions['stockFieldIndex'] . "= parseInt(e.col" . $this->_productOptions['stockFieldIndex'] . ".replace(',', '.'));";
-            }
-            if ($this->_productOptions['preparationDelayFieldIndex'] != '') {
-                $code .= "e.col" . $this->_productOptions['preparationDelayFieldIndex'] . "= parseInt(e.col" . $this->_productOptions['preparationDelayFieldIndex'] . ".replace(',', '.'));";
-            }
-        }
-
-        $code .= "db.Import.save(e);})";
-
-        $response = $this->_dataService->execute($code);
-        return $response;
+		$response = $this->_dataService->execute($code);
+		return $response;
     }
 
     /**
@@ -969,7 +995,6 @@ class Import extends AbstractCollection
     {
 
         foreach ($this->_importAsTaxo as $taxo) {
-            unset($taxo);
             $code = "db.ImportTaxo.find().snapshot().forEach(
 			function(foo) {
 				if (foo.value.text > '') {
@@ -1043,6 +1068,7 @@ class Import extends AbstractCollection
         if ($this->_isProduct) {
 
             if ($this->_productOptions['textFieldIndex'] != "") { // title
+            	$updateProduct.= "'text' : foo['value']['text'],"; // live
                 $updateProduct .= "'live.i18n." . $this->_workingLanguage . ".fields.text' : foo['value']['text'],"; // live
                 $updateProduct .= "'workspace.i18n." . $this->_workingLanguage . ".fields.text'"; // workspace
             }
@@ -1071,55 +1097,54 @@ class Import extends AbstractCollection
 
         }
 
-        // Add other fields
+		// Add other fields
+		foreach ($this->_importAsField as $key => $value) {
+		
+			$fieldName = $value['name'];
+			
+			if ($variationToUpdate && isset($value['useAsVariation']) && $value['useAsVariation']) {
+				$queryVariations.= "'".$fieldName."': v['".$fieldName."'],";
+			}
+			
+			if ($value['localizable']) { // localizable field is written in working language in i18n (live AND workspace)
+			
+				$updateProduct.= "'live.i18n.".$this->_workingLanguage.".fields.".$fieldName."' : foo['value']['".$fieldName."'],"; // live
+				$updateProduct.= "'workspace.i18n.".$this->_workingLanguage.".fields.".$fieldName."' : foo['value']['".$fieldName."'],"; // workspace
+			
+			} else { // non localizable field is written in fields (live AND workspace)
+				
+				if (!in_array($value['name'],$variationFields)) {
+					$updateProduct.= "'live.fields.".$fieldName."' : foo['value']['".$fieldName."'],"; // live
+					$updateProduct.= "'workspace.fields.".$fieldName."' : foo['value']['".$fieldName."'],"; // workspace
+				}
+				
+			}
+			
+		}
 
-        foreach ($this->_importAsField as $value) {
-
-            $fieldName = $value['name'];
-
-            if ($variationToUpdate && $value['useAsVariation']) {
-                $queryVariations .= "'" . $fieldName . "': v['" . $fieldName . "'],";
-            }
-
-            if ($value['localizable']) { // localizable field is written in working language in i18n (live AND workspace)
-
-                $fieldsToUpdate[] = "'live.i18n." . $this->_workingLanguage . ".fields." . $fieldName . "'"; // live
-                $fieldsToUpdate[] = "'workspace.i18n." . $this->_workingLanguage . ".fields." . $fieldName . "'"; // workspace
-
-            } else { // non localizable field is written in fields (live AND workspace)
-
-                if (!in_array($value['name'], $variationFields)) {
-                    $fieldsToUpdate[] = "'live.fields." . $fieldName . "'"; // live
-                    $fieldsToUpdate[] = "'workspace.fields." . $fieldName . "'"; // workspace
-                }
-
-            }
-
-        }
-
-        $updateProduct .= "}";
-        if ($variationToUpdate) {
-            $queryVariations .= "}}";
-            $updateVariations .= "}";
-        }
-
-        $code = "var counter = 0;
+		$updateProduct.="}";
+		if ($variationToUpdate) {
+			$queryVariations.= "}}";
+			$updateVariations.="}";
+		}			
+					
+		$code = "var counter = 0;
 				db.ImportContents.find().snapshot().forEach(function(foo) {
-					db.Contents.findAndModify({query:{" . $queryProduct . "},update:{" . $updateProduct . "}});";
-        if ($variationToUpdate) {
-            $code .= "foo.value.productProperties.variations.forEach(function(v) {
-						db.Contents.update({" . $queryVariations . "},{" . $updateVariations . "});
+					db.Contents.findAndModify({query:{".$queryProduct."},update:{".$updateProduct."}});";
+		if ($variationToUpdate) {
+			$code.= "foo.value.productProperties.variations.forEach(function(v) {
+						db.Contents.update({".$queryVariations."},{".$updateVariations."});
 					});";
-        }
-        $code .= "counter++;});return counter;";
+		}
+		$code.= "counter++;});return counter;";
 
-        $response = $this->_dataService->execute($code);
+		$response = $this->_dataService->execute($code);
 
-        if ($response['ok'] != 1) {
-            throw new \Rubedo\Exceptions\Server($code);
-        }
-
-        return $response['retval'];
+		if ($response['ok']!=1) {
+			throw new \Rubedo\Exceptions\Server($code);
+		}
+			
+		return $response['retval'];
 
     }
 
