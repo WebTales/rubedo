@@ -219,12 +219,18 @@ class PagesResource extends AbstractResource
         $termColumn = (!empty($mainColumn)) ? $mainColumn : null;
         $lastMatchedNode['rows'] = array_replace_recursive($mask['rows'], $this->getRowsInfos($blocks, $mask['rows'], $termColumn));
         if (!isset($lastMatchedNode['title'])) {
-            $lastMatchedNode['title'] = isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title']) ?
-                $lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'] : $lastMatchedNode['i18n'][$params['lang']->getFallback()]['title'];
+            if (isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'])){
+                $lastMatchedNode['title']=$lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'];
+            } elseif (isset($lastMatchedNode['i18n'][$params['lang']->getFallback()]['title'])){
+                $lastMatchedNode['title']=$lastMatchedNode['i18n'][$params['lang']->getFallback()]['title'];
+            }
         }
         if (!isset($lastMatchedNode['description'])) {
-            $lastMatchedNode['description'] = isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title']) ?
-                $lastMatchedNode['i18n'][$params['lang']->getLocale()]['description'] : $lastMatchedNode['i18n'][$params['lang']->getFallback()]['description'];
+            if (isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['description'])){
+                $lastMatchedNode['description']=$lastMatchedNode['i18n'][$params['lang']->getLocale()]['description'];
+            } elseif (isset($lastMatchedNode['i18n'][$params['lang']->getFallback()]['description'])){
+                $lastMatchedNode['description']=$lastMatchedNode['i18n'][$params['lang']->getFallback()]['description'];
+            }
         }
         $output = array(
             'success' => true,
