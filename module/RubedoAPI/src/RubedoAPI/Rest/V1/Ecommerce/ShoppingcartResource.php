@@ -96,9 +96,9 @@ class ShoppingcartResource extends AbstractResource
     public function getAction($params)
     {
         if (empty($params['shoppingCartToken'])) {
-            $shoppingCart = $this->getShoppingCartCollection()->getCurrentCart();
+            $shoppingCart = $this->getShoppingCartCollection()->getCurrentCart(null,true);
         } else {
-            $shoppingCart = $this->getShoppingCartCollection()->getCurrentCart($params['shoppingCartToken']);
+            $shoppingCart = $this->getShoppingCartCollection()->getCurrentCart($params['shoppingCartToken'],true);
         }
 
         return array(
@@ -116,7 +116,7 @@ class ShoppingcartResource extends AbstractResource
     protected function filterShoppingCart($shoppingCart, $includeDetail = null)
     {
         $mask = array('id', 'shoppingCart', 'detailedCart');
-        if (!$includeDetail) {
+        if (!$includeDetail||!isset($shoppingCart['shoppingCart'])) {
             return array_intersect_key($shoppingCart, array_flip($mask));
         }
         $userTypeId = "*";

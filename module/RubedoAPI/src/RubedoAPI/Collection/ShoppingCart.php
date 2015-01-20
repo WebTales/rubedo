@@ -8,7 +8,7 @@ class ShoppingCart extends \Rubedo\Collection\ShoppingCart
 {
     use LazyServiceManager;
 
-    public function getCurrentCart($shoppingCartToken = null)
+    public function getCurrentCart($shoppingCartToken = null,$includeAll=false)
     {
         $currentUser = $this->getCurrentUser();
         if ($currentUser && $this->hasShoppingCart($currentUser)) {
@@ -20,7 +20,11 @@ class ShoppingCart extends \Rubedo\Collection\ShoppingCart
         }
 
         $tempCart = $this->findById($shoppingCartToken, true);
-        return $tempCart ? $tempCart : array();
+        if ($includeAll){
+            return $tempCart ? $tempCart: array();
+        } else {
+            return $tempCart ? $tempCart[static::KEY] : array();
+        }
     }
 
     public function setCurrentCart($cart, $shoppingCartToken = null)
