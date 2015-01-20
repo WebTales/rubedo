@@ -216,7 +216,7 @@ class ShoppingcartResource extends AbstractResource
             $offer['endDate']->setTimestamp($endDate);
             if (
                 $offer['beginDate'] <= $actualDate
-                && $offer['beginDate'] <= $actualDate
+                && $offer['endDate'] >= $actualDate
                 && $basePrice > $offer['price']
             ) {
                 $basePrice = $offer['price'];
