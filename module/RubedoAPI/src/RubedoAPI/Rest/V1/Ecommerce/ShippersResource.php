@@ -87,7 +87,7 @@ class ShippersResource extends AbstractResource
 
         return array(
             'success' => true,
-            'shippers' => $myShippers,
+            'shippers' => $myShippers["data"],
         );
     }
 }
