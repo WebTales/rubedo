@@ -46,6 +46,11 @@ class ShippersResource extends AbstractResource
                         $filter
                             ->setRequired();
                     })
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setDescription('Shopping cart token')
+                            ->setKey('shoppingCartToken')
+                    )
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('Shippers')
@@ -69,7 +74,8 @@ class ShippersResource extends AbstractResource
             throw new APIEntityException('User\'s country is mandatory');
 
         $items = 0;
-        $myCart = Manager::getService("ShoppingCart")->getCurrentCart();
+        $token=isset($params['shoppingCartToken']) ? $params['shoppingCartToken'] : null;
+        $myCart = $shoppingCart = $this->getShoppingCartCollection()->getCurrentCart($token);
 
         foreach ($myCart as $value) {
             $items = $items + $value['amount'];
