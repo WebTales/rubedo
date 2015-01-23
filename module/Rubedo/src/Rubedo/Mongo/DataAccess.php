@@ -95,6 +95,12 @@ class DataAccess implements IDataAccess
      */
     protected $_dbName;
     /**
+     * Name of the replicaSet
+     *
+     * @var string
+     */
+    protected static $_replicaSetName;
+    /**
      * Filter condition to be used when reading
      *
      * @var \WebTales\MongoFilters\CompositeFilter
@@ -190,6 +196,7 @@ class DataAccess implements IDataAccess
      */
     public static function lazyLoadConfig()
     {
+    	
         $config = Manager::getService('config');
         $options = $config['datastream'];
         if (isset($options)) {
@@ -198,11 +205,20 @@ class DataAccess implements IDataAccess
                 $connectionString .= $options['mongo']['login'];
                 $connectionString .= ':' . $options['mongo']['password'] . '@';
             }
-            $connectionString .= $options['mongo']['server'];
-            if (isset($options['mongo']['port'])) {
-                $connectionString .= ':' . $options['mongo']['port'];
+            $serverList = explode(",",$options['mongo']['server']);
+            foreach ($serverList as $server) {
+            	$connectionString .= $server;
+            	if (isset($options['mongo']['port'])) {
+            		$connectionString .= ':' . $options['mongo']['port'].",";
+            	}
             }
-            self::setDefaultMongo($connectionString);
+            $connectionString = substr($connectionString,0,-1);
+			
+            if (isset($options['mongo']['replicaSetName'])) { 
+            	self::$_replicaSetName = $options['mongo']['replicaSetName'];
+            }
+        	
+            self::setDefaultMongo(str_replace(' ','',$connectionString));
 
             self::setDefaultDb($options['mongo']['db']);
         }
@@ -482,7 +498,12 @@ class DataAccess implements IDataAccess
             return self::$_adapterArray[$mongo];
         } else {
             try {
-                $adapter = new \MongoClient($mongo);
+            	if (!self::$_replicaSetName) {
+            		$adapter = new \MongoClient($mongo);
+            	} else {
+            		$mongo .= "?readPreference=nearest";
+            		$adapter = new \MongoClient($mongo,array('replicaSet' => self::$_replicaSetName));
+            	}
             } catch (\Exception $e) {
                 $adapter = new \MongoClient($mongo, array("connect" => FALSE));
             }
