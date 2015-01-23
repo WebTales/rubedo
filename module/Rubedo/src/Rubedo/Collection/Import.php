@@ -156,6 +156,8 @@ class Import extends AbstractCollection
         $this->_userEncoding = $options['userEncoding'];
         $this->_workingLanguage = $options['workingLanguage'];
         $this->_separator = isset($options['separator']) ? $options['separator'] : ';';
+        $this->_termSeparator = isset($options['termSeparator']) ? $options['termSeparator'] : '||';
+        $this->_pathSeparator = isset($options['pathSeparator']) ? $options['pathSeparator'] : '##';
         $this->_typeId = $options['typeId'];
         $this->_fileName = $fileName;
         $this->_isProduct = isset($options['isProduct']) ? $options['isProduct'] : false;
@@ -203,12 +205,12 @@ class Import extends AbstractCollection
 
         // Write file to import into Import collection
         $this->writeImportFile();
-        
-        // Processing Import data taxonomy and localisation fields
-        $this->preProcess();
 
         // Extract taxonomy to ImportTaxonomy collection
         $this->extractTaxonomy();
+
+        // Processing Import data taxonomy and localisation fields
+        $this->preProcess();
 
         if ($this->_importMode == 'insert') { // INSERT mode
 
@@ -777,6 +779,108 @@ class Import extends AbstractCollection
     protected function extractTaxonomy()
     {
 
+    	$code = "db.ImportTaxo.remove();";
+    	$response = $this->_dataService->execute($code);
+    	
+    	foreach ($this->_importAsTaxo as $key => $value) {
+    		
+    		// Init vars
+    		$code = "
+    		var vocabularyId = '".$this->_vocabularies[$key + 1]."';
+    		var workingLanguage = '".$this->_workingLanguage."';
+    		var currentTime = '".$this->currentTime."';
+    		var currentUser = new Array();
+    		currentUser['id'] = '".$this->currentUser['id']."';
+    		currentUser['login'] = '".$this->currentUser['login']."';
+    		currentUser['fullName'] = '".$this->currentUser['fullName']."';
+    		var termSeparator = '".$this->_termSeparator."';
+    		var pathSeparator = '".$this->_pathSeparator."';
+    		var parent = '';
+    		var newId = null; 
+    		var column = 'col".$value["csvIndex"]."';";
+    		
+    		$code.= "db.Import.find().snapshot().forEach(
+			function(ligne) {
+				var pathList = ligne[column].split(termSeparator);
+    			pathList.forEach(function(path){
+    				var termsId = [];
+    				var terms = path.split(pathSeparator);
+	    			for (var i = 0; i < terms.length; i++) {
+    				   	if (terms[i]!='') {
+		    				if (i>0) { 
+		    					parent = termsId[i-1];
+		    				} else { 
+		    					parent = 'root';
+		    				}
+
+			    			var term = db.TaxonomyTerms.findOne({'vocabularyId':vocabularyId, 'text':terms[i], 'parentId':parent},{_id:1});
+    						    			
+			    			if (term) {
+			    				newId = term._id;
+			    			} else {
+    							var term = db.ImportTaxo.findOne({'vocabularyId':vocabularyId, 'text':terms[i], 'parentId':parent},{_id:1});
+    							if (term) {
+			    					newId = term._id;
+			    				} else {
+			    					newId = ObjectId();
+    							}
+			    			}
+							
+    						var termPath = '';
+    						for (var j = 0; j < i+1; j++) {
+    							termPath = termPath + terms[j];
+    							if (j<i) {
+    								termPath = termPath + pathSeparator;
+    							}
+    						}
+    				
+		    				termsId[i]=newId.valueOf();
+    				
+		    				var taxo = {
+		    					_id: newId,
+								text: terms[i],
+    							'path': termPath,
+								vocabularyId: vocabularyId,
+								parentId: parent,
+								expandable:  true,
+								nativeLanguage:  workingLanguage,
+								version: '1',
+								createTime: currentTime,
+								lastUpdateTime: currentTime,
+								createUser: {
+									'id': currentUser['id'],
+									'login': currentUser['login'],
+									'fullName': currentUser['fullName']
+								},
+								lastUpdateUser: {
+									'id': currentUser['id'],
+									'login': currentUser['login'],
+									'fullName': currentUser['fullName']
+    							}
+							};
+    						var localTerm = {
+    							'text' : terms[i],
+    							'locale' : workingLanguage
+    						}; 
+    						taxo.i18n = {};
+    						taxo.i18n[workingLanguage] = localTerm;
+		    				db.ImportTaxo.insert(taxo);
+
+    					}
+	    			}
+    				
+	    		});
+			})";
+    		$response = $this->_dataService->execute($code);
+    		if ($response['ok'] != 1) {
+    			var_dump($code);
+    			var_dump($response);
+    			throw new \Rubedo\Exceptions\Server("Extracting Taxonomy error");
+    		}    		
+    	}
+    	
+		
+    	/*
         // Create map reduce
         foreach ($this->_importAsTaxo as $key => $value) {
 
@@ -791,36 +895,50 @@ class Import extends AbstractCollection
                     $mapCode .= "var terms_" . $transValue["translateToLanguage"] . " = this.col" . $transValue["csvIndex"] . ".split(',');";
                 }
             }
-
+                       
             $mapCode .= "
 						for (var i = 0; i < terms_" . $this->_workingLanguage . ".length; i++) {
-						var key = terms_" . $this->_workingLanguage . "[i];
-						if (key) { 
-								var value = {" . $this->_workingLanguage . ": terms_" . $this->_workingLanguage . "[i]};";
-            foreach ($this->_importAsTaxoTranslation as $transKey => $transValue) {
-                if ($transValue["translatedElement"] == $value['csvIndex']) {
-                    $mapCode .= "if (terms_" . $transValue["translateToLanguage"] . "[i]) {";
-                    $mapCode .= "value." . $transValue["translateToLanguage"] . " = terms_" . $transValue["translateToLanguage"] . "[i];";
-                    $mapCode .= "};";
-                }
-            }
-            $mapCode .= "
+							var path = terms_" . $this->_workingLanguage . "[i].split('##');
+							for (var j = 0; j < path.length; j++) {
+								key = path[j];
+								if (key) { 
+									var value = { ".$this->_workingLanguage . ": key};
+									if (j>0) { value.parent=path[j-1];} else { value.parent='root';}";		
+            						// Add translations
+            						foreach ($this->_importAsTaxoTranslation as $transKey => $transValue) {
+						                if ($transValue["translatedElement"] == $value['csvIndex']) {
+						                    $mapCode .= "if (terms_" . $transValue["translateToLanguage"] . "[i].split('##')[j]) {";
+						                    $mapCode .= "value." . $transValue["translateToLanguage"] . " = { val: terms_" . $transValue["translateToLanguage"] . "[i].split('##')[j]};";
+						                    $mapCode .= "};";
+						                }
+           							 }
+            $mapCode .= "		emit(key, value);
+        						}
 							}
-							emit(key, value);
+							
 						}
 				};";
 
             $map = new \MongoCode($mapCode);
 
-            $reduce = new \MongoCode("function(key, values) { return {key: values[0]} }");
-
+            //$reduceCode = new \MongoCode("function(key, values) { return values[0] }");
+		
+            $reduceCode = "
+            function(key, values) {            		
+            	values.forEach(function(v) {
+            		return {key : v};
+            	});
+            }";
+            
+            $reduce = new \MongoCode($reduceCode);
+            		
             $finalizeCode = "function(key,value) {
 					oid = ObjectId();
 					finalValue = {
 						_id: oid,
 						text: key,
 						vocabularyId: vocabularyId,
-						parentId: 'root',
+						parentId: value.parent".",
 						leaf:  true,
 						expandable:  'false',
 						nativeLanguage:  workingLanguage,
@@ -851,14 +969,15 @@ class Import extends AbstractCollection
 
                     $finalizeCode .= "if (value." . $transValue["translateToLanguage"] . ") {";
                     $finalizeCode .= "finalValue.i18n." . $transValue["translateToLanguage"] . "= {
-							text:value." . $transValue["translateToLanguage"] . ",
-							locale:'" . $transValue["translateToLanguage"] . "'};};";
+							text:value." . $transValue["translateToLanguage"] . ".val,
+							locale:'" . $transValue["translateToLanguage"] . ".val'};};";
                 }
             }
 
             $finalizeCode .= "return (finalValue);}";
 
             $finalize = new \MongoCode($finalizeCode);
+            var_dump($finalizeCode);
 
             // global JavaScript variables passed to map, reduce and finalize functions
             $scope = array(
@@ -886,6 +1005,7 @@ class Import extends AbstractCollection
                 throw new \Rubedo\Exceptions\Server("Extracting Taxonomy error", $response["errmsg"]);
             }
         }
+        */
         return true;
     }
 
@@ -899,7 +1019,9 @@ class Import extends AbstractCollection
     protected function preProcess()
     {
  	
-    	$code = "var castToNumber = function(e, type) {
+    	$code = "var termSeparator = '".$this->_termSeparator."';";
+    	
+    	$code.= "var castToNumber = function(e, type) {
 			if (e=='') {
 				return null;
 			} else {
@@ -924,7 +1046,7 @@ class Import extends AbstractCollection
 		$code.= "db.Import.find().snapshot().forEach(function(e){";
 			
 		foreach($this->_importAsTaxo as $taxo) {
-			$code.= "e.col".$taxo['csvIndex']." = e.col".$taxo['csvIndex'].".split(',');";
+			$code.= "e.col".$taxo['csvIndex']." = e.col".$taxo['csvIndex'].".split(termSeparator);";
 		}
 			
 		foreach ($this->_importAsField as $field) {
@@ -972,12 +1094,14 @@ class Import extends AbstractCollection
             $response = $this->_dataService->execute($code);
 
             $code = "db.ImportTaxo.find().snapshot().forEach(
-			function(e) {
-				var text = e._id;
-				var id = e.value._id;
-				db.Import.update({col" . $taxo['csvIndex'] . ": text},{\$set: {\"col" . $taxo['csvIndex'] . ".\$\" : id.str}},{ multi: true });
+			function(term) {
+				db.Import.update({col" . $taxo['csvIndex'] . ": term.path},{\$set: {\"col" . $taxo['csvIndex'] . ".\$\" : term._id.str}},{ multi: true });
 			})";
             $response = $this->_dataService->execute($code);
+            
+            $code = "db.ImportTaxo.update({},{\$unset:{path:''}});";
+            $response = $this->_dataService->execute($code);
+            
             if ($response['ok'] != 1) {
                 throw new \Rubedo\Exceptions\Server("Turning Terms to id error");
             }
@@ -996,13 +1120,15 @@ class Import extends AbstractCollection
 
         foreach ($this->_importAsTaxo as $taxo) {
             $code = "db.ImportTaxo.find().snapshot().forEach(
-			function(foo) {
-				if (foo.value.text > '') {
-					db.TaxonomyTerms.insert(foo.value);
+			function(term) {
+				if (term.text > '') {
+					db.TaxonomyTerms.insert(term);
 				}
 			})";
             $response = $this->_dataService->execute($code);
             if ($response['ok'] != 1) {
+            	var_dump($code);
+            	var_dump($response);
                 throw new \Rubedo\Exceptions\Server("Writing Taxonomy error");
             }
         }
@@ -1018,8 +1144,8 @@ class Import extends AbstractCollection
     {
 
         $code = "var counter = 0;
-				db.ImportContents.find().snapshot().forEach(function(foo) {
-					db.Contents.insert(foo.value);
+				db.ImportContents.find().snapshot().forEach(function(content) {
+					db.Contents.insert(content.value);
 					counter++;
 				});
 				return counter;
@@ -1162,3 +1288,4 @@ class Import extends AbstractCollection
         return mb_convert_encoding($string, "UTF-8", $encoding);
     }
 }
+
