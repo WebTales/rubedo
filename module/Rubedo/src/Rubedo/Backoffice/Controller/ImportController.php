@@ -412,7 +412,7 @@ class ImportController extends DataAccessController
 				}
 
                 // Run Import
-                $ImportService = Manager::getService('Import');
+                $ImportService = Manager::getService('MongoDataImport');
                 $lineCounter = $ImportService->run($fileInfos['tmp_name'], $options);
 
                 // Indexing
