@@ -47,8 +47,11 @@ class OrdersResource extends AbstractResource
     public function getAction($params)
     {
         $user = $params['identity']->getUser();
-        $filter = Filter::factory()->addFilter(Filter::factory('Value')->setName('userId')->setValue($user['id']));
-        $orders = $this->getOrdersCollection()->getList($filter, array(array('property' => 'createTime', 'direction' => 'desc')));
+        $filter = Filter::factory()
+            ->addFilter(Filter::factory('Value')->setName('userId')->setValue($user['id']));
+        $start=isset($params['start']) ? $params['start'] : 0;
+        $limit=isset($params['limit']) ? $params['limit'] : null;
+        $orders = $this->getOrdersCollection()->getList($filter, array(array('property' => 'createTime', 'direction' => 'desc')),$start,$limit);
         if (!empty($params["orderDetailPage"])) {
             $urlOptions = array(
                 'encode' => true,
@@ -65,6 +68,7 @@ class OrdersResource extends AbstractResource
         return array(
             'success' => true,
             'orders' => &$orders['data'],
+            'total'=>&$orders['count'],
             'orderDetailPageUrl' => isset($orderDetailPageUrl) ? $orderDetailPageUrl : null,
         );
     }
