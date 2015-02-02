@@ -60,6 +60,7 @@ class OrdersResource extends AbstractResource
 
             $orderDetailPageUrl = $this->getContext()->url()->fromRoute('rewrite', array(
                 'pageId' => $params["orderDetailPage"],
+                'locale' => $params['lang']->getLocale(),
             ), $urlOptions);
         }
         foreach ($orders['data'] as &$order) {
@@ -274,7 +275,7 @@ class OrdersResource extends AbstractResource
      */
     public function maskOrderInList($order)
     {
-        $mask = array('status', 'id', 'orderNumber', 'finalTFPrice');
+        $mask = array('status', 'id', 'orderNumber', 'finalPrice','createTime','paymentMeans','shipper');
         return array_intersect_key($order, array_flip($mask));
     }
 
