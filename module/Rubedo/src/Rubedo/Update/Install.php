@@ -375,6 +375,7 @@ class Install
         $result = true;
         foreach ($servicesArray as $service) {
             if (!Manager::getService($service)->checkIndexes()) {
+            	Manager::getService($service)->dropIndexes();
                 $result = $result && Manager::getService($service)->ensureIndexes();
             }
         }
