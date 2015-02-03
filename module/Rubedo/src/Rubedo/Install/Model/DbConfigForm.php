@@ -40,7 +40,6 @@ class DbConfigForm extends BootstrapForm
             ->setAttribute('class', 'form-control');
 
         $replicaSetNameField = (new Text('replicaSetName'))
-        ->setAttribute('Required', true)
         ->setValue(isset($params['replicaSetName']) ? $params['replicaSetName'] : '')
         ->setLabel('Replica Set Name')
         ->setAttribute('class', 'form-control');        
