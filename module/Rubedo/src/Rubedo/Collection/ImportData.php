@@ -77,10 +77,6 @@ class ImportData extends AbstractCollection
     
     	fclose($receivedFile);
     
-    	// create index on importKey
-    
-    	$this->_dataService->ensureIndex('importKey');
-    
     	return true;
     }
     
