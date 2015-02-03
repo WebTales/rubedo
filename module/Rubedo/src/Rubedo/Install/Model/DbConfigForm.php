@@ -39,6 +39,12 @@ class DbConfigForm extends BootstrapForm
             ->setLabel('Server Name')
             ->setAttribute('class', 'form-control');
 
+        $replicaSetNameField = (new Text('replicaSetName'))
+        ->setAttribute('Required', true)
+        ->setValue(isset($params['replicaSetName']) ? $params['replicaSetName'] : '')
+        ->setLabel('Replica Set Name')
+        ->setAttribute('class', 'form-control');        
+        
         $serverPortField = (new Number('port'))
             ->setValue(isset($params['port']) ? $params['port'] : 27017)
             ->setLabel('Server Port')
@@ -72,6 +78,7 @@ class DbConfigForm extends BootstrapForm
 
         $dbForm = new Form();
         $dbForm->add($serverNameField);
+        $dbForm->add($replicaSetNameField);
         $dbForm->add($serverPortField);
         $dbForm->add($dbNameField);
         $dbForm->add($serverAdminLoginField);
