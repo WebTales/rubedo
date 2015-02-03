@@ -733,6 +733,7 @@ abstract class AbstractCollection implements IAbstractCollection
     {
         $result = true;
         foreach ($this->_indexes as $index) {
+        	$this->_dataService->deleteIndex($index['keys']);
             $result = $result && $this->_dataService->ensureIndex($index['keys'], isset($index['options']) ? $index['options'] : array());
         }
         return $result;
