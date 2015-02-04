@@ -101,4 +101,5 @@ return array(
     'RubedoAPI\\Storage\\MongoStorage' => 'RubedoAPI\\Storage\\MongoStorage',
     'CheckPayment'=>'Rubedo\\Payment\\CheckPayment',
     'CreditTransferPayment'=>'Rubedo\\Payment\\CreditTransferPayment',
+    'PaypalPayment'=>'Rubedo\\Payment\\PaypalPayment',
 );

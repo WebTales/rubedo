@@ -34,6 +34,11 @@ class PaymentResource extends AbstractResource
                             ->setKey('orderId')
                             ->setRequired()
                     )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setDescription('Current user Url for return purposes')
+                            ->setKey('currentUserUrl')
+                    )
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('Instructions to use for payment')
@@ -68,7 +73,7 @@ class PaymentResource extends AbstractResource
             throw new APIRequestException('Unknown payment method', 400);
         }
         $myPaymentMeans = $pmConfig[$order['paymentMeans']];
-        $paymentInstructions=Manager::getService($myPaymentMeans['service'])->getOrderPaymentData($order);
+        $paymentInstructions=Manager::getService($myPaymentMeans['service'])->getOrderPaymentData($order,isset($params['currentUserUrl']) ? $params['currentUserUrl'] : null);
         return array(
             'success' => true,
             'paymentInstructions' => $paymentInstructions,
