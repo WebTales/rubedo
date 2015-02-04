@@ -87,7 +87,7 @@ class PaypalPayment extends AbstractPayment
             throw new \Rubedo\Exceptions\Server("Error updating order");
         }
         $output['url']=$this->nativePMConfig['customerRedirect'] . "?cmd=_ap-payment&paykey=" . $result["payKey"];
-        $output['whatToDo']="forwardToUrl";
+        $output['whatToDo']="redirectToUrl";
         return $output;
     }
 }
