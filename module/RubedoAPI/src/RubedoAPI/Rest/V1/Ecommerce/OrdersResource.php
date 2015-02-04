@@ -162,6 +162,13 @@ class OrdersResource extends AbstractResource
         $order['status'] = "pendingPayment";
 
         $registeredOrder = $this->getOrdersCollection()->createOrder($order);
+        if ($registeredOrder['success']){
+            if (isset($params['shoppingCartToken'])){
+                $this->getShoppingCartCollection()->setCurrentCart(array(),$params['shoppingCartToken']);
+            } else {
+                $this->getShoppingCartCollection()->setCurrentCart(array());
+            }
+        }
 
         return array(
             'success' => $registeredOrder['success'],
