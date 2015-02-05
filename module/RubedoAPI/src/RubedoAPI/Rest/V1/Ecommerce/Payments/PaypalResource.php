@@ -39,7 +39,7 @@ class PaypalResource extends AbstractResource
 
 // Reading POSTed data directly from $_POST causes serialization issues with array data in the POST.
 // Instead, read raw POST data from the input stream.
-        Manager::getService("PayaplIPN")->create(array(
+        Manager::getService("PaypalIPN")->create(array(
             "postData"=>$_POST,
             "source"=>"paypal",
         ));
@@ -99,7 +99,7 @@ class PaypalResource extends AbstractResource
             // check that receiver_email is your Primary PayPal email
             // check that payment_amount/payment_currency are correct
             // process the notification
-            Manager::getService("PayaplIPN")->create(array(
+            Manager::getService("PaypalIPN")->create(array(
                 "postData"=>$_POST,
                 "source"=>"paypal",
                 "verified"=>true
@@ -140,7 +140,7 @@ class PaypalResource extends AbstractResource
             return array("success"=>true);
         } else if (strcmp ($res, "INVALID") == 0) {
             // IPN invalid
-            Manager::getService("PayaplIPN")->create(array(
+            Manager::getService("PaypalIPN")->create(array(
                 "postData"=>$_POST,
                 "source"=>"paypal",
                 "verified"=>false
