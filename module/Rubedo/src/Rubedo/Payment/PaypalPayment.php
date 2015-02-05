@@ -43,7 +43,6 @@ class PaypalPayment extends AbstractPayment
         $payload = array(
             "actionType" => "PAY",
             "currencyCode" => "EUR",
-            "custom"=>$order['orderNumber'],
             "receiverList" => array(
                 "receiver" => array(
                     array(

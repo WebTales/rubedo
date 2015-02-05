@@ -106,30 +106,18 @@ class PaypalResource extends AbstractResource
             ));
 
             // assign posted variables to local variables
-            $payment_status = $_POST['payment_status'];
-            $payment_amount = $_POST['mc_gross'];
-            $payment_currency = $_POST['mc_currency'];
-            $receiver_email = $_POST['receiver_email'];
-            $orderNumber=$_POST['custom'];
+            $payment_status = $_POST['status'];
+            $orderPayKey=$_POST['pay_key'];
 
-            if ($payment_status!="Completed"){
+            if ($payment_status!="COMPLETED"){
                 return array("success"=>false);
             }
-            $filter = Filter::factory()->addFilter(Filter::factory('Value')->setName('orderNumber')->setValue($orderNumber));
+            $filter = Filter::factory()->addFilter(Filter::factory('Value')->setName('paypalPayKey')->setValue($orderPayKey));
             $order=Manager::getService("Orders")->findOne($filter);
             if (!$order){
                 return array("success"=>false);
             }
             if($order['status']!='pendingPayment'){
-                return array("success"=>false);
-            }
-            if ((string) number_format($order['finalPrice'],2)!=$payment_amount){
-                return array("success"=>false);
-            }
-            if($payment_currency!="EUR"){
-                return array("success"=>false);
-            }
-            if($receiver_email!=$this->nativePMConfig['userEmail']){
                 return array("success"=>false);
             }
             $order['status']="payed";
