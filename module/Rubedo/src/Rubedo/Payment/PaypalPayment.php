@@ -46,7 +46,7 @@ class PaypalPayment extends AbstractPayment
             "receiverList" => array(
                 "receiver" => array(
                     array(
-                        "amount" => $order['finalPrice'],
+                        "amount" => (string) number_format($order['finalPrice'],2),
                         "email" => $this->nativePMConfig['userEmail']
                     )
                 )
@@ -72,7 +72,6 @@ class PaypalPayment extends AbstractPayment
         ));
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         $result = curl_exec($curl);
