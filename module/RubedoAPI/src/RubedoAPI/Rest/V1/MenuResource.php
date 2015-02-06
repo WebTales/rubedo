@@ -30,6 +30,12 @@ class MenuResource extends AbstractResource
 {
 
     /**
+     * Cache lifetime for api cache (only for get and getEntity)
+     * @var \RubedoAPI\Frontoffice\Controller\ApiController
+     */
+    public $cacheLifeTime=60;
+
+    /**
      * @var array
      */
     private $excludeFromMenuCondition;

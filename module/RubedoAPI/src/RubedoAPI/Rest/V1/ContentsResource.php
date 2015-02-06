@@ -34,6 +34,12 @@ use Rubedo\Content\Context;
 class ContentsResource extends AbstractResource
 {
     /**
+     * Cache lifetime for api cache (only for get and getEntity)
+     * @var \RubedoAPI\Frontoffice\Controller\ApiController
+     */
+    public $cacheLifeTime=60;
+
+    /**
      * @var array
      */
     protected $toExtractFromFields = array('text');

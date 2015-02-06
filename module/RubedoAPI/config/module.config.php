@@ -47,6 +47,7 @@ return array(
             'RubedoAPI\\Services\\Internationalization\\Current' => 'RubedoAPI\\Services\\Internationalization\\Current',
             'RubedoAPI\\Services\\Internationalization\\Translate' => 'RubedoAPI\\Services\\Internationalization\\Translate',
             'RubedoAPI\\Collection\\ShoppingCart' => 'RubedoAPI\\Collection\\ShoppingCart',
+            'RubedoAPI\\Collection\\ApiCache' => 'RubedoAPI\\Collection\\ApiCache',
         ),
         'aliases' => array(
             'API\\Collection\\UserTokens' => 'RubedoAPI\\Collection\\UserTokens',
@@ -61,6 +62,7 @@ return array(
             'CurrentUser' => 'RubedoAPI\\Services\\User\\CurrentUser',
             'API\\Collection\\ShoppingCart' => 'RubedoAPI\\Collection\\ShoppingCart',
             'ShoppingCart' => 'RubedoAPI\\Collection\\ShoppingCart',
+            'ApiCache' => 'RubedoAPI\\Collection\\ApiCache',
         ),
     ),
     'namespaces_api' => array(
