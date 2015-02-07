@@ -89,7 +89,12 @@ class OrdersResource extends AbstractResource
         }
         //$myPaymentMeans = $pmConfig[$params['paymentMeans']];
 
-        $myCart = $this->getShoppingCartCollection()->getCurrentCart();
+        if (isset($params['shoppingCartToken'])){
+            $myCart = $this->getShoppingCartCollection()->getCurrentCart($params['shoppingCartToken']);
+        } else {
+            $myCart = $this->getShoppingCartCollection()->getCurrentCart();
+        }
+
         if (empty($myCart)) {
             throw new APIAuthException('Shopping cart is empty', 404);
         }
@@ -133,8 +138,8 @@ class OrdersResource extends AbstractResource
             $myCart,
             $currentUser['typeId'],
             $currentUser['shippingAddress']['country'],
-            $currentUser['shippingAddress']['regionState'],
-            $currentUser['shippingAddress']['postCode']
+            isset($currentUser['shippingAddress']['regionState']) ? $currentUser['shippingAddress']['regionState'] : "*",
+            isset($currentUser['shippingAddress']['postCode']) ? $currentUser['shippingAddress']['postCode'] : "*"
         );
 
         if (isset($params['shippingComments'])) {
@@ -157,6 +162,13 @@ class OrdersResource extends AbstractResource
         $order['status'] = "pendingPayment";
 
         $registeredOrder = $this->getOrdersCollection()->createOrder($order);
+        if ($registeredOrder['success']){
+            if (isset($params['shoppingCartToken'])){
+                $this->getShoppingCartCollection()->setCurrentCart(array(),$params['shoppingCartToken']);
+            } else {
+                $this->getShoppingCartCollection()->setCurrentCart(array());
+            }
+        }
 
         return array(
             'success' => $registeredOrder['success'],
@@ -183,6 +195,7 @@ class OrdersResource extends AbstractResource
             if ($myContent) {
                 $value['title'] = $myContent['text'];
                 $value['subtitle'] = '';
+                $value['variationProperties'] = array();
                 $unitPrice = 0;
                 $taxedPrice = 0;
                 $unitTaxedPrice = 0;
@@ -203,6 +216,7 @@ class OrdersResource extends AbstractResource
                         foreach ($variation as $varkey => $varvalue) {
                             if (!in_array($varkey, $ignoredArray)) {
                                 $value['subtitle'] .= ' ' . $varvalue;
+                                $value['variationProperties'][$varkey] = $varvalue;
                             }
                         }
                     }
@@ -368,6 +382,11 @@ class OrdersResource extends AbstractResource
                     ->setDescription('Shipping comments')
                     ->setKey('shippingComments')
                     ->setFilter('string')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Shopping cart token')
+                    ->setKey('shoppingCartToken')
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())

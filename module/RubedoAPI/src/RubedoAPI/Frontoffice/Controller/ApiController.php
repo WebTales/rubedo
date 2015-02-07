@@ -18,8 +18,10 @@
 namespace RubedoAPI\Frontoffice\Controller;
 
 use Rubedo\Collection\AbstractCollection;
+use Rubedo\Services\Manager;
 use RubedoAPI\Exceptions\APIAbstractException;
 use RubedoAPI\Exceptions\APIRequestException;
+use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 
@@ -100,8 +102,41 @@ class ApiController extends AbstractActionController
                     'message' => 'Method not exist',
                 ]);
             }
-            if (isset($routes['id']))
+            $rubedoConfig=Manager::getService("Config");
+            if (isset($rubedoConfig['rubedo_config']['apiCache'])&&$rubedoConfig['rubedo_config']['apiCache']=="1"&&$method=="get"&&$resourceObject->cacheLifeTime){
+                $apiCacheService=Manager::getService("ApiCache");
+                $encodedParams=Json::encode($this->params()->fromQuery());
+                if (isset($routes['id'])){
+                    $encodedParams=(string) $routes['id'].$encodedParams;
+                }
+                $encodedParams=$class.$encodedParams;
+                $cacheKey=md5($encodedParams);
+                $foundCachedApiCall=$apiCacheService->findByCacheId($cacheKey);
+                if ($foundCachedApiCall){
+                    return new JsonModel($foundCachedApiCall["cachedResult"]);
+                } else {
+                    if (isset($routes['id'])) {
+                        $apiResponse=$resourceObject->handlerEntity($routes['id'], $method, $params);
+                    } else {
+                        $apiResponse=$resourceObject->handler($method, $params);
+                    }
+                    $time = Manager::getService('CurrentTime')->getCurrentTime();
+                    $newCachedApiCall=array(
+                        "cacheId"=>$cacheKey,
+                        "cachedResult"=>$apiResponse,
+                        "endpoint"=>$class,
+                        "expireAt"=>new \MongoDate($time+$resourceObject->cacheLifeTime)
+                    );
+                    if (isset($routes['id'])){
+                        $newCachedApiCall['entity']=(string) $routes['id'];
+                    }
+                    $apiCacheService->upsertByCacheId($newCachedApiCall,$cacheKey);
+                    return new JsonModel($apiResponse);
+                }
+            }
+            if (isset($routes['id'])) {
                 return new JsonModel($resourceObject->handlerEntity($routes['id'], $method, $params));
+            }
             return new JsonModel($resourceObject->handler($method, $params));
         } catch (APIAbstractException $e) {
             $this->getResponse()->setStatusCode($e->getHttpCode());

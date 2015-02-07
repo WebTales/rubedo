@@ -37,6 +37,12 @@ abstract class AbstractResource implements IResource
     protected $context;
 
     /**
+     * Cache lifetime for api cache (only for get and getEntity)
+     * @var \RubedoAPI\Frontoffice\Controller\ApiController
+     */
+    public $cacheLifeTime=false;
+
+    /**
      * @var \RubedoAPI\Entities\API\Definition\DefinitionEntity
      */
     protected $definition;

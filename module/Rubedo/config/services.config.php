@@ -99,4 +99,7 @@ return array(
     'UserRecommendations' => 'Rubedo\\Collection\\UserRecommendations',
     'ItemRecommendations' => 'Rubedo\\Collection\\ItemRecommendations',
     'RubedoAPI\\Storage\\MongoStorage' => 'RubedoAPI\\Storage\\MongoStorage',
+    'CheckPayment'=>'Rubedo\\Payment\\CheckPayment',
+    'CreditTransferPayment'=>'Rubedo\\Payment\\CreditTransferPayment',
+    'PaypalPayment'=>'Rubedo\\Payment\\PaypalPayment',
 );

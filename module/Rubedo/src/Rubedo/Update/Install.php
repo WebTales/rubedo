@@ -371,6 +371,8 @@ class Install
     {
         Manager::getService('UrlCache')->drop();
         Manager::getService('Cache')->drop();
+        Manager::getService('ApiCache')->drop();
+        Manager::getService('ApiCache')->ensureIndexes();
         $servicesArray = \Rubedo\Interfaces\config::getCollectionServices();
         $result = true;
         foreach ($servicesArray as $service) {

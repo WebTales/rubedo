@@ -98,6 +98,10 @@ class PhpSettingsForm extends BootstrapForm
             ->setValue(isset($params['rubedo_config']['cachePage']) ? $params['rubedo_config']['cachePage'] : 1)
             ->setLabel('Cache page');
 
+        $apiCache = (new Checkbox('apiCache'))
+            ->setValue(isset($params['rubedo_config']['apiCache']) ? $params['rubedo_config']['apiCache'] : 1)
+            ->setLabel('API cache');
+
         $extDebug = (new Checkbox('extDebug'))
             ->setValue(isset($params['rubedo_config']['extDebug']) ? $params['rubedo_config']['extDebug'] : null)
             ->setLabel('Use debug mode of ExtJs');
@@ -165,6 +169,7 @@ class PhpSettingsForm extends BootstrapForm
             ->setAttribute('legend', 'Specific Rubedo options')
             ->add($minify)
             ->add($cachePage)
+            ->add($apiCache)
             ->add($extDebug)
             ->add($eCommerce)
             ->add($magicActivator)

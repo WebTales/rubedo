@@ -51,6 +51,7 @@ class CacheController extends AbstractActionController
         $countArray = array();
         $countArray['cachedItems'] = Manager::getService('Cache')->count();
         $countArray['cachedUrl'] = Manager::getService('UrlCache')->count();
+        $countArray['apiCache'] = Manager::getService('ApiCache')->count();
         return new JsonModel($countArray);
     }
 
@@ -63,9 +64,12 @@ class CacheController extends AbstractActionController
         $countArray['Cached items'] = Cache::getCache()->clean();
         if (Manager::getService('UrlCache')->count() > 0) {
             $countArray['Cached Url'] = Manager::getService('UrlCache')->drop();
+            Manager::getService('UrlCache')->ensureIndexes();
         } else {
             $countArray['Cached Url'] = true;
         }
+        Manager::getService('ApiCache')->drop();
+        Manager::getService('ApiCache')->ensureIndexes();
         return new JsonModel($countArray);
     }
 }

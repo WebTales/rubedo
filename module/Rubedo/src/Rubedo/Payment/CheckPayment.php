@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2012-2014 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-namespace Rubedo\Payment\Controller;
+namespace Rubedo\Payment;
 
 use Rubedo\Services\Manager;
 
@@ -24,7 +24,7 @@ use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class CheckController extends AbstractController
+class CheckPayment extends AbstractPayment
 {
     public function __construct()
     {
@@ -33,27 +33,21 @@ class CheckController extends AbstractController
     }
 
 
-    public function indexAction()
+    public function getOrderPaymentData($order)
     {
-        $this->initOrder();
-        $content = array();
+        $output = array();
+        $content=null;
         if ($this->nativePMConfig["contentId"]) {
             $content = Manager::getService('Contents')->findById($this->nativePMConfig["contentId"], true, false);
         }
         if (!$content) {
-            return $this->sendResponse(array(), "block.html.twig");
+            throw new \Rubedo\Exceptions\Server("Content not configured");
         }
-        $output = $this->params()->fromQuery();
-        $output['contentId'] = $this->nativePMConfig["contentId"];
-        $price = $this->getOrderPrice();
-        $output['price'] = $price;
+        $price = $order['finalPrice'];
         $toReplace = array('%23', '###price###', '###orderId###');
-        $replacedBy = array('#', $price . ' €', $this->currentOrder['orderNumber']);
-        $output['text'] = str_replace($toReplace, $replacedBy, $content['fields']['body']);
-        $output["locale"] = Manager::getService('CurrentLocalization')->getCurrentLocalization();
-        $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("blocks/richtext.html.twig");
-        $css = array();
-        $js = array();
-        return $this->sendResponse($output, $template, $css, $js);
+        $replacedBy = array('#', number_format($price,2) . ' €', $order['orderNumber']);
+        $output['richText'] = str_replace($toReplace, $replacedBy, $content['fields']['body']);
+        $output['whatToDo']="displayRichText";
+        return $output;
     }
 }
