@@ -49,6 +49,18 @@ class DataImport extends DataAccess
      */
     protected $_importKeyValue;
     /**
+     * Unique key index in the import file to match with the unique key field
+     *
+     * @var string
+     */
+    protected $_uniqueKeyIndex;
+    /**
+     * Unique key field in the updated content type
+     *
+     * @var string
+     */
+    protected $_uniqueKeyField;
+    /**
      * User encoding : UTF8, ...
      *
      * @var string
@@ -162,8 +174,8 @@ class DataImport extends DataAccess
             $this->_navigationTaxonomy = $options['contentsNavTaxo'];
             $this->_target = $options['contentsTarget'];
         } else { // get params for update mode
-            $this->uniqueKeyIndex = $options['uniqueKeyIndex'];
-            $this->uniqueKeyField = $options['uniqueKeyField'];
+            $this->_uniqueKeyIndex = $options['uniqueKeyIndex'];
+            $this->_uniqueKeyField = $options['uniqueKeyField'];
             $this->_importAsTaxo = array();
             $this->_target = '';
         }
@@ -188,17 +200,19 @@ class DataImport extends DataAccess
         // Write file to import into Import Data collection
         
         $importData = Manager::getService('ImportData');
-        $importData->writeImportFile($this->_fileName, $this->_separator, $this->_userEncoding, $this->_importKeyValue);
-
-        if ($this->_importMode == 'insert') { // INSERT mode
-    
-            // Extract contents to ImportContents collection
-            $response = $this->process();
-
-        } else { // UPDATE mode
-
+        $importData->writeImportFile($this->_fileName, $this->_separator, $this->_userEncoding, $this->_importKeyValue);  
+		
+        switch ($this->_importMode) {
+        	case "insert":
+        		$response = $this->insertData();
+        		break;
+        	case "update":
+        		$response = $this->updateData();
+        		break;
+        	default:
+        		throw new \Rubedo\Exceptions\Server("Unkown import mode : ".$this->_importMode);
         }
-
+        
         return $response;
 
     }
@@ -562,21 +576,131 @@ class DataImport extends DataAccess
 	   	return true;
    }
 
-   
-   protected function process() {
+   protected function updateData() {
+   	
    	
 	   	// Get data records on import Key
 	   	$filter = Filter::factory('Value')->setName('importKey')->setValue($this->_importKeyValue);
 	   	$dataCursor = Manager::getService('ImportData')->customFind($filter);
+	   	 
+	   	// Fill ImportProduct collection with product variations if needed
+	   	 
+	   	if ($this->_isProduct) $this->getProductVariations();
+	   	 
+	   	$previousRecordBaseSku = null;
+	   	$counter = 0;
+	   	 
+	   	// Loop on import records
+	   	foreach($dataCursor as $record) {
 	   	
-	   	// Get product variations if needed
+	   		if ($this->_isProduct && ($previousRecordBaseSku == $record['col'.$this->_productOptions['baseSkuFieldIndex']])) {
+	   	
+	   			// skip record
+	   			 
+	   		} else {
+
+	   			// Fetch content to update
+	   			
+	   			$findFilter = Filter::Factory();
+	   			
+	   			$filter = Filter::factory('Value')->setName('typeId')->setValue($this->_typeId);
+	   			$findFilter->addFilter($filter);
+	   			 
+	   			if ($this->_uniqueKeyField != 'sku') {
+	   				$filter = Filter::factory('Value')->setName($this->_uniqueKeyField)->setValue($record['col'.$this->_uniqueKeyIndex]);
+	   			} else {
+	   				$filter = Filter::factory('Value')->setName('productProperties.sku')->setValue($record['col'.$this->_productOptions['baseSkuFieldIndex']]);
+	   			}
+	   			$findFilter->addFilter($filter);	   			
+	   			
+	   			$contentToUpdate = Manager::getService('Contents')->findOne($findFilter,true,false);
+	   			
+	   			// Process fields
+
+	   			$fields = [];
+		        $i18n = [];
+		
+		        foreach ($this->_importAsField as $key => $value) {
+		
+		        	$column = 'col'.$value["csvIndex"];
+		        	
+		            // Fields that are not product variations
+		            if (!isset($value['useAsVariation']) || ($value['useAsVariation'] == false)) {
+		
+		                switch ($value['protoId']) {
+		                    case 'text':
+		                        $textFieldIndex = 'col'.$value['csvIndex'];
+		                        $fieldName = 'text';
+		                        $fields[$fieldName] = $record[$column];
+		                        break;
+		                    case 'summary':
+		                    	$fieldName = 'summary';
+		                        $fields[$fieldName] = $record[$column];
+		                        break;
+		                    default:
+		                        if ($value['cType'] != 'localiserField') {
+		                        	$fieldName = $value['newName'];
+		                            $fields[$fieldName] = $record[$column];
+		                        } else {
+		                        	$fieldName = "position";
+		                        	$latlon = explode(',',$record[$column]);
+		                        	if (count($latlon)==2) {
+			                            $fields[$fieldName] = array(
+			                                'address' => '',
+			                                'altitude' => '',
+			                                'lat' => (float) $latlon[0],
+			                                'lon' => (float) $latlon[1],
+			                                'location' => array(
+			                                    'type' => 'Point',
+			                                    'coordinates' => array((float) $latlon[1], (float) $latlon[0])
+			                                )
+			                            );
+		                        	}
+		                        }
+		                        break;
+		                }		                
+		            }
+		        }
+		        
+		        if (is_array($contentToUpdate['fields'])) {
+		        	
+		        	$contentToUpdate['fields'] = array_replace_recursive($contentToUpdate['fields'],$fields);
+		        
+		        	// Finally update content
+		        	$result = Manager::getService('Contents')->update($contentToUpdate, array(), false);
+
+		        	if ($result['success']) {
+		        		$counter++;
+		        	}
+		        }
+
+	   			if ($this->_isProduct) {
+	   				 
+	   				$previousRecordBaseSku = $record['col'.$this->_productOptions['baseSkuFieldIndex']];
+	   				 
+	   			}
+	   		}
+	
+	   	}
+	   	
+	   	return $counter;
+   	
+   }
+   
+   protected function insertData() {
+		
+		// Get data records on import Key
+	   	$filter = Filter::factory('Value')->setName('importKey')->setValue($this->_importKeyValue);
+	   	$dataCursor = Manager::getService('ImportData')->customFind($filter);
+	   	
+	   	// Fill ImportProduct collection with product variations if needed
 	   	
 	   	if ($this->_isProduct) $this->getProductVariations();
 	   	
 	   	$previousRecordBaseSku = null;
 	   	$counter = 0;
 	   	
-	   	// Loop on records
+	   	// Loop on import records
 	   	foreach($dataCursor as $record) {
 	   		
 	   		if ($this->_isProduct && ($previousRecordBaseSku == $record['col'.$this->_productOptions['baseSkuFieldIndex']])) {
@@ -696,9 +820,9 @@ class DataImport extends DataAccess
 		        }
 		        
 		        // Finally create content
-		         
-		        Manager::getService('Contents')->create($content);
-		        $counter++;
+		        
+        		Manager::getService('Contents')->create($content);
+	        	$counter++;
 	   		}
 
 	   	}
@@ -716,7 +840,7 @@ class DataImport extends DataAccess
 
         $variationFields = Manager::getService("ContentTypes")->getVariationFieldForCType($this->_typeId);
 
-        // 2 Map reduce : one for generic product and one for
+        // 2 different queries for contents and products
 
         if ($this->uniqueKeyField != 'sku') {
             $queryProduct = "typeId: '" . $this->_typeId . "','" . $this->uniqueKeyField . "': foo._id";

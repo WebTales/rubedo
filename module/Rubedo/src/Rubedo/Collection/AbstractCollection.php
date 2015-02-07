@@ -369,6 +369,17 @@ abstract class AbstractCollection implements IAbstractCollection
         return $this->_dataService->customUpdate($data, $updateCond, $options);
     }
 
+    public function findAndModify(\WebTales\MongoFilters\IFilter $query = null, array $update, $fields = array(), $options = array()) {
+    	
+    	$result = $this->_dataService->findAndModify($query, $update, $fields, $options);
+
+    	if (count($result)>0) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
+    
     /**
      * Create an objet in the current collection
      *

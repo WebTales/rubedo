@@ -790,6 +790,7 @@ class DataAccess implements IDataAccess
      */
     public function findOne(IFilter $localFilter = null)
     {
+    	
         // get the UI parameters
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
@@ -1476,6 +1477,12 @@ class DataAccess implements IDataAccess
         }
     }
 
+    public function findAndModify(IFilter $query = null, array $update, $fields = array(), $options = array()) {
+    	
+    	return $this->_collection->findAndModify($query->toArray(), $update, $fields, $options);
+    	
+    }
+    
     public function customFind(IFilter $filter = null, $fieldRule = array())
     {
         $filterArray = is_null($filter) ? array() : $filter->toArray();

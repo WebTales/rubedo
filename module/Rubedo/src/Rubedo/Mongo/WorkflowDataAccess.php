@@ -359,8 +359,12 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $obj['workspace'] = array();
         }
         $result = parent::create($obj, $options);
-
-        $result['data'] = $this->_outputObjectFilter($result['data']);
+		
+        if (isset($options["w"]) && $options["w"]==0) { // fire and forget option
+        	return null;
+        } else {
+        	$result['data'] = $this->_outputObjectFilter($result['data']);
+        }
 
         return $result;
     }

@@ -337,8 +337,6 @@ class ImportController extends DataAccessController
         $options['userEncoding'] = $this->params()->fromPost('encoding');
         $options['workingLanguage'] = $this->params()->fromPost('workingLanguage', 'en');
         $options['importKey'] = (string)new \MongoId();
-
-        $options['typeId'] = isset($configs['contentTypeId']) ? $configs['contentTypeId'] : null;
         
         if (!isset($options['userEncoding'])) {
             throw new \Rubedo\Exceptions\Server("Missing parameter encoding", "Exception96", "encoding");
@@ -365,6 +363,7 @@ class ImportController extends DataAccessController
 				$configs = Json::decode($this->params()->fromPost('configs', "[ ]"), Json::TYPE_ARRAY);
 				
 				// Get general params
+				$options['typeId'] = isset($configs['contentTypeId']) ? $configs['contentTypeId'] : null;
 				$options['importMode'] = isset($configs['importMode']) ? $configs['importMode'] : 'update';
 				$options['isProduct'] = isset($configs['isProduct']) ? $configs['isProduct'] : false;
 				$options['vocabularies'] = array();
@@ -398,6 +397,7 @@ class ImportController extends DataAccessController
 					
 					$contentType = Manager::getService("ContentTypes")->findById($options['typeId']);
 					$options['importAsField'] = array();
+					
 					foreach ($contentType['fields'] as $field) {
 						$fieldName = $field['config']['name'];
 						if (isset($options[$fieldName]) && is_numeric($options[$fieldName])) {

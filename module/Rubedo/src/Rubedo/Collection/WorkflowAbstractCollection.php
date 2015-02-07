@@ -156,9 +156,29 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
             $obj = $this->_addReadableProperty($obj);
         }
         return $this->localizeOutput($obj);
-        // return $obj;
+
     }
 
+    /**
+     * Do a findone request
+     *
+     * @param \WebTales\MongoFilters\IFilter $filters
+     *            search condition
+     * @return array
+     */
+    public function findOne(\WebTales\MongoFilters\IFilter $filters = null, $live = true, $raw = true) {
+    	
+    	if ($live === true) {
+    		$this->_dataService->setLive();
+    	} else {
+    		$this->_dataService->setWorkspace();
+    	}
+    	
+    	$obj = $this->_dataService->findOne($filters, $raw);
+
+    	return $obj;
+    }
+    
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
