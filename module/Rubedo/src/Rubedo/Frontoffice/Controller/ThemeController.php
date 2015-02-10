@@ -39,6 +39,7 @@ class ThemeController extends AbstractActionController
     {
         $theme = $this->params()->fromRoute('theme');
         $filePath = $this->params()->fromRoute('filepath');
+        $config = manager::getService('Config');
 
         /** @var \Rubedo\Collection\Directories $directoriesCollection */
         $directoriesCollection = Manager::getService('Directories');
@@ -136,8 +137,6 @@ class ThemeController extends AbstractActionController
 
                 $content = file_get_contents($consolidatedFilePath);
 
-                $config = manager::getService('Application')->getConfig();
-
                 if (isset($config['rubedo_config']['minify']) && $config['rubedo_config']['minify'] == true) {
                     if ($mimeType == 'text/css') {
                         $content = \Minify_CSS::minify($content, array(
@@ -180,9 +179,24 @@ class ThemeController extends AbstractActionController
             $headers['Expires'] = date(DATE_RFC822, strtotime("7 day"));
         }
 
+        $fileContent = stream_get_contents($stream);
+        rewind($stream);
+        if($fileContent) {
+            $etag = hash("sha256", $fileContent);
+
+            $headers['Etag'] = $etag;
+
+            $browserEtag = $this->getRequest()->getHeader("If-None-Match");
+
+            if($browserEtag && $browserEtag->getFieldValue() === $etag) {
+                $response->setStatusCode(304);
+            } else {
+                $response->setStream($stream);
+            }
+        }
+
         $response->getHeaders()->addHeaders($headers);
 
-        $response->setStream($stream);
         return $response;
     }
 
