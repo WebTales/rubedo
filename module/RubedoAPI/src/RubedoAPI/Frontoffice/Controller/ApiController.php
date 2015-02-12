@@ -113,7 +113,9 @@ class ApiController extends AbstractActionController
                 $cacheKey=md5($encodedParams);
                 $foundCachedApiCall=$apiCacheService->findByCacheId($cacheKey);
                 if ($foundCachedApiCall){
-                    return new JsonModel($foundCachedApiCall["cachedResult"]);
+                    $this->response->setContent($foundCachedApiCall["cachedResult"]);
+                    $this->response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
+                    return $this->response;
                 } else {
                     if (isset($routes['id'])) {
                         $apiResponse=$resourceObject->handlerEntity($routes['id'], $method, $params);
@@ -123,7 +125,7 @@ class ApiController extends AbstractActionController
                     $time = Manager::getService('CurrentTime')->getCurrentTime();
                     $newCachedApiCall=array(
                         "cacheId"=>$cacheKey,
-                        "cachedResult"=>$apiResponse,
+                        "cachedResult"=>Json::encode($apiResponse),
                         "endpoint"=>$class,
                         "expireAt"=>new \MongoDate($time+$resourceObject->cacheLifeTime)
                     );

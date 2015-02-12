@@ -32,7 +32,7 @@ abstract class AbstractResource implements IResource
 
     /**
      * Context from entry point
-     * @var \RubedoAPI\Frontoffice\Controller\ApiController
+     * @var int
      */
     protected $context;
 
