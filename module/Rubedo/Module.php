@@ -88,6 +88,7 @@ class Module
         $application = $e->getApplication();
         $config = $application->getConfig();
 
+
         if (isset($config['rubedo_config']['cachePage']))
             self::$cachePageIsActive = filter_var($config['rubedo_config']['cachePage'], FILTER_VALIDATE_BOOLEAN);
         SessionData::setSessionName($config['session']['name']);
@@ -120,17 +121,6 @@ class Module
             $this,
             'preRouting'
         ));
-
-        // add page cache (GET only, based onUser)
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH, array(
-            $this,
-            'preDispatch'
-        ), 100);
-
-        $eventManager->attach(MvcEvent::EVENT_FINISH, array(
-            $this,
-            'postDispatch'
-        ), -100);
 
         // handle URL caching
         $urlCacheService = Manager::getService('UrlCache');
@@ -345,85 +335,6 @@ class Module
         }
     }
 
-    /**
-     * Log dispatching and check for cached page
-     *
-     * @param MvcEvent $event
-     * @return void Response
-     */
-    public function preDispatch(MvcEvent $event)
-    {
-        if ($event->getRouteMatch()) {
-            $controller = $event->getRouteMatch()->getParam('controller');
-        }
-        $message = 'routing to ' . $controller;
-        Manager::getService('Logger')->debug($message);
-        if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index' && $event->getRequest()->isGet()) {
-            $cache = Cache::getCache();
-            $uri = $event->getRequest()->getUri();
-            $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
-            $user = Manager::getService('CurrentUser')->getCurrentUser();
-            if ($user) {
-                return;
-            }
-            $loaded = false;
-            $content = $cache->getItem($key, $loaded);
-            if ($loaded) {
-                $this->pageHit = true;
-                $event->stopPropagation();
-                $response = $event->getResponse();
-                $response->setContent($content);
-                return $response;
-            }
-        }
-    }
-
-    /**
-     * Add post dispatching logging and cache writing
-     *
-     * @param MvcEvent $event
-     */
-    public function postDispatch(MvcEvent $event)
-    {
-        if ($event->getRouteMatch()) {
-            $controller = $event->getRouteMatch()->getParam('controller');
-        } else {
-            return;
-        }
-
-        if (self::$cachePageIsActive && $controller == 'Rubedo\Frontoffice\Controller\Index' && $event->getRequest()->isGet()) {
-
-            if ($this->pageHit) {
-                $message = 'returning cache for ' . $controller;
-                Manager::getService('Logger')->info($message);
-                return;
-            }
-            $cache = Cache::getCache();
-
-            $maxLifeTime = Manager::getService('PageContent')->getMaxLifeTime();
-            if ($maxLifeTime >= 0) {
-                if ($maxLifeTime > 0) {
-                    $cache->setOptions(array(
-                        'ttl' => $maxLifeTime
-                    ));
-                }
-
-                $response = $event->getResponse();
-
-                if ($response->isOk()) {
-                    $uri = $event->getRequest()->getUri();
-                    $key = 'page_response_' . md5($uri->getHost() . $uri->getPath() . $uri->getQuery());
-                    $user = Manager::getService('CurrentUser')->getCurrentUser();
-                    if ($user) {
-                        return;
-                    }
-                    $cache->setItem($key, $response->getContent());
-                }
-            }
-        }
-        $message = 'finished rendering ' . $controller;
-        Manager::getService('Logger')->info($message);
-    }
 
     /**
      * If correct context, initialize user session
