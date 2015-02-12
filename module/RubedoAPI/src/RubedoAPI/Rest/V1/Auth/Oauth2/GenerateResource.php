@@ -67,7 +67,7 @@ class GenerateResource extends AbstractResource
         $output = array('success' => true);
         $response = $this->getAuthAPIService()->APIAuth($params['PHP_AUTH_USER'], $params['PHP_AUTH_PW']);
         $output['token'] = $this->subTokenFilter($response['token']);
-        $output['token']['user'] = $this->subUserFilter($response['user']);
+        $this->subUserFilter($response['user']);
         $route = $this->getContext()->params()->fromRoute();
         $route['api'] = array('auth');
         $route['method'] = 'GET';
@@ -75,7 +75,7 @@ class GenerateResource extends AbstractResource
         //Hack Refresh currentUser
         $this->getCurrentUserAPIService()->setAccessToken($output['token']['access_token']);
         $rightsSubRequest = $this->getContext()->forward()->dispatch('RubedoAPI\\Frontoffice\\Controller\\Api', $route);
-        $output['token']['user']['rights'] = $rightsSubRequest->getVariables()['rights'];
+        $output['currentUser'] = $rightsSubRequest->getVariables()['currentUser'];
         return $output;
     }
 }
