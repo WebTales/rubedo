@@ -70,6 +70,7 @@ class ApiCache extends AbstractCollection
     {
         $options = array();
         $options['upsert'] = true;
+        $options["w"]=0;
         $updateCond = Filter::factory('Value');
         $updateCond->setName('cacheId')->setValue($cacheId);
         $result = $this->_dataService->customUpdate($obj, $updateCond, $options);

@@ -30,7 +30,11 @@ use RubedoAPI\Rest\V1\AbstractResource;
  */
 class ProtectedResource extends AbstractResource
 {
-
+    /**
+     * Cache lifetime for api cache (only for get and getEntity)
+     * @var int
+     */
+    public $cacheLifeTime=60;
     /**
      * {@inheritdoc}
      */

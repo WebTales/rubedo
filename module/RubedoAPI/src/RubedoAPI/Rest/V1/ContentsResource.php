@@ -35,7 +35,7 @@ class ContentsResource extends AbstractResource
 {
     /**
      * Cache lifetime for api cache (only for get and getEntity)
-     * @var \RubedoAPI\Frontoffice\Controller\ApiController
+     * @var int
      */
     public $cacheLifeTime=60;
 

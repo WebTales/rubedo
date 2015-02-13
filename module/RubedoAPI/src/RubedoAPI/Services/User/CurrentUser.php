@@ -70,7 +70,12 @@ class CurrentUser extends \Rubedo\User\CurrentUser
     protected function getAccessToken()
     {
         if (!isset(static::$token)) {
-            $queryArray = Manager::getService('Application')->getRequest()->getQuery()->toArray();
+            if(get_class(Manager::getService('Application')->getRequest()) == "Zend\\Console\\Request") {
+                $queryArray = array();
+            } else {
+                $queryArray = Manager::getService('Application')->getRequest()->getQuery()->toArray();
+            }
+
             if (isset($queryArray['access_token'])) {
                 $this->setAccessToken($queryArray['access_token']);
             } elseif (isset($_COOKIE['accessToken'])) {

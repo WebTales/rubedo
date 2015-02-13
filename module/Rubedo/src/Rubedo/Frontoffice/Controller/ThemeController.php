@@ -39,6 +39,7 @@ class ThemeController extends AbstractActionController
     {
         $theme = $this->params()->fromRoute('theme');
         $filePath = $this->params()->fromRoute('filepath');
+        $config = manager::getService('Config');
 
         /** @var \Rubedo\Collection\Directories $directoriesCollection */
         $directoriesCollection = Manager::getService('Directories');
@@ -136,9 +137,7 @@ class ThemeController extends AbstractActionController
 
                 $content = file_get_contents($consolidatedFilePath);
 
-                $config = manager::getService('Application')->getConfig();
-
-                if (isset($config['rubedo_config']['minify']) && $config['rubedo_config']['minify'] == true) {
+                if (isset($config['rubedo_config']['minify']) && $config['rubedo_config']['minify'] == "1") {
                     if ($mimeType == 'text/css') {
                         $content = \Minify_CSS::minify($content, array(
                             'preserveComments' => false
@@ -175,14 +174,29 @@ class ThemeController extends AbstractActionController
             throw new \Rubedo\Exceptions\NotFound('File does not exist');
         }
 
-        if (isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == true) {
+        if (isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == "1") {
             $headers['Cache-Control'] = 'public, max-age=' . 7 * 24 * 3600;
             $headers['Expires'] = date(DATE_RFC822, strtotime("7 day"));
         }
 
+        $fileContent = stream_get_contents($stream);
+        rewind($stream);
+        if($fileContent) {
+            $etag = hash("sha256", $fileContent);
+
+            $headers['Etag'] = $etag;
+
+            $browserEtag = $this->getRequest()->getHeader("If-None-Match");
+
+            if($browserEtag && $browserEtag->getFieldValue() === $etag) {
+                $response->setStatusCode(304);
+            } else {
+                $response->setStream($stream);
+            }
+        }
+
         $response->getHeaders()->addHeaders($headers);
 
-        $response->setStream($stream);
         return $response;
     }
 

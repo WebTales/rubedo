@@ -28,6 +28,12 @@ use Zend\Json\Json;
  */
 class SearchResource extends AbstractResource
 {
+
+    /**
+     * Cache lifetime for api cache (only for get and getEntity)
+     * @var int
+     */
+    public $cacheLifeTime=60;
     /**
      * @var string
      */
@@ -287,6 +293,8 @@ class SearchResource extends AbstractResource
                 'locale' => $params['lang']->getLocale(),
             ), $urlOptions);
         }
+        $page = $this->getPagesCollection()->findById($params['pageId']);
+        $site = $this->getSitesCollection()->findById($params['siteId']);
         foreach ($results['data'] as $key => $value) {
             switch ($value['objectType']) {
                 case 'dam':
@@ -296,10 +304,8 @@ class SearchResource extends AbstractResource
                     }
                     break;
                 case 'content':
-                    $page = $this->getPagesCollection()->findById($params['pageId']);
-                    $site = $this->getSitesCollection()->findById($params['siteId']);
                     $results['data'][$key]['url'] = $this->getUrlAPIService()->displayUrlApi($results['data'][$key], 'default', $site,
-                        $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
+                    $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
                     if (isset($results['data'][$key]['author'])) {
                         $results['data'][$key]['authorUrl'] = isset($profilePageUrl) ? $profilePageUrl . '?userprofile=' . $results['data'][$key]['id'] : '';
                     }

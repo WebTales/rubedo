@@ -42,8 +42,8 @@ class AuthResource extends AbstractResource
                     ->setDescription('Login in the Rubedo API')
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
-                            ->setDescription('My rights')
-                            ->setKey('rights')
+                            ->setDescription('Current user')
+                            ->setKey('currentUser')
                     );
 
             });
@@ -68,13 +68,14 @@ class AuthResource extends AbstractResource
      */
     public function getAction()
     {
-
+        $currentUser=array_intersect_key($this->getCurrentUserAPIService()->getCurrentUser(), array_flip(array('id', 'login', 'name')));
+        $currentUser['rights']=array(
+            'boAccess' => $this->getAclService()->hasAccess('ui.backoffice'),
+            'canEdit' => $this->getAclService()->hasAccess('write.frontoffice.contents'),
+        );
         return array(
             'success' => true,
-            'rights' => array(
-                'boAccess' => $this->getAclService()->hasAccess('ui.backoffice'),
-                'canEdit' => $this->getAclService()->hasAccess('write.frontoffice.contents'),
-            ),
+            'currentUser'=>$currentUser,
         );
     }
 
