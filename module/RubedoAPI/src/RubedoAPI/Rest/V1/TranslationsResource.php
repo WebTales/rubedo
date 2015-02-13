@@ -31,7 +31,7 @@ class TranslationsResource extends AbstractResource
      * Cache lifetime for api cache (only for get and getEntity)
      * @var int
      */
-    public $cacheLifeTime=60;
+    public $cacheLifeTime=3600;
     /**
      * {@inheritdoc}
      */
