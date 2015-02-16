@@ -1,0 +1,177 @@
+{
+    "type": "Product list",
+    "description": "Similar to a content list but designed for product display.",
+    "configBasique": {
+        "title": "Product list",
+        "bType": "productList",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
+                {
+                    "categorie": "#ext-gen1072#",
+                    "champs": [
+                        {
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1073#",
+                                "name": "singlePage"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1114#",
+                                "name": "columns",
+                                "allowBlank": false,
+                                "editable": false,
+                                "allowDecimals": false,
+                                "minValue": 1,
+                                "maxValue": 4
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1406#",
+                                "name": "showOnlyTitle",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1407#",
+                                "name": "summaryHeight",
+                                "allowDecimals": false,
+                                "minValue": 0,
+                                "value": 80
+                            }
+                        }
+                    ]
+                },
+                {
+                    "categorie": "Products",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.queryBuilderField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1075#",
+                                "name": "query"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1448#",
+                                "name": "filterByUser",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1447#",
+                                "name": "magicQuery",
+                                "inputValue": true
+                            }
+                        }
+                    ]
+                },
+                {
+                    "categorie": "#ext-gen1094#",
+                    "champs": [
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1095#",
+                                "name": "pageSize",
+                                "allowDecimals": false,
+                                "minValue": 0
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1096#",
+                                "allowDecimals": false,
+                                "name": "resultsSkip",
+                                "minValue": 1
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1097#",
+                                "name": "showPager",
+                                "inputValue": true
+                            }
+                        }
+                    ]
+                },
+                {
+                    "categorie": "Infinite Scroll",
+                    "champs": [
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "Infinite Scroll",
+                                "name": "infiniteScroll",
+                                "inputValue": false
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "Scroll Threshold",
+                                "name": "scrollThreshold",
+                                "allowDecimals": false,
+                                "minValue": 50,
+                                "value": 300
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "Time Threshold",
+                                "allowDecimals": false,
+                                "name": "timeThreshold",
+                                "minValue": 50,
+                                "value": 200
+                            }
+                        }
+                    ]
+                }
+            ],
+            "avance": [
+                {
+                    "categorie": "Template",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/contentList.html",
+                                "twigMode": false
+
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "configBloc": {
+            "columns": 1,
+            "showOnlyTitle": false,
+            "summaryHeight": 80,
+            "showPager": true,
+            "filterByUser": false,
+            "timeThreshold": 200,
+            "scrollThreshold": 300,
+            "infiniteScroll": false
+        }
+    },
+    "category": "#ext-gen1431#",
+    "bType": "productList",
+    "id": "54e1daf0f05c1dd01c000037"
+}

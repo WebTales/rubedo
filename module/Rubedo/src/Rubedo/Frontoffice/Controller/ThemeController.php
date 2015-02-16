@@ -156,7 +156,7 @@ class ThemeController extends AbstractActionController
         if (isset($mimeType)) {
             $headers['Content-type'] = $mimeType;
         }
-        if (isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == true && file_put_contents($targetPath, $content)) {
+        if (isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == "1" && file_put_contents($targetPath, $content)) {
             $stream = fopen($targetPath, 'r');
         } elseif ($hasFileInDatabase) {
             $stream = $gridFSFile->getResource();

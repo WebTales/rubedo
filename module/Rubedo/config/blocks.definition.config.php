@@ -173,4 +173,8 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/orderDetail.json'
     ),
+    'productList' => array(
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/productList.json'
+    ),
 );
