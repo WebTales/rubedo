@@ -56,7 +56,8 @@
                             "type": "Rubedo.view.queryBuilderField",
                             "config": {
                                 "fieldLabel": "#ext-gen1075#",
-                                "name": "query"
+                                "name": "query",
+                                "isProductQuery":true
                             }
                         },
                         {
