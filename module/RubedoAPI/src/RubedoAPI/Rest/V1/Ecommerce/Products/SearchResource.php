@@ -48,7 +48,7 @@ class SearchResource extends GlobalSearch
     public function getAction($queryParams)
     {
         $params = $this->initParams($queryParams);
-
+        $params["isProduct"]=array(true);
         $query = $this->getElasticDataSearchService();
         $query::setIsFrontEnd(true);
         $query->init();

@@ -378,6 +378,12 @@ class DataSearch extends DataAbstract implements IDataSearch
             $this->_globalFilterList ['target'] = $workspacesFilter;
             $this->_setFilter = true;
         }
+        //Products filter
+        if (isset($this->_params["isProduct"])&&$this->_params["isProduct"]){
+            $isProductFilter=new \Elastica\Filter\Term ();
+            $isProductFilter->setTerm('isProduct', true);
+            $this->_globalFilterList ['isProduct']=$isProductFilter;
+        }
 
         // Frontend filters, for contents only : online, start and end publication date
 
