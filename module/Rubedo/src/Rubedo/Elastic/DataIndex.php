@@ -20,6 +20,7 @@ namespace Rubedo\Elastic;
 use Rubedo\Interfaces\Elastic\IDataIndex;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Zend\Json\Json;
 
 /**
  * Class implementing the Rubedo API to Elastic Search indexing services using
@@ -278,10 +279,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                     'store' => 'yes',
                     'type' => 'object',
                     'properties'=>array(
-                        'sku' => array(
-                            'type'=>'string',
-                            'store' => 'yes',
-                        ),
                         'variations'=>array(
                             'dynamic' => true,
                             'type' => 'object',
@@ -289,6 +286,11 @@ class DataIndex extends DataAbstract implements IDataIndex
                         )
                     )
 
+                );
+                $mapping['encodedProductProperties']=array(
+                    'store'=>'yes',
+                    'type'=>'string',
+                    'index'=>'no'
                 );
 
                 $mapping['isProduct'] = array(
@@ -915,6 +917,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         if (isset($data['productProperties'])) {
             $indexData['productProperties'] = $data['productProperties'];
+            $indexData['encodedProductProperties'] = Json::encode($data['productProperties']);
             if (isset($data['isProduct'])) {
                 $indexData['isProduct'] = $data['isProduct'];
             }
