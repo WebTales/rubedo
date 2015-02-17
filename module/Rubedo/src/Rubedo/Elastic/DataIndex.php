@@ -282,6 +282,10 @@ class DataIndex extends DataAbstract implements IDataIndex
                     'dynamic' => true,
                     'type' => 'object'
                 );
+                $mapping['isProduct'] = array(
+                    'type' => 'boolean',
+                    'store' => 'yes'
+                );
             }
 
             // Index fields
@@ -876,7 +880,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Load ES type
         $contentType = self::$_content_index->getType($typeId);
 
-        // get available languages 
+        // get available languages
         $availableLanguages = array_keys($data['i18n']);
 
         // Initialize data array to push into index
@@ -902,6 +906,9 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         if (isset($data['productProperties'])) {
             $indexData['productProperties'] = $data['productProperties'];
+            if (isset($data['isProduct'])) {
+                $indexData['isProduct'] = $data['isProduct'];
+            }
         }
 
         // Add taxonomy
