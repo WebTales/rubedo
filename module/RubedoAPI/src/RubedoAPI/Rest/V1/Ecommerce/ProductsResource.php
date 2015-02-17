@@ -149,4 +149,85 @@ class ProductsResource extends ContentsResource
             ->addFilter(Filter::factory('OperatorToValue')->setName('isProduct')->setOperator('$exists')->setValue(true))
             ->addFilter(Filter::factory('Value')->setName('isProduct')->setValue(true));
     }
+
+
+    /**
+     * Filter contents
+     *
+     * @param $contents
+     * @param $params
+     * @return mixed
+     */
+    protected function outputContentsMask($contents, $params, $query)
+    {
+        $fields = isset($params['fields']) ? $params['fields'] : array('text', 'summary', 'image');
+        $queryReturnedFields = !empty($query["returnedFields"]) && is_array($query["returnedFields"]) ? $query["returnedFields"] : array();
+        $fields = array_merge($fields, $queryReturnedFields);
+        $urlService = $this->getUrlAPIService();
+        $page = $this->getPagesCollection()->findById($params['pageId']);
+        $site = $this->getSitesCollection()->findById($params['siteId']);
+        $mask = array('isProduct', 'i18n', 'pageId', 'blockId', 'maskId');
+        $userTypeId = "*";
+        $country = "*";
+        $region = "*";
+        $postalCode = "*";
+        $currentUser = $this->getCurrentUserAPIService()->getCurrentUser();
+        if ($currentUser) {
+            $userTypeId = $currentUser['typeId'];
+            if (isset($currentUser['shippingAddress']['country']) && !empty($currentUser['shippingAddress']['country'])) {
+                $country = $currentUser['shippingAddress']['country'];
+            }
+            if (isset($currentUser['shippingAddress']['regionState']) && !empty($currentUser['shippingAddress']['regionState'])) {
+                $region = $currentUser['shippingAddress']['regionState'];
+            }
+            if (isset($currentUser['shippingAddress']['postCode']) && !empty($currentUser['shippingAddress']['postCode'])) {
+                $postalCode = $currentUser['shippingAddress']['postCode'];
+            }
+        }
+        foreach ($contents as &$content) {
+            if (isset($content["productProperties"]["variations"])){
+                $lowestNoSoPrice=false;
+                $lowestFinalPrice=false;
+                foreach ($content["productProperties"]["variations"] as &$variation){
+                    $specialOffers=isset($variation["specialOffers"])&&is_array($variation["specialOffers"]) ? $variation["specialOffers"] : array();
+                    $variation["noSoTPrice"]=$this->getTaxesCollection()->getTaxValue($content['typeId'], $userTypeId, $country, $region, $postalCode, $variation["price"]);
+                    $variation["finalPrice"]=$this->getTaxesCollection()->getTaxValue($content['typeId'], $userTypeId, $country, $region, $postalCode, $this->getBetterSpecialOffer($specialOffers,$variation["price"]));
+                    if (!$lowestNoSoPrice||$variation["noSoTPrice"]<$lowestNoSoPrice){
+                        $lowestNoSoPrice=$variation["noSoTPrice"];
+                    }
+                    if (!$lowestFinalPrice||$variation["finalPrice"]<$lowestFinalPrice){
+                        $lowestFinalPrice=$variation["finalPrice"];
+                    }
+                }
+                $content["productProperties"]["lowestNoSoPrice"]=$lowestNoSoPrice;
+                $content["productProperties"]["lowestFinalPrice"]=$lowestFinalPrice;
+            }
+            $content['fields'] = array_intersect_key($content['fields'], array_flip($fields));
+            $content['detailPageUrl'] = $urlService->displayUrlApi($content, 'default', $site,
+                $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
+            $content = array_diff_key($content, array_flip($mask));
+        }
+        return $contents;
+    }
+
+    protected function getBetterSpecialOffer($offers, $basePrice)
+    {
+        $actualDate = new \DateTime();
+        foreach ($offers as $offer) {
+            $beginDate = $offer['beginDate'];
+            $endDate = $offer['endDate'];
+            $offer['beginDate'] = new \DateTime();
+            $offer['beginDate']->setTimestamp($beginDate);
+            $offer['endDate'] = new \DateTime();
+            $offer['endDate']->setTimestamp($endDate);
+            if (
+                $offer['beginDate'] <= $actualDate
+                && $offer['endDate'] >= $actualDate
+                && $basePrice > $offer['price']
+            ) {
+                $basePrice = $offer['price'];
+            }
+        }
+        return $basePrice;
+    }
 }
