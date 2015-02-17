@@ -275,13 +275,22 @@ class DataIndex extends DataAbstract implements IDataIndex
             if (isset($data['productType']) && $data['productType'] != 'none') {
                 $mapping ['productProperties'] = array(
                     'dynamic' => true,
-                    'type' => 'object'
+                    'store' => 'yes',
+                    'type' => 'object',
+                    'properties'=>array(
+                        'sku' => array(
+                            'type'=>'string',
+                            'store' => 'yes',
+                        ),
+                        'variations'=>array(
+                            'dynamic' => true,
+                            'type' => 'object',
+                            'properties'=>array()
+                        )
+                    )
+
                 );
 
-                $mapping ['productProperties'] ['variations'] = array(
-                    'dynamic' => true,
-                    'type' => 'object'
-                );
                 $mapping['isProduct'] = array(
                     'type' => 'boolean',
                     'store' => 'yes'
@@ -426,7 +435,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                             ),
                             "store" => $store
                         );
-                        $mapping ['productProperties'] ['variations'] [$name] = $config;
+                        $mapping ['productProperties']['properties']['variations']['properties'][$name] = $config;
 
                     }
                 }
