@@ -141,6 +141,52 @@
                             }
                         }
                     ]
+                },
+                {
+                    "categorie": "Image options",
+                    "champs": [
+                        {
+                            "type": "Ext.form.field.Text",
+                            "config": {
+                                "fieldLabel": "#ext-gen1405#",
+                                "name": "imageField",
+                                "value": "image"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1090#",
+                                "name": "imageHeight",
+                                "allowDecimals": false,
+                                "minValue": 0
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "Image width",
+                                "name": "imageWidth",
+                                "allowDecimals": false,
+                                "minValue": 0
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.ComboBox",
+                            "config": {
+                                "fieldLabel": "Image resize mode",
+                                "name": "imageResizeMode",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local",
+                                "store": [
+                                    "boxed",
+                                    "crop",
+                                    "morph"
+                                ]
+                            }
+                        }
+                    ]
                 }
             ],
             "avance": [
@@ -164,11 +210,11 @@
         "configBloc": {
             "columns": 1,
             "showOnlyTitle": false,
-            "summaryHeight": 80,
             "showPager": true,
             "filterByUser": false,
             "timeThreshold": 200,
             "scrollThreshold": 300,
+            "imageField": "image",
             "infiniteScroll": false
         }
     },
