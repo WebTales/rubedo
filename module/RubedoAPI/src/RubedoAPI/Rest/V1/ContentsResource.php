@@ -496,6 +496,33 @@ class ContentsResource extends AbstractResource
                 }
             }
         }
+        if (isset($content['isProduct'])&&$content['isProduct']&&isset($content["productProperties"]["variations"])&&is_array($content["productProperties"]["variations"])){
+            $userTypeId = "*";
+            $country = "*";
+            $region = "*";
+            $postalCode = "*";
+            $currentUser = $this->getCurrentUserAPIService()->getCurrentUser();
+            if ($currentUser) {
+                $userTypeId = $currentUser['typeId'];
+                if (isset($currentUser['shippingAddress']['country']) && !empty($currentUser['shippingAddress']['country'])) {
+                    $country = $currentUser['shippingAddress']['country'];
+                }
+                if (isset($currentUser['shippingAddress']['regionState']) && !empty($currentUser['shippingAddress']['regionState'])) {
+                    $region = $currentUser['shippingAddress']['regionState'];
+                }
+                if (isset($currentUser['shippingAddress']['postCode']) && !empty($currentUser['shippingAddress']['postCode'])) {
+                    $postalCode = $currentUser['shippingAddress']['postCode'];
+                }
+            }
+            foreach ($content["productProperties"]["variations"] as &$variation){
+                $variation["price"]=$this->getTaxesCollection()->getTaxValue($content['typeId'], $userTypeId, $country, $region, $postalCode, $variation["price"]);
+                if (isset($variation["specialOffers"])&&is_array($variation["specialOffers"])){
+                    foreach ($variation["specialOffers"] as &$specialOffer){
+                        $specialOffer["price"]=$this->getTaxesCollection()->getTaxValue($content['typeId'], $userTypeId, $country, $region, $postalCode, $specialOffer["price"]);
+                    }
+                }
+            }
+        }
 
         $content = array_intersect_key(
             $content,
