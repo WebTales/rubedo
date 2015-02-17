@@ -17,11 +17,52 @@
 
 namespace RubedoAPI\Rest\V1\Ecommerce\Products;
 
+use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
+use RubedoAPI\Rest\V1\SearchResource as GlobalSearch;
+
 /**
  * Class SearchResource
- * @package RubedoAPI\Rest\V1\Contents
+ * @package RubedoAPI\Rest\V1\Ecommerce\Products
  */
-class SearchResource extends \RubedoAPI\Rest\V1\Contents\SearchResource
+class SearchResource extends GlobalSearch
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->searchOption = 'content';
+        $this
+            ->definition
+            ->setName('Products')
+            ->setDescription('Deal with products')
+            ->editVerb('get', function (VerbDefinitionEntity &$entity) {
+                $entity
+                    ->setDescription('Get a list of products using Elastic Search');
+            });
+    }
+
+    /**
+    * Get action
+    * @param $queryParams
+    * @return array
+    */
+    public function getAction($queryParams)
+    {
+        $params = $this->initParams($queryParams);
+
+        $query = $this->getElasticDataSearchService();
+        $query::setIsFrontEnd(true);
+        $query->init();
+        //add product param here
+        $results = $query->search($params, $this->searchOption);
+
+        $this->injectDataInResults($results, $queryParams);
+
+        return [
+            'success' => true,
+            'results' => $results,
+            'count' => $results['total']
+        ];
+
+    }
 
 }
