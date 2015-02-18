@@ -198,7 +198,7 @@
                             "config": {
                                 "fieldLabel": "Custom template",
                                 "name": "customTemplate",
-                                "defaultTemplateUrl": "blocks/contentList.html",
+                                "defaultTemplateUrl": "blocks/productList.html",
                                 "twigMode": false
 
                             }
@@ -215,6 +215,7 @@
             "timeThreshold": 200,
             "scrollThreshold": 300,
             "imageField": "image",
+            "imageResizeMode":"boxed",
             "infiniteScroll": false
         }
     },

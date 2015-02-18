@@ -177,4 +177,8 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/productList.json'
     ),
+    'productSearch' => array(
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/productSearch.json'
+    ),
 );

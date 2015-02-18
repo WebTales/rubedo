@@ -1,0 +1,181 @@
+{
+    "type": "Product search",
+    "description": "Product search",
+    "configBasique": {
+        "title": "Product search",
+        "bType": "productSearch",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
+                {
+                    "categorie": "#ext-gen1063#",
+                    "champs": [
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1055#",
+                                "name": "constrainToSite"
+                            }
+                        },
+                        {
+                            "type": "Rubedo.view.ESQfield",
+                            "config": {
+                                "fieldLabel": "#ext-gen1056#",
+                                "advancedESQMode": true,
+                                "name": "predefinedFacets"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Hidden",
+                            "config": {
+                                "itemId": "displayedFacetsBrotherField",
+                                "name": "displayedFacets"
+                            }
+                        },
+                        {
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1073#",
+                                "name": "singlePage"
+                            }
+                        },
+                        {
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1409#",
+                                "name": "profilePage"
+                            }
+                        }
+                    ]
+                },{
+                    "categorie": "Image options",
+                    "champs": [
+                        {
+                            "type": "Ext.form.field.Text",
+                            "config": {
+                                "fieldLabel": "#ext-gen1405#",
+                                "name": "imageField",
+                                "value": "image"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1090#",
+                                "name": "imageHeight",
+                                "allowDecimals": false,
+                                "minValue": 0
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "Image width",
+                                "name": "imageWidth",
+                                "allowDecimals": false,
+                                "minValue": 0
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.ComboBox",
+                            "config": {
+                                "fieldLabel": "Image resize mode",
+                                "name": "imageResizeMode",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local",
+                                "store": [
+                                    "boxed",
+                                    "crop",
+                                    "morph"
+                                ]
+                            }
+                        }
+                    ]
+                },{
+                    "categorie": "Display options",
+                    "champs": [
+                        {
+                            "type": "Ext.form.field.ComboBox",
+                            "isAutoStored": true,
+                            "autoStoreData": [
+                                {
+                                    "value": "default",
+                                    "label": "#ext-gen1375#"
+                                },
+                                {
+                                    "value": "checkbox",
+                                    "label": "#ext-gen1376#"
+                                }
+                            ],
+                            "config": {
+                                "fieldLabel": "#ext-gen1374#",
+                                "name": "displayMode",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local"
+                            }
+                        },{
+                            "type": "Ext.form.field.ComboBox",
+                            "isAutoStored": true,
+                            "autoStoreData": [
+                                {
+                                    "value": "list",
+                                    "label": "#ext-gen1419#"
+                                },
+                                {
+                                    "value": "grid",
+                                    "label": "Grid"
+                                }
+                            ],
+                            "config": {
+                                "fieldLabel": "#ext-gen1421#",
+                                "name": "productDisplayMode",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local"
+                            }
+                        },{
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1407#",
+                                "name": "summaryHeight",
+                                "allowDecimals": false,
+                                "minValue": 0,
+                                "value": 80
+                            }
+                        }
+                    ]
+                }
+            ],
+            "avance": [
+                {
+                    "categorie": "Template",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/productSearch.html",
+                                "twigMode": false
+
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "configBloc": {
+            "constrainToSite": false,
+            "displayedFacets": "['all']",
+            "displayMode": "default",
+            "productDisplayMode": "grid",
+            "imageField": "image",
+            "autoComplete": false
+        }
+    },
+    "category": "#ext-gen1431#",
+    "bType": "productSearch",
+    "id": "54e45f29f05c1d440e000030"
+}
