@@ -169,7 +169,7 @@
         "configBloc": {
             "constrainToSite": false,
             "displayedFacets": "['all']",
-            "displayMode": "default",
+            "displayMode": "checkbox",
             "productDisplayMode": "grid",
             "imageField": "image",
             "autoComplete": false
