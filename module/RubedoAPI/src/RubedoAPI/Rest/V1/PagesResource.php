@@ -231,6 +231,13 @@ class PagesResource extends AbstractResource
                 $lastMatchedNode['title']=$lastMatchedNode['i18n'][$params['lang']->getFallback()]['title'];
             }
         }
+        if (!isset($lastMatchedNode['eCTitle'])) {
+            if (isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['eCTitle'])){
+                $lastMatchedNode['eCTitle']=$lastMatchedNode['i18n'][$params['lang']->getLocale()]['eCTitle'];
+            } elseif (isset($lastMatchedNode['i18n'][$params['lang']->getFallback()]['eCTitle'])){
+                $lastMatchedNode['eCTitle']=$lastMatchedNode['i18n'][$params['lang']->getFallback()]['eCTitle'];
+            }
+        }
         if (!isset($lastMatchedNode['description'])) {
             if (isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['description'])){
                 $lastMatchedNode['description']=$lastMatchedNode['i18n'][$params['lang']->getLocale()]['description'];
