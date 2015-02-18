@@ -21,6 +21,10 @@
                             "type": "Rubedo.view.ESQfield",
                             "config": {
                                 "fieldLabel": "#ext-gen1056#",
+                                "queryMode": false,
+                                "geoQueryMode": false,
+                                "damQueryMode": false,
+                                "productQueryMode":true,
                                 "advancedESQMode": true,
                                 "name": "predefinedFacets"
                             }

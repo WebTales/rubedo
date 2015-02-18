@@ -33,6 +33,7 @@ return array(
     'Rubedo\\Backoffice\\Controller\\ElasticIndexer' => 'Rubedo\\Backoffice\\Controller\\ElasticIndexerController',
     'Rubedo\\Backoffice\\Controller\\ElasticSearch' => 'Rubedo\\Backoffice\\Controller\\ElasticSearchController',
     'Rubedo\\Backoffice\\Controller\\ElasticSearchContent' => 'Rubedo\\Backoffice\\Controller\\ElasticSearchContentController',
+    'Rubedo\\Backoffice\\Controller\\ElasticSearchProduct' => 'Rubedo\\Backoffice\\Controller\\ElasticSearchProductController',
     'Rubedo\\Backoffice\\Controller\\ElasticSearchDam' => 'Rubedo\\Backoffice\\Controller\\ElasticSearchDamController',
     'Rubedo\\Backoffice\\Controller\\ElasticSearchUser' => 'Rubedo\\Backoffice\\Controller\\ElasticSearchUserController',
     'Rubedo\\Backoffice\\Controller\\ElasticSearchGeo' => 'Rubedo\\Backoffice\\Controller\\ElasticSearchGeoController',
