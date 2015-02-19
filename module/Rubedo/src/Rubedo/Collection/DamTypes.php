@@ -29,7 +29,7 @@ use WebTales\MongoFilters\Filter;
  */
 class DamTypes extends AbstractLocalizableCollection implements IDamTypes
 {
-    protected static $nonLocalizableFields = array("fields", "vocabularies", "mainFileType", "activateDisqus", "readOnly", "workspaces");
+    protected static $nonLocalizableFields = array("defaultId","fields", "vocabularies", "mainFileType", "activateDisqus", "readOnly", "workspaces");
     protected static $labelField = 'type';
     protected $_indexes = array(
         array(
