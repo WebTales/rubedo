@@ -19,13 +19,24 @@
                             }
                         },
                         {
-                            "type": "Ext.form.field.Number",
+                            "type": "Ext.form.field.ComboBox",
                             "config": {
-                                "fieldLabel": "#ext-gen1290#",
-                                "name": "menuLevel",
-                                "allowDecimals": false,
+                                "fieldLabel": "Fallback root",
+                                "name": "fallbackRoot",
                                 "editable": false,
-                                "minValue": 0
+                                "forceSelection": true,
+                                "queryMode": "local",
+                                "value": "current",
+                                "store": [
+                                    [
+                                        "current",
+                                        "Current"
+                                    ],
+                                    [
+                                        "parent",
+                                        "Parent"
+                                    ]
+                                ]
                             }
                         },
                         {
@@ -58,6 +69,21 @@
                             }
                         },
                         {
+                            "type": "Ext.form.field.ComboBox",
+                            "config": {
+                                "fieldLabel": "Thumbnail resize mode",
+                                "name": "imageResizeMode",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local",
+                                "store": [
+                                    "boxed",
+                                    "crop",
+                                    "morph"
+                                ]
+                            }
+                        },
+                        {
                             "type": "Ext.form.field.Checkbox",
                             "config": {
                                 "fieldLabel": "#ext-gen1433#",
@@ -85,10 +111,11 @@
         },
         "configBloc": {
             "showLevel2Categories": false,
+            "imageResizeMode":"boxed",
             "nbOfColumns": 1,
-            "menuLevel": 1,
             "imageWidth": 100,
-            "imageHeight": 100
+            "imageHeight": 100,
+            "fallbackRoot":"current"
         }
     },
     "category": "#ext-gen1431#",
