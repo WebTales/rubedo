@@ -35,9 +35,6 @@ class DamTypes extends AbstractLocalizableCollection implements IDamTypes
         array(
             'keys' => array(
                 'type' => 1
-            ),
-            'options' => array(
-                'unique' => true
             )
         )
     );

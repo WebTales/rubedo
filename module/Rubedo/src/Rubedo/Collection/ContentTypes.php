@@ -36,9 +36,6 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         array(
             'keys' => array(
                 'type' => 1
-            ),
-            'options' => array(
-                'unique' => true
             )
         ),
         array(
@@ -240,18 +237,6 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         AbstractCollection::disableUserFilter($wasFiltered);
     }
 
-    /**
-     * Find an item given by its name (find only one if many)
-     *
-     * @param string $name
-     * @return array
-     */
-    public function findByName($name)
-    {
-        return $this->_dataService->findOne(array(
-            'type' => $name
-        ));
-    }
 
     protected function _addReadableProperty($obj)
     {

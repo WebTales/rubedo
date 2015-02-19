@@ -144,6 +144,9 @@ class Install
                         if (!$collectionService->findOne(Filter::factory('Value')->setName('defaultId')
                             ->setValue($item['defaultId']))
                         ) {
+                            if (isset($item["CTType"])&&in_array($item["CTType"],array("simpleText","richText"))){
+                                $item["_id"]=new \MongoId($item['defaultId']);
+                            }
                             $result = $collectionService->create($item);
                         } else {
                             $result['success'] = true;

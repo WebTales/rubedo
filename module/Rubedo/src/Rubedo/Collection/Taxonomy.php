@@ -40,9 +40,6 @@ class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
         array(
             'keys' => array(
                 'name' => 1
-            ),
-            'options' => array(
-                'unique' => true
             )
         )
     );
