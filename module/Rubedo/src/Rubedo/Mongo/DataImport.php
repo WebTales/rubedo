@@ -624,7 +624,7 @@ class DataImport extends DataAccess
 		
 		        	$column = 'col'.$value["csvIndex"];
 		        	
-		            // Fields that are not product variations
+		            // Update fields that are not product variations
 		            if (!isset($value['useAsVariation']) || ($value['useAsVariation'] == false)) {
 		
 		                switch ($value['protoId']) {
@@ -658,14 +658,21 @@ class DataImport extends DataAccess
 		                        	}
 		                        }
 		                        break;
-		                }		                
+		                }
+		                		                
+		            } else {
+		            	
+		            	// Update variation fields : TODO
+		            	
 		            }
+		            
+		            
 		        }
 		        
 		        if (is_array($contentToUpdate['fields'])) {
 		        	
 		        	$contentToUpdate['fields'] = array_replace_recursive($contentToUpdate['fields'],$fields);
-		        
+
 		        	// Finally update content
 		        	$result = Manager::getService('Contents')->update($contentToUpdate, array(), false);
 
