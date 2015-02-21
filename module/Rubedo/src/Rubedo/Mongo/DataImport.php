@@ -614,12 +614,12 @@ class DataImport extends DataAccess
 	   			$findFilter->addFilter($filter);	   			
 	   			
 	   			$contentToUpdate = Manager::getService('Contents')->findOne($findFilter,true,false);
-	   			
+
 	   			// Process fields
 
 	   			$fields = [];
 		        $i18n = [];
-		
+
 		        foreach ($this->_importAsField as $key => $value) {
 		
 		        	$column = 'col'.$value["csvIndex"];
@@ -668,6 +668,39 @@ class DataImport extends DataAccess
 		            
 		            
 		        }
+		        // Add product fields
+		        if ($this->_isProduct) {
+		        	if (is_integer($this->_productOptions['textFieldIndex'])) { // title
+		        		$textValue = $record['col'.$this->_productOptions['textFieldIndex']];
+		        		$contentToUpdate['text'] = $textValue;
+		        		$contentToUpdate['i18n'][$this->_workingLanguage]['fields']['text'] = $textValue;
+		        	}
+		        	if (is_integer($this->_productOptions['summaryFieldIndex'])) { // summary
+		        		$contentToUpdate['i18n'][$this->_workingLanguage]['fields']['summary'] = $record['col'.$this->_productOptions['summaryFieldIndex']];
+		        	}
+		        	if (is_integer($this->_productOptions['baseSkuFieldIndex'])) { // base sku
+		        		$contentToUpdate['productProperties']['sku'] = $record['col'.$this->_productOptions['baseSkuFieldIndex']];
+		        	}
+		        	if (is_integer($this->_productOptions['basePriceFieldIndex'])) { // base price
+		        		$contentToUpdate['productProperties']['basePrice'] = $record['col'.$this->_productOptions['basePriceFieldIndex']];
+		        	}
+		        	if (is_integer($this->_productOptions['preparationDelayFieldIndex'])) { // preparation delay
+		        		$contentToUpdate['productProperties']['preparationDelay'] = $record['col'.$this->_productOptions['preparationDelayFieldIndex']];
+		        	}
+		        	if (is_integer($this->_productOptions['skuFieldIndex'])) { // variation sku
+		        		//$contentToUpdate['productProperties']['preparationDelay'] = $record['col'.$this->_productOptions['preparationDelayFieldIndex']];
+		        		//$updateVariations .= "'productProperties.variations.\$.sku' : v['sku'],";
+		        	}
+		        	if (is_integer($this->_productOptions['priceFieldIndex'])) { // variation price
+		        		//$contentToUpdate['productProperties']['preparationDelay'] = $record['col'.$this->_productOptions['preparationDelayFieldIndex']];
+		        		//$updateVariations .= "'productProperties.variations.\$.price' : v['price'],";
+		        	}
+		        	if (is_integer($this->_productOptions['stockFieldIndex'])) { // variation stock
+		        		//$contentToUpdate['productProperties']['preparationDelay'] = $record['col'.$this->_productOptions['preparationDelayFieldIndex']];
+		        		//$updateVariations .= "'productProperties.variations.\$.stock' : v['stock'],";
+		        	}
+		        
+		        }		        
 		        
 		        if (is_array($contentToUpdate['fields'])) {
 		        	
