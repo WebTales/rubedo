@@ -709,4 +709,6 @@ class DataImport extends DataAccess
 	   	
 	   	return $counter;
    }
+   
+}
 
