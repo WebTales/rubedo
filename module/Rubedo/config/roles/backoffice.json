@@ -25,6 +25,7 @@
         "execute.controller.languages.index.backoffice",
         "execute.controller.appextension.index.backoffice",
         "execute.controller.blocks.index.backoffice",
-        "execute.controller.appextension.get-file.backoffice"
+        "execute.controller.appextension.get-file.backoffice",
+        "execute.controller.countries.index.backoffice"
     ]
 }

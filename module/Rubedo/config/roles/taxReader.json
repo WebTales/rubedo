@@ -1,0 +1,13 @@
+{
+    "id": "taxReader",
+    "label": {
+        "fr": "Consultation des taxes",
+        "en": "Can read taxes"
+    },
+    "rights": [
+        "read.ui.taxes",
+        "execute.controller.taxes.index.backoffice",
+        "execute.controller.usertypes.index.backoffice",
+        "execute.controller.contenttypes.index.backoffice"
+    ]
+}
