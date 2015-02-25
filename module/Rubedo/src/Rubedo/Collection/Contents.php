@@ -24,7 +24,6 @@ use WebTales\MongoFilters\CompositeFilter;
 use WebTales\MongoFilters\Filter;
 use WebTales\MongoFilters\IFilter;
 use WebTales\MongoFilters\InUidFilter;
-use Zend\Debug\Debug;
 use Zend\EventManager\EventInterface;
 use Zend\Json\Json;
 
@@ -428,6 +427,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
                     $field = $value['config']['name'];
                     $result = $this->_controlAllowBlank($tempFields[$field], false);
                 }
+                if (isset($value['config']['useAsVariation'])&&$value['config']['useAsVariation']){
+                    $result=true;
+                }
                 if ($result == false) {
                     $missingField[$value['config']['name']] = $value['config']['name'];
                 }
@@ -540,8 +542,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
     protected function _validateFieldValue($value, $config, $key)
     {
         if (isset($config['allowBlank'])) {
-            $result = $this->_controlAllowBlank($value, $config['allowBlank']);
-
+            if (isset($config['useAsVariation'])&&$config['useAsVariation']){
+                $result=true;
+            } else {
+                $result = $this->_controlAllowBlank($value, $config['allowBlank']);
+            }
             if (!$result) {
                 $this->_inputDataErrors[] = "The field " . $key . " must be specified";
             }
