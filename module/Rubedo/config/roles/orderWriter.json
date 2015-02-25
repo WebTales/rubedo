@@ -1,0 +1,15 @@
+{
+    "id": "orderWriter",
+    "label": {
+        "fr": "Edition des commandes",
+        "en": "Can write orders"
+    },
+    "rights": [
+        "write.ui.orders",
+        "execute.controller.orders.update.backoffice"
+
+    ],
+    "includes": [
+        "orderReader"
+    ]
+}
