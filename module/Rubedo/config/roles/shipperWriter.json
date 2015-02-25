@@ -1,0 +1,17 @@
+{
+    "id": "shipperWriter",
+    "label": {
+        "fr": "Edition des expéditeurs",
+        "en": "Can write shippers"
+    },
+    "rights": [
+        "write.ui.shippers",
+        "execute.controller.shippers.delete.backoffice",
+        "execute.controller.shippers.create.backoffice",
+        "execute.controller.shippers.update.backoffice"
+
+    ],
+    "includes": [
+        "shipperReader"
+    ]
+}
