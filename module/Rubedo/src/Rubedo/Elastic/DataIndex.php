@@ -460,10 +460,6 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         if (isset($data['fields']) && is_array($data['fields'])) {
 
-            // get active analysers
-//            $activeAnalysers = array_keys(
-//                $this::$_content_index_param["index"]["analysis"]["analyzer"]);
-
             // get vocabularies
             $vocabularies = $this->_getVocabularies($data);
 
@@ -1259,8 +1255,11 @@ class DataIndex extends DataAbstract implements IDataIndex
             self::$_dam_index->create(self::$_dam_index_param, true);
         }
 
-//        $contentsService = Manager::getService('Contents');
-//        $damService = Manager::getService('Dam');
+        if ($option == 'all' or $option == 'users') {
+        	// Destroy and re-create user index
+        	self::$_user_index->delete();
+        	self::$_user_index->create(self::$_user_index_param, true);
+        }
 
         if ($option == 'all' or $option == 'content') {
 
