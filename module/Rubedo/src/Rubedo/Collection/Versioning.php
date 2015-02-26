@@ -90,6 +90,10 @@ class Versioning extends AbstractCollection implements IVersioning
             $version['publishVersion'] = $contentVersions[0]['publishVersion'] + 1;
 
             $version = array_merge($version, $obj['live']);
+            if (isset($obj["isProduct"])&&$obj["isProduct"]&&isset($obj["productProperties"])&&is_array($obj["productProperties"])){
+                $version["isProduct"]=$obj["isProduct"];
+                $version["productProperties"]=$obj["productProperties"];
+            }
         } else {
             $version['publishVersion'] = 0;
         }
