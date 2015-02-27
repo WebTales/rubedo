@@ -41,7 +41,24 @@ class Image implements IImage
         unset($mainType);
         $gdCreateClassName = 'imagecreatefrom' . $type;
         $image = $gdCreateClassName($fileName);
-
+        $exif = exif_read_data($fileName);
+        if (isset($exif['Orientation'])&&!empty($exif['Orientation'])) {
+            switch ($exif['Orientation']) {
+                case 3:
+                    $image = imagerotate($image, 180, 0);
+                    break;
+                case 6:
+                    $image = imagerotate($image, -90, 0);
+                    $imgWidth = $imgInfos[1];
+                    $imgHeight = $imgInfos[0];
+                    break;
+                case 8:
+                    $image = imagerotate($image, 90, 0);
+                    $imgWidth = $imgInfos[1];
+                    $imgHeight = $imgInfos[0];
+                    break;
+            }
+        }
         $ratio = $imgWidth / $imgHeight;
         if ((is_null($width) || $imgWidth == $width) && (is_null($height) || ($imgHeight == $height))) {
             // do not transform anything : return original image
