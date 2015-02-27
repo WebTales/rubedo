@@ -75,8 +75,11 @@ class OrdersController extends DataAccessController
         $translationService = Manager::getService('Translate');
         $workingLanguage = $this->params()->fromQuery('workingLanguage', 'en');
         foreach ($csvHeader as &$head) {
-            $head = 'Backoffice.Exports.Orders.' . $head;
-            $head = $translationService->getTranslation($head, $workingLanguage);
+            $newHead = 'Backoffice.Exports.Orders.' . $head;
+            $translatedHead = $translationService->getTranslation($newHead, $workingLanguage);
+            if ($translatedHead){
+                $head=$translatedHead;
+            }
         }
 
         fputcsv($csvResource, $csvHeader, ';');

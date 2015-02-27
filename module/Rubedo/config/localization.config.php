@@ -19,6 +19,7 @@ return array(
     'public/components/webtales/rubedo-localization/languagekey/Exceptions/generalExceptions.json',
     'public/components/webtales/rubedo-localization/languagekey/Generic/genericTranslations.json',
     'public/components/webtales/rubedo-localization/languagekey/BackOffice/FrontEndEdition/frontEndLabels.json',
+    'public/components/webtales/rubedo-localization/languagekey/BackOffice/Exports/Orders.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Search/search.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/ContentList/list.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Authentication/auth.json',
