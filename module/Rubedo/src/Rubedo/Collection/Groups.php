@@ -144,6 +144,13 @@ class Groups extends AbstractCollection implements IGroups
     public function destroy(array $obj, $options = array())
     {
 
+        if ($obj["name"]=="admin"||$obj["name"]=="public"){
+            $returnArray = array(
+                'success' => false,
+                "msg" => 'Cannot delete this group'
+            );
+            return($returnArray);
+        }
         $deleteCond = Filter::factory('InUid')->setValue($this->_getChildToDelete($obj['id']));
         $resultArray = $this->_dataService->customDelete($deleteCond);
 
