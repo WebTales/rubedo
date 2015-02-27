@@ -191,6 +191,8 @@ class OrdersResource extends AbstractResource
         $totalItems = 0;
         $ignoredArray = array('price', 'amount', 'id', 'sku', 'stock', 'basePrice', 'specialOffers');
         foreach ($cart as &$value) {
+            $value["productId"] = (string) $value["productId"];
+            $value["variationId"] = (string) $value["variationId"];
             $myContent = $this->getContentsCollection()->findById($value['productId'], true, false);
             if ($myContent) {
                 $value['title'] = $myContent['text'];
