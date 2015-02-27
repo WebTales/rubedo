@@ -158,6 +158,9 @@ class ShoppingcartResource extends AbstractResource
             $myContent = $this->getContentsCollection()->findById($value['productId'], true, false);
             if ($myContent) {
                 $value['title'] = $myContent['text'];
+                if (isset($myContent["fields"]["image"])&&!empty($myContent["fields"]["image"])){
+                    $value["image"]=$myContent["fields"]["image"];
+                }
                 $value['subtitle'] = '';
                 $value['variationProperties'] = array();
                 $unitPrice = 0;
