@@ -96,6 +96,19 @@
             ],
             "avance": [
                 {
+                    "categorie": "Display settings",
+                    "champs": [
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "Disable level one pages",
+                                "name": "disableLevelOne",
+                                "inputValue": true
+                            }
+                        }
+                    ]
+                },
+                {
                     "categorie": "Template",
                     "champs": [
                         {
@@ -115,6 +128,7 @@
         "configBloc": {
             "style": "Horizontal",
             "displayRootPage": true,
+            "disableLevelOne":false,
             "menuLevel": 2,
             "fallbackRoot": "current"
         }
