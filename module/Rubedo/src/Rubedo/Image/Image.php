@@ -42,7 +42,11 @@ class Image implements IImage
         $gdCreateClassName = 'imagecreatefrom' . $type;
         $image = $gdCreateClassName($fileName);
         if (function_exists('exif_read_data')  ) {
-            $exif = exif_read_data($fileName);
+            try {
+                $exif = @exif_read_data($fileName);
+            } catch(\Exception $exception){
+                $exif=null;
+            }
             if (isset($exif['Orientation'])&&!empty($exif['Orientation'])) {
                 switch ($exif['Orientation']) {
                     case 3:
