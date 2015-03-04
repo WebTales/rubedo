@@ -47,7 +47,7 @@ class Image implements IImage
             } catch(\Exception $exception){
                 $exif=null;
             }
-            if (isset($exif['Orientation'])&&!empty($exif['Orientation'])) {
+            if ($exif&&isset($exif['Orientation'])&&!empty($exif['Orientation'])) {
                 switch ($exif['Orientation']) {
                     case 3:
                         $image = imagerotate($image, 180, 0);
