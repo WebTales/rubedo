@@ -73,7 +73,7 @@ The following is a sample VHOST you might want to consider for your project.
 	   ServerName rubedo.local
 	
 	   <Directory "path_to_project/rubedo/public">
-	       Options -Indexes FollowSymLinks
+	       Options -Indexes +FollowSymLinks
 	       AllowOverride All
 	       Order allow,deny
 	       Allow from all
