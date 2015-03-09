@@ -84,5 +84,6 @@ return array(
     'Rubedo\\Backoffice\\Controller\\Orders' => 'Rubedo\\Backoffice\\Controller\\OrdersController',
     'Rubedo\\Backoffice\\Controller\\PaypalIpn' => 'Rubedo\\Backoffice\\Controller\\PaypalIpnController',
     'Rubedo\\Backoffice\\Controller\\ImportPresets' => 'Rubedo\\Backoffice\\Controller\\ImportPresetsController',
-    'Rubedo\\Backoffice\\Controller\\Magic' => 'Rubedo\\Backoffice\\Controller\\MagicController'
+    'Rubedo\\Backoffice\\Controller\\Magic' => 'Rubedo\\Backoffice\\Controller\\MagicController',
+    'Rubedo\\Backoffice\\Controller\\XhrEncodeImage' => 'Rubedo\\Backoffice\\Controller\\XhrEncodeImageController'
 );
