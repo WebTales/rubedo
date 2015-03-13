@@ -178,6 +178,21 @@ class DataImport extends DataAccess
             $this->_uniqueKeyField = $options['uniqueKeyField'];
             $this->_importAsTaxo = array();
             $this->_target = '';
+            // Add system fields text and summary
+            if (isset($options['text']) && is_int($options['text'])) {
+            	echo "ok";
+            	$this->_importAsField[] = array(
+            		'csvIndex' => $options['text'],
+            		'protoId' => 'text'
+            	);
+            }
+            if (isset($options['summary']) && is_int($options['summary'])) {
+            	echo "ok";
+            	$this->_importAsField[] = array(
+            			'csvIndex' => $options['summary'],
+            			'protoId' => 'summary'
+            	);
+            }
         }
 
         if ($this->_isProduct) { // Product options
@@ -476,7 +491,7 @@ class DataImport extends DataAccess
 	                        }
 	                        break;
 	                }
-	                		                
+	                
 	            } else {
 	            	
 	            	// Update variation fields : TODO
@@ -540,6 +555,8 @@ class DataImport extends DataAccess
 	        if (is_array($contentToUpdate['fields'])) {
 	        	
 	        	$contentToUpdate['fields'] = array_replace_recursive($contentToUpdate['fields'],$fields);
+	        	
+	        	$contentToUpdate['i18n'][$this->_workingLanguage]['fields'] = array_replace_recursive($contentToUpdate['i18n'][$this->_workingLanguage]['fields'],$fields);
 
 	        	// Finally update content
 	        	$result = Manager::getService('Contents')->update($contentToUpdate, array(), false);
