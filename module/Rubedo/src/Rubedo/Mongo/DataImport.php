@@ -447,135 +447,146 @@ class DataImport extends DataAccess
    			
    			$contentToUpdate = Manager::getService('Contents')->findOne($findFilter,true,false);
 
-   			// Process fields
-
-   			$fields = [];
-	        $i18n = [];
-
-	        foreach ($this->_importAsField as $key => $value) {
+   			// If the content to update exists
+   			
+   			if ($contentToUpdate) {
+   				
+	   			// Process fields
 	
-	        	$column = 'col'.$value["csvIndex"];
-	        	
-	            // Update fields that are not product variations
-	            if (!isset($value['useAsVariation']) || ($value['useAsVariation'] == false)) {
+	   			$fields = [];
+	   			$variationFields = [];
+		        $i18n = [];
 	
-	                switch ($value['protoId']) {
-	                    case 'text':
-	                        $textFieldIndex = 'col'.$value['csvIndex'];
-	                        $fieldName = 'text';
-	                        $fields[$fieldName] = $record[$column];
-	                        break;
-	                    case 'summary':
-	                    	$fieldName = 'summary';
-	                        $fields[$fieldName] = $record[$column];
-	                        break;
-	                    default:
-	                        if ($value['cType'] != 'localiserField') {
-	                        	$fieldName = $value['newName'];
-	                            $fields[$fieldName] = $record[$column];
-	                        } else {
-	                        	$fieldName = "position";
-	                        	$latlon = explode(',',$record[$column]);
-	                        	if (count($latlon)==2) {
-		                            $fields[$fieldName] = array(
-		                                'address' => '',
-		                                'altitude' => '',
-		                                'lat' => (float) $latlon[0],
-		                                'lon' => (float) $latlon[1],
-		                                'location' => array(
-		                                    'type' => 'Point',
-		                                    'coordinates' => array((float) $latlon[1], (float) $latlon[0])
-		                                )
-		                            );
-	                        	}
-	                        }
-	                        break;
-	                }
-	                
-	            } else {
-	            	
-	            	// Update variation fields : TODO
-	            	
-	            }
-	            
-	            
-	        }
-	        // Add product fields
-	        if ($this->_isProduct) {
-	        	if (is_integer($this->_productOptions['textFieldIndex'])) { // title
-	        		$textValue = $record['col'.$this->_productOptions['textFieldIndex']];
-	        		$contentToUpdate['text'] = $textValue;
-	        		$contentToUpdate['i18n'][$this->_workingLanguage]['fields']['text'] = $textValue;
-	        	}
-	        	if (is_integer($this->_productOptions['summaryFieldIndex'])) { // summary
-	        		$contentToUpdate['i18n'][$this->_workingLanguage]['fields']['summary'] = $record['col'.$this->_productOptions['summaryFieldIndex']];
-	        	}
-	        	if (is_integer($this->_productOptions['baseSkuFieldIndex'])) { // base sku
-	        		$contentToUpdate['productProperties']['sku'] = $record['col'.$this->_productOptions['baseSkuFieldIndex']];
-	        	}
-	        	if (is_integer($this->_productOptions['basePriceFieldIndex'])) { // base price
-	        		$contentToUpdate['productProperties']['basePrice'] = $record['col'.$this->_productOptions['basePriceFieldIndex']];
-	        	}
-	        	if (is_integer($this->_productOptions['preparationDelayFieldIndex'])) { // preparation delay
-	        		$contentToUpdate['productProperties']['preparationDelay'] = $record['col'.$this->_productOptions['preparationDelayFieldIndex']];
-	        	}
-	        	
-	        	
-	        	// Update variation fields
-	        	$importProducts = Manager::getService('ImportProducts');
-	        	$filter = Filter::factory('Value')->setName('_id')->setValue($record['col'.$this->_productOptions['baseSkuFieldIndex']]);
-	        	$variation = Manager::getService('ImportProducts')->findOne($filter);
-	        	$variationPrice = [];
-	        	$variationStock = [];
-	        	foreach($variation['value']['productProperties']['variations'] as $variationValue) {
-	        		if ($variationValue['sku'] == $record['col'.$this->_productOptions['skuFieldIndex']]) {
-		        		$variationPrice[$variationValue['sku']] = $record['col'.$this->_productOptions['priceFieldIndex']];
-		        		$variationStock[$variationValue['sku']] = $record['col'.$this->_productOptions['stockFieldIndex']];
-		        		break;
-	        		}
-	        	}
+		        foreach ($this->_importAsField as $key => $value) {
+		
+		        	$column = 'col'.$value["csvIndex"];
+		        	
+		            // Update fields that are not product variations
+		            if (!isset($value['useAsVariation']) || ($value['useAsVariation'] == false)) {
+		
+		                switch ($value['protoId']) {
+		                    case 'text':
+		                        $textFieldIndex = 'col'.$value['csvIndex'];
+		                        $fieldName = 'text';
+		                        $fields[$fieldName] = $record[$column];
+		                        break;
+		                    case 'summary':
+		                    	$fieldName = 'summary';
+		                        $fields[$fieldName] = $record[$column];
+		                        break;
+		                    default:
+		                        if ($value['cType'] != 'localiserField') {
+		                        	$fieldName = $value['newName'];
+		                            $fields[$fieldName] = $record[$column];
+		                        } else {
+		                        	$fieldName = "position";
+		                        	$latlon = explode(',',$record[$column]);
+		                        	if (count($latlon)==2) {
+			                            $fields[$fieldName] = array(
+			                                'address' => '',
+			                                'altitude' => '',
+			                                'lat' => (float) $latlon[0],
+			                                'lon' => (float) $latlon[1],
+			                                'location' => array(
+			                                    'type' => 'Point',
+			                                    'coordinates' => array((float) $latlon[1], (float) $latlon[0])
+			                                )
+			                            );
+		                        	}
+		                        }
+		                        break;
+		                }
+		                
+		            } else {
+		            	
+		            	// Update variation fields : TODO
+		            	$variationFields[$value['newName']] = $record[$column];
 
-	        	foreach ($contentToUpdate['productProperties']['variations'] as $variationKey => $variationValue) {
-	        		if ($variationValue['sku'] == $record['col'.$this->_productOptions['skuFieldIndex']]) {
-	        		
-		        		// Variation price update
-		        		if (is_integer($this->_productOptions['priceFieldIndex'])) {
-		        			$contentToUpdate['productProperties']['variations'][$variationKey]['price'] = $variationPrice[$variationValue['sku']];
+		            }
+		               
+		        }
+		        
+		        // Add product fields
+		        if ($this->_isProduct) {
+		        	if (is_integer($this->_productOptions['textFieldIndex'])) { // title
+		        		$textValue = $record['col'.$this->_productOptions['textFieldIndex']];
+		        		$contentToUpdate['text'] = $textValue;
+		        		$contentToUpdate['i18n'][$this->_workingLanguage]['fields']['text'] = $textValue;
+		        	}
+		        	if (is_integer($this->_productOptions['summaryFieldIndex'])) { // summary
+		        		$contentToUpdate['i18n'][$this->_workingLanguage]['fields']['summary'] = $record['col'.$this->_productOptions['summaryFieldIndex']];
+		        	}
+		        	if (is_integer($this->_productOptions['baseSkuFieldIndex'])) { // base sku
+		        		$contentToUpdate['productProperties']['sku'] = $record['col'.$this->_productOptions['baseSkuFieldIndex']];
+		        	}
+		        	if (is_integer($this->_productOptions['basePriceFieldIndex'])) { // base price
+		        		$contentToUpdate['productProperties']['basePrice'] = $record['col'.$this->_productOptions['basePriceFieldIndex']];
+		        	}
+		        	if (is_integer($this->_productOptions['preparationDelayFieldIndex'])) { // preparation delay
+		        		$contentToUpdate['productProperties']['preparationDelay'] = $record['col'.$this->_productOptions['preparationDelayFieldIndex']];
+		        	}
+		        	
+		        	
+		        	// Update variation fields
+		        	$importProducts = Manager::getService('ImportProducts');
+		        	$filter = Filter::factory('Value')->setName('_id')->setValue($record['col'.$this->_productOptions['baseSkuFieldIndex']]);
+		        	$variation = Manager::getService('ImportProducts')->findOne($filter);
+		        	$variationPrice = [];
+		        	$variationStock = [];
+		        	foreach($variation['value']['productProperties']['variations'] as $variationValue) {
+		        		if ($variationValue['sku'] == $record['col'.$this->_productOptions['skuFieldIndex']]) {
+			        		if (is_int($this->_productOptions['priceFieldIndex'])) $variationPrice[$variationValue['sku']] = $record['col'.$this->_productOptions['priceFieldIndex']];
+			        		if (is_int($this->_productOptions['stockFieldIndex'])) $variationStock[$variationValue['sku']] = $record['col'.$this->_productOptions['stockFieldIndex']];
+			        		break;
 		        		}
-		        		// Variation stock update
-		        		if (is_integer($this->_productOptions['stockFieldIndex'])) {
-		        			$contentToUpdate['productProperties']['variations'][$variationKey]['stock'] = $variationStock[$variationValue['sku']];
+		        	}
+	
+		        	foreach ($contentToUpdate['productProperties']['variations'] as $variationKey => $variationValue) {
+		        		if ($variationValue['sku'] == $record['col'.$this->_productOptions['skuFieldIndex']]) {
+		        		
+			        		// Variation price update
+			        		if (is_integer($this->_productOptions['priceFieldIndex'])) {
+			        			$contentToUpdate['productProperties']['variations'][$variationKey]['price'] = $variationPrice[$variationValue['sku']];
+			        		}
+			        		// Variation stock update
+			        		if (is_integer($this->_productOptions['stockFieldIndex'])) {
+			        			$contentToUpdate['productProperties']['variations'][$variationKey]['stock'] = $variationStock[$variationValue['sku']];
+			        		}
+			        		// Variations update			        		
+			        		foreach($variationFields as $variationFieldName => $variationFieldValue) {
+			        			$contentToUpdate['productProperties']['variations'][$variationKey][$variationFieldName] = $variationFieldValue;
+			        		}
+			        		break;
 		        		}
-		        		break;
-	        		}
-	        	}
-	        	      
-	        }		        
-	        
-	        if (is_array($contentToUpdate['fields'])) {
-	        	
-	        	$contentToUpdate['fields'] = array_replace_recursive($contentToUpdate['fields'],$fields);
-	        	
-	        	$contentToUpdate['i18n'][$this->_workingLanguage]['fields'] = array_replace_recursive($contentToUpdate['i18n'][$this->_workingLanguage]['fields'],$fields);
-
-	        	// Finally update content
-	        	$result = Manager::getService('Contents')->update($contentToUpdate, array(), false);
-
-	        	if ($result['success']) {
-	        		if ($this->_isProduct && ($previousRecordBaseSku == $record['col'.$this->_productOptions['baseSkuFieldIndex']])) {
-	        		
-	        			// skip record
-	        			 
-	        		} else {
-	        			$counter++;
-	        		}
-	        	}
-	        }
-
-   			if ($this->_isProduct) {
-   				 
-   				$previousRecordBaseSku = $record['col'.$this->_productOptions['baseSkuFieldIndex']];
-   				 
+		        	}
+		        	      
+		        }		        
+		        
+		        if (is_array($contentToUpdate['fields'])) {
+		        	
+		        	$contentToUpdate['fields'] = array_replace_recursive($contentToUpdate['fields'],$fields);
+		        	
+		        	$contentToUpdate['i18n'][$this->_workingLanguage]['fields'] = array_replace_recursive($contentToUpdate['i18n'][$this->_workingLanguage]['fields'],$fields);
+	
+		        	// Finally update content
+		        	$result = Manager::getService('Contents')->update($contentToUpdate, array(), false);
+	
+		        	if ($result['success']) {
+		        		if ($this->_isProduct && ($previousRecordBaseSku == $record['col'.$this->_productOptions['baseSkuFieldIndex']])) {
+		        		
+		        			// skip record
+		        			 
+		        		} else {
+		        			$counter++;
+		        		}
+		        	}
+		        }
+	
+	   			if ($this->_isProduct) {
+	   				 
+	   				$previousRecordBaseSku = $record['col'.$this->_productOptions['baseSkuFieldIndex']];
+	   				 
+	   			}
    			}
 	
 	   	}
