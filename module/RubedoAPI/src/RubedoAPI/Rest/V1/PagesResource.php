@@ -160,7 +160,13 @@ class PagesResource extends AbstractResource
                     } else {
                         $url = $url . '/' . $value;
                     }
-                    $pages[] = array('title' => $matchedNode['text'], 'url' => $url);
+                    $matchedPageTitle=$matchedNode['text'];
+                        if (isset($matchedNode['i18n'][$params['lang']->getLocale()]['text'])){
+                            $matchedPageTitle=$matchedNode['i18n'][$params['lang']->getLocale()]['text'];
+                        } elseif (isset($matchedNode['i18n'][$params['lang']->getFallback()]['text'])){
+                            $matchedPageTitle=$matchedNode['i18n'][$params['lang']->getFallback()]['text'];
+                        }
+                    $pages[] = array('title' => $matchedPageTitle, 'url' => $url);
                     $lastMatchedNode = $matchedNode;
                 }
             }
