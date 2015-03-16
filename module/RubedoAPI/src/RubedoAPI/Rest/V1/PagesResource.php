@@ -22,7 +22,6 @@ use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Entities\API\Language;
 use RubedoAPI\Exceptions\APIEntityException;
-use Zend\Debug\Debug;
 
 /**
  * Class PagesResource
@@ -249,6 +248,13 @@ class PagesResource extends AbstractResource
                 $lastMatchedNode['description']=$lastMatchedNode['i18n'][$params['lang']->getLocale()]['description'];
             } elseif (isset($lastMatchedNode['i18n'][$params['lang']->getFallback()]['description'])){
                 $lastMatchedNode['description']=$lastMatchedNode['i18n'][$params['lang']->getFallback()]['description'];
+            }
+        }
+        if (!isset($lastMatchedNode['keywords'])) {
+            if (isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['keywords'])){
+                $lastMatchedNode['keywords']=$lastMatchedNode['i18n'][$params['lang']->getLocale()]['keywords'];
+            } elseif (isset($lastMatchedNode['i18n'][$params['lang']->getFallback()]['keywords'])){
+                $lastMatchedNode['keywords']=$lastMatchedNode['i18n'][$params['lang']->getFallback()]['keywords'];
             }
         }
         $output = array(
