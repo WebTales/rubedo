@@ -257,6 +257,18 @@ class PagesResource extends AbstractResource
                 $lastMatchedNode['keywords']=$lastMatchedNode['i18n'][$params['lang']->getFallback()]['keywords'];
             }
         }
+        if (isset($lastMatchedNode["i18n"])){
+            $urlOptions = array(
+                'encode' => true,
+                'reset' => true,
+            );
+            foreach($lastMatchedNode["i18n"] as &$alternative){
+                $alternative["fullUrl"]=$this->getContext()->url()->fromRoute('rewrite', array(
+                    'pageId' => $lastMatchedNode["id"],
+                    'locale' => $alternative["locale"],
+                ), $urlOptions);
+            }
+        }
         $output = array(
             'success' => true,
             'site' => $this->outputSiteMask($site),
