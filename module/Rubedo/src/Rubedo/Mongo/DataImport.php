@@ -180,14 +180,12 @@ class DataImport extends DataAccess
             $this->_target = '';
             // Add system fields text and summary
             if (isset($options['text']) && is_int($options['text'])) {
-            	echo "ok";
             	$this->_importAsField[] = array(
             		'csvIndex' => $options['text'],
             		'protoId' => 'text'
             	);
             }
             if (isset($options['summary']) && is_int($options['summary'])) {
-            	echo "ok";
             	$this->_importAsField[] = array(
             			'csvIndex' => $options['summary'],
             			'protoId' => 'summary'
@@ -437,12 +435,19 @@ class DataImport extends DataAccess
    			
    			$filter = Filter::factory('Value')->setName('typeId')->setValue($this->_typeId);
    			$findFilter->addFilter($filter);
-   			 
-   			if ($this->_uniqueKeyField != 'sku') {
-   				$filter = Filter::factory('Value')->setName($this->_uniqueKeyField)->setValue($record['col'.$this->_uniqueKeyIndex]);
-   			} else {
-   				$filter = Filter::factory('Value')->setName('productProperties.sku')->setValue($record['col'.$this->_productOptions['baseSkuFieldIndex']]);
+
+   			switch ($this->_uniqueKeyField) {
+   				case 'sku':
+   					$filterName = 'productProperties.sku';
+   					$filterValue = $record['col'.$this->_productOptions['baseSkuFieldIndex']];
+   					break;
+   				default:			
+   					$filterName = "live.i18n.".$this->_workingLanguage.".fields.".$this->_uniqueKeyField;
+   					$filterValue = $record['col'.$this->_uniqueKeyIndex];
+   					break;
    			}
+   			
+   			$filter = Filter::factory('Value')->setName($filterName)->setValue($filterValue);
    			$findFilter->addFilter($filter);	   			
    			
    			$contentToUpdate = Manager::getService('Contents')->findOne($findFilter,true,false);
@@ -450,7 +455,7 @@ class DataImport extends DataAccess
    			// If the content to update exists
    			
    			if ($contentToUpdate) {
-   				
+
 	   			// Process fields
 	
 	   			$fields = [];
@@ -567,7 +572,7 @@ class DataImport extends DataAccess
 		        	$contentToUpdate['fields'] = array_replace_recursive($contentToUpdate['fields'],$fields);
 		        	
 		        	$contentToUpdate['i18n'][$this->_workingLanguage]['fields'] = array_replace_recursive($contentToUpdate['i18n'][$this->_workingLanguage]['fields'],$fields);
-	
+
 		        	// Finally update content
 		        	$result = Manager::getService('Contents')->update($contentToUpdate, array(), false);
 	
@@ -588,7 +593,6 @@ class DataImport extends DataAccess
 	   				 
 	   			}
    			}
-	
 	   	}
 	   	
 	   	return $counter;
