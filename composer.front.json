@@ -29,7 +29,8 @@
         "angular-ui/angular-google-maps":"1.2.1",
         "ivpusic/angular-cookie":"v4.0.2",
         "mbostock/d3":"3.4.11",
-        "ded/script.js":"v2.5.7"
+        "ded/script.js":"v2.5.7",
+        "dalelotts/angular-bootstrap-datetimepicker":"0.3.12"
     },
     "require-dev": {},
     "repositories": [
@@ -250,6 +251,16 @@
                 "version": "v2.5.7",
                 "dist": {
                     "url": "https://github.com/ded/script.js/archive/v2.5.7.zip",
+                    "type": "zip"
+                }
+            }
+        },{
+            "type": "package",
+            "package": {
+                "name": "dalelotts/angular-bootstrap-datetimepicker",
+                "version": "0.3.12",
+                "dist": {
+                    "url": "https://github.com/dalelotts/angular-bootstrap-datetimepicker/archive/0.3.12.zip",
                     "type": "zip"
                 }
             }
