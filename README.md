@@ -33,7 +33,7 @@ Installation
 ------------------------------------------------------------------------------------------
 ### PreRequisites
 * A full PHP 5.4+ stack (i.e. http://www.zend.com/products/server/)
-* MongoDB (http://www.mongodb.org) 2.4.x
+* MongoDB (http://www.mongodb.org) 2.6.x
 * PHP MongoDB Driver >= 1.4.0
 * intl PHP extension (http://www.php.net/manual/intro.intl.php) which you should use anyway
 * ElasticSearch (http://www.elasticsearch.org) 1.4.x
@@ -73,7 +73,7 @@ The following is a sample VHOST you might want to consider for your project.
 	   ServerName rubedo.local
 	
 	   <Directory "path_to_project/rubedo/public">
-	       Options -Indexes FollowSymLinks
+	       Options -Indexes +FollowSymLinks
 	       AllowOverride All
 	       Order allow,deny
 	       Allow from all
