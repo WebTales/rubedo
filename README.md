@@ -17,7 +17,7 @@ Open Source License
 ------------------------------------------------------------------------------------------
 Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
 http://www.gnu.org/licenses/gpl.html
-Copyright (c) 2014, WebTales (http://www.webtales.fr/). All rights reserved.
+Copyright (c) 2015, WebTales (http://www.webtales.fr/). All rights reserved.
 licensing@webtales.fr
 
 Documentation and Help
