@@ -30,8 +30,11 @@ Documentation and Help
 * Newsletter http://newsletter-rubedo.webtales.fr/en/home
 
 
-Installation (see http://docs.rubedo-project.org/en/homepage/install-rubedo for detailed instructions)
+Installation
 ------------------------------------------------------------------------------------------
+
+See http://docs.rubedo-project.org/en/homepage/install-rubedo for detailed instructions
+
 ### PreRequisites
 * A full PHP 5.4+ stack (i.e. http://www.zend.com/products/server/)
 * MongoDB (http://www.mongodb.org) 2.6.x
