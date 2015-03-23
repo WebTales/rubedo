@@ -7,6 +7,7 @@ An open source PHP CMS, based on Zend Framework &amp; NoSQL MongoDB and Elastics
 
 Rubedo is a unique big data platform that goes beyond traditional content management and commerce
 * Multisite management / Website factory
+* Commerce
 * Behavioral targeting
 * Full text and faceted search functionalities
 * Responsive Web design
@@ -23,13 +24,13 @@ licensing@webtales.fr
 Documentation and Help
 ------------------------------------------------------------------------------------------
 * Rubedo Documentation Center http://docs.rubedo-project.org/en/homepage
-* Translation are available on https://crowdin.com/project/rubedo
+* Translations are available on https://crowdin.com/project/rubedo
 * Forum http://forum.rubedo-project.org/
 * Hosting http://www.rubedocloud.com/en/ 
 * Newsletter http://newsletter-rubedo.webtales.fr/en/home
 
 
-Installation
+Installation (see http://docs.rubedo-project.org/en/homepage/install-rubedo for detailed instructions)
 ------------------------------------------------------------------------------------------
 ### PreRequisites
 * A full PHP 5.4+ stack (i.e. http://www.zend.com/products/server/)
