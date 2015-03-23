@@ -174,7 +174,7 @@
                         {
                             "type": "Ext.form.field.ComboBox",
                             "config": {
-                                "fieldLabel": "Image resize mode",
+                                "fieldLabel": "#ext-gen1451#",
                                 "name": "imageResizeMode",
                                 "editable": false,
                                 "forceSelection": true,

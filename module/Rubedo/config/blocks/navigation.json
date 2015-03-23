@@ -101,7 +101,7 @@
                         {
                             "type": "Ext.form.field.Checkbox",
                             "config": {
-                                "fieldLabel": "Disable level one pages",
+                                "fieldLabel": "#ext-gen1463#",
                                 "name": "disableLevelOne",
                                 "inputValue": true
                             }
@@ -114,7 +114,7 @@
                         {
                             "type": "Rubedo.view.ACEField",
                             "config": {
-                                "fieldLabel": "Custom template",
+                                "fieldLabel": "#ext-gen1452#",
                                 "name": "customTemplate",
                                 "defaultTemplateUrl": "blocks/navigation.html",
                                 "twigMode": false

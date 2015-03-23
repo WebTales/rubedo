@@ -71,7 +71,7 @@
                         {
                             "type": "Ext.form.field.ComboBox",
                             "config": {
-                                "fieldLabel": "Thumbnail resize mode",
+                                "fieldLabel": "#ext-gen1451#",
                                 "name": "imageResizeMode",
                                 "editable": false,
                                 "forceSelection": true,

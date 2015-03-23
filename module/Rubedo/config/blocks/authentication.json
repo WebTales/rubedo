@@ -20,7 +20,7 @@
                         {
                             "type": "Ext.ux.TreePicker",
                             "config": {
-                                "fieldLabel": "Sign up page",
+                                "fieldLabel": "#ext-gen1462#",
                                 "name": "signUpPage"
                             }
                         },
