@@ -564,7 +564,7 @@ class ContentsResource extends AbstractResource
 
         //remove inactive layouts
 
-        if (isset($content['type']['layouts'])) {
+        if (isset($content['type']['layouts'])&&is_array($content['type']['layouts'])) {
             foreach ($content['type']['layouts'] as $key => $value) {
                 if (!$value['active']) {
                     unset ($content['type']['layouts'][$key]);
@@ -574,7 +574,7 @@ class ContentsResource extends AbstractResource
 
         //if site is set filter layouts
 
-        if (isset($content['type']['layouts']) && isset($params['siteId'])) {
+        if (isset($content['type']['layouts']) &&is_array($content['type']['layouts']) && isset($params['siteId'])) {
             foreach ($content['type']['layouts'] as $key => $value) {
                 if ($value['site'] != $params['siteId']) {
                     unset ($content['type']['layouts'][$key]);
