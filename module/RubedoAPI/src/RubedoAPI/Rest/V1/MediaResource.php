@@ -92,6 +92,8 @@ class MediaResource extends AbstractResource
         $media['i18n'] = array();
         $media['i18n'][$nativeLanguage] = array();
         $media['i18n'][$nativeLanguage]['fields'] = $media['fields'];
+        $media["target"]=array("global");
+        $media["writeWorkspace"]="global";
         $media['Content-Type'] = null;
         $media['originalFileId'] = $this->uploadFile($params['file'], $media['Content-Type']);
 
@@ -416,6 +418,7 @@ class MediaResource extends AbstractResource
     {
         $verbDef
             ->setDescription('add a new media')
+            ->identityRequired()
             ->addInputFilter(
                 (new FilterDefinitionEntity())
                     ->setDescription('File')
