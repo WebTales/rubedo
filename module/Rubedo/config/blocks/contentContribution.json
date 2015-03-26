@@ -1,0 +1,48 @@
+{
+    "type": "Content contribution",
+    "description": "Content contribution",
+    "configBasique": {
+        "title": "Content contribution",
+        "bType": "contentContribution",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
+                {
+                    "categorie": "#ext-gen1063#",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.CTCField",
+                            "config": {
+                                "fieldLabel": "Content type",
+                                "name": "contentType",
+                                "multiSelect": false
+
+                            }
+                        }
+                    ]
+                }
+            ],
+            "avance": [
+                {
+                    "categorie": "Template",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/contentContribution.html",
+                                "twigMode": false
+
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "configBloc": {}
+    },
+    "category": "#ext-gen1068#",
+    "bType": "contentContribution",
+    "id": "5514126ff05c1df01f00006d"
+}

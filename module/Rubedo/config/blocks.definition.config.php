@@ -181,4 +181,8 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/productSearch.json'
     ),
+    'contentContribution' => array(
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/contentContribution.json'
+    ),
 );
