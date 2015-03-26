@@ -75,6 +75,9 @@ class MediaResource extends AbstractResource
         if (empty($type)) {
             throw new APIEntityException('Type not exist', 404);
         }
+        if(isset($params['fields'])&&is_string($params['fields'])){
+            $params['fields']=Json::decode($params['fields'],Json::TYPE_ARRAY);
+        }
         if (!isset($params['fields'])) {
             $params['fields'] = array();
         }
