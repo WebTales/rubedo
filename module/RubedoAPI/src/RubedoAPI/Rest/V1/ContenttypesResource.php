@@ -21,6 +21,7 @@ namespace RubedoAPI\Rest\V1;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use WebTales\MongoFilters\Filter;
+use Rubedo\Services\Manager;
 
 /**
  * Class ContenttypesResource
@@ -67,9 +68,59 @@ class ContenttypesResource extends AbstractResource
      * @param $id
      * @return array
      */
-    public function getEntityAction($id)
+    public function getEntityAction($id,$params)
     {
         $contentType = $this->getContentTypesCollection()->findById($id);
+        if (isset($params["includeTaxonomy"])&&$params["includeTaxonomy"]){
+            $contentType["completeVocabularies"]=array();
+            $taxoService= Manager::getService("Taxonomy");
+            $taxoTermsService= Manager::getService("TaxonomyTerms");
+            if (isset($contentType["vocabularies"])&&is_array($contentType["vocabularies"])){
+                foreach($contentType["vocabularies"] as $vocabId){
+                    if ($vocabId!="navigation"){
+                        $vocabulary=$taxoService->findById($vocabId);
+                        if ($vocabulary){
+                            $vocabulary=array_intersect_key(
+                                $vocabulary,
+                                array_flip(
+                                    array(
+                                        'id',
+                                        'name',
+                                        'description',
+                                        'helpText',
+                                        'mandatory',
+                                        'multiSelect',
+                                        'expandable',
+                                        "facetOperator",
+                                        "inputAsTree"
+                                    )
+                                )
+                            );
+                            $vocabulary["terms"]=array();
+                            $filter=Filter::factory("Value")->setName('vocabularyId')->setValue($vocabulary['id']);
+                            $terms=$taxoTermsService->getList($filter);
+                            if($terms){
+                                foreach($terms['data'] as &$term){
+                                    $term= array_intersect_key(
+                                        $term,
+                                        array_flip(
+                                            array(
+                                                'id',
+                                                'text',
+                                                'parentId',
+                                                'orderValue'
+                                            )
+                                        )
+                                    );
+                                }
+                                $vocabulary["terms"]=$terms["data"];
+                            }
+                            $contentType["completeVocabularies"][$vocabId]=$vocabulary;
+                        }
+                    }
+                }
+            }
+        }
         return array(
             'success' => true,
             'contentType' => $contentType,
@@ -133,6 +184,12 @@ class ContenttypesResource extends AbstractResource
     {
         $definition
             ->setDescription('Get a content type')
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('includeTaxonomy')
+                    ->setDescription('Set to true to retrieve taxonomy terms for each vocabulary used by content type')
+                    ->setFilter('boolean')
+            )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
                     ->setKey('contentType')
