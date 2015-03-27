@@ -258,12 +258,24 @@ class ContentsResource extends AbstractResource
             $data['target'] = array();
         }
 
+        if (!isset($data['online'])) {
+            $data['online'] = true;
+        }
+
+        if (!isset($data['startPublicationDate'])) {
+            $data['startPublicationDate'] = "";
+        }
+
+        if (!isset($data['endPublicationDate'])) {
+            $data['endPublicationDate'] = "";
+        }
+
         if (!isset($data['nativeLanguage'])) {
             $data['nativeLanguage'] = $params['lang']->getLocale();
         }
 
         if (!$this->getAclService()->hasAccess('write.ui.contents.' . $data['status'])) {
-            throw new APIAuthException('You have no suffisants rights', 403);
+            throw new APIAuthException('You have insufficient rights', 403);
         }
 
         return $this->getContentsCollection()->create($data, array(), false);
