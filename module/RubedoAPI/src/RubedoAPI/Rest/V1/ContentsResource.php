@@ -222,6 +222,7 @@ class ContentsResource extends AbstractResource
      */
     public function postAction($params)
     {
+        AbstractLocalizableCollection::setIncludeI18n(true);
         $data = &$params['content'];
         if (empty($data['typeId'])) {
             throw new APIEntityException('typeId data is missing.', 400);
