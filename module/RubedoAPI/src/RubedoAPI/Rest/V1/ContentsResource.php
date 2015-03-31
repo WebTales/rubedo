@@ -451,9 +451,16 @@ class ContentsResource extends AbstractResource
             $data['i18n'][$params['lang']->getLocale()]['fields'] = $this->localizableFields($type, $data['fields']);
             $data['fields'] = $this->filterFields($type, $data['fields']);
         }
+        if (!isset($data['status'])){
+            $data['status']="published";
+        }
 
-        if (isset($data['status']) && !$this->getAclService()->hasAccess('write.ui.contents.' . $data['status'])) {
-            throw new APIAuthException('You have no suffisants rights', 403);
+        if (!$this->getAclService()->hasAccess('write.ui.contents.' . $data['status'])) {
+            if (!$this->getAclService()->hasAccess('write.fo.contents.' . $data['status'])){
+                throw new APIAuthException('You have insufficient rights', 403);
+            } elseif ($content['createUser']['id']!=$this->getCurrentUserAPIService()->getCurrentUser()['id']){
+                throw new APIAuthException('Cannot edit contents of other users', 403);
+            }
         }
 
         $content = array_replace_recursive($content, $data);

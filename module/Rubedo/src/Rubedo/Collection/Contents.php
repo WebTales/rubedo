@@ -270,7 +270,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $origObj = $this->findById($obj['id'], $live, false);
         if (!self::isUserFilterDisabled()) {
             if (isset($origObj['readOnly']) && $origObj['readOnly']) {
-                throw new Access('No rights to update this content', "Exception33");
+                $aclServive = Manager::getService('Acl');
+                $currentUser=Manager::getService('CurrentUser')->getCurrentUser();
+                if (!$aclServive->hasAccess("write.fo.contents.".$obj["status"])||$currentUser['id']!=$origObj['createUser']['id']) {
+                    throw new Access('No rights to update this content', "Exception33");
+                }
             }
         }
         if (!is_array($obj['target'])) {
