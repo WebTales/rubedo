@@ -275,7 +275,7 @@ class ContentsResource extends AbstractResource
             $data['nativeLanguage'] = $params['lang']->getLocale();
         }
 
-        if (!$this->getAclService()->hasAccess('write.ui.contents.' . $data['status'])) {
+        if (!$this->getAclService()->hasAccess('write.ui.contents.' . $data['status'])&&!$this->getAclService()->hasAccess('write.fo.contents.' . $data['status'])) {
             throw new APIAuthException('You have insufficient rights', 403);
         }
 

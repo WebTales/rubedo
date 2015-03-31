@@ -1,0 +1,13 @@
+{
+    "id": "contentFOPublisher",
+    "label": {
+        "fr": "Publieur de contenus FO",
+        "en": "FO content publisher"
+    },
+    "rights": [
+        "write.fo.contents.published"
+    ],
+    "includes": [
+        "contentFOWriter"
+    ]
+}

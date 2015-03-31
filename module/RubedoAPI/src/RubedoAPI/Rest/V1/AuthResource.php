@@ -72,6 +72,10 @@ class AuthResource extends AbstractResource
         $currentUser['rights']=array(
             'boAccess' => $this->getAclService()->hasAccess('ui.backoffice'),
             'canEdit' => $this->getAclService()->hasAccess('write.frontoffice.contents'),
+            'canContributeFO' => $this->getAclService()->hasAccess('write.fo.contentContribute'),
+            'canContributeFODraft' => $this->getAclService()->hasAccess('write.fo.contents.draft'),
+            'canContributeFOPending' => $this->getAclService()->hasAccess('write.fo.contents.pending'),
+            'canContributeFOPublished' => $this->getAclService()->hasAccess('write.fo.contents.published'),
         );
         return array(
             'success' => true,
