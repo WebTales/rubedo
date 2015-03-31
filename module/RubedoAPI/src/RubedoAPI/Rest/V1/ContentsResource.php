@@ -482,7 +482,11 @@ class ContentsResource extends AbstractResource
      */
     public function getEntityAction($id, $params)
     {
-        $content = $this->getContentsCollection()->findById($id, true, false);
+        $getLive=true;
+        if (isset($params['useDraftMode'])){
+            $getLive=false;
+        }
+        $content = $this->getContentsCollection()->findById($id, $getLive, false);
         if (empty($content)) {
             throw new APIEntityException('Content not found', 404);
         }
@@ -815,6 +819,11 @@ class ContentsResource extends AbstractResource
                     ->setKey('pageId')
                     ->setDescription('Id of the page')
                     ->setFilter('\\MongoId')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('useDraftMode')
+                    ->setDescription('Set to true to preview draft contents')
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
