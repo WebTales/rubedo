@@ -89,7 +89,7 @@ class ContentsResource extends AbstractResource
     public function getAction($params)
     {
 
-        if (isset($params['useDraftMode'])){
+        if (isset($params['useDraftMode'])||isset($params['foContributeMode'])){
             Context::setIsDraft(true);
         }
         if (isset($params['simulatedTime'])){
@@ -160,6 +160,15 @@ class ContentsResource extends AbstractResource
         $filters['filter']->addFilter(
             $this->productFilter()
         );
+        if (isset($params['foContributeMode'])){
+            $currentUser=$this->getCurrentUserAPIService()->getCurrentUser();
+            if(!$currentUser){
+                throw new APIEntityException('Connected user required in contribute mode', 403);
+            }
+            $filters['filter']->addFilter(
+                Filter::factory('Value')->setName('createUser.id')->setValue($currentUser['id'])
+            );
+        }
 
         if (!empty($params['requiredFields']) && is_array($params['requiredFields'])) {
             foreach ($params['requiredFields'] as $requiredField) {
@@ -682,6 +691,11 @@ class ContentsResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setKey('fields')
                     ->setDescription('Mask of fields')
+            )
+            ->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('foContributeMode')
+                    ->setDescription('Return only contents of current user, include drafts')
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
