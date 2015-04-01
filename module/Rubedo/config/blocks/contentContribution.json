@@ -18,6 +18,12 @@
                                 "multiSelect": false
 
                             }
+                        },{
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "List page",
+                                "name": "listPageId"
+                            }
                         }
                     ]
                 }
