@@ -2,7 +2,7 @@
 <html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="rubedo" ng-controller="RubedoController as rubedo">
 <head>
     <!--[if lte IE 8]>
-    <script>
+    <script type="text/javascript" >
         document.createElement('ng-include');
         document.createElement('ng-repeat');
         document.createElement('ng-view');
@@ -53,45 +53,45 @@
         <?php endif; ?>
     <?php endforeach; ?>
     <!--[if lte IE 8]>
-    <script src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/respond.js"></script>
+    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/respond.js"></script>
     <![endif]-->
     <!--library scripts-->
-    <script src="/components/jquery/jquery/jquery-1.11.1.min.js"></script>
-    <script src="/components/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/components/jquery/jquery/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/components/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
     <!--[if lte IE 9]>
-    <script src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/angular.js"></script>
-    <script src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/history.js"></script>
+    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/angular.js"></script>
+    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/history.js"></script>
     <![endif]-->
     <![if !lte IE 9]>
-    <script src="/components/angular/angular.js/angular.js"></script>
+    <script type="text/javascript" src="/components/angular/angular.js/angular.js"></script>
     <![endif]>
-    <script src="/components/angular/angular.js/angular-route.js"></script>
-    <script src="/components/angular/lrInfiniteScroll.js/lrInfiniteScroll.js"></script>
-    <script src="/components/jquery/htmlClean/jquery.htmlClean.min.js"></script>
-    <script src='/components/jakiestfu/Snap.js/snap.min.js'></script>
-    <script src='/components/jtrussell/angular-snap.js-bower/angular-snap.min.js'></script>
-    <script src='/components/vitalets/angular-xeditable/dist/js/xeditable.min.js'></script>
-    <script src='/components/vitalets/angular-xeditable/libs/checklist-model.js'></script>
-    <script src='/components/webtales/ckeditor/ckeditor.js'></script>
-    <script src='/components/lemonde/angular-ckeditor/angular-ckeditor.min.js'></script>
-    <script src='//maps.googleapis.com/maps/api/js?sensor=true&libraries=places'></script>
-    <script src='/components/lodash/lodash/dist/lodash.underscore.min.js'></script>
-    <script src='/components/angular-ui/angular-google-maps/dist/angular-google-maps.js'></script>
-    <script src="/components/longtailvideo/jwplayer/jwplayer.js"></script>
-    <script src="/components/ivpusic/angular-cookie/angular-cookie.min.js"></script>
-    <script src="/components/ded/script.js/dist/script.min.js"></script>
-    <script src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/angular-google-map.js"></script>
-    <script src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/chosen.jquery.js"></script>
-    <script src="/theme/<?php echo $this->siteTheme; ?>/lib/toaster/jquery.toaster.js"></script>
-    <script src="/theme/<?php echo $this->siteTheme; ?>/lib/angularStrap/ngStrap.js"></script>
-    <script src="/components/jquery/fullCalendar/lib/moment.min.js"></script>
-    <script src="/components/dalelotts/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
+    <script type="text/javascript" src="/components/angular/angular.js/angular-route.js"></script>
+    <script type="text/javascript" src="/components/angular/lrInfiniteScroll.js/lrInfiniteScroll.js"></script>
+    <script type="text/javascript" src="/components/jquery/htmlClean/jquery.htmlClean.min.js"></script>
+    <script type="text/javascript" src='/components/jakiestfu/Snap.js/snap.min.js'></script>
+    <script type="text/javascript" src='/components/jtrussell/angular-snap.js-bower/angular-snap.min.js'></script>
+    <script type="text/javascript" src='/components/vitalets/angular-xeditable/dist/js/xeditable.min.js'></script>
+    <script type="text/javascript" src='/components/vitalets/angular-xeditable/libs/checklist-model.js'></script>
+    <script type="text/javascript" src='/components/webtales/ckeditor/ckeditor.js'></script>
+    <script type="text/javascript" src='/components/lemonde/angular-ckeditor/angular-ckeditor.min.js'></script>
+    <script type="text/javascript" src='//maps.googleapis.com/maps/api/js?sensor=true&libraries=places'></script>
+    <script type="text/javascript" src='/components/lodash/lodash/dist/lodash.underscore.min.js'></script>
+    <script type="text/javascript" src='/components/angular-ui/angular-google-maps/dist/angular-google-maps.js'></script>
+    <script type="text/javascript" src="/components/longtailvideo/jwplayer/jwplayer.js"></script>
+    <script type="text/javascript" src="/components/ivpusic/angular-cookie/angular-cookie.min.js"></script>
+    <script type="text/javascript" src="/components/ded/script.js/dist/script.min.js"></script>
+    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/angular-google-map.js"></script>
+    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/chosen.jquery.js"></script>
+    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/lib/toaster/jquery.toaster.js"></script>
+    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/lib/angularStrap/ngStrap.js"></script>
+    <script type="text/javascript" src="/components/jquery/fullCalendar/lib/moment.min.js"></script>
+    <script type="text/javascript"  src="/components/dalelotts/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
     <?php if ($this->activateMagic): ?>
-        <script src="/components/fingerprintjs/fingerprint.js"></script>
+        <script type="text/javascript" src="/components/fingerprintjs/fingerprint.js"></script>
     <?php endif; ?>
     <?php if ($this->angularLocale): ?>
-        <script
-            src="/components/angular/angular.js/i18n/angular-locale_<?php echo $this->angularLocale; ?>.js"></script>
+        <script type="text/javascript"
+                src="/components/angular/angular.js/i18n/angular-locale_<?php echo $this->angularLocale; ?>.js"></script>
     <?php endif; ?>
     <!--internal angular modules scripts-->
     <?php if (isset($this->siteResources['angularModulesPaths'])) {
@@ -111,13 +111,13 @@
     </script>
 
     <!--frontoffice scripts-->
-    <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>
-    <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoFields/rubedoFields.js"></script>
-    <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoBlocks/rubedoBlocks.js"></script>
-    <script src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedo/rubedo.js"></script>
+    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>
+    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoFields/rubedoFields.js"></script>
+    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoBlocks/rubedoBlocks.js"></script>
+    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedo/rubedo.js"></script>
     <!--external resource scripts-->
     <?php foreach ($this->siteResources['externalScripts'] as $externalScript): ?>
-        <script src="<?php echo $externalScript['url']; ?>"></script>
+        <script type="text/javascript" src="<?php echo $externalScript['url']; ?>"></script>
     <?php endforeach; ?>
     <!--internal resource scripts-->
     <?php foreach ($this->siteResources['internalScripts'] as $internalScript): ?>
