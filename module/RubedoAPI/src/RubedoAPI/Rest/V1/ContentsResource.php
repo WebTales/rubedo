@@ -287,7 +287,49 @@ class ContentsResource extends AbstractResource
         if (!$this->getAclService()->hasAccess('write.ui.contents.' . $data['status'])&&!$this->getAclService()->hasAccess('write.fo.contents.' . $data['status'])) {
             throw new APIAuthException('You have insufficient rights', 403);
         }
+        if (isset($data["taxonomy"])&&is_array($data["taxonomy"])){
+            $taxoService= Manager::getService("Taxonomy");
+            $taxoTermsService= Manager::getService("TaxonomyTerms");
+            foreach($data["taxonomy"] as $vocabId=>&$terms){
+                $currentVocabulary=$taxoService->findById($vocabId);
+                if (!$currentVocabulary){
+                    unset($data["taxonomy"][$vocabId]);
+                } else {
+                    $isVocabExtendable=isset($currentVocabulary["expandable"])&&$currentVocabulary["expandable"];
+                    foreach($terms as $key =>&$value){
+                        try{
+                            new \MongoId($value);
+                        } catch(\Exception $e){
+                            if (!$isVocabExtendable){
+                                unset($terms[$key]);
+                            } else {
+                                $newTerm=array(
+                                    "text"=>$value,
+                                    "parentId"=>"root",
+                                    "vocabularyId"=>$vocabId,
+                                    "i18n"=>array(
+                                        $params['lang']->getLocale()=>array(
+                                            "text"=>$value,
+                                            "locale"=>$params['lang']->getLocale()
+                                        )
+                                    ),
+                                    "leaf"=>true,
+                                    "expandable"=>false,
+                                    "nativeLanguage"=>$params['lang']->getLocale()
+                                );
+                                $createdTerm=$taxoTermsService->create($newTerm);
+                                if($createdTerm["success"]){
+                                    $value=$createdTerm["data"]["id"];
+                                } else {
+                                    unset($terms[$key]);
+                                }
+                            }
+                        }
 
+                    }
+                }
+            }
+        }
         return $this->getContentsCollection()->create($data, array(), false);
     }
 
@@ -469,6 +511,49 @@ class ContentsResource extends AbstractResource
                 throw new APIAuthException('You have insufficient rights', 403);
             } elseif ($content['createUser']['id']!=$this->getCurrentUserAPIService()->getCurrentUser()['id']){
                 throw new APIAuthException('Cannot edit contents of other users', 403);
+            }
+        }
+        if (isset($data["taxonomy"])&&is_array($data["taxonomy"])){
+            $taxoService= Manager::getService("Taxonomy");
+            $taxoTermsService= Manager::getService("TaxonomyTerms");
+            foreach($data["taxonomy"] as $vocabId=>&$terms){
+                $currentVocabulary=$taxoService->findById($vocabId);
+                if (!$currentVocabulary){
+                    unset($data["taxonomy"][$vocabId]);
+                } else {
+                    $isVocabExtendable=isset($currentVocabulary["expandable"])&&$currentVocabulary["expandable"];
+                    foreach($terms as $key =>&$value){
+                        try{
+                            new \MongoId($value);
+                        } catch(\Exception $e){
+                            if (!$isVocabExtendable){
+                                unset($terms[$key]);
+                            } else {
+                                $newTerm=array(
+                                    "text"=>$value,
+                                    "parentId"=>"root",
+                                    "vocabularyId"=>$vocabId,
+                                    "i18n"=>array(
+                                        $params['lang']->getLocale()=>array(
+                                            "text"=>$value,
+                                            "locale"=>$params['lang']->getLocale()
+                                        )
+                                    ),
+                                    "leaf"=>true,
+                                    "expandable"=>false,
+                                    "nativeLanguage"=>$params['lang']->getLocale()
+                                );
+                                $createdTerm=$taxoTermsService->create($newTerm);
+                                if($createdTerm["success"]){
+                                    $value=$createdTerm["data"]["id"];
+                                } else {
+                                    unset($terms[$key]);
+                                }
+                            }
+                        }
+
+                    }
+                }
             }
         }
 
