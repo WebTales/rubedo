@@ -19,8 +19,9 @@ namespace Rubedo\Elastic;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
 
+
 /**
- * Class implementing the Rubedo API to Elastic Search indexing services using Elastica API
+ * Class implementing the Rubedo API to Elastic Search indexing services using Elasticsearch API
  *
  * @author dfanchon
  * @category Rubedo
@@ -57,9 +58,9 @@ class DataAbstract
     protected static $_defaultPort;
 
     /**
-     * Elastica Client
+     * Elastic search client
      *
-     * @var \Elastica_Client
+     * @var \Elasticsearch_Client
      */
     protected $_client;
 
@@ -71,48 +72,25 @@ class DataAbstract
     protected static $_options;
 
     /**
-     * Object which represent the content ES index
+     * Content Index object
      *
-     * @var \Elastica_Index
+     * @var array
      */
     protected static $_content_index;
 
     /**
-     * Object which represent the default ES index param
+     * Dam index object
      *
-     * @var \Elastica_Index
-     */
-    protected static $_content_index_param;
-
-    /**
-     * Object which represent the dam ES index
-     *
-     * @var \Elastica_Index
+     * @var string
      */
     protected static $_dam_index;
 
     /**
-     * Object which represent the default dam ES index param
-     * @TODO : get param from config
+     * User index object
      *
-     * @var \Elastica_Index
-     */
-    protected static $_dam_index_param;
-
-    /**
-     * Object which represent the user ES index
-     *
-     * @var \Elastica_Index
+     * @var array
      */
     protected static $_user_index;
-
-    /**
-     * Object which represent the default user ES index param
-     * @TODO : get param from config
-     *
-     * @var \Elastica_Index
-     */
-    protected static $_user_index_param;
 
 
     public function __construct()
@@ -141,44 +119,52 @@ class DataAbstract
             $port = self::$_options['port'];
         }
 
-        $this->_client = new \Elastica\Client(array(
-            'port' => $port,
-            'host' => $host
-        ));
+        $params = array();
+        $params['hosts'] = array ("$host:$port");
 
-        $this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
+        $this->_client = new \Elasticsearch\Client($params);
+
+        //$this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
 
         $dataAccess = Manager::getService('MongoDataAccess');
         $defaultDB = $dataAccess::getDefaultDb();
         $defaultDB = mb_convert_case($defaultDB, MB_CASE_LOWER, "UTF-8");
 
-        // Get content index
-        $indexName = $defaultDB . "-" . self::$_options['contentIndex'];
-        self::$_content_index = $this->_client->getIndex($indexName);
+        // Create content index if not exists 
+        self::$_content_index['name'] = $defaultDB . "-" . self::$_options['contentIndex'];
+		if (!$this->_client->indices()->exists(['index' => array(self::$_content_index['name'])])) {
+			$contentIndexParams = [
+				'index' => self::$_content_index['name'], 
+				'body' => [
+					'settings' => self::$_content_index['settings']
+				]
+			];
+			$this->_client->indices()->create($contentIndexParams);
+		}
 
-        // Create content index if not exists
-        if (!self::$_content_index->exists()) {
-            self::$_content_index->create(self::$_content_index_param, true);
-        }
+		// Create dam index if not exists
+		self::$_dam_index['name'] = $defaultDB . "-" . self::$_options['damIndex'];
+		if (!$this->_client->indices()->exists(['index' => array(self::$_dam_index['name'])])) {
+			$damIndexParams = [
+				'index' => self::$_dam_index['name'],
+				'body' => [
+					'settings' => self::$_dam_index['settings']
+				]
+			];
+			$this->_client->indices()->create($damIndexParams);
+		}
 
-        // Get dam index
-        $indexName = $defaultDB . "-" . self::$_options['damIndex'];
-        self::$_dam_index = $this->_client->getIndex($indexName);
-
-        // Create dam index if not exists
-        if (!self::$_dam_index->exists()) {
-            self::$_dam_index->create(self::$_dam_index_param, true);
-        }
-
-        // Get user index
-        $indexName = $defaultDB . "-" . self::$_options['userIndex'];
-        self::$_user_index = $this->_client->getIndex($indexName);
-
-        // Create user index if not exists
-
-        if (!self::$_user_index->exists()) {
-            self::$_user_index->create(self::$_user_index_param, true);
-        }
+		// Create user index if not exists
+		self::$_user_index['name'] = $defaultDB . "-" . self::$_options['userIndex'];
+		if (!$this->_client->indices()->exists(['index' => array(self::$_user_index['name'])])) {
+			$userIndexParams = [
+				'index' => self::$_user_index['name'],
+				'body' => [
+					'settings' => self::$_user_index['settings']
+				]
+			];
+			$this->_client->indices()->create($userIndexParams);
+		}
 
     }
 
@@ -202,36 +188,6 @@ class DataAbstract
             self::lazyLoadConfig();
         }
         return self::$_options;
-    }
-
-    /**
-     * Set the options for the content index
-     *
-     * @param string $host
-     */
-    public static function setContentIndexOption(array $options)
-    {
-        self::$_content_index_param = $options;
-    }
-
-    /**
-     * Set the options for the dam index
-     *
-     * @param string $host
-     */
-    public static function setDamIndexOption(array $options)
-    {
-        self::$_dam_index_param = $options;
-    }
-
-    /**
-     * Set the options for the user index
-     *
-     * @param string $host
-     */
-    public static function setUserIndexOption(array $options)
-    {
-        self::$_user_index_param = $options;
     }
 
     /**
@@ -259,8 +215,8 @@ class DataAbstract
         }
         $indexOptionsJson = file_get_contents($options['elastic']['configFilePath']);
         $indexOptions = Json::decode($indexOptionsJson, Json::TYPE_ARRAY);
-        self::setContentIndexOption($indexOptions);
-        self::setDamIndexOption($indexOptions);
-        self::setUserIndexOption($indexOptions);
+        self::$_content_index['settings'] = $indexOptions;
+        self::$_dam_index['settings'] = $indexOptions;
+        self::$_user_index['settings'] = $indexOptions;
     }
 }
