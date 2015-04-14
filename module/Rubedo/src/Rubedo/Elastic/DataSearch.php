@@ -218,6 +218,7 @@ class DataSearch extends DataAbstract implements IDataSearch
      */
     public function search(array $params, $option = 'all', $withSummary = true)
     {
+
         $taxonomyService = Manager::getService('Taxonomy');
         $taxonomyTermsService = Manager::getService('TaxonomyTerms');
 
@@ -960,18 +961,19 @@ class DataSearch extends DataAbstract implements IDataSearch
         $elasticaQuery->setFields($returnedFieldsArray);
 
         // run query
-        $client = $this->_client;
-        $client->setLogger(Manager::getService('SearchLogger')->getLogger());
-        $search = new \Elastica\Search ($client);
+        //$client = $this->_client;
+        //$client->setLogger(Manager::getService('SearchLogger')->getLogger());
+        //$search = new \Elastica\Search ($client);
+        $searchParams=[];
         switch ($option) {
             case 'content' :
-                $search->addIndex(self::$_content_index);
+            	$searchParams['index'] = self::$_content_index['name'];
                 break;
             case 'dam' :
-                $search->addIndex(self::$_dam_index);
+                $searchParams['index'] = self::$_dam_index['name'];
                 break;
             case 'user' :
-                $search->addIndex(self::$_user_index);
+                $searchParams['index'] = self::$_user_index['name'];
                 break;
             case 'geo' :
                 if (isset($geoPrecision)) $geoAgreggation->setPrecision($geoPrecision);
@@ -982,12 +984,11 @@ class DataSearch extends DataAbstract implements IDataSearch
                 $search->addIndex(self::$_content_index);
                 break;
             case 'all' :
-                $search->addIndex(self::$_content_index);
-                $search->addIndex(self::$_dam_index);
-                $search->addIndex(self::$_user_index);
+            	$searchParams['index'] = self::$_content_index['name'] . ','. self::$_dam_index['name']. ',' . self::$_user_index['name'];
                 break;
         }
 
+        
         // For geosearch dynamically set searchMode depending on the number of results
         if ($option == 'geo' && self::$_isFrontEnd) {
             $noResults = $search->count($elasticaQuery, false);
@@ -1002,20 +1003,20 @@ class DataSearch extends DataAbstract implements IDataSearch
         // Get resultset
         switch ($this->_params['searchMode']) {
             case 'default':
-                $elasticaResultSet = $search->search($elasticaQuery);
+                $elasticResultSet = $this->_client->search($elasticaQuery);
                 break;
             case 'aggregate':
-                $elasticaResultSet = $search->count($elasticaQuery, true);
+                $elasticResultSet = $search->count($elasticaQuery, true);
                 break;
             case 'count':
-                $elasticaResultSet = $search->count($elasticaQuery, false);
+                $elasticResultSet = $search->count($elasticaQuery, false);
                 break;
         }
 
         // For geosearch get aggregation buckets
         if ($option == 'geo') {
 
-            $result ['Aggregations'] = $elasticaResultSet->getAggregation("agf")['hash'];
+            $result ['Aggregations'] = $elasticResultSet->getAggregation("agf")['hash'];
 
             foreach ($result ['Aggregations']['buckets'] as $key => $bucket) {
                 $point = $this->geoHashDecode($bucket['key']);
@@ -1024,9 +1025,9 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
 
         // Update data
-        $resultsList = $elasticaResultSet->getResults();
+        $resultsList = $elasticResultSet->getResults();
 
-        $result ['total'] = $elasticaResultSet->getTotalHits();
+        $result ['total'] = $elasticResultSet->getTotalHits();
         $result ['query'] = $this->_params ['query'];
         $userWriteWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
         $userCanWriteContents = Manager::getService('Acl')->hasAccess("write.ui.contents");
@@ -1123,7 +1124,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         }
 
         // Add label to Facets, hide empty facets,
-        $elasticaFacetsTemp = $elasticaResultSet->getFacets();
+        $elasticaFacetsTemp = $elasticResultSet->getFacets();
         $elasticaFacets = array();
         if ((is_array($this->_displayedFacets)) && (!empty ($this->_displayedFacets)) && (!is_string($this->_displayedFacets [0]))) {
             foreach ($this->_displayedFacets as $requestedFacet) {
