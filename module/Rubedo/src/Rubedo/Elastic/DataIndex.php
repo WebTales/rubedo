@@ -67,7 +67,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             $activeLanguages = $languages->getActiveLanguages();
 
             // get active analysers
-            $activeAnalysers = array_keys($this::$_content_index_param ["index"] ["analysis"] ["analyzer"]);
+            $activeAnalysers = array_keys($this::$_content_index_param ["analysis"] ["analyzer"]);
 
             // get vocabularies
             $vocabularies = $this->_getVocabularies($data);
