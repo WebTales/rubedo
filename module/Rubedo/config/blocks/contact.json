@@ -15,7 +15,7 @@
                             "config": {
                                 "fieldLabel": "#ext-gen1155#",
                                 "name": "mailingListId",
-                                "multiSelect": false
+                                "multiSelect": true
                             }
                         },
                         {
