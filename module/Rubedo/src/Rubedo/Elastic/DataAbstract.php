@@ -79,6 +79,13 @@ class DataAbstract
     protected static $_content_index;
 
     /**
+     * Content Index param
+     *
+     * @var array
+     */
+    protected static $_content_index_param;
+    
+    /**
      * Dam index object
      *
      * @var string
@@ -133,13 +140,13 @@ class DataAbstract
         // Create content index if not exists 
         self::$_content_index['name'] = $defaultDB . "-" . self::$_options['contentIndex'];
 		if (!$this->_client->indices()->exists(['index' => array(self::$_content_index['name'])])) {
-			$contentIndexParams = [
+			self::$_content_index_param = [
 				'index' => self::$_content_index['name'], 
 				'body' => [
 					'settings' => self::$_content_index['settings']
 				]
 			];
-			$this->_client->indices()->create($contentIndexParams);
+			$this->_client->indices()->create(self::$_content_index_param);
 		}
 
 		// Create dam index if not exists

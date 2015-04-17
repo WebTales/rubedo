@@ -36,12 +36,12 @@ class DataIndex extends DataAbstract implements IDataIndex
     /**
      * Contains content types already requested
      */
-    protected $_contentTypeCache = array();
+    protected $_contentTypeCache = [];
 
     /**
      * Contains dam types already requested
      */
-    protected $_damTypeCache = array();
+    protected $_damTypeCache = [];
 
     /**
      * Contains the documents
@@ -58,7 +58,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function getIndexMapping(array $data, $type)
     {
-        $mapping = array();
+        $mapping = [];
 
         if (isset ($data ['fields']) && is_array($data ['fields'])) {
 
@@ -67,147 +67,147 @@ class DataIndex extends DataAbstract implements IDataIndex
             $activeLanguages = $languages->getActiveLanguages();
 
             // get active analysers
-            $activeAnalysers = array_keys($this::$_content_index_param ["analysis"] ["analyzer"]);
+            $activeAnalysers = array_keys($this::$_content_index_param["body"]["settings"]["analysis"] ["analyzer"]);
 
             // get vocabularies
             $vocabularies = $this->_getVocabularies($data);
 
             // Set generic mapping for contents & dam
 
-            $generic_mapping = array(
-                'objectType' => array(
+            $generic_mapping = [
+                'objectType' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'lastUpdateTime' => array(
+                ],
+                'lastUpdateTime' => [
                     'type' => 'date',
                     'store' => 'yes'
-                ),
-                'createUser' => array(
+                ],
+                'createUser' => [
                     'type' => 'object',
                     'store' => 'yes',
-                    'properties' => array(
-                        'id' => array(
+                    'properties' => [
+                        'id' => [
                             'type' => 'string',
                             'index' => 'not_analyzed',
                             'store' => 'yes'
-                        ),
-                        'fullName' => array(
+                        ],
+                        'fullName' => [
                             'type' => 'string',
                             'index' => 'not_analyzed',
                             'store' => 'yes'
-                        ),
-                        'login' => array(
+                        ],
+                        'login' => [
                             'type' => 'string',
                             'index' => 'no',
                             'store' => 'no'
-                        )
-                    )
-                ),
-                'text' => array(
+                        ]
+                    ]
+                ],
+                'text' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'author' => array(
+                ],
+                'author' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'typeId' => array(
+                ],
+                'typeId' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'target' => array(
+                ],
+                'target' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'writeWorkspace' => array(
+                ],
+                'writeWorkspace' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'availableLanguages' => array(
+                ],
+                'availableLanguages' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'version' => array(
+                ],
+                'version' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'startPublicationDate' => array(
+                ],
+                'startPublicationDate' => [
                     'type' => 'integer',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'endPublicationDate' => array(
+                ],
+                'endPublicationDate' => [
                     'type' => 'integer',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'autocomplete_nonlocalized' => array(
+                ],
+                'autocomplete_nonlocalized' => [
                     'type' => 'completion',
                     'index_analyzer' => 'simple',
                     'search_analyzer' => 'simple',
                     'payloads' => true,
                     'preserve_position_increments' => false
-                )
-            );
+                ]
+            ];
 
             // add mapping for autocomplete in every active language
             foreach ($activeLanguages as $lang) {
                 $locale = in_array($lang ['locale'], $activeAnalysers) ? $lang ['locale'] : 'default';
-                $generic_mapping ['autocomplete_' . $lang ['locale']] = array(
+                $generic_mapping ['autocomplete_' . $lang ['locale']] = [
                     'type' => 'completion',
                     'index_analyzer' => $locale . '_analyzer',
                     'search_analyzer' => $locale . '_analyzer',
                     'payloads' => true,
                     'preserve_position_increments' => false
-                );
+                ];
             }
 
             // Set specific mapping for contents
 
             if ($type == 'content') {
-                $specific_mapping = array(
-                    'summary' => array(
+                $specific_mapping = [
+                    'summary' => [
                         'type' => 'string',
                         'store' => 'yes'
-                    ),
-                    'contentType' => array(
+                    ],
+                    'contentType' => [
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'store' => 'yes'
-                    ),
-                    'online' => array(
+                    ],
+                    'online' => [
                         'type' => 'boolean',
                         'store' => 'yes'
-                    )
-                );
+                    ]
+                ];
             }
 
             // Set specific mapping for dam
 
             if ($type == 'dam') {
-                $specific_mapping = array(
-                    'damType' => array(
+                $specific_mapping = [
+                    'damType' => [
                         'type' => 'string',
                         'index' => 'not_analyzed',
                         'store' => 'yes'
-                    ),
-                    'fileSize' => array(
+                    ],
+                    'fileSize' => [
                         'type' => 'integer',
                         'store' => 'yes'
-                    ),
-                    'file' => array(
+                    ],
+                    'file' => [
                         'type' => 'attachment'
-                    )
-                );
+                    ]
+                ];
             }
 
             // Merge generic and specific mappings
@@ -216,87 +216,87 @@ class DataIndex extends DataAbstract implements IDataIndex
 
             // Add Taxonomies
             foreach ($vocabularies as $vocabularyName) {
-                $mapping ["taxonomy." . $vocabularyName] = array(
+                $mapping ["taxonomy." . $vocabularyName] = [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                );
+                ];
             }
 
             // Add system fields : text and summary for contents, title for dam
 
             $fields = $data['fields'];
             if ($type == 'content') {
-                $fields [] = array(
+                $fields [] = [
                     "cType" => "system",
-                    "config" => array(
+                    "config" => [
                         "name" => "text",
                         "fieldLabel" => "text",
                         "searchable" => true,
                         "localizable" => true
-                    )
-                );
-                $fields [] = array(
+                    ]
+                ];
+                $fields [] = [
                     "cType" => "system",
-                    "config" => array(
+                    "config" => [
                         "name" => "summary",
                         "fieldLabel" => "summary",
                         "searchable" => true,
                         "localizable" => true
-                    )
-                );
+                    ]
+                ];
             }
 
             if ($type == 'dam') {
-                $fields [] = array(
+                $fields [] = [
                     "cType" => "system",
-                    "config" => array(
+                    "config" => [
                         "name" => "title",
                         "fieldLabel" => "text",
                         "searchable" => true,
                         "localizable" => true
-                    )
-                );
+                    ]
+                ];
             }
 
             // unmapped fields are not allowed in fields, i18n and productProperties
-            $mapping ['fields'] = array(
+            $mapping ['fields'] = [
                 'dynamic' => false,
                 'type' => 'object'
-            );
+            ];
 
             foreach ($activeLanguages as $lang) {
-                $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] = array(
+                $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] = [
                     'dynamic' => false,
                     'type' => 'object'
-                );
+                ];
             }
 
             // Add properties for product only
             if (isset($data['productType']) && $data['productType'] != 'none') {
-                $mapping ['productProperties'] = array(
+                $mapping ['productProperties'] = [
                     'dynamic' => true,
                     'store' => 'yes',
                     'type' => 'object',
-                    'properties'=>array(
-                        'variations'=>array(
+                    'properties'=>[
+                        'variations'=>[
                             'dynamic' => true,
                             'type' => 'object',
-                            'properties'=>array()
-                        )
-                    )
+                            'properties'=>[]
+                        ]
+                    ]
 
-                );
-                $mapping['encodedProductProperties']=array(
+                ];
+                $mapping['encodedProductProperties']=[
                     'store'=>'yes',
                     'type'=>'string',
                     'index'=>'no'
-                );
+                ];
 
-                $mapping['isProduct'] = array(
+                $mapping['isProduct'] = [
                     'type' => 'boolean',
                     'store' => 'yes'
-                );
+                ];
             }
 
             // Index fields
@@ -314,10 +314,10 @@ class DataIndex extends DataAbstract implements IDataIndex
 
                         switch ($field ['cType']) {
                             case 'datefield' :
-                                $config = array(
+                                $config = [
                                     'type' => 'string',
                                     'store' => $store
-                                );
+                                ];
                                 if ($notAnalyzed) {
                                     $config ['index'] = 'not_analyzed';
                                 }
@@ -330,10 +330,10 @@ class DataIndex extends DataAbstract implements IDataIndex
                                 }
                                 break;
                             case 'numberfield' :
-                                $config = array(
+                                $config = [
                                     'type' => 'float',
                                     'store' => $store
-                                );
+                                ];
                                 if ($notAnalyzed) {
                                     $config ['index'] = 'not_analyzed';
                                 }
@@ -346,10 +346,10 @@ class DataIndex extends DataAbstract implements IDataIndex
                                 }
                                 break;
                             case 'document' :
-                                $config = array(
+                                $config = [
                                     'type' => 'attachment',
                                     'store' => $store
-                                );
+                                ];
                                 if ($notAnalyzed) {
                                     $config ['index'] = 'not_analyzed';
                                 }
@@ -362,22 +362,22 @@ class DataIndex extends DataAbstract implements IDataIndex
                                 }
                                 break;
                             case 'localiserField' :
-                                $config = array(
-                                    'properties' => array(
-                                        'location' => array(
-                                            'properties' => array(
-                                                'coordinates' => array(
+                                $config = [
+                                    'properties' => [
+                                        'location' => [
+                                            'properties' => [
+                                                'coordinates' => [
                                                     'type' => 'geo_point',
                                                     'store' => 'yes'
-                                                )
-                                            )
-                                        ),
-                                        'address' => array(
+                                                ]
+                                            ]
+                                        ],
+                                        'address' => [
                                             'type' => 'string',
                                             'store' => 'yes'
-                                        )
-                                    )
-                                );
+                                        ]
+                                    ]
+                                ];
                                 if (!$field ['config'] ['localizable']) {
                                     $mapping ['fields'] ['properties'] [$name] = $config;
                                 } else {
@@ -390,14 +390,14 @@ class DataIndex extends DataAbstract implements IDataIndex
                                 if (!$field ['config'] ['localizable']) {
                                     $_autocomplete = 'autocomplete_nonlocalized';
                                     $_all = 'all_nonlocalized';
-                                    $config = array(
+                                    $config = [
                                         "type" => "string",
                                         "index" => (!$notAnalyzed) ? "analyzed" : "not_analyzed",
-                                        "copy_to" => array(
+                                        "copy_to" => [
                                             $_all
-                                        ),
+                                        ],
                                         "store" => $store
-                                    );
+                                    ];
                                     $mapping ['fields'] ['properties'] [$name] = $config;
                                 } else {
                                     foreach ($activeLanguages as $lang) {
@@ -410,15 +410,15 @@ class DataIndex extends DataAbstract implements IDataIndex
                                         } else {
                                             $lg_analyser = 'default';
                                         }
-                                        $config = array(
+                                        $config = [
                                             "type" => "string",
                                             "index" => (!$notAnalyzed) ? "analyzed" : "not_analyzed",
                                             "analyzer" => $lg_analyser,
-                                            "copy_to" => array(
+                                            "copy_to" => [
                                                 $_all
-                                            ),
+                                            ],
                                             "store" => $store
-                                        );
+                                        ];
 
                                         $mapping [$fieldName] = $config;
                                         $mapping ['i18n'] ['properties'] [$locale] ['properties'] ['fields'] ['properties'] [$name] = $config;
@@ -429,14 +429,14 @@ class DataIndex extends DataAbstract implements IDataIndex
 
 
                         $_all = 'all_nonlocalized';
-                        $config = array(
+                        $config = [
                             "type" => "string",
                             "index" => "not_analyzed",
-                            "copy_to" => array(
+                            "copy_to" => [
                                 $_all
-                            ),
+                            ],
                             "store" => $store
-                        );
+                        ];
                         $mapping ['productProperties']['properties']['variations']['properties'][$name] = $config;
 
                     }
@@ -456,7 +456,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function getUserIndexMapping(array $data)
     {
-        $mapping = array();
+        $mapping = [];
 
         if (isset($data['fields']) && is_array($data['fields'])) {
 
@@ -465,88 +465,88 @@ class DataIndex extends DataAbstract implements IDataIndex
 
             // Set mapping for user
 
-            $mapping = array(
-                'objectType' => array(
+            $mapping = [
+                'objectType' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'email' => array(
+                ],
+                'email' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'photo' => array(
+                ],
+                'photo' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'userType' => array(
+                ],
+                'userType' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'author' => array(
+                ],
+                'author' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'typeId' => array(
+                ],
+                'typeId' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'lastUpdateTime' => array(
+                ],
+                'lastUpdateTime' => [
                     'type' => 'date',
                     'store' => 'yes'
-                ),
-                'createUser' => array(
+                ],
+                'createUser' => [
                     'type' => 'object',
                     'store' => 'yes',
-                    'properties' => array(
-                        'id' => array(
+                    'properties' => [
+                        'id' => [
                             'type' => 'string',
                             'index' => 'not_analyzed',
                             'store' => 'yes'
-                        ),
-                        'fullName' => array(
+                        ],
+                        'fullName' => [
                             'type' => 'string',
                             'index' => 'not_analyzed',
                             'store' => 'yes'
-                        ),
-                        'login' => array(
+                        ],
+                        'login' => [
                             'type' => 'string',
                             'index' => 'no',
                             'store' => 'no'
-                        )
-                    )
-                ),
-                'startPublicationDate' => array(
+                        ]
+                    ]
+                ],
+                'startPublicationDate' => [
                     'type' => 'integer',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'endPublicationDate' => array(
+                ],
+                'endPublicationDate' => [
                     'type' => 'integer',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                ),
-                'autocomplete_nonlocalized' => array(
+                ],
+                'autocomplete_nonlocalized' => [
                     'type' => 'completion',
                     'index_analyzer' => 'simple',
                     'search_analyzer' => 'simple',
                     'payloads' => true,
                     'preserve_position_increments' => false
-                )
-            );
+                ]
+            ];
 
             // Add Taxonomies
             foreach ($vocabularies as $vocabularyName) {
-                $mapping["taxonomy." . $vocabularyName] = array(
+                $mapping["taxonomy." . $vocabularyName] = [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
-                );
+                ];
             }
 
             // Add Fields
@@ -555,28 +555,28 @@ class DataIndex extends DataAbstract implements IDataIndex
 
             // Add system fields : email and name for user
 
-            $fields[] = array(
+            $fields[] = [
                 "cType" => "system",
-                "config" => array(
+                "config" => [
                     "name" => "email",
                     "fieldLabel" => "email",
                     "searchable" => false
-                )
-            );
-            $fields[] = array(
+                ]
+            ];
+            $fields[] = [
                 "cType" => "system",
-                "config" => array(
+                "config" => [
                     "name" => "name",
                     "fieldLabel" => "name",
                     "searchable" => true
-                )
-            );
+                ]
+            ];
 
             // unmapped fields are not allowed in fields and i18n
-            $mapping['fields'] = array(
+            $mapping['fields'] = [
                 'dynamic' => false,
                 'type' => 'object'
-            );
+            ];
 
             foreach ($fields as $field) {
 
@@ -589,45 +589,45 @@ class DataIndex extends DataAbstract implements IDataIndex
 
                     switch ($field['cType']) {
                         case 'Ext.form.field.Date':
-                            $config = array(
+                            $config = [
                                 'type' => 'string',
                                 'store' => $store
-                            );
+                            ];
                             $mapping['fields']['properties'][$name] = $config;
                             break;
                         case 'Rubedo.view.localiserField':
-                            $config = array(
-                                'properties' => array(
-                                    'location' => array(
-                                        'properties' => array(
-                                            'coordinates' => array(
+                            $config = [
+                                'properties' => [
+                                    'location' => [
+                                        'properties' => [
+                                            'coordinates' => [
                                                 'type' => 'geo_point',
                                                 'store' => 'yes'
-                                            )
-                                        )
-                                    ),
-                                    'address' => array(
+                                            ]
+                                        ]
+                                    ],
+                                    'address' => [
                                         'type' => 'string',
                                         'store' => 'yes'
-                                    )
-                                )
-                            );
+                                    ]
+                                ]
+                            ];
                             $mapping['fields']['properties'][$name] = $config;
                             break;
                         default:
                             //$_autocomplete = 'autocomplete_nonlocalized';
                             $_all = 'all_nonlocalized';
-                            $config = array(
+                            $config = [
                                 "type" => "string",
                                 "store" => $store,
-                                "copy_to" => array($_all)
-                            );
+                                "copy_to" => [$_all]
+                            ];
                             // Add first letter indexing for user name
                             if ($field["config"]["name"] == "name") {
-                                $config["fields"]["first_letter"] = array(
+                                $config["fields"]["first_letter"] = [
                                     "type" => "string",
                                     "analyzer" => "first_letter"
-                                );
+                                ];
                             }
                             $mapping["fields"]["properties"][$name] = $config;
                     }
@@ -647,7 +647,7 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     protected function _getVocabularies($data)
     {
-        $vocabularies = array();
+        $vocabularies = [];
         foreach ($data['vocabularies'] as $vocabularyId) {
             $vocabulary = Manager::getService('Taxonomy')->findById(
                 $vocabularyId);
@@ -678,17 +678,24 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         // Create new ES type if not empty
         if (!empty($indexMapping)) {
-            // Create new type
-            $type = new \Elastica\Type(self::$_content_index, $id);
 
-            // Set mapping
-            $type->setMapping($indexMapping);
+            // Create new type
+            
+        	$indexParams = [
+        		'index' => self::$_content_index['name'],
+        		'type' => $id,
+        		'body' => [
+        			$id => ['properties' => $indexMapping]
+        		]
+        	];
+        	
+            $this->_client->indices()->putMapping($indexParams);
 
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
         } else {
             // If there is no searchable field, the new type is not created
-            return array();
+            return [];
         }
     }
 
@@ -713,18 +720,24 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         // If there is no searchable field, the new type is not created
         if (!empty($indexMapping)) {
+            
             // Create new type
-            $type = new \Elastica\Type(self::$_dam_index, $id);
-
-            // Set mapping
-            $indexMappingObject = \Elastica\Type\Mapping::create($indexMapping);
-            $indexMappingObject->disableSource();
-            $type->setMapping($indexMappingObject);
-
+            
+        	$indexParams = [
+        		'index' => self::$_dam_index['name'],
+        		'type' => $id,
+        		'body' => [
+        			$id => [    
+        				'_source' => ['enabled' => false],
+        				'properties' => $indexMapping
+            		]
+        		]
+        	];
+        	 
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -749,18 +762,24 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         // If there is no searchable field, the new type is not created
         if (!empty($indexMapping)) {
-            // Create new type
-            $type = new \Elastica\Type(self::$_user_index, $id);
-
-            // Set mapping
-            $indexMappingObject = \Elastica\Type\Mapping::create($indexMapping);
-            $indexMappingObject->disableSource();
-            $type->setMapping($indexMappingObject);
+        	
+        	// Create new type
+        	
+        	$indexParams = [
+        		'index' => self::$_user_index['name'],
+        		'type' => $id,
+        		'body' => [
+        			$id => [
+        				'_source' => ['enabled' => false],
+        				'properties' => $indexMapping
+        			]
+        		]
+        	];
 
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -774,7 +793,8 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteContentType($id)
     {
-        $mapping = self::$_content_index->getMapping();
+        //$mapping = self::$_content_index->getMapping();
+        if ($mapping = $this->_client->indices()->getMapping(['index' => self::$_content_index['name']]))
         if (array_key_exists($id, $mapping)) {
             $type = new \Elastica\Type(self::$_content_index, $id);
             $type->delete();
@@ -807,7 +827,8 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteDamType($id)
     {
-        $mapping = self::$_dam_index->getMapping();
+        //$mapping = self::$_dam_index->getMapping();
+    	if ($mapping = $this->_client->indices()->getMapping(['index' => self::$_dam_index['name']]))
         if (array_key_exists($id, $mapping)) {
             $type = new \Elastica\Type(self::$_dam_index, $id);
             $type->delete();
@@ -843,7 +864,8 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteUserType($id)
     {
-        $mapping = self::$_user_index->getMapping();
+        //$mapping = self::$_user_index->getMapping();
+    	if ($mapping = $this->_client->indices()->getMapping(['index' => self::$_user_index['name']]))
         if (array_key_exists($id, $mapping)) {
             $type = new \Elastica\Type(self::$_user_index, $id);
             $type->delete();
@@ -892,7 +914,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         // Initialize data array to push into index
 
-        $indexData = array(
+        $indexData = [
             'objectType' => 'content',
             'contentType' => $typeId,
             'text' => $data['text'],
@@ -907,7 +929,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'availableLanguages' => $availableLanguages,
             'version' => $data['version'],
             'online' => $data['online']
-        );
+        ];
 
         // Index product properties if exists
 
@@ -931,7 +953,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 }
 
                 $taxonomy = $taxonomyService->findById($vocabulary);
-                $termsArray = array();
+                $termsArray = [];
 
                 foreach ($terms as $term) {
                     if ($term == 'all' or $term=="") {
@@ -957,12 +979,12 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
 
         // Add read workspace
-        $indexData['target'] = array();
+        $indexData['target'] = [];
         if (isset($data['target'])) {
             if (!is_array($data['target'])) {
-                $data['target'] = array(
+                $data['target'] = [
                     $data['target']
-                );
+                ];
             }
             foreach ($data['target'] as $target) {
                 $indexData['target'][] = (string)$target;
@@ -975,11 +997,11 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add autocompletion fields and title
         foreach ($availableLanguages as $lang) {
             $title = isset($data['i18n'][$lang]['fields']['text']) ? $data['i18n'][$lang]['fields']['text'] : $data['text'];
-            $indexData['autocomplete_' . $lang] = array(
+            $indexData['autocomplete_' . $lang] = [
                 'input' => $title,
                 'output' => $title,
                 'payload' => "{ \"type\" : \"content\",  \"id\" : \"" . $data['id'] . "\"}"
-            );
+            ];
         }
 
         // Add document
@@ -1018,7 +1040,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         $availableLanguages = array_keys($data['i18n']);
 
         // Initialize data array to push into index     
-        $indexData = array(
+        $indexData = [
             'objectType' => 'dam',
             'damType' => $typeId,
             'text' => $data['title'],
@@ -1031,7 +1053,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'availableLanguages' => array_keys($data['i18n']),
             'fileSize' => isset($data['fileSize']) ? (integer)$data['fileSize'] : 0,
             'version' => $data['version']
-        );
+        ];
 
         // Add taxonomy
         if (isset($data["taxonomy"])) {
@@ -1045,7 +1067,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                     continue;
                 }
                 $taxonomy = $taxonomyService->findById($vocabulary);
-                $termsArray = array();
+                $termsArray = [];
 
                 foreach ($terms as $term) {
                     if ($term == 'all') {
@@ -1071,7 +1093,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
 
         // Add read workspace
-        $indexData['target'] = array();
+        $indexData['target'] = [];
         if (isset($data['target'])) {
             foreach ($data['target'] as $target) {
                 $indexData['target'][] = (string)$target;
@@ -1082,11 +1104,11 @@ class DataIndex extends DataAbstract implements IDataIndex
         $mediaThumbnail = Manager::getService('Url')->mediaThumbnailUrl($data['id']);
         foreach ($availableLanguages as $lang) {
             $title = isset($data['i18n'][$lang]['fields']['title']) ? $data['i18n'][$lang]['fields']['title'] : $data['title'];
-            $indexData['autocomplete_' . $lang] = array(
+            $indexData['autocomplete_' . $lang] = [
                 'input' => $title,
                 'output' => $title,
                 'payload' => "{ \"type\" : \"dam\",  \"id\" : \"" . $data['id'] . "\",  \"thumbnail\" : \"" . $mediaThumbnail . "\"}"
-            );
+            ];
         }
 
         // Add document
@@ -1094,7 +1116,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         if (isset($data['originalFileId']) && $data['originalFileId'] != '') {
 
-            $indexedFiles = array(
+            $indexedFiles = [
                 'application/pdf',
                 'application/rtf',
                 'text/html',
@@ -1109,7 +1131,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 'application/vnd.oasis.opendocument.text',
                 'application/vnd.oasis.opendocument.spreadsheet',
                 'application/vnd.oasis.opendocument.presentation'
-            );
+            ];
             $mime = explode(';', $data['Content-Type']);
 
             if (in_array($mime[0], $indexedFiles)) {
@@ -1154,7 +1176,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         $photo = isset($data['photo']) ? $data['photo'] : null;
 
-        $indexData = array(
+        $indexData = [
             'objectType' => 'user',
             'userType' => $typeId,
             'text' => $data['name'],
@@ -1163,7 +1185,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 1000) : 0,
             'fields' => $data['fields'],
             'photo' => $photo
-        );
+        ];
 
         // Add taxonomy
         if (isset($data["taxonomy"])) {
@@ -1177,7 +1199,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 }
 
                 $taxonomy = $taxonomyService->findById($vocabulary);
-                $termsArray = array();
+                $termsArray = [];
 
                 foreach ($terms as $term) {
                     if ($term == 'all') {
@@ -1205,11 +1227,11 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Add autocompletion fields and title
         $userThumbnail = (!empty($photo)) ? Manager::getService('Url')->userAvatar($data['id'], 40, 40, "boxed") : null;
 
-        $indexData['autocomplete_nonlocalized'] = array(
+        $indexData['autocomplete_nonlocalized'] = [
             'input' => $data['name'],
             'output' => $data['name'],
             'payload' => "{ \"type\" : \"user\",  \"id\" : \"" . $data['id'] . "\", \"thumbnail\" : \"" . $userThumbnail . "\"}"
-        );
+        ];
 
         // Add document
         $currentDocument = new \Elastica\Document($data['id'], $indexData);
@@ -1241,26 +1263,28 @@ class DataIndex extends DataAbstract implements IDataIndex
         set_time_limit(240);
 
         // Initialize result array
-        $result = array();
+        $result = [];
 
         if ($option == 'all' or $option == 'content') {
             // Destroy and re-create content index
-            self::$_content_index->delete();
-            self::$_content_index->create(self::$_content_index_param, true);
+            $this->_client->indices()->delete(['index' =>  self::$_content_index['name']]);
+            //$this->_client->indices()->create(self::$_content_index_param);
         }
 
         if ($option == 'all' or $option == 'dam') {
             // Destroy and re-create dam index
-            self::$_dam_index->delete();
-            self::$_dam_index->create(self::$_dam_index_param, true);
+            $this->_client->indices()->delete(['index' =>  self::$_dam_index]);
+            //self::$_dam_index->create(self::$_dam_index_param, true);
         }
 
         if ($option == 'all' or $option == 'users') {
         	// Destroy and re-create user index
-        	self::$_user_index->delete();
-        	self::$_user_index->create(self::$_user_index_param, true);
+        	$this->_client->indices()->delete(['index' =>  self::$_user_index]);
+        	//self::$_user_index->create(self::$_user_index_param, true);
         }
 
+        parent::init();
+        
         if ($option == 'all' or $option == 'content') {
 
             // Retreive all content types
@@ -1334,9 +1358,9 @@ class DataIndex extends DataAbstract implements IDataIndex
         set_time_limit(240);
 
         // Initialize result array and variables
-        $result = array();
+        $result = [];
         $itemCount = 0;
-        $this->_documents = array();
+        $this->_documents = [];
 
         // Retrieve data and ES index for type
         switch ($option) {
@@ -1443,7 +1467,7 @@ class DataIndex extends DataAbstract implements IDataIndex
                 break;
         }
 
-        $this->_documents = array();
+        $this->_documents = [];
 
         $dataService = Manager::getService($serviceData);
         $wasFiltered = $dataService::disableUserFilter();
