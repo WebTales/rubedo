@@ -197,7 +197,7 @@ class DataAbstract
      */
     public function getVersion()
     {
-        $data = $this->_client->request('/', 'GET')->getData();
+        $data = $this->_client->info();
         if (isset($data['version']) && isset($data['version']['number'])) {
             return $data['version']['number'];
         }
