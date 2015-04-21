@@ -77,7 +77,8 @@ class ChangephotoResource extends AbstractResource
         $userPhotoUrl = $this->getUrlAPIService()->userAPIAvatar($user, 100, 100, 'boxed');
         return (array(
             "success" => true,
-            "photoUrl" => $userPhotoUrl
+            "photoUrl" => $userPhotoUrl,
+            "photoId"=>$newFileId
         ));
 
     }
@@ -148,6 +149,10 @@ class ChangephotoResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setKey('photoUrl')
                     ->setDescription('Url of the new user photo')
+            )->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('photoId')
+                    ->setDescription('Id of the new user photo')
             );
     }
 } 
