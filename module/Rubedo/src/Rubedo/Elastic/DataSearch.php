@@ -20,9 +20,10 @@ namespace Rubedo\Elastic;
 use Rubedo\Interfaces\Elastic\IDataSearch;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
+use Zend\Debug\Debug;
 
 /**
- * Class implementing the Rubedo API to Elastic Search using Elastica API
+ * Class implementing the Rubedo API to Elastic Search using elastic API
  *
  * @author dfanchon
  * @category Rubedo
@@ -724,9 +725,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             }
         }
         
-        //$elasticaQuery = new \Elastica\Query ();
         $searchParams=[];
-        //$elasticaQueryString = new \Elastica\Query\QueryString ();
         
         // Setting fields from localization strategy for content or dam search
         // only
@@ -734,7 +733,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         if ($option != "user") {
             switch ($localizationStrategy) {
                 case 'backOffice' :
-                	$elasticaQueryString = [
+                	$elasticQueryString = [
                     	'fields' => [
                     		"all_" . $currentLocale,
                     		"_all^0.1"
@@ -745,7 +744,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                     //TODO $this->setLocaleFilter(array(
                     //    $currentLocale
                     //));
-                    $elasticaQueryString = [
+                    $elasticQueryString = [
                     	'fields' => [
                     		"all_" . $currentLocale,
                     		"all_nonlocalized",
@@ -761,7 +760,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                         $fallBackLocale
                     ));
                     if ($currentLocale != $fallBackLocale) {
-                    	$elasticaQueryString = [
+                    	$elasticQueryString = [
                     		'fields' => [
                     			"all_" . $currentLocale,
                     			"all_" . $fallBackLocale . "^0.1",
@@ -770,7 +769,7 @@ class DataSearch extends DataAbstract implements IDataSearch
                    			]
                     	];
                     } else {
-                        $elasticaQueryString = [
+                        $elasticQueryString = [
                         	'fields' => [
                             	"all_" . $currentLocale,
                             	"all_nonlocalized",
@@ -783,7 +782,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         } else {
 
             // user search do not use localization
-            $elasticaQueryString = [
+            $elasticQueryString = [
             	'fields' => [
                 	"all_nonlocalized"
                 ]
@@ -793,12 +792,12 @@ class DataSearch extends DataAbstract implements IDataSearch
         
         // add user query
         if ($this->_params ['query'] != "") {
-        	$elasticaQueryString['query'] = $this->_params ['query'];
+        	$elasticQueryString['query'] = $this->_params ['query'];
         } else {
-        	$elasticaQueryString['query'] = '*';
+        	$elasticQueryString['query'] = '*';
         }
 
-        $searchParams['body']['query']['query_string'] = $elasticaQueryString;
+        $searchParams['body']['query']['query_string'] = $elasticQueryString;
         
         // Apply filter to query and aggregations
         
@@ -939,9 +938,7 @@ class DataSearch extends DataAbstract implements IDataSearch
 
         $searchParams['body']['sort'] = [
         	[$this->_params ['orderby'] => ['order' => strtolower($this->_params ['orderbyDirection']), "ignore_unmapped" => true] ]   	
-        ];
-
-        $searchParams['body']['fields'] = ['*'];       
+        ];   
         
         // run query
 
@@ -975,7 +972,6 @@ class DataSearch extends DataAbstract implements IDataSearch
             	$searchParams['index'] = self::$_content_index['name'] . ','. self::$_dam_index['name']. ',' . self::$_user_index['name'];
                 break;
         }
-
 
         // For geosearch dynamically set searchMode depending on the number of results // TODO
         if ($option == 'geo' && self::$_isFrontEnd) {
@@ -1014,7 +1010,6 @@ class DataSearch extends DataAbstract implements IDataSearch
         }*/
 
         // Update data
-        //$resultsList = $elasticResultSet->getResults();
         $resultsList = $elasticResultSet['hits']['hits'];
         
         $result ['total'] = $elasticResultSet['hits']['total'];
@@ -1026,8 +1021,7 @@ class DataSearch extends DataAbstract implements IDataSearch
         $writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
 
         foreach ($resultsList as $resultItem) {
-
-            $data = $resultItem['fields'];
+            $data = $resultItem['_source'];
 
             $resultData ['id'] = $resultItem['_id'];
             $resultData ['typeId'] = $resultItem['_type'];
@@ -1035,53 +1029,51 @@ class DataSearch extends DataAbstract implements IDataSearch
             if (!is_float($score))
                 $score = 1;
             $resultData ['score'] = round($score * 100);
-            $resultData ['authorName'] = isset ($data ['createUser.fullName'] [0]) ? $data ['createUser.fullName'] [0] : null;
-            $resultData ['author'] = isset ($data ['createUser.id'] [0]) ? $data ['createUser.id'] [0] : null;
-            $resultData ['version'] = isset ($data ['version'] [0]) ? $data ['version'] [0] : null;
-            $resultData ['photo'] = isset ($data ['photo'] [0]) ? $data ['photo'] [0] : null;
-            $resultData ['objectType'] = $data ['objectType'] [0];
+            $resultData ['authorName'] = isset ($data ['createUser']['fullName']) ? $data ['createUser']['fullName'] : null;
+            $resultData ['author'] = isset ($data ['createUser']['id']) ? $data ['createUser']['id'] : null;
+            $resultData ['version'] = isset ($data ['version']) ? $data ['version'] : null;
+            $resultData ['photo'] = isset ($data ['photo'] ) ? $data ['photo'] : null;
+            $resultData ['objectType'] = $data ['objectType'];
             unset ($data ['objectType']);
             unset ($data ['photo']);
 
-            if (isset ($data ['availableLanguages'] [0])) {
-                if (!is_array($data ['availableLanguages'] [0])) {
+            if (isset ($data ['availableLanguages'] )) {
+                if (!is_array($data ['availableLanguages'])) {
                     $resultData ['availableLanguages'] = array(
-                        $data ['availableLanguages'] [0]
+                        $data ['availableLanguages'] 
                     );
                 } else {
-                    $resultData['availableLanguages'] = $data ['availableLanguages'] [0];
+                    $resultData['availableLanguages'] = $data ['availableLanguages'];
                 }
             }
 
             switch ($resultData ['objectType']) {
                 case 'content' :
-                    if (isset ($data ["i18n." . $currentLocale . ".fields.text"][0])) {
-                        $resultData ['title'] = $data ["i18n." . $currentLocale . ".fields.text"][0];
+                    if (isset ($data ["i18n." . $currentLocale . ".fields.text"])) {
+                        $resultData ['title'] = $data ["i18n." . $currentLocale . ".fields.text"];
                         if ($withSummary) {
-                            $resultData ['summary'] = (isset ($data ["i18n." . $currentLocale . ".fields.summary"][0])) ? $data ["i18n." . $currentLocale . ".fields.summary"][0] : "";
+                            $resultData ['summary'] = (isset ($data ["i18n." . $currentLocale . ".fields.summary"])) ? $data ["i18n." . $currentLocale . ".fields.summary"] : "";
                         }
                     } else {
-                        $resultData ['title'] = $data ['text'] [0];
+                        $resultData ['title'] = $data ['text'] ;
                     }
-                    $contentType = $this->_getContentType($data ['contentType'] [0]);
+                    $contentType = $this->_getContentType($data ['contentType'] );
                     if (!$userCanWriteContents || $contentType ['readOnly']) {
                         $resultData ['readOnly'] = true; 
-                   // } elseif ( !in_array($data['writeWorkspace'][0], $userWriteWorkspaces) ) {
                         } elseif ( !in_array('global', $userWriteWorkspaces) ) {
                         $resultData ['readOnly'] = true;
                     }
                     $resultData ['type'] = $contentType ['type'];
                     break;
                 case 'dam' :
-                    if (isset ($data ["i18n." . $currentLocale . ".fields.title"][0])) {
-                        $resultData ['title'] = $data ["i18n." . $currentLocale . ".fields.title"][0];
+                    if (isset ($data ["i18n." . $currentLocale . ".fields.title"])) {
+                        $resultData ['title'] = $data ["i18n." . $currentLocale . ".fields.title"];
                     } else {
-                        $resultData ['title'] = $data ['text'] [0];
+                        $resultData ['title'] = $data ['text'] ;
                     }
-                    $damType = $this->_getDamType($data ['damType'] [0]);
+                    $damType = $this->_getDamType($data ['damType'] );
                     if (!$userCanWriteDam || $damType ['readOnly']) {
                         $resultData ['readOnly'] = true;
-                    //} elseif (!in_array($data['writeWorkspace'][0], $userWriteWorkspaces)) {
                     } elseif (!in_array('global', $userWriteWorkspaces)) {
                         $resultData ['readOnly'] = true;
                     }
@@ -1089,13 +1081,13 @@ class DataSearch extends DataAbstract implements IDataSearch
                     break;
                 case 'user' :
 
-                    if (isset ($data ["fields.name"] [0])) {
-                        $resultData ['name'] = $data ["fields.name"] [0];
+                    if (isset ($data ["fields.name"] )) {
+                        $resultData ['name'] = $data ["fields.name"] ;
                     } else {
-                        $resultData ['name'] = $data ['email'] [0];
+                        $resultData ['name'] = $data ['email'] ;
                     }
                     $resultData ['title'] = $resultData ['name'];
-                    $userType = $this->_getUserType($data ['userType'] [0]);
+                    $userType = $this->_getUserType($data ['userType'] );
                     $resultData ['type'] = $userType ['type'];
                     break;
             }
@@ -1103,11 +1095,12 @@ class DataSearch extends DataAbstract implements IDataSearch
 
             // ensure that date is formated as timestamp while handled as date
             // type for ES
-            $data ['lastUpdateTime'] = strtotime($data ['lastUpdateTime'] [0]);
+           
+            $data ['lastUpdateTime'] = (string) $data ['lastUpdateTime']/1000 ;
 
             // Set read only
 
-            if (!isset ($data ['writeWorkspace'] [0]) or in_array($data ['writeWorkspace'] [0], $writeWorkspaceArray)) {
+            if (!isset ($data ['writeWorkspace'] ) or in_array($data ['writeWorkspace'] , $writeWorkspaceArray)) {
                 $resultData ['readOnly'] = false;
             } else {
                 $resultData ['readOnly'] = true;
@@ -1118,23 +1111,23 @@ class DataSearch extends DataAbstract implements IDataSearch
 
         // Add label to Facets, hide empty facets,
         
-        $elasticaFacetsTemp = $elasticResultSet['aggregations'];
+        $elasticFacetsTemp = $elasticResultSet['aggregations'];
 
-        $elasticaFacets = array();
+        $elasticFacets = array();
         if ((is_array($this->_displayedFacets)) && (!empty ($this->_displayedFacets)) && (!is_string($this->_displayedFacets [0]))) {
             foreach ($this->_displayedFacets as $requestedFacet) {
-                foreach ($elasticaFacetsTemp as $id => $obtainedFacet) {
+                foreach ($elasticFacetsTemp as $id => $obtainedFacet) {
                     if ($id == $requestedFacet ["name"]) {
-                        $elasticaFacets [$id] = $obtainedFacet;
+                        $elasticFacets [$id] = $obtainedFacet;
                     }
                 }
             }
         } else {
-            $elasticaFacets = $elasticaFacetsTemp;
+            $elasticFacets = $elasticFacetsTemp;
         }
         $result ['facets'] = array();
 
-        foreach ($elasticaFacets as $id => $facet) {
+        foreach ($elasticFacets as $id => $facet) {
             $temp = ( array )$facet['aggregation'];
 
             $renderFacet = true;
@@ -1218,10 +1211,12 @@ class DataSearch extends DataAbstract implements IDataSearch
                         if ($this->_facetDisplayMode == 'checkbox' or (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0)) {
                             $collection = Manager::getService('Users');
                             foreach ($temp ['buckets'] as $key => $value) {
-                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
-                                $termItem = $collection->findById($value ['key']);
-                                $temp ['terms'] [$key] ['label'] = $termItem ['name'];
-                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
+                            	if ($value ['key'] != 'rubedo') {
+	                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
+	                              	$termItem = $collection->findById($value ['key']);
+	                              	$temp ['terms'] [$key] ['label'] = $termItem ['name'];
+	                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
+                            	}
                             }
                         } else {
                             $renderFacet = false;

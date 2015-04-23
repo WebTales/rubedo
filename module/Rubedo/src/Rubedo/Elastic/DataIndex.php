@@ -21,10 +21,11 @@ use Rubedo\Interfaces\Elastic\IDataIndex;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\Json\Json;
+use Zend\Debug\Debug;
 
 /**
  * Class implementing the Rubedo API to Elastic Search indexing services using
- * Elastica API
+ * PHP elasticsearch API
  *
  * @author dfanchon
  * @category Rubedo
@@ -67,13 +68,12 @@ class DataIndex extends DataAbstract implements IDataIndex
             $activeLanguages = $languages->getActiveLanguages();
 
             // get active analysers
-            $activeAnalysers = array_keys($this::$_content_index_param["body"]["settings"]["analysis"] ["analyzer"]);
+            $activeAnalysers = array_keys($this::$_index_settings["analysis"] ["analyzer"]);
 
             // get vocabularies
             $vocabularies = $this->_getVocabularies($data);
 
             // Set generic mapping for contents & dam
-
             $generic_mapping = [
                 'objectType' => [
                     'type' => 'string',
@@ -172,7 +172,6 @@ class DataIndex extends DataAbstract implements IDataIndex
             }
 
             // Set specific mapping for contents
-
             if ($type == 'content') {
                 $specific_mapping = [
                     'summary' => [
@@ -192,7 +191,6 @@ class DataIndex extends DataAbstract implements IDataIndex
             }
 
             // Set specific mapping for dam
-
             if ($type == 'dam') {
                 $specific_mapping = [
                     'damType' => [
@@ -211,7 +209,6 @@ class DataIndex extends DataAbstract implements IDataIndex
             }
 
             // Merge generic and specific mappings
-
             $mapping = array_merge($generic_mapping, $specific_mapping);
 
             // Add Taxonomies
@@ -224,7 +221,6 @@ class DataIndex extends DataAbstract implements IDataIndex
             }
 
             // Add system fields : text and summary for contents, title for dam
-
             $fields = $data['fields'];
             if ($type == 'content') {
                 $fields [] = [
@@ -300,7 +296,6 @@ class DataIndex extends DataAbstract implements IDataIndex
             }
 
             // Index fields
-
             foreach ($fields as $field) {
                 // Only searchable fields get indexed
                 if ($field ['config'] ['searchable']) {
@@ -427,7 +422,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                         }
                     } else { // Product variation field
 
-
                         $_all = 'all_nonlocalized';
                         $config = [
                             "type" => "string",
@@ -464,7 +458,6 @@ class DataIndex extends DataAbstract implements IDataIndex
             $vocabularies = $this->_getVocabularies($data);
 
             // Set mapping for user
-
             $mapping = [
                 'objectType' => [
                     'type' => 'string',
@@ -554,7 +547,6 @@ class DataIndex extends DataAbstract implements IDataIndex
             $fields = $data['fields'];
 
             // Add system fields : email and name for user
-
             $fields[] = [
                 "cType" => "system",
                 "config" => [
@@ -615,7 +607,6 @@ class DataIndex extends DataAbstract implements IDataIndex
                             $mapping['fields']['properties'][$name] = $config;
                             break;
                         default:
-                            //$_autocomplete = 'autocomplete_nonlocalized';
                             $_all = 'all_nonlocalized';
                             $config = [
                                 "type" => "string",
@@ -714,15 +705,14 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         // Delete existing dam type
         $this->deleteDamType($id);
-
+        
         // Create mapping
         $indexMapping = $this->getIndexMapping($data, 'dam');
-
+       
         // If there is no searchable field, the new type is not created
         if (!empty($indexMapping)) {
             
-            // Create new type
-            
+            // Create new type           
         	$indexParams = [
         		'index' => self::$_dam_index['name'],
         		'type' => $id,
@@ -763,8 +753,7 @@ class DataIndex extends DataAbstract implements IDataIndex
         // If there is no searchable field, the new type is not created
         if (!empty($indexMapping)) {
         	
-        	// Create new type
-        	
+        	// Create new type        	
         	$indexParams = [
         		'index' => self::$_user_index['name'],
         		'type' => $id,
@@ -784,21 +773,22 @@ class DataIndex extends DataAbstract implements IDataIndex
     }
 
     /**
-     * Delete ES type for existing content type
+     * Delete content type mapping
      *
      * @see \Rubedo\Interfaces\IDataIndex::deleteContentType()
-     * @param string $id
+     * @param string $typeId
      *            content type id
      * @return array
      */
-    public function deleteContentType($id)
+    public function deleteContentType($typeId)
     {
-        //$mapping = self::$_content_index->getMapping();
-        if ($mapping = $this->_client->indices()->getMapping(['index' => self::$_content_index['name']]))
-        if (array_key_exists($id, $mapping)) {
-            $type = new \Elastica\Type(self::$_content_index, $id);
-            $type->delete();
-        }
+      	$params = [
+    		'index' => self::$_content_index['name'],
+    		'type' => $typeId
+    	];
+    	if ($this->_client->indices()->existsType($params)) {
+    		$this->_client->indices()->deleteMapping($params);
+    	}
     }
 
     /**
@@ -813,26 +803,31 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteContent($typeId, $id)
     {
-        $type = new \Elastica\Type(self::$_content_index, $typeId);
-        $type->deleteById($id);
+    	$params = [
+    		'index' => self::$_content_index['name'],
+    		'type' => $typeId,
+    		'id' => $id
+    	];
+    	$this->_client->delete($params);
     }
 
     /**
-     * Delete ES type for existing dam type
+     * Delete dam type mapping
      *
      * @see \Rubedo\Interfaces\IDataIndex::deleteDamType()
-     * @param string $id
+     * @param string $typeId
      *            dam type id
      * @return array
      */
-    public function deleteDamType($id)
-    {
-        //$mapping = self::$_dam_index->getMapping();
-    	if ($mapping = $this->_client->indices()->getMapping(['index' => self::$_dam_index['name']]))
-        if (array_key_exists($id, $mapping)) {
-            $type = new \Elastica\Type(self::$_dam_index, $id);
-            $type->delete();
-        }
+    public function deleteDamType($typeId)
+    {   	
+    	$params = [
+    		'index' => self::$_dam_index['name'],
+    		'type' => $typeId
+    	];
+    	if ($this->_client->indices()->existsType($params)) {
+    		$this->_client->indices()->deleteMapping($params);
+    	}
     }
 
     /**
@@ -840,36 +835,38 @@ class DataIndex extends DataAbstract implements IDataIndex
      *
      * @see \Rubedo\Interfaces\IDataIndex::deleteDam()
      * @param string $typeId
-     *            content type id
+     *            dam type id
      * @param string $id
      *            content id
      * @return array
      */
     public function deleteDam($typeId, $id)
     {
-        $type = new \Elastica\Type(self::$_dam_index, $typeId);
-        try {
-            $type->deleteById($id);
-        } catch (\Exception $e) {
-        } // Ignore not found error
+    	$params = [
+    		'index' => self::$_dam_index['name'],
+    		'type' => $typeId,
+    		'id' => $id
+    	];
+    	$this->_client->delete($params);
     }
 
     /**
-     * Delete ES type for existing user type
+     * Delete user type mapping
      *
      * @see \Rubedo\Interfaces\IDataIndex::deleteUserType()
-     * @param string $id
+     * @param string $typeId
      *            user type id
      * @return array
      */
-    public function deleteUserType($id)
+    public function deleteUserType($typeId)
     {
-        //$mapping = self::$_user_index->getMapping();
-    	if ($mapping = $this->_client->indices()->getMapping(['index' => self::$_user_index['name']]))
-        if (array_key_exists($id, $mapping)) {
-            $type = new \Elastica\Type(self::$_user_index, $id);
-            $type->delete();
-        }
+        $params = [
+    		'index' => self::$_user_index['name'],
+    		'type' => $typeId
+    	];
+    	if ($this->_client->indices()->existsType($params)) {
+    		$this->_client->indices()->deleteMapping($params);
+    	}
     }
 
     /**
@@ -884,8 +881,12 @@ class DataIndex extends DataAbstract implements IDataIndex
      */
     public function deleteUser($typeId, $id)
     {
-        $type = new \Elastica\Type(self::$_user_index, $typeId);
-        $type->deleteById($id);
+    	$params = [
+    		'index' => self::$_user_index['name'],
+    		'type' => $typeId,
+    		'id' => $id
+    	];
+    	$this->_client->delete($params);
     }
 
     /**
@@ -905,15 +906,13 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
 
         $typeId = $data['typeId'];
-
-        // Load ES type
-        $contentType = self::$_content_index->getType($typeId);
+        
+        $indexName = self::$_content_index['name'];
 
         // get available languages
         $availableLanguages = array_keys($data['i18n']);
 
         // Initialize data array to push into index
-
         $indexData = [
             'objectType' => 'content',
             'contentType' => $typeId,
@@ -932,7 +931,6 @@ class DataIndex extends DataAbstract implements IDataIndex
         ];
 
         // Index product properties if exists
-
         if (isset($data['productProperties'])) {
             $indexData['productProperties'] = $data['productProperties'];
             $indexData['encodedProductProperties'] = Json::encode($data['productProperties']);
@@ -1004,19 +1002,27 @@ class DataIndex extends DataAbstract implements IDataIndex
             ];
         }
 
-        // Add document
-        $currentDocument = new \Elastica\Document($data['id'], $indexData);
-
         if (isset($indexData['attachment']) && $indexData['attachment'] != '') {
-            $currentDocument->addFile('file', $indexData['attachment']);
+        	$indexData['file'] = base64_encode($indexData['attachment']);
         }
 
         // Add content to content type index
         if (!$bulk) {
-            $contentType->addDocument($currentDocument);
-            $contentType->getIndex()->refresh();
+        	           
+        	$params = [
+        		'index' => $indexName,
+        		'type' => $typeId,
+        		'id' => $data['id'],
+        		'body' => $indexData
+        	];
+        	
+        	$this->_client->bulk($params);
+        	 
+        	$this->_client->indices()->refresh(['index' => $indexName]);
+        	
         } else {
-            $this->_documents[] = $currentDocument;
+            $this->_documents[] = ['index' => ['_id' => $data['id']]];
+            $this->_documents[] = $indexData;
         }
     }
 
@@ -1033,12 +1039,12 @@ class DataIndex extends DataAbstract implements IDataIndex
             return;
         }
         $typeId = $data['typeId'];
-        // Load ES dam type
-        $damType = self::$_dam_index->getType($typeId);
 
+        $indexName = self::$_dam_index['name'];
+        
         // get available languages
         $availableLanguages = array_keys($data['i18n']);
-
+        
         // Initialize data array to push into index     
         $indexData = [
             'objectType' => 'dam',
@@ -1054,7 +1060,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'fileSize' => isset($data['fileSize']) ? (integer)$data['fileSize'] : 0,
             'version' => $data['version']
         ];
-
+               	
         // Add taxonomy
         if (isset($data["taxonomy"])) {
 
@@ -1112,8 +1118,6 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
 
         // Add document
-        $currentDam = new \Elastica\Document($data['id'], $indexData);
-
         if (isset($data['originalFileId']) && $data['originalFileId'] != '') {
 
             $indexedFiles = [
@@ -1135,19 +1139,27 @@ class DataIndex extends DataAbstract implements IDataIndex
             $mime = explode(';', $data['Content-Type']);
 
             if (in_array($mime[0], $indexedFiles)) {
-                $mongoFile = Manager::getService('Files')->FindById(
-                    $data['originalFileId']);
-                $currentDam->addFileContent('file', $mongoFile->getBytes());
+                $mongoFile = Manager::getService('Files')->FindById($data['originalFileId']);
+                $indexData['file'] = base64_encode($mongoFile->getBytes());
             }
         }
 
         // Add dam to dam type index
-
         if (!$bulk) {
-            $damType->addDocument($currentDam);
-            $damType->getIndex()->refresh();
+        	
+        	$params = [
+        		'index' => $indexName,
+        		'type' => $typeId,
+        		'body' => $indexData
+        	];
+        	        	
+        	$this->_client->index($params);
+        	 
+        	$this->_client->indices()->refresh(['index' => $indexName]);
+        	
         } else {
-            $this->_documents[] = $currentDam;
+            $this->_documents[] = ['index' => ['_id' => $data['id']]];
+            $this->_documents[] = $indexData;
         }
     }
 
@@ -1167,8 +1179,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         $typeId = $data['typeId'];
 
-        // Load ES type
-        $userType = self::$_user_index->getType($typeId);
+        $indexName = self::$_user_index['name'];
 
         // Initialize data array to push into index
 
@@ -1181,6 +1192,7 @@ class DataIndex extends DataAbstract implements IDataIndex
             'userType' => $typeId,
             'text' => $data['name'],
             'email' => $data['email'],
+            'createUser' => $data['createUser'],
             'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string)($data['lastUpdateTime'] *
                 1000) : 0,
             'fields' => $data['fields'],
@@ -1234,18 +1246,27 @@ class DataIndex extends DataAbstract implements IDataIndex
         ];
 
         // Add document
-        $currentDocument = new \Elastica\Document($data['id'], $indexData);
-
         if (isset($indexData['attachment']) && $indexData['attachment'] != '') {
-            $currentDocument->addFile('file', $indexData['attachment']);
+            $indexData['file'] = base64_encode($indexData['attachment']);
         }
 
         // Add content to content type index
         if (!$bulk) {
-            $userType->addDocument($currentDocument);
-            $userType->getIndex()->refresh();
+        	
+        	$params = [
+        		'index' => $indexName,
+        		'type' => $typeId,
+        	];
+        	 
+        	$params['body'] = $indexData;
+        	
+        	$this->_client->index($params);
+        	 
+        	$this->_client->indices()->refresh(['index' => $indexName]);
+        	
         } else {
-            $this->_documents[] = $currentDocument;
+            $this->_documents[] = ['index' => ['_id' => $data['id']]];
+            $this->_documents[] = $indexData;
         }
     }
 
@@ -1265,26 +1286,21 @@ class DataIndex extends DataAbstract implements IDataIndex
         // Initialize result array
         $result = [];
 
+        // Destroy and re-create content, dam and user indexes        
         if ($option == 'all' or $option == 'content') {
-            // Destroy and re-create content index
             $this->_client->indices()->delete(['index' =>  self::$_content_index['name']]);
-            //$this->_client->indices()->create(self::$_content_index_param);
         }
 
         if ($option == 'all' or $option == 'dam') {
-            // Destroy and re-create dam index
-            $this->_client->indices()->delete(['index' =>  self::$_dam_index]);
-            //self::$_dam_index->create(self::$_dam_index_param, true);
+            $this->_client->indices()->delete(['index' =>  self::$_dam_index['name']]);
         }
 
         if ($option == 'all' or $option == 'users') {
-        	// Destroy and re-create user index
-        	$this->_client->indices()->delete(['index' =>  self::$_user_index]);
-        	//self::$_user_index->create(self::$_user_index_param, true);
+        	$this->_client->indices()->delete(['index' =>  self::$_user_index['name']]);
         }
 
         parent::init();
-        
+
         if ($option == 'all' or $option == 'content') {
 
             // Retreive all content types
@@ -1401,7 +1417,8 @@ class DataIndex extends DataAbstract implements IDataIndex
             }
         }
 
-        if (!$useQueue) {
+        //if (!$useQueue) {
+        if (true) {
 
             do {
 
@@ -1413,7 +1430,6 @@ class DataIndex extends DataAbstract implements IDataIndex
         } else {
 
             // Get total items to be indexed
-
             $dataService = Manager::getService($serviceData);
 
             $filter = Filter::factory('Value')->setName('typeId')->SetValue($id);
@@ -1423,7 +1439,6 @@ class DataIndex extends DataAbstract implements IDataIndex
             $start = 0;
 
             // Push jobs in queue
-
             if ($totalToBeIndexed > 0) {
                 do {
 
@@ -1445,20 +1460,20 @@ class DataIndex extends DataAbstract implements IDataIndex
         return ($result);
     }
 
-    public function bulkIndex($option, $id, $start, $bulkSize)
+    public function bulkIndex($option, $typeId, $start, $bulkSize)
     {
         switch ($option) {
             case 'content':
                 $serviceData = 'Contents';
-                $serviceType = self::$_content_index->getType($id);
+                $indexName = self::$_content_index['name'];
                 break;
             case 'dam':
                 $serviceData = 'Dam';
-                $serviceType = self::$_dam_index->getType($id);
+                $indexName = self::$_dam_index['name'];
                 break;
             case 'user':
                 $serviceData = 'Users';
-                $serviceType = self::$_user_index->getType($id);
+                $indexName = self::$_user_index['name'];
                 break;
             default:
                 throw new \Rubedo\Exceptions\Server(
@@ -1471,7 +1486,7 @@ class DataIndex extends DataAbstract implements IDataIndex
 
         $dataService = Manager::getService($serviceData);
         $wasFiltered = $dataService::disableUserFilter();
-        $itemList = $dataService->getByType($id, (int)$start, (int)$bulkSize);
+        $itemList = $dataService->getByType($typeId, (int)$start, (int)$bulkSize);
 
         $dataService::disableUserFilter($wasFiltered);
         foreach ($itemList["data"] as $item) {
@@ -1489,11 +1504,23 @@ class DataIndex extends DataAbstract implements IDataIndex
         }
 
         if (!empty($this->_documents)) {
+			
+        	$params = array();
+        	$params = [
+        		'index' => $indexName,
+        		'type' => $typeId,
+        	];
+        	
+        	$params['body'] = $this->_documents;
 
-            $serviceType->addDocuments($this->_documents);
-            $serviceType->getIndex()->refresh();
+        	$this->_client->bulk($params);        	
+
+        	$this->_client->indices()->refresh(['index' => $indexName]);
+        	
             empty($this->_documents);
+            
             $return = count($itemList['data']);
+            
         } else {
 
             $return = 0;

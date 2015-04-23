@@ -83,7 +83,7 @@ class DataAbstract
      *
      * @var array
      */
-    protected static $_content_index_param;
+    protected static $_index_settings;
     
     /**
      * Dam index object
@@ -140,37 +140,37 @@ class DataAbstract
         // Create content index if not exists 
         self::$_content_index['name'] = $defaultDB . "-" . self::$_options['contentIndex'];
 		if (!$this->_client->indices()->exists(['index' => array(self::$_content_index['name'])])) {
-			self::$_content_index_param = [
+			$params = [
 				'index' => self::$_content_index['name'], 
 				'body' => [
-					'settings' => self::$_content_index['settings']
+					'settings' => self::$_index_settings
 				]
 			];
-			$this->_client->indices()->create(self::$_content_index_param);
+			$this->_client->indices()->create($params);
 		}
 
 		// Create dam index if not exists
 		self::$_dam_index['name'] = $defaultDB . "-" . self::$_options['damIndex'];
 		if (!$this->_client->indices()->exists(['index' => array(self::$_dam_index['name'])])) {
-			$damIndexParams = [
+			$params = [
 				'index' => self::$_dam_index['name'],
 				'body' => [
-					'settings' => self::$_dam_index['settings']
+					'settings' => self::$_index_settings
 				]
 			];
-			$this->_client->indices()->create($damIndexParams);
+			$this->_client->indices()->create($params);
 		}
 
 		// Create user index if not exists
 		self::$_user_index['name'] = $defaultDB . "-" . self::$_options['userIndex'];
 		if (!$this->_client->indices()->exists(['index' => array(self::$_user_index['name'])])) {
-			$userIndexParams = [
+			$params = [
 				'index' => self::$_user_index['name'],
 				'body' => [
-					'settings' => self::$_user_index['settings']
+					'settings' => self::$_index_settings
 				]
 			];
-			$this->_client->indices()->create($userIndexParams);
+			$this->_client->indices()->create($params);
 		}
 
     }
@@ -222,8 +222,6 @@ class DataAbstract
         }
         $indexOptionsJson = file_get_contents($options['elastic']['configFilePath']);
         $indexOptions = Json::decode($indexOptionsJson, Json::TYPE_ARRAY);
-        self::$_content_index['settings'] = $indexOptions;
-        self::$_dam_index['settings'] = $indexOptions;
-        self::$_user_index['settings'] = $indexOptions;
+        self::$_index_settings = $indexOptions;
     }
 }
