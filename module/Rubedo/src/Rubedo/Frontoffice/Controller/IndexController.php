@@ -235,10 +235,15 @@ class IndexController extends AbstractActionController
                 }
             }
         }
+
         $themeName = strtolower($theme);
         $propagatedSiteTheme = $themeName;
+        $includeBaseBootstrap=true;
         if (isset($config['templates']['themes'][$themeName])) {
             $theme = $config['templates']['themes'][$themeName];
+            if (isset($theme["noBootstrap"])&&$theme["noBootstrap"]){
+                $includeBaseBootstrap=false;
+            }
             $prepend = '/theme/' . $themeName;
             $propagatedSiteTheme = $themeName;
             if (isset($theme['css'])) {
@@ -302,8 +307,10 @@ class IndexController extends AbstractActionController
             'googleAnalyticsKey' => $googleAnalyticsKey,
             'activateMagic' => (isset($config['rubedo_config']['activateMagic']) && ($config['rubedo_config']['activateMagic'] == "1")) ? true : false,
             'angularLocale' => $lang,
-            'siteTheme' => $propagatedSiteTheme
+            'siteTheme' => $propagatedSiteTheme,
+            'includeBaseBootstrap'=>$includeBaseBootstrap
         );
+
         $viewModel = new ViewModel($this->viewData);
         $viewModel->setTerminal(true);
 

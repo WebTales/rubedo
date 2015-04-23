@@ -31,7 +31,9 @@
     <title ng-bind-template="{{rubedo.current.page.title}}"></title>
     <!--css-->
     <link rel="stylesheet" type="text/css" href="/components/jtrussell/angular-snap.js-bower/angular-snap-only.min.css">
+    <?php if ($this->includeBaseBootstrap){ ?>
     <link rel="stylesheet" type="text/css" href="/components/twbs/bootstrap/dist/css/bootstrap.min.css">
+    <?php } ?>
     <link rel="stylesheet" type="text/css" href="/theme/<?php echo $this->siteTheme; ?>/css/rubedo.css">
     <link href='/components/jquery/fullCalendar/fullcalendar.css' rel='stylesheet' type="text/css" />
     <link href='/components/jquery/fullCalendar/fullcalendar.print.css' rel='stylesheet' media='print' type="text/css" />
