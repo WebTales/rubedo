@@ -351,6 +351,10 @@ class OrdersResource extends AbstractResource
                     ->setDescription('Orders')
                     ->setKey('orders')
                     ->setRequired()
+            )->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Total number of orders')
+                    ->setKey('total')
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
