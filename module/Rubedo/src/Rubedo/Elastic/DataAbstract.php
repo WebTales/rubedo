@@ -105,6 +105,7 @@ class DataAbstract
         if (!isset(self::$_options)) {
             self::lazyLoadConfig();
         }
+        self::init();
     }
 
     /**

@@ -17,10 +17,8 @@
  */
 namespace Rubedo\Elastic;
 
-use Rubedo\Interfaces\Elastic\IDataSearch;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
-use Zend\Debug\Debug;
 
 /**
  * Class implementing the Rubedo API to Elastic Search using elastic API
@@ -29,7 +27,7 @@ use Zend\Debug\Debug;
  * @category Rubedo
  * @package Rubedo
  */
-class DataSearch extends DataAbstract implements IDataSearch
+class DataSearch extends DataAbstract
 {
 
     /**
