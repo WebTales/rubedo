@@ -237,8 +237,11 @@ class DataSearch extends DataAbstract implements IDataSearch
 
     protected function setLocaleFilter(array $values)
     {
-        $filter = new \Elastica\Filter\Terms ();
-        $filter->setTerms('availableLanguages', $values);
+        $filter = [
+    		'terms' => [
+    			'availableLanguages' => $values
+        	]
+        ];
         $this->_globalFilterList ['availableLanguages'] = $filter;
         $this->_setFilter = true;
     }
@@ -643,7 +646,7 @@ class DataSearch extends DataAbstract implements IDataSearch
             				$this->_params ['inflon'] + 0,
             				$this->_params ['suplat'] + 0
             			],
-            			'bottomright' => [
+            			'bottom_right' => [
                 			$this->_params ['suplon'] + 0,
                 			$this->_params ['inflat'] + 0
             			]
@@ -741,9 +744,9 @@ class DataSearch extends DataAbstract implements IDataSearch
                 	];
                     break;
                 case 'onlyOne' :
-                    //TODO $this->setLocaleFilter(array(
-                    //    $currentLocale
-                    //));
+                    $this->setLocaleFilter(array(
+                        $currentLocale
+                    ));
                     $elasticQueryString = [
                     	'fields' => [
                     		"all_" . $currentLocale,
@@ -952,20 +955,10 @@ class DataSearch extends DataAbstract implements IDataSearch
             case 'user' :
                 $searchParams['index'] = self::$_user_index['name'];
                 break;
-            case 'geo' : // TODO
-                if (isset($geoPrecision)) $geoAgreggation['hash']['geohash_grid']['precision'] = $geoPrecision;
-                //var_dump($geoAgreggation);
+            case 'geo' :
+                if (isset($geoPrecision)) $geoAgreggation['aggs']['hash']['geohash_grid']['precision'] = $geoPrecision;
                 $searchParams['body']['aggs']['agf'] = $geoAgreggation;
-                $searchParams['body']['aggs']['agf']['filter'] = $globalFilter;
-        			//$geoAgreggation
-                //];
-                
-                //$agf = new \Elastica\Aggregation\Filter('agf');
-                //$agf->setFilter($globalFilter);
-                //$agf->addAggregation($geoAgreggation);
-                //$elasticaQuery->addAggregation($agf);
-                
-                
+                $searchParams['body']['aggs']['agf']['filter'] = $globalFilter;                               
                 $searchParams['index'] = self::$_content_index['name'];
                 break;
             case 'all' :
@@ -975,39 +968,43 @@ class DataSearch extends DataAbstract implements IDataSearch
 
         // For geosearch dynamically set searchMode depending on the number of results // TODO
         if ($option == 'geo' && self::$_isFrontEnd) {
+        	//var_dump($searchParams);
+        	$this->_params['searchMode'] = 'default';
+        	/*
             $noResults = $this->_client->count($searchParams);
             if ($noResults > $this->_params['limit']) {
                 $this->_params['searchMode'] = 'aggregate';
             } else {
                 $this->_params['searchMode'] = 'default';
             }
+            */
+            
 
         }
 
         // Get resultset
         switch ($this->_params['searchMode']) {
             case 'default':
+
                 $elasticResultSet = $this->_client->search($searchParams);
                 break;
             case 'aggregate': // TODO
-                $elasticResultSet = $search->count($elasticaQuery, true);
+                $elasticResultSet = $this->_client->search($searchParams, true);
                 break;
             case 'count': // TODO
-                $elasticResultSet = $search->count($elasticaQuery, false);
+                $elasticResultSet = $this->_client->search($searchParams, false);
                 break;
         }
 
-        // For geosearch get aggregation buckets // TODO
-        /*
+        // For geosearch get aggregation buckets
         if ($option == 'geo') {
-
-            $result ['Aggregations'] = $elasticResultSet->getAggregation("agf")['hash'];
+            $result ['Aggregations'] = $elasticResultSet['aggregations']['agf']['hash'];
 
             foreach ($result ['Aggregations']['buckets'] as $key => $bucket) {
                 $point = $this->geoHashDecode($bucket['key']);
                 $result ['Aggregations']['buckets'][$key] += $point;
             }
-        }*/
+        }
 
         // Update data
         $resultsList = $elasticResultSet['hits']['hits'];
@@ -1128,177 +1125,180 @@ class DataSearch extends DataAbstract implements IDataSearch
         $result ['facets'] = array();
 
         foreach ($elasticFacets as $id => $facet) {
-            $temp = ( array )$facet['aggregation'];
-
-            $renderFacet = true;
-            if (!empty ($temp)) {
-                $temp ['id'] = $id;
-                switch ($id) {
-                	
-                    case 'navigation' :
-
-                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.Navigation", 'Navigation');
-                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
-                            foreach ($temp ['buckets'] as $key => $value) {
-                                $termItem = $taxonomyTermsService->getTerm($value ['key'], 'navigation');
-                                $temp ['terms'] [$key] ['label'] = $termItem ["Navigation"];
-                            }
-                        } else {
-                            $renderFacet = false;
-                        }
-                        break;
-
-                    case 'damType' :
-
-                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.MediaType", 'Media type');
-                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
-                            foreach ($temp ['buckets'] as $key => $value) {
-                                $termItem = $this->_getDamType($value ['key']);
-                                if ($termItem && isset ($termItem ['type'])) {
-                                	$temp ['terms'] [$key] ['term'] = $value ['key'];
-                                    $temp ['terms'] [$key] ['label'] = $termItem ['type'];
-                                    $temp['terms'] [$key] ['count'] = $value['doc_count'];
-                                }
-                            }
-                        } else {
-                            $renderFacet = false;
-                        }
-                        break;
-
-                    case 'objectType' :
-
-                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.DataType", 'Data type');
-                        foreach ($temp ['buckets'] as $key => $value) {
-                        	$temp ['terms'] [$key] ['term'] = $value ['key'];
-                            $temp ['terms'] [$key] ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.".strtoupper($value ["key"]), strtoupper($value ["key"]));
-                            $temp['terms'] [$key] ['count'] = $value['doc_count'];
-                        }
-                        break;
-
-                    case 'type' :
-
-                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.ContentType", 'Content type');
-                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
-                            foreach ($temp ['buckets'] as $key => $value) {
-                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
-                                $termItem = $this->_getContentType($value ['key']);
-                                $temp ['terms'] [$key] ['label'] = $termItem ['type'];
-                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
-                            }
-                        } else {
-                            $renderFacet = false;
-                        }
-                        break;
-
-                    case 'userType' :
-
-                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.UserType", 'User type');
-                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
-                            foreach ($temp ['buckets'] as $key => $value) {
-                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
-                                $termItem = $this->_getUserType($value ['key']);
-                                $temp ['terms'] [$key] ['label'] = $termItem ['type'];
-                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
-                            }
-                        } else {
-                            $renderFacet = false;
-                        }
-                        break;
-
-                    case 'author' :
-
-                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.Author", 'Author');
-                        if ($this->_facetDisplayMode == 'checkbox' or (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0)) {
-                            $collection = Manager::getService('Users');
-                            foreach ($temp ['buckets'] as $key => $value) {
-                            	if ($value ['key'] != 'rubedo') {
+        	//var_dump($facet);
+        	if (isset($facet['aggregation'])) {
+	            $temp = ( array )$facet['aggregation'];
+	
+	            $renderFacet = true;
+	            if (!empty ($temp)) {
+	                $temp ['id'] = $id;
+	                switch ($id) {
+	                	
+	                    case 'navigation' :
+	
+	                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.Navigation", 'Navigation');
+	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+	                            foreach ($temp ['buckets'] as $key => $value) {
+	                                $termItem = $taxonomyTermsService->getTerm($value ['key'], 'navigation');
+	                                $temp ['terms'] [$key] ['label'] = $termItem ["Navigation"];
+	                            }
+	                        } else {
+	                            $renderFacet = false;
+	                        }
+	                        break;
+	
+	                    case 'damType' :
+	
+	                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.MediaType", 'Media type');
+	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+	                            foreach ($temp ['buckets'] as $key => $value) {
+	                                $termItem = $this->_getDamType($value ['key']);
+	                                if ($termItem && isset ($termItem ['type'])) {
+	                                	$temp ['terms'] [$key] ['term'] = $value ['key'];
+	                                    $temp ['terms'] [$key] ['label'] = $termItem ['type'];
+	                                    $temp['terms'] [$key] ['count'] = $value['doc_count'];
+	                                }
+	                            }
+	                        } else {
+	                            $renderFacet = false;
+	                        }
+	                        break;
+	
+	                    case 'objectType' :
+	
+	                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.DataType", 'Data type');
+	                        foreach ($temp ['buckets'] as $key => $value) {
+	                        	$temp ['terms'] [$key] ['term'] = $value ['key'];
+	                            $temp ['terms'] [$key] ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.".strtoupper($value ["key"]), strtoupper($value ["key"]));
+	                            $temp['terms'] [$key] ['count'] = $value['doc_count'];
+	                        }
+	                        break;
+	
+	                    case 'type' :
+	
+	                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.ContentType", 'Content type');
+	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+	                            foreach ($temp ['buckets'] as $key => $value) {
 	                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
-	                              	$termItem = $collection->findById($value ['key']);
-	                              	$temp ['terms'] [$key] ['label'] = $termItem ['name'];
+	                                $termItem = $this->_getContentType($value ['key']);
+	                                $temp ['terms'] [$key] ['label'] = $termItem ['type'];
 	                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
-                            	}
-                            }
-                        } else {
-                            $renderFacet = false;
-                        }
-                        break;
-
-                    case 'userName' :
-
-                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.UserName", 'User Name');
-                        foreach ($temp ['buckets'] as $key => $value) {
-                        	$temp ['terms'] [$key] ['term'] = $value ['key'];
-                            $temp ['terms'] [$key] ['label'] = strtoupper($value ["key"]);
-                            $temp['terms'] [$key] ['count'] = $value['doc_count'];
-                        }
-
-                        break;
-
-                    case 'lastupdatetime' :
-
-                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.ModificationDate", 'Modification date');
-                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
-                            foreach ($temp ['buckets'] as $key => $value) {
-                                $rangeCount = $value ['doc_count'];
-                                // unset facet when count = 0 or total results
-                                // count when display mode is not set to
-                                // checkbox
-                                if ($this->_facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount <= $result ['total'])) {
-                                    $temp ['ranges'] [$key] ['label'] = $timeLabel [( string )$value ['from']];
-                                } else {
-                                    unset ($temp ['ranges'] [$key]);
-                                }
-                            }
-                        } else {
-                            $renderFacet = false;
-                        }
-
-                        $temp ["ranges"] = array_values($temp ["buckets"]);
-
-                        break;
-
-                    default :
-                        $regex = '/^[0-9a-z]{24}$/';
-                        if (preg_match($regex, $id)) { // Taxonomy facet use
-                            // mongoID
-                            $vocabularyItem = Manager::getService('Taxonomy')->findById($id);
-                            $temp ['label'] = $vocabularyItem ['name'];
-                            if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
-                                foreach ($temp ['buckets'] as $key => $value) {
-                                	$temp ['terms'] [$key] ['term'] = $value ['key'];
-                                	$temp['terms'] [$key] ['count'] = $value['doc_count'];
-                                    $termItem = $taxonomyTermsService->findById($value ['key']);
-                                    if ($termItem) {
-                                        $temp ['terms'] [$key] ['label'] = $termItem ['text'];
-                                    } else {
-                                        unset ($temp ['buckets'] [$key]);
-                                    }
-                                }
-                            } else {
-                                $renderFacet = false;
-                            }
-                        } else {
-                            // faceted field
-                            $intermediaryVal = $this->searchLabel($facetedFields, "name", $id);	
-                            $temp ['label'] = $intermediaryVal [0] ['label'];
-
-                            if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
-                                foreach ($temp ['buckets'] as $key => $value) {
-                                	$temp ['terms'] [$key] ['term'] = $value ['key'];
-                                	$temp['terms'] [$key] ['count'] = $value['doc_count'];
-                                    $temp ['terms'] [$key] ['label'] = $value ['key'];
-                                }
-                            }
-                        }
-                        break;
-                }
-                if ($renderFacet) {
-                	unset ($temp['buckets']);
-                	unset ($temp['doc_count_error_upper_bound']);
-                	unset ($temp['sum_other_doc_count']);
-                    $result ['facets'] [] = $temp;
-                }
-            }
+	                            }
+	                        } else {
+	                            $renderFacet = false;
+	                        }
+	                        break;
+	
+	                    case 'userType' :
+	
+	                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.UserType", 'User type');
+	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+	                            foreach ($temp ['buckets'] as $key => $value) {
+	                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
+	                                $termItem = $this->_getUserType($value ['key']);
+	                                $temp ['terms'] [$key] ['label'] = $termItem ['type'];
+	                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
+	                            }
+	                        } else {
+	                            $renderFacet = false;
+	                        }
+	                        break;
+	
+	                    case 'author' :
+	
+	                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.Author", 'Author');
+	                        if ($this->_facetDisplayMode == 'checkbox' or (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0)) {
+	                            $collection = Manager::getService('Users');
+	                            foreach ($temp ['buckets'] as $key => $value) {
+	                            	if ($value ['key'] != 'rubedo') {
+		                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
+		                              	$termItem = $collection->findById($value ['key']);
+		                              	$temp ['terms'] [$key] ['label'] = $termItem ['name'];
+		                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
+	                            	}
+	                            }
+	                        } else {
+	                            $renderFacet = false;
+	                        }
+	                        break;
+	
+	                    case 'userName' :
+	
+	                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.UserName", 'User Name');
+	                        foreach ($temp ['buckets'] as $key => $value) {
+	                        	$temp ['terms'] [$key] ['term'] = $value ['key'];
+	                            $temp ['terms'] [$key] ['label'] = strtoupper($value ["key"]);
+	                            $temp['terms'] [$key] ['count'] = $value['doc_count'];
+	                        }
+	
+	                        break;
+	
+	                    case 'lastupdatetime' :
+	
+	                        $temp ['label'] = Manager::getService('Translate')->translate("Search.Facets.Label.ModificationDate", 'Modification date');
+	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+	                            foreach ($temp ['buckets'] as $key => $value) {
+	                                $rangeCount = $value ['doc_count'];
+	                                // unset facet when count = 0 or total results
+	                                // count when display mode is not set to
+	                                // checkbox
+	                                if ($this->_facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount <= $result ['total'])) {
+	                                    $temp ['ranges'] [$key] ['label'] = $timeLabel [( string )$value ['from']];
+	                                } else {
+	                                    unset ($temp ['ranges'] [$key]);
+	                                }
+	                            }
+	                        } else {
+	                            $renderFacet = false;
+	                        }
+	
+	                        $temp ["ranges"] = array_values($temp ["buckets"]);
+	
+	                        break;
+	
+	                    default :
+	                        $regex = '/^[0-9a-z]{24}$/';
+	                        if (preg_match($regex, $id)) { // Taxonomy facet use
+	                            // mongoID
+	                            $vocabularyItem = Manager::getService('Taxonomy')->findById($id);
+	                            $temp ['label'] = $vocabularyItem ['name'];
+	                            if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+	                                foreach ($temp ['buckets'] as $key => $value) {
+	                                	$temp ['terms'] [$key] ['term'] = $value ['key'];
+	                                	$temp['terms'] [$key] ['count'] = $value['doc_count'];
+	                                    $termItem = $taxonomyTermsService->findById($value ['key']);
+	                                    if ($termItem) {
+	                                        $temp ['terms'] [$key] ['label'] = $termItem ['text'];
+	                                    } else {
+	                                        unset ($temp ['buckets'] [$key]);
+	                                    }
+	                                }
+	                            } else {
+	                                $renderFacet = false;
+	                            }
+	                        } else {
+	                            // faceted field
+	                            $intermediaryVal = $this->searchLabel($facetedFields, "name", $id);	
+	                            $temp ['label'] = $intermediaryVal [0] ['label'];
+	
+	                            if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+	                                foreach ($temp ['buckets'] as $key => $value) {
+	                                	$temp ['terms'] [$key] ['term'] = $value ['key'];
+	                                	$temp['terms'] [$key] ['count'] = $value['doc_count'];
+	                                    $temp ['terms'] [$key] ['label'] = $value ['key'];
+	                                }
+	                            }
+	                        }
+	                        break;
+	                }
+	                if ($renderFacet) {
+	                	unset ($temp['buckets']);
+	                	unset ($temp['doc_count_error_upper_bound']);
+	                	unset ($temp['sum_other_doc_count']);
+	                    $result ['facets'] [] = $temp;
+	                }
+	            }
+            }				
         }
 
         // Add label to filters
