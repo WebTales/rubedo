@@ -9,7 +9,6 @@
         "webtales/mongo-filters": "2.0.*",
         "twig/extensions": "1.0.*",
         "monolog/monolog": "~1.8",
-        "ruflin/Elastica": "1.4.*",
         "ezyang/htmlpurifier": "~4.6",
         "zendframework/zendframework": "2.3.*",
         "swiftmailer/swiftmailer": "~5.1",
