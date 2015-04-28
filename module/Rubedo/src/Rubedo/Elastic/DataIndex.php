@@ -642,8 +642,7 @@ class DataIndex extends DataAbstract
             }
         }
 
-        //if (!$useQueue) {
-        if (true) {
+        if (!$useQueue) {
 
             do {
 

@@ -1031,8 +1031,8 @@ class DataSearch extends DataAbstract
             if (!is_float($score))
                 $score = 1;
             $resultData ['score'] = round($score * 100);
-            $resultData ['authorName'] = isset ($data ['createUser']['fullName'][0]) ? $data ['createUser']['fullName'][0] : null;
-            $resultData ['author'] = isset ($data ['createUser']['id'][0]) ? $data ['createUser']['id'][0] : null;
+            $resultData ['authorName'] = isset ($data ['createUser.fullName'][0]) ? $data ['createUser.fullName'][0] : null;
+            $resultData ['author'] = isset ($data ['createUser.id'][0]) ? $data ['createUser.id'][0] : null;
             $resultData ['version'] = isset ($data ['version'][0]) ? $data ['version'][0] : null;
             $resultData ['photo'] = isset ($data ['photo'][0] ) ? $data ['photo'][0] : null;
             $resultData ['objectType'] = $data ['objectType'][0];
