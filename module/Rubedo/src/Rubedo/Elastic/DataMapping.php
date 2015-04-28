@@ -32,6 +32,181 @@ use Zend\Json\Json;
 class DataMapping extends DataAbstract
 {
 
+	/**
+	 * Common system mapping for contents, dam and users
+	 */
+	protected $_systemMapping = [
+		'objectType' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'typeId' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'author' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'createUser' => [
+			'type' => 'object',
+			'store' => 'yes',
+			'properties' => [
+				'id' => [
+				'type' => 'string',
+				'index' => 'not_analyzed',
+				'store' => 'yes'
+				],
+				'fullName' => [
+					'type' => 'string',
+					'index' => 'not_analyzed',
+					'store' => 'yes'
+				],
+				'login' => [
+					'type' => 'string',
+					'index' => 'no',
+					'store' => 'no'
+				]
+			]
+		],
+		'startPublicationDate' => [
+			'type' => 'integer',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'endPublicationDate' => [
+			'type' => 'integer',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'lastUpdateTime' => [
+			'type' => 'date',
+			'store' => 'yes'
+		],
+		'autocomplete_nonlocalized' => [
+			'type' => 'completion',
+			'index_analyzer' => 'simple',
+			'search_analyzer' => 'simple',
+			'payloads' => true,
+			'preserve_position_increments' => false
+		]
+	];
+	
+	/**
+	 * Common mapping for contents & dam
+	 */	
+	protected $_contentAndDamMapping = [
+		'text' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'target' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'writeWorkspace' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'availableLanguages' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'version' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		]
+			
+	];
+	
+	/**
+	 * Specific mapping for contents
+	 */
+	protected $_contentMapping = [
+		'summary' => [
+			'type' => 'string',
+			'store' => 'yes'
+		],
+		'contentType' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'online' => [
+			'type' => 'boolean',
+			'store' => 'yes'
+		]	
+	];
+
+	/**
+	 * Specific mapping for dam
+	 */
+	protected $_damMapping = [
+		'damType' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'fileSize' => [
+			'type' => 'integer',
+			'store' => 'yes'
+		],
+		'file' => [
+			'type' => 'attachment'
+		]	
+	];
+
+	/**
+	 * Specific mapping for users
+	 */
+	protected $_userMapping = [
+		'email' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'photo' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
+		'userType' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		]	
+	];
+
+	/**
+	 * Active languages
+	 */	
+	protected $_activeLanguages;
+	
+	/**
+	 * Active analyzers
+	 */
+	protected $_activeAnalysers;
+	
+	public function __construct()
+	{
+		parent::__construct();
+		
+		// get active languages
+		$languages = Manager::getService('Languages');
+		$this->_activeLanguages = $languages->getActiveLanguages();
+		
+		// get active analyzers
+		$this->_activeAnalysers = array_keys($this::$_index_settings['analysis'] ['analyzer']);
+	}
+	
     /**
      * Returns mapping from content or dam type data
      *
@@ -46,106 +221,22 @@ class DataMapping extends DataAbstract
 
         if (isset ($data ['fields']) && is_array($data ['fields'])) {
 
-            // get active languages
-            $languages = Manager::getService("Languages");
-            $activeLanguages = $languages->getActiveLanguages();
-
-            // get active analysers
-            $activeAnalysers = array_keys($this::$_index_settings["analysis"] ["analyzer"]);
-
             // get vocabularies
             $vocabularies = $this->_getVocabularies($data);
 
-            // Set generic mapping for contents & dam
-            $generic_mapping = [
-                'objectType' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'lastUpdateTime' => [
-                    'type' => 'date',
-                    'store' => 'yes'
-                ],
-                'createUser' => [
-                    'type' => 'object',
-                    'store' => 'yes',
-                    'properties' => [
-                        'id' => [
-                            'type' => 'string',
-                            'index' => 'not_analyzed',
-                            'store' => 'yes'
-                        ],
-                        'fullName' => [
-                            'type' => 'string',
-                            'index' => 'not_analyzed',
-                            'store' => 'yes'
-                        ],
-                        'login' => [
-                            'type' => 'string',
-                            'index' => 'no',
-                            'store' => 'no'
-                        ]
-                    ]
-                ],
-                'text' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'author' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'typeId' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'target' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'writeWorkspace' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'availableLanguages' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'version' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'startPublicationDate' => [
-                    'type' => 'integer',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'endPublicationDate' => [
-                    'type' => 'integer',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'autocomplete_nonlocalized' => [
-                    'type' => 'completion',
-                    'index_analyzer' => 'simple',
-                    'search_analyzer' => 'simple',
-                    'payloads' => true,
-                    'preserve_position_increments' => false
-                ]
-            ];
+            // Set mapping
+            if ($type == 'content') {
+            	$specificMapping = $this->_contentMapping;
+            }
+            if ($type == 'dam') {
+            	$specificMapping = $this->_damMapping;
+            }
+            $mapping = array_merge($this->_systemMapping,$this->_contentAndDamMapping, $specificMapping);
 
             // add mapping for autocomplete in every active language
-            foreach ($activeLanguages as $lang) {
-                $locale = in_array($lang ['locale'], $activeAnalysers) ? $lang ['locale'] : 'default';
-                $generic_mapping ['autocomplete_' . $lang ['locale']] = [
+            foreach ($this->_activeLanguages as $lang) {
+                $locale = !in_array($lang ['locale'], $this->_activeAnalysers) ? 'default' : $lang ['locale'];
+                $mapping ['autocomplete_' . $lang ['locale']] = [
                     'type' => 'completion',
                     'index_analyzer' => $locale . '_analyzer',
                     'search_analyzer' => $locale . '_analyzer',
@@ -153,46 +244,6 @@ class DataMapping extends DataAbstract
                     'preserve_position_increments' => false
                 ];
             }
-
-            // Set specific mapping for contents
-            if ($type == 'content') {
-                $specific_mapping = [
-                    'summary' => [
-                        'type' => 'string',
-                        'store' => 'yes'
-                    ],
-                    'contentType' => [
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
-                        'store' => 'yes'
-                    ],
-                    'online' => [
-                        'type' => 'boolean',
-                        'store' => 'yes'
-                    ]
-                ];
-            }
-
-            // Set specific mapping for dam
-            if ($type == 'dam') {
-                $specific_mapping = [
-                    'damType' => [
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
-                        'store' => 'yes'
-                    ],
-                    'fileSize' => [
-                        'type' => 'integer',
-                        'store' => 'yes'
-                    ],
-                    'file' => [
-                        'type' => 'attachment'
-                    ]
-                ];
-            }
-
-            // Merge generic and specific mappings
-            $mapping = array_merge($generic_mapping, $specific_mapping);
 
             // Add Taxonomies
             foreach ($vocabularies as $vocabularyName) {
@@ -207,33 +258,33 @@ class DataMapping extends DataAbstract
             $fields = $data['fields'];
             if ($type == 'content') {
                 $fields [] = [
-                    "cType" => "system",
-                    "config" => [
-                        "name" => "text",
-                        "fieldLabel" => "text",
-                        "searchable" => true,
-                        "localizable" => true
+                    'cType' => 'system',
+                    'config' => [
+                        'name' => 'text',
+                        'fieldLabel' => 'text',
+                        'searchable' => true,
+                        'localizable' => true
                     ]
                 ];
                 $fields [] = [
-                    "cType" => "system",
-                    "config" => [
-                        "name" => "summary",
-                        "fieldLabel" => "summary",
-                        "searchable" => true,
-                        "localizable" => true
+                    'cType' => 'system',
+                    'config' => [
+                        'name' => 'summary',
+                        'fieldLabel' => 'summary',
+                        'searchable' => true,
+                        'localizable' => true
                     ]
                 ];
             }
 
             if ($type == 'dam') {
                 $fields [] = [
-                    "cType" => "system",
-                    "config" => [
-                        "name" => "title",
-                        "fieldLabel" => "text",
-                        "searchable" => true,
-                        "localizable" => true
+                    'cType' => 'system',
+                    'config' => [
+                        'name' => 'title',
+                        'fieldLabel' => 'text',
+                        'searchable' => true,
+                        'localizable' => true
                     ]
                 ];
             }
@@ -244,7 +295,7 @@ class DataMapping extends DataAbstract
                 'type' => 'object'
             ];
 
-            foreach ($activeLanguages as $lang) {
+            foreach ($this->_activeLanguages as $lang) {
                 $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] = [
                     'dynamic' => false,
                     'type' => 'object'
@@ -278,146 +329,9 @@ class DataMapping extends DataAbstract
                 ];
             }
 
-            // Index fields
+            // add fields mappings
             foreach ($fields as $field) {
-                // Only searchable fields get indexed
-                if ($field ['config'] ['searchable']) {
-
-                    $name = $field ['config'] ['name'];
-                    $store = (isset ($field ['config'] ['returnInSearch']) && $field ['config'] ['returnInSearch'] == FALSE) ? "no" : "yes";
-                    $notAnalyzed = (isset ($field ['config'] ['notAnalyzed']) && $field ['config'] ['notAnalyzed']) ? TRUE : FALSE;
-
-                    // For classical fields
-                    if (!isset($field ['config'] ['useAsVariation']) or ($field ['config'] ['useAsVariation'] == false)) {
-
-                        switch ($field ['cType']) {
-                            case 'datefield' :
-                                $config = [
-                                    'type' => 'string',
-                                    'store' => $store
-                                ];
-                                if ($notAnalyzed) {
-                                    $config ['index'] = 'not_analyzed';
-                                }
-                                if (!$field ['config'] ['localizable']) {
-                                    $mapping ['fields'] ['properties'] [$name] = $config;
-                                } else {
-                                    foreach ($activeLanguages as $lang) {
-                                        $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
-                                    }
-                                }
-                                break;
-                            case 'numberfield' :
-                                $config = [
-                                    'type' => 'float',
-                                    'store' => $store
-                                ];
-                                if ($notAnalyzed) {
-                                    $config ['index'] = 'not_analyzed';
-                                }
-                                if (!$field ['config'] ['localizable']) {
-                                    $mapping ['fields'] ['properties'] [$name] = $config;
-                                } else {
-                                    foreach ($activeLanguages as $lang) {
-                                        $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
-                                    }
-                                }
-                                break;
-                            case 'document' :
-                                $config = [
-                                    'type' => 'attachment',
-                                    'store' => $store
-                                ];
-                                if ($notAnalyzed) {
-                                    $config ['index'] = 'not_analyzed';
-                                }
-                                if (!$field ['config'] ['localizable']) {
-                                    $mapping ['fields'] ['properties'] [$name] = $config;
-                                } else {
-                                    foreach ($activeLanguages as $lang) {
-                                        $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
-                                    }
-                                }
-                                break;
-                            case 'localiserField' :
-                                $config = [
-                                    'properties' => [
-                                        'location' => [
-                                            'properties' => [
-                                                'coordinates' => [
-                                                    'type' => 'geo_point',
-                                                    'store' => 'yes'
-                                                ]
-                                            ]
-                                        ],
-                                        'address' => [
-                                            'type' => 'string',
-                                            'store' => 'yes'
-                                        ]
-                                    ]
-                                ];
-                                if (!$field ['config'] ['localizable']) {
-                                    $mapping ['fields'] ['properties'] [$name] = $config;
-                                } else {
-                                    foreach ($activeLanguages as $lang) {
-                                        $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
-                                    }
-                                }
-                                break;
-                            default :
-                                if (!$field ['config'] ['localizable']) {
-                                    $_autocomplete = 'autocomplete_nonlocalized';
-                                    $_all = 'all_nonlocalized';
-                                    $config = [
-                                        "type" => "string",
-                                        "index" => (!$notAnalyzed) ? "analyzed" : "not_analyzed",
-                                        "copy_to" => [
-                                            $_all
-                                        ],
-                                        "store" => $store
-                                    ];
-                                    $mapping ['fields'] ['properties'] [$name] = $config;
-                                } else {
-                                    foreach ($activeLanguages as $lang) {
-                                        $locale = $lang ['locale'];
-                                        $fieldName = $name . '_' . $locale;
-                                        $_all = 'all_' . $locale;
-                                        $_autocomplete = 'autocomplete_' . $locale;
-                                        if (in_array($locale . '_analyzer', $activeAnalysers)) {
-                                            $lg_analyser = $locale . '_analyzer';
-                                        } else {
-                                            $lg_analyser = 'default';
-                                        }
-                                        $config = [
-                                            "type" => "string",
-                                            "index" => (!$notAnalyzed) ? "analyzed" : "not_analyzed",
-                                            "analyzer" => $lg_analyser,
-                                            "copy_to" => [
-                                                $_all
-                                            ],
-                                            "store" => $store
-                                        ];
-
-                                        $mapping [$fieldName] = $config;
-                                        $mapping ['i18n'] ['properties'] [$locale] ['properties'] ['fields'] ['properties'] [$name] = $config;
-                                    }
-                                }
-                        }
-                    } else { // Product variation field
-
-                        $_all = 'all_nonlocalized';
-                        $config = [
-                            "type" => "string",
-                            "index" => "not_analyzed",
-                            "copy_to" => [
-                                $_all
-                            ],
-                            "store" => $store
-                        ];
-                        $mapping ['productProperties']['properties']['variations']['properties'][$name] = $config;
-
-                    }
-                }
+				$this->_addFieldMapping($field,$mapping);
             }
         }
 
@@ -441,80 +355,7 @@ class DataMapping extends DataAbstract
             $vocabularies = $this->_getVocabularies($data);
 
             // Set mapping for user
-            $mapping = [
-                'objectType' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'email' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'photo' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'userType' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'author' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'typeId' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'lastUpdateTime' => [
-                    'type' => 'date',
-                    'store' => 'yes'
-                ],
-                'createUser' => [
-                    'type' => 'object',
-                    'store' => 'yes',
-                    'properties' => [
-                        'id' => [
-                            'type' => 'string',
-                            'index' => 'not_analyzed',
-                            'store' => 'yes'
-                        ],
-                        'fullName' => [
-                            'type' => 'string',
-                            'index' => 'not_analyzed',
-                            'store' => 'yes'
-                        ],
-                        'login' => [
-                            'type' => 'string',
-                            'index' => 'no',
-                            'store' => 'no'
-                        ]
-                    ]
-                ],
-                'startPublicationDate' => [
-                    'type' => 'integer',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'endPublicationDate' => [
-                    'type' => 'integer',
-                    'index' => 'not_analyzed',
-                    'store' => 'yes'
-                ],
-                'autocomplete_nonlocalized' => [
-                    'type' => 'completion',
-                    'index_analyzer' => 'simple',
-                    'search_analyzer' => 'simple',
-                    'payloads' => true,
-                    'preserve_position_increments' => false
-                ]
-            ];
+            $mapping = array_merge($this->_systemMapping, $this->_userMapping);
 
             // Add Taxonomies
             foreach ($vocabularies as $vocabularyName) {
@@ -531,19 +372,20 @@ class DataMapping extends DataAbstract
 
             // Add system fields : email and name for user
             $fields[] = [
-                "cType" => "system",
-                "config" => [
-                    "name" => "email",
-                    "fieldLabel" => "email",
-                    "searchable" => false
+                'cType' => 'system',
+                'config' => [
+                    'name' => 'email',
+                    'fieldLabel' => 'email',
+                    'searchable' => false
                 ]
             ];
             $fields[] = [
-                "cType" => "system",
-                "config" => [
-                    "name" => "name",
-                    "fieldLabel" => "name",
-                    "searchable" => true
+                'cType' => 'system',
+                'config' => [
+                    'name' => 'name',
+                    'fieldLabel' => 'name',
+                    'searchable' => true,
+                    'notAnalyzed' => false
                 ]
             ];
 
@@ -553,62 +395,12 @@ class DataMapping extends DataAbstract
                 'type' => 'object'
             ];
 
+            // add fields mappings
             foreach ($fields as $field) {
-
-                // Only searchable fields get indexed
-                if ($field['config']['searchable']) {
-
-                    $name = $field['config']['name'];
-                    $store = (isset($field['config']['returnInSearch']) &&
-                        $field['config']['returnInSearch'] == FALSE) ? "no" : "yes";
-
-                    switch ($field['cType']) {
-                        case 'Ext.form.field.Date':
-                            $config = [
-                                'type' => 'string',
-                                'store' => $store
-                            ];
-                            $mapping['fields']['properties'][$name] = $config;
-                            break;
-                        case 'Rubedo.view.localiserField':
-                            $config = [
-                                'properties' => [
-                                    'location' => [
-                                        'properties' => [
-                                            'coordinates' => [
-                                                'type' => 'geo_point',
-                                                'store' => 'yes'
-                                            ]
-                                        ]
-                                    ],
-                                    'address' => [
-                                        'type' => 'string',
-                                        'store' => 'yes'
-                                    ]
-                                ]
-                            ];
-                            $mapping['fields']['properties'][$name] = $config;
-                            break;
-                        default:
-                            $_all = 'all_nonlocalized';
-                            $config = [
-                                "type" => "string",
-                                "store" => $store,
-                                "copy_to" => [$_all]
-                            ];
-                            // Add first letter indexing for user name
-                            if ($field["config"]["name"] == "name") {
-                                $config["fields"]["first_letter"] = [
-                                    "type" => "string",
-                                    "analyzer" => "first_letter"
-                                ];
-                            }
-                            $mapping["fields"]["properties"][$name] = $config;
-                    }
-                }
+            	$this->_addFieldMapping($field,$mapping);
             }
+            
         }
-
         return $mapping;
     }
 
@@ -630,11 +422,155 @@ class DataMapping extends DataAbstract
 
         return $vocabularies;
     }
-
+    
+    protected function _addFieldMapping($field,&$mapping) {
+    	
+    	// Only searchable fields get indexed
+    	if ($field ['config'] ['searchable']) {
+    	
+    		$name = $field ['config'] ['name'];
+    		$store = (isset ($field ['config'] ['returnInSearch']) && $field ['config'] ['returnInSearch'] == FALSE) ? 'no' : 'yes';
+    		$notAnalyzed = (isset ($field ['config'] ['notAnalyzed']) && $field ['config'] ['notAnalyzed']) ? TRUE : FALSE;
+    	
+    		// For classical fields
+    		if (!isset($field ['config'] ['useAsVariation']) or ($field ['config'] ['useAsVariation'] == false)) {
+    	
+    			switch ($field ['cType']) {
+    				case 'datefield' :
+    					$config = [
+    						'type' => 'string',
+    						'store' => $store
+    					];
+    					if ($notAnalyzed) {
+    						$config ['index'] = 'not_analyzed';
+    					}
+    					if (!$field ['config'] ['localizable']) {
+    						$mapping ['fields'] ['properties'] [$name] = $config;
+    					} else {
+    						foreach ($this->_activeLanguages as $lang) {
+    							$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+    						}
+    					}
+    					break;
+    				case 'numberfield' :
+    					$config = [
+    						'type' => 'float',
+    						'store' => $store
+    					];
+    					if ($notAnalyzed) {
+    						$config ['index'] = 'not_analyzed';
+    					}
+    					if (!$field ['config'] ['localizable']) {
+    						$mapping ['fields'] ['properties'] [$name] = $config;
+    					} else {
+    						foreach ($this->_activeLanguages as $lang) {
+    							$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+    						}
+    					}
+    					break;
+    				case 'document' :
+    					$config = [
+    						'type' => 'attachment',
+    						'store' => $store
+    					];
+    					if ($notAnalyzed) {
+    						$config ['index'] = 'not_analyzed';
+    					}
+    					if (!$field ['config'] ['localizable']) {
+    						$mapping ['fields'] ['properties'] [$name] = $config;
+    					} else {
+    						foreach ($this->_activeLanguages as $lang) {
+    							$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+    						}
+    					}
+    					break;
+    				case 'localiserField' :
+    					$config = [
+    						'properties' => [
+    							'location' => [
+    								'properties' => [
+    									'coordinates' => [
+    										'type' => 'geo_point',
+    										'store' => 'yes'
+    									]
+    								]
+    							],
+    							'address' => [
+    								'type' => 'string',
+    								'store' => 'yes'
+    							]
+    						]
+    					];
+    					if (!$field ['config'] ['localizable']) {
+    							$mapping ['fields'] ['properties'] [$name] = $config;
+    					} else {
+    						foreach ($this->_activeLanguages as $lang) {
+    							$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+    						}
+    					}
+    					break;
+    				default :
+    					// Default mapping for non localizable fields
+    					if (!isset($field ['config'] ['localizable']) || !$field ['config'] ['localizable']) {
+    						$config = [
+    							'type' => 'string',
+    							'index' => (!$notAnalyzed) ? 'analyzed' : 'not_analyzed',
+    							'copy_to' => ['all_nonlocalized'],
+    							'store' => $store
+    						];
+    						// User name particular case
+    						if ($name == 'name') {
+    							$config['fields']['first_letter'] = [
+    								'type' => 'string',
+    								'analyzer' => 'first_letter'
+    							];
+    						}
+    						$mapping ['fields'] ['properties'] [$name] = $config;
+    					} else {
+    						// Mapping for localizable fields
+    						foreach ($this->_activeLanguages as $lang) {
+    							$locale = $lang ['locale'];
+    							$fieldName = $name . '_' . $locale;
+    							$_all = 'all_' . $locale;
+    							$_autocomplete = 'autocomplete_' . $locale;
+    							if (in_array($locale . '_analyzer', $this->_activeAnalysers)) {
+    								$lg_analyser = $locale . '_analyzer';
+    							} else {
+    								$lg_analyser = 'default';
+    							}
+    							$config = [
+    								'type' => 'string',
+    								'index' => (!$notAnalyzed) ? 'analyzed' : 'not_analyzed',
+    								'analyzer' => $lg_analyser,
+    								'copy_to' => [
+    									$_all
+    								],
+    								'store' => $store
+    							];
+    	
+    							$mapping [$fieldName] = $config;
+    							$mapping ['i18n'] ['properties'] [$locale] ['properties'] ['fields'] ['properties'] [$name] = $config;
+    						}
+    					}
+    			}
+    		} else { // Product variation field
+    			$_all = 'all_nonlocalized';
+    			$config = [
+    				'type' => 'string',
+    				'index' => 'not_analyzed',
+    				'copy_to' => [
+    					$_all
+    				],
+    				'store' => $store
+    			];
+    			$mapping ['productProperties']['properties']['variations']['properties'][$name] = $config;
+    		}
+    	}    	
+    }
+    
     /**
      * Index ES type for new or updated content type
      *
-     * @see \Rubedo\Interfaces\IDataIndex:indexContentType()
      * @param string $id
      *            content type id
      * @param array $data
@@ -676,7 +612,6 @@ class DataMapping extends DataAbstract
     /**
      * Index ES type for new or updated dam type
      *
-     * @see \Rubedo\Interfaces\IDataIndex:indexDamType()
      * @param string $id
      *            dam type id
      * @param array $data
@@ -706,7 +641,9 @@ class DataMapping extends DataAbstract
             		]
         		]
         	];
-        	 
+        	
+        	$this->_client->indices()->putMapping($indexParams);
+        	
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
         } else {
@@ -717,7 +654,6 @@ class DataMapping extends DataAbstract
     /**
      * Index ES type for new or updated duser type
      *
-     * @see \Rubedo\Interfaces\IDataIndex:indexUserType()
      * @param string $id
      *            user type id
      * @param array $data
@@ -748,6 +684,8 @@ class DataMapping extends DataAbstract
         		]
         	];
 
+        	$this->_client->indices()->putMapping($indexParams);
+        	
             // Return indexed field list
             return array_flip(array_keys($indexMapping));
         } else {
@@ -758,7 +696,6 @@ class DataMapping extends DataAbstract
     /**
      * Delete content type mapping
      *
-     * @see \Rubedo\Interfaces\IDataIndex::deleteContentType()
      * @param string $typeId
      *            content type id
      * @return array
@@ -777,7 +714,6 @@ class DataMapping extends DataAbstract
     /**
      * Delete dam type mapping
      *
-     * @see \Rubedo\Interfaces\IDataIndex::deleteDamType()
      * @param string $typeId
      *            dam type id
      * @return array
@@ -796,7 +732,6 @@ class DataMapping extends DataAbstract
     /**
      * Delete user type mapping
      *
-     * @see \Rubedo\Interfaces\IDataIndex::deleteUserType()
      * @param string $typeId
      *            user type id
      * @return array
