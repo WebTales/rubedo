@@ -232,10 +232,11 @@ class DataIndex extends DataAbstract
         	$params = [
         		'index' => $indexName,
         		'type' => $typeId,
-        		'id' => $data['id'],
-        		'body' => $indexData
+        		'body' => [
+        			['index' => ['_id' => $data['id']]],
+        			$indexData
+        		]
         	];
-        	
         	$this->_client->bulk($params);
         	 
         	$this->_client->indices()->refresh(['index' => $indexName]);
@@ -370,10 +371,12 @@ class DataIndex extends DataAbstract
         	$params = [
         		'index' => $indexName,
         		'type' => $typeId,
-        		'body' => $indexData
+        		'body' => [
+        			['index' => ['_id' => $data['id']]],
+        			$indexData
+        		]
         	];
-        	        	
-        	$this->_client->index($params);
+        	$this->_client->bulk($params);
         	 
         	$this->_client->indices()->refresh(['index' => $indexName]);
         	
@@ -476,11 +479,12 @@ class DataIndex extends DataAbstract
         	$params = [
         		'index' => $indexName,
         		'type' => $typeId,
+        		'body' => [
+        			['index' => ['_id' => $data['id']]],
+        			$indexData
+        		]
         	];
-        	 
-        	$params['body'] = $indexData;
-        	
-        	$this->_client->index($params);
+        	$this->_client->bulk($params);
         	 
         	$this->_client->indices()->refresh(['index' => $indexName]);
         	
