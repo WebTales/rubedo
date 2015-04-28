@@ -256,19 +256,20 @@ class ImageController extends AbstractActionController
             $response = new Stream();
             $response->getHeaders()->addHeaders(array(
                 'Content-type' => 'image/' . $type,
-                'Content-Disposition' => 'inline; filename="' . $filename,
+                'Content-Disposition' => 'inline; filename="' . basename($filename),
                 'Pragma' => 'Public',
                 'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
-                'Expires' => date(DATE_RFC822, strtotime("7 day"))
+                'Expires' => date(DATE_RFC822, strtotime("7 day")),
+                'Content-Length' => filesize($tmpImagePath)
             ));
 
             if ($forceDownload) {
                 $response->getHeaders()->addHeaders(array(
-                    'Content-Disposition' => 'attachment; filename="' . $filename
+                    'Content-Disposition' => 'attachment; filename="' . basename($filename)
                 ));
             } else {
                 $response->getHeaders()->addHeaders(array(
-                    'Content-Disposition' => 'inline; filename="' . $filename
+                    'Content-Disposition' => 'inline; filename="' . basename($filename)
                 ));
             }
             $response->setStream($stream);
