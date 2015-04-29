@@ -212,10 +212,10 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
 
+        $ElasticDataMappingService = \Rubedo\Services\Manager::getService('ElasticDataMapping');
+        $ElasticDataMappingService->indexContentType($obj['id'], $obj);
+		
         $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-        $ElasticDataIndexService->init();
-        $ElasticDataIndexService->indexContentType($obj['id'], $obj);
-
         $ElasticDataIndexService->indexByType('content', $obj['id']);
 
         AbstractCollection::disableUserFilter($wasFiltered);

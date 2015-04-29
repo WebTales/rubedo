@@ -18,8 +18,6 @@
 namespace Rubedo\Elastic;
 
 use Rubedo\Services\Manager;
-use WebTales\MongoFilters\Filter;
-use Zend\Json\Json;
 
 /**
  * Class implementing the Rubedo API to Elastic Search mapping services using

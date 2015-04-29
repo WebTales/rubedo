@@ -123,7 +123,7 @@ class DataSearch extends DataAbstract
         $filter = array();
         switch ($operator) {
             case 'or' :
-                $termfilter = [
+                $termFilter = [
                 	'terms' => [
                 		$field => $this->_params [$name]
         			]
@@ -169,7 +169,7 @@ class DataSearch extends DataAbstract
     	
     	// Exclude active Facets for this vocabulary
     	 
-    	$exclude = self::_excludeActiveFacets($facetName);
+    	$exclude = $this->_excludeActiveFacets($facetName);
     	
     	// Apply filters from other facets
     	 
@@ -202,7 +202,7 @@ class DataSearch extends DataAbstract
     	 
     	// Exclude active Facets for this vocabulary
     
-    	$exclude = self::_excludeActiveFacets($facetName);
+    	$exclude = $this->_excludeActiveFacets($facetName);
     	 
     	// Apply filters from other facets
     
@@ -624,13 +624,13 @@ class DataSearch extends DataAbstract
         if (array_key_exists('lastupdatetime', $this->_params)) {
             $filter = [
             	'range' => [
-            		'endPublicationDate' => [
+            		'lastUpdateTime' => [
             			'gte' => $this->_params ['lastupdatetime']
             		]
            		]
         	];
             
-            $this->_globalFilterList ['lastupdatetime'] = $filter;
+           	$this->_globalFilterList ['lastupdatetime'] = $filter;
             $this->_filters ['lastupdatetime'] = $this->_params ['lastupdatetime'];
             $this->_setFilter = true;
         }
@@ -852,48 +852,40 @@ class DataSearch extends DataAbstract
         }
         
         // Define the alphabetical name facet for users
-
+        
         if ($option == 'user') {
 
         	$searchParams['body']['aggs']['userName'] = $this->_addTermsFacet('userName','first_letter');
 
         }
 
-        // Define the date facet.
-
+        // Define the date facet
+        
         $d = Manager::getService('CurrentTime')->getCurrentTime();
-
-        // In ES 0.9, date are in microseconds
-        $today = mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d)) * 1000;
-        $lastday = mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d)) * 1000;
-        // Cast to string for 32bits systems
-        $lastday = ( string )$lastday;
-        $lastweek = mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d)) * 1000;
-        $lastweek = ( string )$lastweek;
-        $lastmonth = mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d)) * 1000;
-        $lastmonth = ( string )$lastmonth;
-        $lastyear = mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1) * 1000;
-        $lastyear = ( string )$lastyear;
+       
+        $lastday = ( string ) mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d)) * 1000;
+        $lastweek = ( string )mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d)) * 1000;
+        $lastmonth = ( string )mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d)) * 1000;
+        $lastyear = ( string )mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1) * 1000;
+        
         $ranges = [
-            ['from' => 'now-1d', 'to' => 'now'],
-            ['from' => 'now-1w', 'to' => 'now'],
-            ['from' => 'now-1M', 'to' => 'now'],
-            ['from' => 'now-1y', 'to' => 'now'],
+        	['from' => $lastday, 'to' => 'now'],
+        	['from' => $lastweek, 'to' => 'now'],
+        	['from' => $lastmonth, 'to' => 'now'],
+        	['from' => $lastyear, 'to' => 'now'],
         ];
-            
-        // build facet
-            
-        //$searchParams['body']['aggs']['lastupdatetime'] = self::_addRangeFacet('lastUpdateTime','endPublicationDate',$ranges);
+        
+        $searchParams['body']['aggs']['lastupdatetime'] = $this->_addRangeFacet('lastUpdateTime','lastUpdateTime',$ranges);
             
         // init time label array
         $timeLabel = array();
-
         $timeLabel [$lastday] = Manager::getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Day', 'Past 24H');
         $timeLabel [$lastweek] = Manager::getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Week', 'Past week');
         $timeLabel [$lastmonth] = Manager::getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Month', 'Past month');
         $timeLabel [$lastyear] = Manager::getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Year', 'Past year');
 
         // Define taxonomy facets
+        
         foreach ($taxonomies as $taxonomy) {
             $vocabulary = $taxonomy ['id'];
 
@@ -905,6 +897,7 @@ class DataSearch extends DataAbstract
         }
 
         // Define the fields facets
+        
         foreach ($facetedFields as $field) {
 
             if ($field ['useAsVariation']) {
@@ -926,6 +919,7 @@ class DataSearch extends DataAbstract
         }
 
         // Add size and from to paginate results
+        
         if (isset($this->_params['start']) && isset($this->_params['limit'])) {
          	$searchParams['body']['size'] = $this->_params ['limit'];
         	$searchParams['body']['from'] = $this->_params ['start'];          
@@ -970,6 +964,7 @@ class DataSearch extends DataAbstract
         }
 
         // For geosearch dynamically set searchMode depending on the number of results
+        
         if ($option == 'geo' && self::$_isFrontEnd) {
         	$countSearchParams = $searchParams;
             $countSearchParams['body']['size'] = 0;
@@ -985,6 +980,7 @@ class DataSearch extends DataAbstract
         }
 
         // Get resultset
+
         switch ($this->_params['searchMode']) {
             case 'default': // default mode with results
                 $elasticResultSet = $this->_client->search($searchParams);
@@ -1003,6 +999,7 @@ class DataSearch extends DataAbstract
         }
 
         // For geosearch get aggregation buckets
+        
         if ($option == 'geo') {
             $result ['Aggregations'] = $elasticResultSet['aggregations']['agf']['hash'];
 
@@ -1013,6 +1010,7 @@ class DataSearch extends DataAbstract
         }
 
         // Update data
+        
         $resultsList = $elasticResultSet['hits']['hits'];
         $result ['total'] = $elasticResultSet['hits']['total'];
         $result ['query'] = $this->_params ['query'];
@@ -1241,13 +1239,19 @@ class DataSearch extends DataAbstract
 	
 	                        $temp ['label'] = Manager::getService('Translate')->translate('Search.Facets.Label.ModificationDate', 'Modification date');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+	                        	
+	                        	$temp ['_type'] = 'range';
+	                        	$temp ['ranges'] = array_values($temp ['buckets']);
+	                        	
 	                            foreach ($temp ['buckets'] as $key => $value) {
 	                                $rangeCount = $value ['doc_count'];
 	                                // unset facet when count = 0 or total results
 	                                // count when display mode is not set to
 	                                // checkbox
 	                                if ($this->_facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount <= $result ['total'])) {
-	                                    $temp ['ranges'] [$key] ['label'] = $timeLabel [( string )$value ['from']];
+	                                	$temp ['ranges'] [$key] ['label'] = $timeLabel [( string )($value ['from'])];
+	                                    $temp ['ranges'] [$key] ['count'] = $rangeCount;
+	                                    unset( $temp ['ranges'] [$key] ['doc_count']);
 	                                } else {
 	                                    unset ($temp ['ranges'] [$key]);
 	                                }
@@ -1255,8 +1259,6 @@ class DataSearch extends DataAbstract
 	                        } else {
 	                            $renderFacet = false;
 	                        }
-	
-	                        $temp ['ranges'] = array_values($temp ['buckets']);
 	
 	                        break;
 	
@@ -1393,7 +1395,7 @@ class DataSearch extends DataAbstract
                             'terms' => array(
                                 array(
                                     'term' => $termId,
-                                    'label' => $timeLabel [( string )$termId]
+                                    'label' => $timeLabel [( string ) $termId]
                                 )
                             )
                         );

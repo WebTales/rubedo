@@ -35,6 +35,7 @@ return array(
     'Delegations' => 'Rubedo\\Collection\\Delegations',
     'Directories' => 'Rubedo\\Collection\\Directories',
     'ElasticDataIndex' => 'Rubedo\\Elastic\\DataIndex',
+    'ElasticDataMapping' => 'Rubedo\\Elastic\\DataMapping',
     'ElasticDataSearch' => 'Rubedo\\Elastic\\DataSearch',
     'FieldTypes' => 'Rubedo\\Collection\\FieldTypes',
     'Files' => 'Rubedo\\Collection\\Files',
