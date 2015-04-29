@@ -1071,7 +1071,7 @@ class DataSearch extends DataAbstract
                     if (isset ($data ['i18n.' . $currentLocale . '.fields.title'][0])) {
                         $resultData ['title'] = $data ['i18n.' . $currentLocale . '.fields.title'][0];
                     } else {
-                        $resultData ['title'] = $data ['text'] ;
+                        $resultData ['title'] = $data ['text'][0] ;
                     }
                     $damType = $this->_getDamType($data ['damType'][0] );
                     if (!$userCanWriteDam || $damType ['readOnly']) {
