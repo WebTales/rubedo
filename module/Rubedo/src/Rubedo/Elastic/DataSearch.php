@@ -1052,7 +1052,7 @@ class DataSearch extends DataAbstract
                     if (isset ($data ['i18n.' . $currentLocale . '.fields.text'][0])) {
                         $resultData ['title'] = $data ['i18n.' . $currentLocale . '.fields.text'][0];
                         if ($withSummary) {
-                            $resultData ['summary'] = (isset ($data ['i18n.' . $currentLocale . '.fields.summary'][0])) ? $data ['i18n.' . $currentLocale . '.fields.summary'] : '';
+                            $resultData ['summary'] = (isset ($data ['i18n.' . $currentLocale . '.fields.summary'][0])) ? $data ['i18n.' . $currentLocale . '.fields.summary'][0] : '';
                         }
                     } else {
                         $resultData ['title'] = $data ['text'][0] ;
