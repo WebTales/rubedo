@@ -944,22 +944,22 @@ class DataSearch extends DataAbstract
 
         switch ($option) {
             case 'content' :
-            	$searchParams['index'] = self::$_content_index['name'];
+            	$searchParams['index'] = $this->getIndexNameFromConfig('contentIndex');
                 break;
             case 'dam' :
-                $searchParams['index'] = self::$_dam_index['name'];
+                $searchParams['index'] = $this->getIndexNameFromConfig('damIndex');
                 break;
             case 'user' :
-                $searchParams['index'] = self::$_user_index['name'];
+                $searchParams['index'] = $this->getIndexNameFromConfig('userIndex');
                 break;
             case 'geo' :
                 if (isset($geoPrecision)) $geoAgreggation['aggs']['hash']['geohash_grid']['precision'] = $geoPrecision;
                 $searchParams['body']['aggs']['agf'] = $geoAgreggation;
                 $searchParams['body']['aggs']['agf']['filter'] = $globalFilter;                               
-                $searchParams['index'] = self::$_content_index['name'];
+                $searchParams['index'] = $this->getIndexNameFromConfig('contentIndex');
                 break;
             case 'all' :
-            	$searchParams['index'] = self::$_content_index['name'] . ','. self::$_dam_index['name']. ',' . self::$_user_index['name'];
+            	$searchParams['index'] = $this->getIndexNameFromConfig('contentIndex') . ','. $this->getIndexNameFromConfig('damIndex') . ',' . $this->getIndexNameFromConfig('userIndex');
                 break;
         }
 
@@ -1527,19 +1527,19 @@ class DataSearch extends DataAbstract
 
         // get suggest from content
 
-        $path = self::$_content_index->getName() . '/_suggest';
+        $path = $this->getIndexNameFromConfig('contentIndex') . '/_suggest';
         $suggestion = $client->request($path, 'GET', $query);
         $responseArray = $suggestion->getData()['autocomplete'][0]['options'];
 
         // get suggest from dam
-        $path = self::$_dam_index->getName() . '/_suggest';
+        $path = $this->getIndexNameFromConfig('damIndex') . '/_suggest';
         $suggestion = $client->request($path, 'GET', $query);
         if (isset ($suggestion->getData()['autocomplete'][0]['options'])) {
             $responseArray = array_merge($responseArray, $suggestion->getData()['autocomplete'][0]['options']);
         }
 
         // get suggest from user
-        $path = self::$_user_index->getName() . '/_suggest';
+        $path = $this->getIndexNameFromConfig('userIndex') . '/_suggest';
         $suggestion = $client->request($path, 'GET', $nonlocalizedquery);
         if (isset ($suggestion->getData()['autocomplete'][0]['options'])) {
             $responseArray = array_merge($responseArray, $suggestion->getData()['autocomplete'][0]['options']);

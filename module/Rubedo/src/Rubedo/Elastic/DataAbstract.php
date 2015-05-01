@@ -18,7 +18,7 @@ namespace Rubedo\Elastic;
 
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
-
+use WebTales\MongoFilters\Filter;
 
 /**
  * Class implementing the Rubedo API to Elastic Search indexing services using Elasticsearch API
@@ -72,46 +72,53 @@ class DataAbstract
     protected static $_options;
 
     /**
-     * Content Index object
+     * Index settings
      *
      * @var array
      */
-    protected static $_content_index;
+    protected static $_indexSettings;
 
     /**
-     * Content Index param
+     * Index Name
      *
      * @var array
      */
-    protected static $_index_settings;
+    protected $_indexName;
     
     /**
-     * Dam index object
-     *
-     * @var string
-     */
-    protected static $_dam_index;
-
-    /**
-     * User index object
-     *
+     * Active languages
+     * 
      * @var array
      */
-    protected static $_user_index;
+    protected $_activeLanguages;
+    
+    /**
+     * Active analyzers
+     * 
+     * @var array
+     */
+    protected $_activeAnalysers;
+        
+    /**
+     * Documents queue for indexing
+     *  
+     * @var array
+     */
+    protected $_documents;
 
-
+    /**
+     * Load ES configuration from file
+     */
     public function __construct()
     {
         if (!isset(self::$_options)) {
             self::lazyLoadConfig();
         }
-        self::init();
     }
 
     /**
      * Initialize a search service handler to index or query Elastic Search
      *
-     * @see \Rubedo\Interfaces\IDataIndex::init()
      * @param string $host
      *            http host name
      * @param string $port
@@ -133,46 +140,20 @@ class DataAbstract
         $this->_client = new \Elasticsearch\Client($params);
 
         //$this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
-
-        $dataAccess = Manager::getService('MongoDataAccess');
-        $defaultDB = $dataAccess::getDefaultDb();
-        $defaultDB = mb_convert_case($defaultDB, MB_CASE_LOWER, "UTF-8");
-
-        // Create content index if not exists 
-        self::$_content_index['name'] = $defaultDB . "-" . self::$_options['contentIndex'];
-		if (!$this->_client->indices()->exists(['index' => array(self::$_content_index['name'])])) {
-			$params = [
-				'index' => self::$_content_index['name'], 
-				'body' => [
-					'settings' => self::$_index_settings
-				]
-			];
-			$this->_client->indices()->create($params);
-		}
-
-		// Create dam index if not exists
-		self::$_dam_index['name'] = $defaultDB . "-" . self::$_options['damIndex'];
-		if (!$this->_client->indices()->exists(['index' => array(self::$_dam_index['name'])])) {
-			$params = [
-				'index' => self::$_dam_index['name'],
-				'body' => [
-					'settings' => self::$_index_settings
-				]
-			];
-			$this->_client->indices()->create($params);
-		}
-
-		// Create user index if not exists
-		self::$_user_index['name'] = $defaultDB . "-" . self::$_options['userIndex'];
-		if (!$this->_client->indices()->exists(['index' => array(self::$_user_index['name'])])) {
-			$params = [
-				'index' => self::$_user_index['name'],
-				'body' => [
-					'settings' => self::$_index_settings
-				]
-			];
-			$this->_client->indices()->create($params);
-		}
+        
+        // Create index if not exists
+        if (isset($this->_indexName)) {
+        	
+        	if (!$this->_client->indices()->exists(['index' => array($this->_indexName)])) {
+        		$params = [
+        			'index' => $this->_indexName,
+        			'body' => [
+        				'settings' => self::$_indexSettings
+        			]
+        		];
+        		$this->_client->indices()->create($params);
+        	}	
+        }
 
     }
 
@@ -197,7 +178,38 @@ class DataAbstract
         }
         return self::$_options;
     }
-
+    
+    /**
+     * Return the index name from configuration file
+     * 
+     * @return string
+     */
+    public function getIndexNameFromConfig($optionName)
+    {
+        $dataAccess = Manager::getService('MongoDataAccess');
+        $defaultDB = $dataAccess::getDefaultDb();
+        $defaultDB = mb_convert_case($defaultDB, MB_CASE_LOWER, "UTF-8");
+        
+        return $defaultDB . "-" . self::$_options[$optionName];
+        
+    }
+    
+    /**
+     * Read the active analyzers from config
+     */
+    public function getAnalyzers()
+    {
+		$this->_activeAnalysers = array_keys(self::$_indexSettings['analysis'] ['analyzer']);   
+    }
+    
+    /**
+     * Read the active languages
+     */
+    public function getLanguages()
+    {
+		$this->_activeLanguages = Manager::getService('Languages')->getActiveLanguages();
+    }
+    
     /**
      * Return the ElasticSearch Server Version
      *
@@ -223,6 +235,403 @@ class DataAbstract
         }
         $indexOptionsJson = file_get_contents($options['elastic']['configFilePath']);
         $indexOptions = Json::decode($indexOptionsJson, Json::TYPE_ARRAY);
-        self::$_index_settings = $indexOptions;
+        self::$_indexSettings = $indexOptions;
+    }
+    
+    /**
+     * Return all the vocabularies contained in the id list
+     *
+     * @param array $data
+     *            contain vocabularies id of the current object
+     * @return array
+     */
+    protected static function getVocabularies($data)
+    {
+    	$vocabularies = [];
+    	foreach ($data['vocabularies'] as $vocabularyId) {
+    		$vocabulary = Manager::getService('Taxonomy')->findById(
+    				$vocabularyId);
+    		$vocabularies[] = $vocabulary['id'];
+    	}
+    
+    	return $vocabularies;
+    }
+
+    /**
+     * Add field mapping to global mapping
+     *
+     * @param array $field
+     *            contains field configuration
+     * @param array $mapping
+     *            contains global mapping to update
+     */
+    protected function addFieldMapping($field,&$mapping) {
+    	 
+    	// Only searchable fields get indexed
+    	if ($field ['config'] ['searchable']) {
+    		 
+    		$name = $field ['config'] ['name'];
+    		$store = (isset ($field ['config'] ['returnInSearch']) && $field ['config'] ['returnInSearch'] == FALSE) ? 'no' : 'yes';
+    		$notAnalyzed = (isset ($field ['config'] ['notAnalyzed']) && $field ['config'] ['notAnalyzed']) ? TRUE : FALSE;
+    		 
+    		// For classical fields
+    		if (!isset($field ['config'] ['useAsVariation']) or ($field ['config'] ['useAsVariation'] == false)) {
+    			 
+    			switch ($field ['cType']) {
+    				case 'datefield' :
+    					$config = [
+    						'type' => 'string',
+    						'store' => $store
+    					];
+    					if ($notAnalyzed) {
+    						$config ['index'] = 'not_analyzed';
+    					}
+    					if (!$field ['config'] ['localizable']) {
+    						$mapping ['fields'] ['properties'] [$name] = $config;
+    					} else {
+    						foreach ($this->_activeLanguages as $lang) {
+    							$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+    						}
+    					}
+    					break;
+    				case 'numberfield' :
+    					$config = [
+    						'type' => 'float',
+    						'store' => $store
+    					];
+    					if ($notAnalyzed) {
+    						$config ['index'] = 'not_analyzed';
+    					}
+    					if (!$field ['config'] ['localizable']) {
+    						$mapping ['fields'] ['properties'] [$name] = $config;
+    					} else {
+    						foreach ($this->_activeLanguages as $lang) {
+    							$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+    						}
+    					}
+    					break;
+    				case 'document' :
+    					$config = [
+    						'type' => 'attachment',
+    						'store' => $store
+    					];
+    					if ($notAnalyzed) {
+    						$config ['index'] = 'not_analyzed';
+    					}
+    					if (!$field ['config'] ['localizable']) {
+    						$mapping ['fields'] ['properties'] [$name] = $config;
+    					} else {
+    						foreach ($this->_activeLanguages as $lang) {
+    							$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+    						}
+    					}
+    					break;
+    				case 'localiserField' :
+    					$config = [
+    						'properties' => [
+    							'location' => [
+    								'properties' => [
+    									'coordinates' => [
+    										'type' => 'geo_point',
+    										'store' => 'yes'
+    									]
+    								]
+    							],
+    							'address' => [
+    								'type' => 'string',
+    								'store' => 'yes'
+    							]
+    						]
+    					];
+    					if (!$field ['config'] ['localizable']) {
+    						$mapping ['fields'] ['properties'] [$name] = $config;
+    					} else {
+    						foreach ($this->_activeLanguages as $lang) {
+    							$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+    						}
+    					}
+    					break;
+    				default :
+    					// Default mapping for non localizable fields
+    					if (!isset($field ['config'] ['localizable']) || !$field ['config'] ['localizable']) {
+    						$config = [
+    							'type' => 'string',
+    							'index' => (!$notAnalyzed) ? 'analyzed' : 'not_analyzed',
+    							'copy_to' => ['all_nonlocalized'],
+    							'store' => $store
+    						];
+    						// User name particular case
+    						if ($name == 'name') {
+    							$config['fields']['first_letter'] = [
+    								'type' => 'string',
+    								'analyzer' => 'first_letter'
+    							];
+    						}
+    						$mapping ['fields'] ['properties'] [$name] = $config;
+    					} else {
+    						// Mapping for localizable fields
+    						foreach ($this->_activeLanguages as $lang) {
+    							$locale = $lang ['locale'];
+    							$fieldName = $name . '_' . $locale;
+    							$_all = 'all_' . $locale;
+    							$_autocomplete = 'autocomplete_' . $locale;
+    							if (in_array($locale . '_analyzer', $this->_activeAnalysers)) {
+    								$lg_analyser = $locale . '_analyzer';
+    							} else {
+    								$lg_analyser = 'default';
+    							}
+    							$config = [
+    								'type' => 'string',
+    								'index' => (!$notAnalyzed) ? 'analyzed' : 'not_analyzed',
+    								'analyzer' => $lg_analyser,
+    								'copy_to' => [
+    									$_all
+    								],
+    								'store' => $store
+    							];
+    							 
+    							$mapping [$fieldName] = $config;
+    							$mapping ['i18n'] ['properties'] [$locale] ['properties'] ['fields'] ['properties'] [$name] = $config;
+    						}
+    					}
+    			}
+    		} else { // Product variation field
+    			$_all = 'all_nonlocalized';
+    			$config = [
+    				'type' => 'string',
+    				'index' => 'not_analyzed',
+    				'copy_to' => [
+    					$_all
+    				],
+    				'store' => $store
+    			];
+    			$mapping ['productProperties']['properties']['variations']['properties'][$name] = $config;
+    		}
+    	}
+    }
+    
+    /**
+     * Set mapping for new or updated object type
+     *
+     * @param string $indexName
+     * @param string $typeId
+     * @param array $mapping
+     *
+     * @return array
+     */
+    public function putMapping($indexName, $typeId, $mapping)
+    {
+    
+    	// Delete existing content type
+    	$this->deleteMapping($indexName, $typeId);
+    
+    	// Create new ES type if not empty
+    	if (!empty($mapping)) {
+    
+    		// Create new type
+    
+    		$indexParams = [
+    			'index' => $indexName,
+    			'type' => $typeId,
+    			'body' => [
+    				$typeId => ['properties' => $mapping]
+    			]
+    		];
+    
+    		$this->_client->indices()->putMapping($indexParams);
+    
+    		// Return indexed field list
+    		return array_flip(array_keys($mapping));
+    	} else {
+    		// If there is no searchable field, the new type is not created
+    		return [];
+    	}
+    }
+    
+    /**
+     * Delete object type mapping
+     *
+     * @param string $indexName
+     * @param string $typeId
+     * 
+     * @return array
+     */
+    public function deleteMapping($indexName, $typeId)
+    {
+    	$params = [
+    		'index' => $indexName,
+    		'type' => $typeId
+    	];
+  		if ($this->_client->indices()->existsType($params)) {
+    		$this->_client->indices()->deleteMapping($params);
+    	}
+    }
+    
+    /**
+     * Reindex all objects for one given type
+     *
+     * @param string $option
+     *            : dam or content or user
+     * @param string $id
+     *            : dam type or content type or user type id
+     *
+     * @return array
+     */
+    public function indexByType($option, $id)
+    {
+    	// for big data set
+    	set_time_limit(240);
+    
+    	// Initialize result array and variables
+    	$result = [];
+    	$itemCount = 0;
+    	$this->_documents = [];
+    
+    	// Retrieve data and ES index for type
+    	switch ($option) {
+    		case 'content':
+    			$bulkSize = 500;
+    			$serviceData = 'Contents';
+    			$serviceType = 'ContentTypes';
+    			break;
+    		case 'dam':
+    			$bulkSize = 100;
+    			$serviceData = 'Dam';
+    			$serviceType = 'DamTypes';
+    			break;
+    		case 'user':
+    			$bulkSize = 500;
+    			$serviceData = 'Users';
+    			$serviceType = 'UserTypes';
+    			break;
+    		default:
+    			throw new \Rubedo\Exceptions\Server(
+    			"Option argument should be set to content, dam or user",
+    			"Exception65");
+    			break;
+    	}
+    
+    	// Retrieve data and ES index for type
+    
+    	$type = Manager::getService($serviceType)->findById($id);
+    
+    	// Index all dam or contents from given type
+    	$useQueue = class_exists("ZendJobQueue");
+    
+    	if ($useQueue) {
+    		try {
+    			$queue = new \ZendJobQueue();
+    		} catch (\Exception $e) {
+    			$useQueue = false;
+    		}
+    	}
+
+    	if (!$useQueue) {
+    		do {
+    
+    			$nbIndexedItems = $this->bulkIndex($option, $id, $itemCount,
+    					$bulkSize);
+    
+    			$itemCount += $nbIndexedItems;
+    		} while ($nbIndexedItems == $bulkSize);
+    	} else {
+    
+    		// Get total items to be indexed
+    		$dataService = Manager::getService($serviceData);
+    
+    		$filter = Filter::factory('Value')->setName('typeId')->SetValue($id);
+    
+    		$totalToBeIndexed = $dataService->count($filter);
+    
+    		$start = 0;
+    
+    		// Push jobs in queue
+    		if ($totalToBeIndexed > 0) {
+    			do {
+    
+    				// $protocol = isset($_SERVER["HTTPS"]) ? "https://" :
+    				// "http://";
+    				$protocol = 'http://';
+    				$queue->createHttpJob(
+    						$protocol . $_SERVER['HTTP_HOST'] .
+    						"/queue?service=ElasticDataIndex&class=bulkIndex&Option=$option&id=$id&start=$start&bulkSize=$bulkSize");
+    				$start += $bulkSize;
+    			} while ($start < $totalToBeIndexed);
+    		}
+    
+    		$itemCount = $totalToBeIndexed;
+    	}
+    
+    	$result[$type['type']] = $itemCount;
+    
+    	return ($result);
+    }
+    
+    public function bulkIndex($option, $typeId, $start, $bulkSize)
+    {
+    	switch ($option) {
+    		case 'content':
+    			$serviceData = 'Contents';
+    			$indexName = $this->getIndexNameFromConfig('contentIndex');
+    			break;
+    		case 'dam':
+    			$serviceData = 'Dam';
+    			$indexName = $this->getIndexNameFromConfig('damIndex');
+    			break;
+    		case 'user':
+    			$serviceData = 'Users';
+    			$indexName = $this->getIndexNameFromConfig('userIndex');
+    			break;
+    		default:
+    			throw new \Rubedo\Exceptions\Server(
+    			"Option argument should be set to content or dam",
+    			"Exception65");
+    			break;
+    	}
+    
+    	$this->_documents = [];
+    
+    	$dataService = Manager::getService($serviceData);
+    	$wasFiltered = $dataService::disableUserFilter();
+    	$itemList = $dataService->getByType($typeId, (int)$start, (int)$bulkSize);
+    
+    	$dataService::disableUserFilter($wasFiltered);
+    	foreach ($itemList["data"] as $item) {
+    		switch ($option) {
+    			case 'content':
+    				$this->_documents = array_merge($this->_documents, Manager::getService('ElasticContents')->index($item, TRUE));
+    				break;
+    			case 'dam':
+    				$this->_documents = array_merge($this->_documents, Manager::getService('ElasticDam')->index($item, TRUE));
+    				break;
+    			case 'user':
+    				$this->_documents = array_merge($this->_documents, Manager::getService('ElasticUsers')->index($item, TRUE));
+    				break;
+    		}
+    	}
+    
+    	if (!empty($this->_documents)) {
+    			
+    		$params = [
+    			'index' => $indexName,
+    			'type' => $typeId,
+    		];
+    		 
+    		$params['body'] = $this->_documents;
+
+    		$this->_client->bulk($params);
+    
+    		$this->_client->indices()->refresh(['index' => $indexName]);
+    		 
+    		empty($this->_documents);
+    
+    		$return = count($itemList['data']);
+    
+    	} else {
+    
+    		$return = 0;
+    	}
+    
+    	return $return;
     }
 }
