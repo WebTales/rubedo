@@ -1276,7 +1276,7 @@ class DataSearch extends DataAbstract
 	                                    if ($termItem) {
 	                                        $temp ['terms'] [$key] ['label'] = $termItem ['text'];
 	                                    } else {
-	                                        unset ($temp ['buckets'] [$key]);
+	                                        unset($temp ['terms'] [$key]);
 	                                    }
 	                                }
 	                            } else {
