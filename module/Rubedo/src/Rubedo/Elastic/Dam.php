@@ -16,8 +16,6 @@
  */
 namespace Rubedo\Elastic;
 
-use Rubedo\Services\Manager;
-
 /**
  * Service to handle Contents indexing and searching
  *
@@ -77,8 +75,8 @@ class Dam extends DataAbstract
         // Add taxonomy
         if (isset($data["taxonomy"])) {
 
-            $taxonomyService = Manager::getService('Taxonomy');
-            $taxonomyTermsService = Manager::getService('TaxonomyTerms');
+            $taxonomyService = $this->_getService('Taxonomy');
+            $taxonomyTermsService = $this->_getService('TaxonomyTerms');
 
             foreach ($data["taxonomy"] as $vocabulary => $terms) {
 
@@ -120,7 +118,7 @@ class Dam extends DataAbstract
         }
 
         // Add autocompletion
-        $mediaThumbnail = Manager::getService('Url')->mediaThumbnailUrl($data['id']);
+        $mediaThumbnail = $this->_getService('Url')->mediaThumbnailUrl($data['id']);
         foreach ($availableLanguages as $lang) {
             $title = isset($data['i18n'][$lang]['fields']['title']) ? $data['i18n'][$lang]['fields']['title'] : $data['title'];
             $indexData['autocomplete_' . $lang] = [
@@ -152,7 +150,7 @@ class Dam extends DataAbstract
             $mime = explode(';', $data['Content-Type']);
 
             if (in_array($mime[0], $indexedFiles)) {
-                $mongoFile = Manager::getService('Files')->FindById($data['originalFileId']);
+                $mongoFile = $this->_getService('Files')->FindById($data['originalFileId']);
                 $indexData['file'] = base64_encode($mongoFile->getBytes());
             }
         }

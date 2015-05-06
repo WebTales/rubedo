@@ -16,7 +16,6 @@
  */
 namespace Rubedo\Elastic;
 
-use Rubedo\Services\Manager;
 use Zend\Json\Json;
 
 /**
@@ -89,29 +88,26 @@ class Contents extends DataAbstract
 		// Add taxonomy
 		if (isset($data["taxonomy"])) {
 	
-			$taxonomyService = Manager::getService('Taxonomy');
-			$taxonomyTermsService = Manager::getService('TaxonomyTerms');
-	
 			foreach ($data["taxonomy"] as $vocabulary => $terms) {
 				if (!is_array($terms)) {
 					continue;
 				}
 	
-				$taxonomy = $taxonomyService->findById($vocabulary);
+				$taxonomy = $this->_getService('Taxonomy')->findById($vocabulary);
 				$termsArray = [];
 	
 				foreach ($terms as $term) {
 					if ($term == 'all' or $term=="") {
 						continue;
 					}
-					$term = $taxonomyTermsService->findById($term);
+					$term = $this->_getService('TaxonomyTerms')->findById($term);
 	
 					if (!$term) {
 						continue;
 					}
 	
 					if (!isset($termsArray[$term["id"]])) {
-						$termsArray[$term["id"]] = $taxonomyTermsService->getAncestors(
+						$termsArray[$term["id"]] = $this->_getService('TaxonomyTerms')->getAncestors(
 								$term);
 						$termsArray[$term["id"]][] = $term;
 					}

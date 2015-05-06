@@ -16,8 +16,6 @@
  */
 namespace Rubedo\Elastic;
 
-use Rubedo\Services\Manager;
-
 /**
  * Service to handle Contents indexing and searching
  *
@@ -75,8 +73,8 @@ class Users extends DataAbstract
         // Add taxonomy
         if (isset($data["taxonomy"])) {
         
-        	$taxonomyService = Manager::getService('Taxonomy');
-        	$taxonomyTermsService = Manager::getService('TaxonomyTerms');
+        	$taxonomyService = $this->_getService('Taxonomy');
+        	$taxonomyTermsService = $this->_getService('TaxonomyTerms');
         
         	foreach ($data["taxonomy"] as $vocabulary => $terms) {
         		if (!is_array($terms)) {
@@ -110,7 +108,7 @@ class Users extends DataAbstract
         }
         
         // Add autocompletion fields and title
-        $userThumbnail = (!empty($photo)) ? Manager::getService('Url')->userAvatar($data['id'], 40, 40, "boxed") : null;
+        $userThumbnail = (!empty($photo)) ? $this->_getService('Url')->userAvatar($data['id'], 40, 40, "boxed") : null;
         
         $indexData['autocomplete_nonlocalized'] = [
         'input' => $data['name'],

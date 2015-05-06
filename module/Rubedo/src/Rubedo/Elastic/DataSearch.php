@@ -17,7 +17,6 @@
  */
 namespace Rubedo\Elastic;
 
-use Rubedo\Services\Manager;
 use Zend\Json\Json;
 
 /**
@@ -55,7 +54,7 @@ class DataSearch extends DataAbstract
     protected function _getContentType($contentTypeId)
     {
         if (!isset ($this->contentTypesService)) {
-            $this->contentTypesService = Manager::getService('ContentTypes');
+            $this->contentTypesService = $this->_getService('ContentTypes');
         }
         if (!isset ($this->contentTypesArray [$contentTypeId])) {
             $this->contentTypesArray [$contentTypeId] = $this->contentTypesService->findById($contentTypeId);
@@ -73,7 +72,7 @@ class DataSearch extends DataAbstract
     protected function _getDamType($damTypeId)
     {
         if (!isset ($this->damTypesService)) {
-            $this->damTypesService = Manager::getService('DamTypes');
+            $this->damTypesService = $this->_getService('DamTypes');
         }
         if (!isset ($this->damTypesArray [$damTypeId])) {
             $this->damTypesArray [$damTypeId] = $this->damTypesService->findById($damTypeId);
@@ -91,7 +90,7 @@ class DataSearch extends DataAbstract
     protected function _getUserType($userTypeId)
     {
         if (!isset ($this->userTypesService)) {
-            $this->userTypesService = Manager::getService('userTypes');
+            $this->userTypesService = $this->_getService('userTypes');
         }
         if (!isset ($this->userTypesArray [$userTypeId])) {
             $this->userTypesArray [$userTypeId] = $this->userTypesService->findById($userTypeId);
@@ -164,19 +163,15 @@ class DataSearch extends DataAbstract
     protected function _addTermsFacet($facetName, $fieldName = null, $orderField = '_count', $orderDirection = 'desc', $size = 1000) {
 
     	// Set default value for fieldName
-    	
     	If (is_null($fieldName)) $fieldName = $facetName;
     	
     	// Exclude active Facets for this vocabulary
-    	 
     	$exclude = $this->_excludeActiveFacets($facetName);
     	
-    	// Apply filters from other facets
-    	 
+    	// Apply filters from other facets 
     	$facetFilter = self::_getFacetFilter($facetName);
     	 
-    	// Build facet
-    	 
+    	// Build facet 
     	$result = [
     		'filter' => $facetFilter,
     		'aggs' => [
@@ -196,20 +191,16 @@ class DataSearch extends DataAbstract
     
     protected function _addRangeFacet($facetName, $fieldName = null, $ranges) {
     
-    	// Set default value for fieldName
-    	 
+    	// Set default value for fieldName   	 
     	If (is_null($fieldName)) $fieldName = $facetName;
     	 
-    	// Exclude active Facets for this vocabulary
-    
+    	// Exclude active Facets for this vocabulary 
     	$exclude = $this->_excludeActiveFacets($facetName);
     	 
     	// Apply filters from other facets
-    
     	$facetFilter = self::_getFacetFilter($facetName);
     
     	// Build facet
-    
     	$result = [
     		'filter' => $facetFilter,
     		'aggs' => [
@@ -309,20 +300,15 @@ class DataSearch extends DataAbstract
      */
     public function search(array $params, $option = 'all', $withSummary = true)
     {
-
-        $taxonomyService = Manager::getService('Taxonomy');
-        $taxonomyTermsService = Manager::getService('TaxonomyTerms');
-
+	
         $this->_params = $params;
 
         $this->_facetDisplayMode = isset ($this->_params ['block-config'] ['displayMode']) ? $this->_params ['block-config'] ['displayMode'] : 'standard';
 
-        // front-end search
-        
+        // front-end search        
         if ((self::$_isFrontEnd)) {
 
             // get list of displayed Facets
-
             $this->_displayedFacets = isset ($this->_params ['block-config'] ['displayedFacets']) ? $this->_params ['block-config'] ['displayedFacets'] : array();
 
             if (is_string($this->_displayedFacets)) {
@@ -336,13 +322,13 @@ class DataSearch extends DataAbstract
             }
 
             // get current user language
-            $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+            $currentLocale = $this->_getService('CurrentLocalization')->getCurrentLocalization();
 
             // get site localization strategy
-            $localizationStrategy = $taxonomyService->getLocalizationStrategy();
+            $localizationStrategy = $this->_getService('Taxonomy')->getLocalizationStrategy();
 
             // get locale fall back
-            $fallBackLocale = $taxonomyService->getFallbackLocale();
+            $fallBackLocale = $this->_getService('Taxonomy')->getFallbackLocale();
 
             // if there is any facet to display, get overrides
             if (!empty ($this->_displayedFacets)) {
@@ -350,32 +336,22 @@ class DataSearch extends DataAbstract
                 $this->_facetOperators = array();
 
                 // check if facetOverrides exists
-
                 $facetOverrides = isset ($this->_params ['block-config'] ['facetOverrides']) ? (Json::decode($this->_params ['block-config'] ['facetOverrides'], Json::TYPE_ARRAY)) : array();
 
                 if (!empty ($facetOverrides)) { // This code is only for 2.0.x backward compatibility
 
                     foreach ($facetOverrides as $facet) {
-                        if ($this->_displayedFacets == array(
-                                'all'
-                            ) or in_array($facet ['id'], $this->_displayedFacets)
-                        ) {
-                            if ($facet ['id'] == 'contentType')
-                                $facet ['id'] = 'type';
+                        if ($this->_displayedFacets == ['all'] or in_array($facet ['id'], $this->_displayedFacets)) {
+                            if ($facet ['id'] == 'contentType') $facet ['id'] = 'type';
                             $this->_facetOperators [$facet ['id']] = strtolower($facet ['facetOperator']);
                         }
                     }
                 } else {
 
                     // if all facets are displayed
-
-                    if ($this->_displayedFacets == array(
-                            'all'
-                        )
-                    ) {
-
+                    if ($this->_displayedFacets == ['all']) {
                         // get facets operators from all taxonomies
-                        $taxonomyList = $taxonomyService->getList();
+                        $taxonomyList = $this->_getService('Taxonomy')->getList();
 
                         foreach ($taxonomyList ['data'] as $taxonomy) {
                             $this->_facetOperators [$taxonomy ['id']] = isset ($taxonomy ['facetOperator']) ? strtolower($taxonomy ['facetOperator']) : 'and';
@@ -390,7 +366,7 @@ class DataSearch extends DataAbstract
                             } else {
                                 // Get default facet operator from taxonomy if not present in block configuration
                                 if (preg_match('/[\dabcdef]{24}/', $facet ['name']) == 1 || $facet ['name'] == 'navigation') {
-                                    $taxonomy = $taxonomyService->findById($facet ['name']);
+                                    $taxonomy = $this->_getService('Taxonomy')->findById($facet ['name']);
                                     if ($taxonomy) {
                                         $this->_facetOperators [$facet ['name']] = isset ($taxonomy ['facetOperator']) ? strtolower($taxonomy ['facetOperator']) : 'and';
                                     }
@@ -404,17 +380,16 @@ class DataSearch extends DataAbstract
             // for BO, the strategy is to search into the working langage with
             // fallback on all other langages (_all)
             $localizationStrategy = 'backOffice';
-            $currentUser = Manager::getService('CurrentUser')->getCurrentUser();
+            $currentUser = $this->_getService('CurrentUser')->getCurrentUser();
             $currentLocale = $currentUser ['workingLanguage'];
         }
 
         // Get taxonomies
-        $collection = Manager::getService('Taxonomy');
-        $taxonomyList = $collection->getList();
+        $taxonomyList = $this->_getService('Taxonomy')->getList();
         $taxonomies = $taxonomyList ['data'];
 
         // Get faceted fields
-        $collection = Manager::getService('ContentTypes');
+        $collection = $this->_getService('ContentTypes');
         $facetedFields = $collection->getFacetedFields();
         foreach ($facetedFields as $facetedField) {
             // get default facet operator from faceted field if not present in block configuration
@@ -438,7 +413,7 @@ class DataSearch extends DataAbstract
 
         // set default options
         if (!array_key_exists('lang', $this->_params)) {
-            $session = Manager::getService('Session');
+            $session = $this->_getService('Session');
             $this->_params ['lang'] = $session->get('lang', 'fr');
         }
 
@@ -450,14 +425,12 @@ class DataSearch extends DataAbstract
         $this->_params ['query'] = strip_tags($this->_params ['query']);
 
         // Build global and filter
-
         $this->_setFilter = false;
 
         $globalFilter = array();
 
         // Filter on read Workspaces
-
-        $readWorkspaceArray = Manager::getService('CurrentUser')->getReadWorkspaces();
+        $readWorkspaceArray = $this->_getService('CurrentUser')->getReadWorkspaces();
 
         if (($option != 'user') && (!in_array('all', $readWorkspaceArray)) && (!empty ($readWorkspaceArray))) {
 
@@ -472,8 +445,7 @@ class DataSearch extends DataAbstract
             $this->_setFilter = true;
         }
         
-        // Products filter
-        
+        // Products filter        
         if (isset($this->_params['isProduct'])&&$this->_params['isProduct']){
         	$isProductFilter = [
         		'term' => ['isProduct' => true]
@@ -482,11 +454,9 @@ class DataSearch extends DataAbstract
         }
 
         // Frontend filters, for contents only : online, start and end publication date
-
         if ((self::$_isFrontEnd) && ($option != 'user') && ($option != 'dam')) {
 
-            // Only 'online' contents
-          
+            // Only 'online' contents         
         	$onlineFilter = [
         		'or' => [
         			['term' => [
@@ -502,8 +472,7 @@ class DataSearch extends DataAbstract
         	];
         	
             //  Filter on start and end publication date
-
-            $now = Manager::getService('CurrentTime')->getCurrentTime();
+            $now = $this->_getService('CurrentTime')->getCurrentTime();
 
             // filter on start
             $beginFilter = [
@@ -586,7 +555,7 @@ class DataSearch extends DataAbstract
         // add filter for geo search on content types with 'position' field
         if ($option == 'geo') {
         	
-            $contentTypeList = Manager::getService('ContentTypes')->getGeolocatedContentTypes();
+            $contentTypeList = $this->_getService('ContentTypes')->getGeolocatedContentTypes();
             if (!empty ($contentTypeList)) {
             	$geoFilter = array();
                 foreach ($contentTypeList as $contentTypeId) {
@@ -732,7 +701,6 @@ class DataSearch extends DataAbstract
         
         // Setting fields from localization strategy for content or dam search
         // only
-
         if ($option != 'user') {
             switch ($localizationStrategy) {
                 case 'backOffice' :
@@ -802,8 +770,7 @@ class DataSearch extends DataAbstract
 
         $searchParams['body']['query']['query_string'] = $elasticQueryString;
         
-        // Apply filter to query and aggregations
-        
+        // Apply filter to query and aggregations        
         if (!empty ($this->_globalFilterList)) {
             foreach ($this->_globalFilterList as $filter) {
             	$globalFilter['and'][] = $filter;
@@ -812,7 +779,6 @@ class DataSearch extends DataAbstract
         }
 
         // Define the objectType facet (content, dam or user)
-
         if ($this->_isFacetDisplayed('objectType')) {
 
         	$searchParams['body']['aggs']['objectType'] = $this->_addTermsFacet('objectType');
@@ -820,7 +786,6 @@ class DataSearch extends DataAbstract
         }
 
         // Define the type facet
-
         if (($this->_isFacetDisplayed('contentType')) || ($this->_isFacetDisplayed('type'))) {
 
         	$searchParams['body']['aggs']['type'] = $this->_addTermsFacet('type', 'contentType');
@@ -828,7 +793,6 @@ class DataSearch extends DataAbstract
         }
         
         // Define the dam type facet
-
         if ($this->_isFacetDisplayed('damType')) {
 
         	$searchParams['body']['aggs']['damType'] = $this->_addTermsFacet('damType');
@@ -836,7 +800,6 @@ class DataSearch extends DataAbstract
         }
         
         // Define the user type facet
-
         if ($this->_isFacetDisplayed('userType')) {
 
 			$searchParams['body']['aggs']['userType'] = $this->_addTermsFacet('userType');
@@ -844,24 +807,21 @@ class DataSearch extends DataAbstract
         }
         
         // Define the author facet
-
         if ($this->_isFacetDisplayed('author')) {
         
         	$searchParams['body']['aggs']['author'] = $this->_addTermsFacet('author','createUser.id');
  
         }
         
-        // Define the alphabetical name facet for users
-        
+        // Define the alphabetical name facet for users    
         if ($option == 'user') {
 
         	$searchParams['body']['aggs']['userName'] = $this->_addTermsFacet('userName','first_letter');
 
         }
 
-        // Define the date facet
-        
-        $d = Manager::getService('CurrentTime')->getCurrentTime();
+        // Define the date facet    
+        $d = $this->_getService('CurrentTime')->getCurrentTime();
        
         $lastday = ( string ) mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d)) * 1000;
         $lastweek = ( string )mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d)) * 1000;
@@ -879,13 +839,12 @@ class DataSearch extends DataAbstract
             
         // init time label array
         $timeLabel = array();
-        $timeLabel [$lastday] = Manager::getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Day', 'Past 24H');
-        $timeLabel [$lastweek] = Manager::getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Week', 'Past week');
-        $timeLabel [$lastmonth] = Manager::getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Month', 'Past month');
-        $timeLabel [$lastyear] = Manager::getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Year', 'Past year');
+        $timeLabel [$lastday] = $this->_getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Day', 'Past 24H');
+        $timeLabel [$lastweek] = $this->_getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Week', 'Past week');
+        $timeLabel [$lastmonth] = $this->_getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Month', 'Past month');
+        $timeLabel [$lastyear] = $this->_getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Year', 'Past year');
 
-        // Define taxonomy facets
-        
+        // Define taxonomy facets    
         foreach ($taxonomies as $taxonomy) {
             $vocabulary = $taxonomy ['id'];
 
@@ -896,8 +855,7 @@ class DataSearch extends DataAbstract
             }
         }
 
-        // Define the fields facets
-        
+        // Define the fields facets     
         foreach ($facetedFields as $field) {
 
             if ($field ['useAsVariation']) {
@@ -918,8 +876,7 @@ class DataSearch extends DataAbstract
              }
         }
 
-        // Add size and from to paginate results
-        
+        // Add size and from to paginate results       
         if (isset($this->_params['start']) && isset($this->_params['limit'])) {
          	$searchParams['body']['size'] = $this->_params ['limit'];
         	$searchParams['body']['from'] = $this->_params ['start'];          
@@ -931,17 +888,14 @@ class DataSearch extends DataAbstract
         }
 
         // add sort
-
         $searchParams['body']['sort'] = [
         	[$this->_params ['orderby'] => ['order' => strtolower($this->_params ['orderbyDirection']), 'ignore_unmapped' => true] ]   	
         ];   
         
-        // retrieve all stored fields
-        
+        // retrieve all stored fields       
         $searchParams['body']['fields'] = ['*'];
         
         // run query
-
         switch ($option) {
             case 'content' :
             	$searchParams['index'] = $this->getIndexNameFromConfig('contentIndex');
@@ -963,8 +917,7 @@ class DataSearch extends DataAbstract
                 break;
         }
 
-        // For geosearch dynamically set searchMode depending on the number of results
-        
+        // For geosearch dynamically set searchMode depending on the number of results       
         if ($option == 'geo' && self::$_isFrontEnd) {
         	$countSearchParams = $searchParams;
             $countSearchParams['body']['size'] = 0;
@@ -980,7 +933,6 @@ class DataSearch extends DataAbstract
         }
 
         // Get resultset
-
         switch ($this->_params['searchMode']) {
             case 'default': // default mode with results
                 $elasticResultSet = $this->_client->search($searchParams);
@@ -998,8 +950,7 @@ class DataSearch extends DataAbstract
                 break;
         }
 
-        // For geosearch get aggregation buckets
-        
+        // For geosearch get aggregation buckets        
         if ($option == 'geo') {
             $result ['Aggregations'] = $elasticResultSet['aggregations']['agf']['hash'];
 
@@ -1009,16 +960,15 @@ class DataSearch extends DataAbstract
             }
         }
 
-        // Update data
-        
+        // Update data        
         $resultsList = $elasticResultSet['hits']['hits'];
         $result ['total'] = $elasticResultSet['hits']['total'];
         $result ['query'] = $this->_params ['query'];
-        $userWriteWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
-        $userCanWriteContents = Manager::getService('Acl')->hasAccess('write.ui.contents');
-        $userCanWriteDam = Manager::getService('Acl')->hasAccess('write.ui.dam');
+        $userWriteWorkspaces = $this->_getService('CurrentUser')->getWriteWorkspaces();
+        $userCanWriteContents = $this->_getService('Acl')->hasAccess('write.ui.contents');
+        $userCanWriteDam = $this->_getService('Acl')->hasAccess('write.ui.dam');
 
-        $writeWorkspaceArray = Manager::getService('CurrentUser')->getWriteWorkspaces();
+        $writeWorkspaceArray = $this->_getService('CurrentUser')->getWriteWorkspaces();
 
         foreach ($resultsList as $resultItem) {
             $data = $resultItem['fields'];
@@ -1098,7 +1048,6 @@ class DataSearch extends DataAbstract
             $data ['lastUpdateTime'] = strtotime($data ['lastUpdateTime'][0]) ;
 
             // Set read only
-
             if (!isset ($data ['writeWorkspace'][0] ) or in_array($data ['writeWorkspace'][0] , $writeWorkspaceArray)) {
                 $resultData ['readOnly'] = false;
             } else {
@@ -1108,8 +1057,7 @@ class DataSearch extends DataAbstract
             $result ['data'] [] = array_merge($resultData, $data);
         }
 
-        // Add label to Facets, hide empty facets,
-        
+        // Add label to Facets, hide empty facets,        
         $elasticFacetsTemp = $elasticResultSet['aggregations'];
 
         $elasticFacets = array();
@@ -1138,10 +1086,10 @@ class DataSearch extends DataAbstract
 	                	
 	                    case 'navigation' :
 	
-	                        $temp ['label'] = Manager::getService('Translate')->translate('Search.Facets.Label.Navigation', 'Navigation');
+	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.Navigation', 'Navigation');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                            foreach ($temp ['buckets'] as $key => $value) {
-	                                $termItem = $taxonomyTermsService->getTerm($value ['key'], 'navigation');
+	                                $termItem = $this->_getService('TaxonomyTerms')->getTerm($value ['key'], 'navigation');
 	                                $temp ['terms'] [$key] ['label'] = $termItem ['Navigation'];
 	                            }
 	                        } else {
@@ -1151,7 +1099,7 @@ class DataSearch extends DataAbstract
 	
 	                    case 'damType' :
 	
-	                        $temp ['label'] = Manager::getService('Translate')->translate('Search.Facets.Label.MediaType', 'Media type');
+	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.MediaType', 'Media type');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                            foreach ($temp ['buckets'] as $key => $value) {
 	                                $termItem = $this->_getDamType($value ['key']);
@@ -1168,17 +1116,17 @@ class DataSearch extends DataAbstract
 	
 	                    case 'objectType' :
 	
-	                        $temp ['label'] = Manager::getService('Translate')->translate('Search.Facets.Label.DataType', 'Data type');
+	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.DataType', 'Data type');
 	                        foreach ($temp ['buckets'] as $key => $value) {
 	                        	$temp ['terms'] [$key] ['term'] = $value ['key'];
-	                            $temp ['terms'] [$key] ['label'] = Manager::getService('Translate')->translate('Search.Facets.Label.'.strtoupper($value ['key']), strtoupper($value ['key']));
+	                            $temp ['terms'] [$key] ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.'.strtoupper($value ['key']), strtoupper($value ['key']));
 	                            $temp['terms'] [$key] ['count'] = $value['doc_count'];
 	                        }
 	                        break;
 	
 	                    case 'type' :
 	
-	                        $temp ['label'] = Manager::getService('Translate')->translate('Search.Facets.Label.ContentType', 'Content type');
+	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.ContentType', 'Content type');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                            foreach ($temp ['buckets'] as $key => $value) {
 	                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
@@ -1193,7 +1141,7 @@ class DataSearch extends DataAbstract
 	
 	                    case 'userType' :
 	
-	                        $temp ['label'] = Manager::getService('Translate')->translate('Search.Facets.Label.UserType', 'User type');
+	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.UserType', 'User type');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                            foreach ($temp ['buckets'] as $key => $value) {
 	                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
@@ -1208,9 +1156,9 @@ class DataSearch extends DataAbstract
 	
 	                    case 'author' :
 	
-	                        $temp ['label'] = Manager::getService('Translate')->translate('Search.Facets.Label.Author', 'Author');
+	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.Author', 'Author');
 	                        if ($this->_facetDisplayMode == 'checkbox' or (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0)) {
-	                            $collection = Manager::getService('Users');
+	                            $collection = $this->_getService('Users');
 	                            foreach ($temp ['buckets'] as $key => $value) {
 	                            	if ($value ['key'] != 'rubedo') {
 		                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
@@ -1226,7 +1174,7 @@ class DataSearch extends DataAbstract
 	
 	                    case 'userName' :
 	
-	                        $temp ['label'] = Manager::getService('Translate')->translate('Search.Facets.Label.UserName', 'User Name');
+	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.UserName', 'User Name');
 	                        foreach ($temp ['buckets'] as $key => $value) {
 	                        	$temp ['terms'] [$key] ['term'] = $value ['key'];
 	                            $temp ['terms'] [$key] ['label'] = strtoupper($value ['key']);
@@ -1237,7 +1185,7 @@ class DataSearch extends DataAbstract
 	
 	                    case 'lastupdatetime' :
 	
-	                        $temp ['label'] = Manager::getService('Translate')->translate('Search.Facets.Label.ModificationDate', 'Modification date');
+	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.ModificationDate', 'Modification date');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                        	
 	                        	$temp ['_type'] = 'range';
@@ -1266,13 +1214,13 @@ class DataSearch extends DataAbstract
 	                        $regex = '/^[0-9a-z]{24}$/';
 	                        if (preg_match($regex, $id)) { // Taxonomy facet use
 	                            // mongoID
-	                            $vocabularyItem = Manager::getService('Taxonomy')->findById($id);
+	                            $vocabularyItem = $this->_getService('Taxonomy')->findById($id);
 	                            $temp ['label'] = $vocabularyItem ['name'];
 	                            if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                                foreach ($temp ['buckets'] as $key => $value) {
 	                                	$temp ['terms'] [$key] ['term'] = $value ['key'];
 	                                	$temp['terms'] [$key] ['count'] = $value['doc_count'];
-	                                    $termItem = $taxonomyTermsService->findById($value ['key']);
+	                                    $termItem = $this->_getService('TaxonomyTerms')->findById($value ['key']);
 	                                    if ($termItem) {
 	                                        $temp ['terms'] [$key] ['label'] = $termItem ['text'];
 	                                    } else {
@@ -1308,7 +1256,6 @@ class DataSearch extends DataAbstract
         }
 
         // Add label to filters
-
         $result ['activeFacets'] = array();
         if (is_array($this->_filters)) {
             foreach ($this->_filters as $id => $termId) {
@@ -1317,7 +1264,7 @@ class DataSearch extends DataAbstract
                     case 'damType' :
                         $temp = array(
                             'id' => $id,
-                            'label' => Manager::getService('Translate')->translate('Search.Facets.Label.MediaType', 'Media type')
+                            'label' => $this->_getService('Translate')->translate('Search.Facets.Label.MediaType', 'Media type')
                         );
                         foreach ($termId as $term) {
                             $termItem = $this->_getDamType($term);
@@ -1332,7 +1279,7 @@ class DataSearch extends DataAbstract
                     case 'type' :
                         $temp = array(
                             'id' => $id,
-                            'label' => Manager::getService('Translate')->translate('Search.Facets.Label.ContentType', 'Content type')
+                            'label' => $this->_getService('Translate')->translate('Search.Facets.Label.ContentType', 'Content type')
                         );
                         foreach ($termId as $term) {
                             $termItem = $this->_getContentType($term);
@@ -1347,7 +1294,7 @@ class DataSearch extends DataAbstract
                     case 'userType' :
                         $temp = array(
                             'id' => $id,
-                            'label' => Manager::getService('Translate')->translate('Search.Facets.Label.UserType', 'User type')
+                            'label' => $this->_getService('Translate')->translate('Search.Facets.Label.UserType', 'User type')
                         );
                         foreach ($termId as $term) {
                             $termItem = $this->_getUserType($term);
@@ -1362,10 +1309,10 @@ class DataSearch extends DataAbstract
                     case 'author' :
                         $temp = array(
                             'id' => $id,
-                            'label' => Manager::getService('Translate')->translate('Search.Facets.Label.Author', 'Author')
+                            'label' => $this->_getService('Translate')->translate('Search.Facets.Label.Author', 'Author')
                         );
                         foreach ($termId as $term) {
-                            $termItem = Manager::getService('Users')->findById($term);
+                            $termItem = $this->_getService('Users')->findById($term);
                             $temp ['terms'] [] = array(
                                 'term' => $term,
                                 'label' => $termItem ['name']
@@ -1377,7 +1324,7 @@ class DataSearch extends DataAbstract
                     case 'userName' :
                         $temp = array(
                             'id' => $id,
-                            'label' => Manager::getService('Translate')->translate('Search.Facets.Label.UserName', 'User Name')
+                            'label' => $this->_getService('Translate')->translate('Search.Facets.Label.UserName', 'User Name')
                         );
                         foreach ($termId as $term) {
                             $temp ['terms'] [] = array(
@@ -1445,7 +1392,7 @@ class DataSearch extends DataAbstract
                         $regex = '/^[0-9a-z]{24}$/';
                         if (preg_match($regex, $id)) { // Taxonomy facet use
                             // mongoID
-                            $vocabularyItem = Manager::getService('Taxonomy')->findById($id);
+                            $vocabularyItem = $this->_getService('Taxonomy')->findById($id);
 
                             $temp = array(
                                 'id' => $id,
@@ -1453,7 +1400,7 @@ class DataSearch extends DataAbstract
                             );
 
                             foreach ($termId as $term) {
-                                $termItem = $taxonomyTermsService->findById($term);
+                                $termItem = $this->_getService('TaxonomyTerms')->findById($term);
                                 $temp ['terms'] [] = array(
                                     'term' => $term,
                                     'label' => $termItem ['text']
@@ -1501,7 +1448,7 @@ class DataSearch extends DataAbstract
         $this->_params = $params;
 
         // get current user language
-        $currentLocale = Manager::getService('CurrentLocalization')->getCurrentLocalization();
+        $currentLocale = $this->_getService('CurrentLocalization')->getCurrentLocalization();
 
         // query
         $query = array(
@@ -1526,7 +1473,6 @@ class DataSearch extends DataAbstract
         $client = $this->_client;
 
         // get suggest from content
-
         $path = $this->getIndexNameFromConfig('contentIndex') . '/_suggest';
         $suggestion = $client->request($path, 'GET', $query);
         $responseArray = $suggestion->getData()['autocomplete'][0]['options'];

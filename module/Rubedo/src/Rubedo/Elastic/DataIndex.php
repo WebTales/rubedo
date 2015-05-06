@@ -17,8 +17,6 @@
  */
 namespace Rubedo\Elastic;
 
-use Rubedo\Services\Manager;
-
 /**
  * Class implementing the Rubedo API to Elastic Search indexing services using
  * PHP elasticsearch API
@@ -34,7 +32,7 @@ class DataIndex extends DataAbstract
      * Documents queue for indexing
      */
     protected $_documents;
-
+       
     /**
      * Reindex all content or dam
      *
@@ -76,7 +74,7 @@ class DataIndex extends DataAbstract
         if ($option == 'all' or $option == 'content') {
 
             // Retreive all content types
-            $contentTypeList = Manager::getService('ContentTypes')->getList();
+            $contentTypeList = $this->_getService('ContentTypes')->getList();
 
             foreach ($contentTypeList["data"] as $contentType) {
 
@@ -85,10 +83,10 @@ class DataIndex extends DataAbstract
                     $contentType['system'] == FALSE
                 ) {
                     // Create content type mapping
-                    Manager::getService('ElasticContentTypes')->setMapping($contentType["id"], $contentType);
+                    $this->_getService('ElasticContentTypes')->setMapping($contentType["id"], $contentType);
 
                     // Reindex all contents from given type
-                    $result = array_merge($result, Manager::getService('ElasticContentTypes')->index($contentType["id"]));
+                    $result = array_merge($result, $this->_getService('ElasticContentTypes')->index($contentType["id"]));
                 }
             }
         }
@@ -96,34 +94,52 @@ class DataIndex extends DataAbstract
         if ($option == 'all' or $option == 'dam') {
 
             // Retreive all dam types
-            $damTypeList = Manager::getService('DamTypes')->getList();
+            $damTypeList = $this->_getService('DamTypes')->getList();
 
             foreach ($damTypeList["data"] as $damType) {
 
                 // Create dam type mapping
-            	Manager::getService('ElasticDamTypes')->setMapping($damType["id"], $damType);
+            	$this->_getService('ElasticDamTypes')->setMapping($damType["id"], $damType);
 
                 // Reindex all assets from given type
-                $result = array_merge($result, Manager::getService('ElasticContentTypes')->index($damType["id"]));
+                $result = array_merge($result, $this->_getService('ElasticDamTypes')->index($damType["id"]));
             }
         }
 
         if ($option == 'all' or $option == 'user') {
 
             // Retreive all user types
-            $userTypeList = Manager::getService('UserTypes')->getList();
+            $userTypeList = $this->_getService('UserTypes')->getList();
 
             foreach ($userTypeList["data"] as $userType) {
 
                 // Create user type mapping with overwrite set to true
-            	Manager::getService('ElasticDamTypes')->setMapping($userType["id"], $userType);
+            	$this->_getService('ElasticUserTypes')->setMapping($userType["id"], $userType);
 
                 // Reindex all assets from given type
-                $result = array_merge($result, Manager::getService('ElasticContentTypes')->index($userType["id"]));
+                $result = array_merge($result, $this->_getService('ElasticUserTypes')->index($userType["id"]));
             }
         }
 
         return ($result);
+    }
+    
+    public function indexContent($data, $bulk = false) {
+    	
+    	$this->_getService('ElasticContents')->index($data, $bulk = false);
+    	
+    }
+    
+    public function indexDam($data, $bulk = false) {
+    	 
+    	$this->_getService('ElasticDam')->index($data, $bulk = false);
+    	 
+    }
+    
+    public function indexUser($data, $bulk = false) {
+    	 
+    	$this->_getService('ElasticUsers')->index($data, $bulk = false);
+    	 
     }
 
 }

@@ -143,7 +143,6 @@ class UserTypes extends DataAbstract
             }
 
             // Add Fields
-
             $fields = $data['fields'];
 
             // Add system fields : email and name for user
@@ -173,7 +172,7 @@ class UserTypes extends DataAbstract
 
             // add fields mappings
             foreach ($fields as $field) {
-            	$this->_addFieldMapping($field,$mapping);
+            	$this->addFieldMapping($field,$mapping);
             }
             
         }

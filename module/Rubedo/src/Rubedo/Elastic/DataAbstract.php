@@ -180,13 +180,27 @@ class DataAbstract
     }
     
     /**
+     * Getter for cached service
+     *
+     * @param string $serviceName
+     *
+     * @return object
+     */
+    public function _getService($serviceName) {
+    	if (!isset($this->_services[$serviceName])) {
+    		$this->_services[$serviceName] = Manager::getService($serviceName);
+    	}
+    	return $this->_services[$serviceName];
+    }
+        
+    /**
      * Return the index name from configuration file
      * 
      * @return string
      */
     public function getIndexNameFromConfig($optionName)
     {
-        $dataAccess = Manager::getService('MongoDataAccess');
+        $dataAccess = $this->_getService('MongoDataAccess');
         $defaultDB = $dataAccess::getDefaultDb();
         $defaultDB = mb_convert_case($defaultDB, MB_CASE_LOWER, "UTF-8");
         
@@ -207,7 +221,7 @@ class DataAbstract
      */
     public function getLanguages()
     {
-		$this->_activeLanguages = Manager::getService('Languages')->getActiveLanguages();
+		$this->_activeLanguages = $this->_getService('Languages')->getActiveLanguages();
     }
     
     /**
@@ -227,9 +241,9 @@ class DataAbstract
     /**
      * Read configuration from global application config and load it for the current class
      */
-    public static function lazyLoadConfig()
+    public function lazyLoadConfig()
     {
-        $options = Manager::getService('config');
+        $options = $this->_getService('config');
         if (isset($options)) {
             self::setOptions($options['elastic']);
         }
@@ -245,11 +259,11 @@ class DataAbstract
      *            contain vocabularies id of the current object
      * @return array
      */
-    protected static function getVocabularies($data)
+    protected function getVocabularies($data)
     {
     	$vocabularies = [];
     	foreach ($data['vocabularies'] as $vocabularyId) {
-    		$vocabulary = Manager::getService('Taxonomy')->findById(
+    		$vocabulary = $this->_getService('Taxonomy')->findById(
     				$vocabularyId);
     		$vocabularies[] = $vocabulary['id'];
     	}
@@ -513,7 +527,7 @@ class DataAbstract
     
     	// Retrieve data and ES index for type
     
-    	$type = Manager::getService($serviceType)->findById($id);
+    	$type = $this->_getService($serviceType)->findById($id);
     
     	// Index all dam or contents from given type
     	$useQueue = class_exists("ZendJobQueue");
@@ -537,7 +551,7 @@ class DataAbstract
     	} else {
     
     		// Get total items to be indexed
-    		$dataService = Manager::getService($serviceData);
+    		$dataService = $this->_getService($serviceData);
     
     		$filter = Filter::factory('Value')->setName('typeId')->SetValue($id);
     
@@ -591,7 +605,7 @@ class DataAbstract
     
     	$this->_documents = [];
     
-    	$dataService = Manager::getService($serviceData);
+    	$dataService = $this->_getService($serviceData);
     	$wasFiltered = $dataService::disableUserFilter();
     	$itemList = $dataService->getByType($typeId, (int)$start, (int)$bulkSize);
     
@@ -599,13 +613,13 @@ class DataAbstract
     	foreach ($itemList["data"] as $item) {
     		switch ($option) {
     			case 'content':
-    				$this->_documents = array_merge($this->_documents, Manager::getService('ElasticContents')->index($item, TRUE));
+    				$this->_documents = array_merge($this->_documents, $this->_getService('ElasticContents')->index($item, TRUE));
     				break;
     			case 'dam':
-    				$this->_documents = array_merge($this->_documents, Manager::getService('ElasticDam')->index($item, TRUE));
+    				$this->_documents = array_merge($this->_documents, $this->_getService('ElasticDam')->index($item, TRUE));
     				break;
     			case 'user':
-    				$this->_documents = array_merge($this->_documents, Manager::getService('ElasticUsers')->index($item, TRUE));
+    				$this->_documents = array_merge($this->_documents, $this->_getService('ElasticUsers')->index($item, TRUE));
     				break;
     		}
     	}
