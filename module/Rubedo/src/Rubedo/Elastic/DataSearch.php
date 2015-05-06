@@ -53,11 +53,8 @@ class DataSearch extends DataAbstract
      */
     protected function _getContentType($contentTypeId)
     {
-        if (!isset ($this->contentTypesService)) {
-            $this->contentTypesService = $this->_getService('ContentTypes');
-        }
         if (!isset ($this->contentTypesArray [$contentTypeId])) {
-            $this->contentTypesArray [$contentTypeId] = $this->contentTypesService->findById($contentTypeId);
+            $this->contentTypesArray [$contentTypeId] = $this->_getService('ContentTypes')->findById($contentTypeId);
         }
         return $this->contentTypesArray [$contentTypeId];
     }
@@ -71,11 +68,8 @@ class DataSearch extends DataAbstract
      */
     protected function _getDamType($damTypeId)
     {
-        if (!isset ($this->damTypesService)) {
-            $this->damTypesService = $this->_getService('DamTypes');
-        }
         if (!isset ($this->damTypesArray [$damTypeId])) {
-            $this->damTypesArray [$damTypeId] = $this->damTypesService->findById($damTypeId);
+            $this->damTypesArray [$damTypeId] = $this->_getService('DamTypes')->findById($damTypeId);
         }
         return $this->damTypesArray [$damTypeId];
     }
@@ -89,11 +83,8 @@ class DataSearch extends DataAbstract
      */
     protected function _getUserType($userTypeId)
     {
-        if (!isset ($this->userTypesService)) {
-            $this->userTypesService = $this->_getService('userTypes');
-        }
         if (!isset ($this->userTypesArray [$userTypeId])) {
-            $this->userTypesArray [$userTypeId] = $this->userTypesService->findById($userTypeId);
+            $this->userTypesArray [$userTypeId] = $this->_getService('userTypes')->findById($userTypeId);
         }
         return $this->userTypesArray [$userTypeId];
     }
