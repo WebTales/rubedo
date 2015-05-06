@@ -38,15 +38,13 @@ class Contents extends DataAbstract
 		parent::init();
 	}
 	
-	/**
-	 * Create or update index for existing object
-	 *
-	 * @param obj $data
-	 *            content data
-	 * @param boolean $live
-	 *            live if true, workspace if live
-	 * @return array
-	 */
+    /**
+     * Create or update index for existing content
+     *
+     * @param obj $data content data
+     * @param boolean $bulk     
+     * @return array
+     */
 	public function index($data, $bulk = false)
 	{
 		if (!isset($data['fields']) || !isset($data['i18n'])) {

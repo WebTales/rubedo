@@ -36,15 +36,13 @@ class Dam extends DataAbstract
 		parent::init();
 	}
 	
-	/**
-	 * Create or update index for existing object
-	 *
-	 * @param obj $data
-	 *            content data
-	 * @param boolean $live
-	 *            live if true, workspace if live
-	 * @return array
-	 */
+    /**
+     * Create or update index for existing dam
+     *
+     * @param obj $data dam data
+     * @param boolean $bulk
+     * @return array
+     */
 	public function index($data, $bulk = false)
 	{
 	    if (!isset($data['typeId']) || isset($data['mainFileType']) && $data['mainFileType'] === 'Resource') {

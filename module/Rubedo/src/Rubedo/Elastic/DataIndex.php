@@ -123,19 +123,40 @@ class DataIndex extends DataAbstract
 
         return ($result);
     }
-    
+
+    /**
+     * Create or update index for existing content
+     *
+     * @param obj $data content data
+     * @param boolean $bulk     
+     * @return array
+     */
     public function indexContent($data, $bulk = false) {
     	
     	$this->_getService('ElasticContents')->index($data, $bulk = false);
     	
     }
-    
+
+    /**
+     * Create or update index for existing dam
+     *
+     * @param obj $data dam data
+     * @param boolean $bulk
+     * @return array
+     */
     public function indexDam($data, $bulk = false) {
     	 
     	$this->_getService('ElasticDam')->index($data, $bulk = false);
     	 
     }
-    
+
+    /**
+     * Create or update index for existing user
+     *
+     * @param obj $data user data
+     * @param boolean $bulk
+     * @return array
+     */
     public function indexUser($data, $bulk = false) {
     	 
     	$this->_getService('ElasticUsers')->index($data, $bulk = false);
