@@ -32,7 +32,7 @@ class Users extends DataAbstract
 	public function __construct()
 	{
 		parent::__construct();
-		$this->_indexName = $this->getIndexNameFromConfig('damIndex');
+		$this->_indexName = $this->getIndexNameFromConfig('userIndex');
 		parent::init();
 	}
 	
