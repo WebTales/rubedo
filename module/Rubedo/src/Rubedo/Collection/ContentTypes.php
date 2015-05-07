@@ -212,11 +212,9 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
 
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-        $ElasticDataIndexService->init();
-        $ElasticDataIndexService->indexContentType($obj['id'], $obj);
+        Manager::getService('ElasticContentTypes')->setMapping($obj['id'], $obj);
 
-        $ElasticDataIndexService->indexByType('content', $obj['id']);
+        Manager::getService('ElasticContentTypes')->index($obj['id']);
 
         AbstractCollection::disableUserFilter($wasFiltered);
     }
@@ -230,9 +228,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
 
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-        $ElasticDataIndexService->init();
-        $ElasticDataIndexService->deleteContentType($obj['id']);
+        Manager::getService('ElasticContentTypes')->delete($obj['id']);
 
         AbstractCollection::disableUserFilter($wasFiltered);
     }

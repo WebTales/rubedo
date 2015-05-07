@@ -105,9 +105,7 @@ class Dam extends AbstractLocalizableCollection implements IDam
      */
     protected function _indexDam($obj)
     {
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-        $ElasticDataIndexService->init();
-        $ElasticDataIndexService->indexDam($obj);
+        Manager::getService('ElasticDam')->index($obj);
     }
 
     /**
@@ -117,11 +115,7 @@ class Dam extends AbstractLocalizableCollection implements IDam
      */
     protected function _unIndexDam($obj)
     {
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-        if (isset($obj['typeId'])) {
-            $ElasticDataIndexService->init();
-            $ElasticDataIndexService->deleteDam($obj['typeId'], $obj['id']);
-        }
+        Manager::getService('ElasticDam')->delete($obj['typeId'], $obj['id']);
     }
 
     /**

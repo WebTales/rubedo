@@ -164,12 +164,10 @@ class DamTypes extends AbstractLocalizableCollection implements IDamTypes
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
 
-        $ElasticDataIndexService = Manager::getService('ElasticDataIndex');
-        $ElasticDataIndexService->init();
-        $ElasticDataIndexService->indexDamType($obj['id'], $obj, true);
-
-        $ElasticDataIndexService->indexByType('dam', $obj['id']);
-
+        Manager::getService('ElasticDamTypes')->setMapping($obj['id'], $obj);
+        
+        Manager::getService('ElasticDamTypes')->index($obj['id']);
+        
         AbstractCollection::disableUserFilter($wasFiltered);
     }
 
@@ -182,9 +180,7 @@ class DamTypes extends AbstractLocalizableCollection implements IDamTypes
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
 
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-        $ElasticDataIndexService->init();
-        $ElasticDataIndexService->deleteDamType($obj['id'], true);
+        Manager::getService('ElasticDamTypes')->delete($obj['id']);
 
         AbstractCollection::disableUserFilter($wasFiltered);
     }

@@ -356,9 +356,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
             return;
         }
 
-        $ElasticDataIndexService = Manager::getService('ElasticDataIndex');
-        $ElasticDataIndexService->init();
-        $ElasticDataIndexService->indexContent($obj);
+        Manager::getService('ElasticContents')->index($obj);
+
     }
 
     /**
@@ -368,9 +367,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
      */
     protected function _unIndexContent($obj)
     {
-        $ElasticDataIndexService = Manager::getService('ElasticDataIndex');
-        $ElasticDataIndexService->init();
-        $ElasticDataIndexService->deleteContent($obj['typeId'], $obj['id']);
+         Manager::getService('ElasticContents')->delete($obj['typeId'], $obj['id']);
     }
 
     /**
