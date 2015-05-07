@@ -1190,7 +1190,7 @@ class DataSearch extends DataAbstract
 	                                // count when display mode is not set to
 	                                // checkbox
 	                                if ($this->_facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount <= $result ['total'])) {
-	                                	$temp ['ranges'] [$key] ['label'] = "Time Label";
+	                                	$temp ['ranges'] [$key] ['label'] = isset($timeLabel [$value ['from']]) ? $timeLabel [$value ['from']] : 'Time label';
 	                                    $temp ['ranges'] [$key] ['count'] = $rangeCount;
 	                                    unset( $temp ['ranges'] [$key] ['doc_count']);
 	                                } else {
