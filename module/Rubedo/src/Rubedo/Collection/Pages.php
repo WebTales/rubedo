@@ -135,6 +135,7 @@ class Pages extends AbstractLocalizableCollection implements IPages
         'blocks',
         'parentId',
         'noIndex',
+        'taxonomy',
         'noFollow'
     );
 
