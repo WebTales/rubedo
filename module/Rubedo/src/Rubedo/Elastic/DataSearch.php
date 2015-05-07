@@ -1080,8 +1080,10 @@ class DataSearch extends DataAbstract
 	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.Navigation', 'Navigation');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                            foreach ($temp ['buckets'] as $key => $value) {
+	                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
 	                                $termItem = $this->_getService('TaxonomyTerms')->getTerm($value ['key'], 'navigation');
 	                                $temp ['terms'] [$key] ['label'] = $termItem ['Navigation'];
+	                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
 	                            }
 	                        } else {
 	                            $renderFacet = false;
