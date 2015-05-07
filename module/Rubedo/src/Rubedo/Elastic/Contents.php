@@ -88,7 +88,7 @@ class Contents extends DataAbstract
 	
 			foreach ($data["taxonomy"] as $vocabulary => $terms) {
 				if (!is_array($terms)) {
-					continue;
+					$terms = [$terms];
 				}
 	
 				$taxonomy = $this->_getService('Taxonomy')->findById($vocabulary);

@@ -79,7 +79,7 @@ class Dam extends DataAbstract
             foreach ($data["taxonomy"] as $vocabulary => $terms) {
 
                 if (!is_array($terms)) {
-                    continue;
+                    $terms = [$terms];
                 }
                 $taxonomy = $taxonomyService->findById($vocabulary);
                 $termsArray = [];

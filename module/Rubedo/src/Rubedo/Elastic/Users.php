@@ -76,7 +76,7 @@ class Users extends DataAbstract
         
         	foreach ($data["taxonomy"] as $vocabulary => $terms) {
         		if (!is_array($terms)) {
-        			continue;
+					$terms = [$terms];
         		}
         
         		$taxonomy = $taxonomyService->findById($vocabulary);
@@ -84,7 +84,7 @@ class Users extends DataAbstract
         
         		foreach ($terms as $term) {
         			if ($term == 'all') {
-        				continue;
+        				$terms = [$terms];
         			}
         			$term = $taxonomyTermsService->findById($term);
         
