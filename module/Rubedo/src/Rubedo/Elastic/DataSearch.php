@@ -420,6 +420,13 @@ class DataSearch extends DataAbstract
 
         $globalFilter = array();
 
+        
+        // Front end filters
+        if (isset($this->_params['frontEndFilters'])) {
+        	$this->_globalFilterList ['frontEndFilters'] = $this->_params['frontEndFilters'];
+        	$this->_setFilter = true;
+        }
+        
         // Filter on read Workspaces
         $readWorkspaceArray = $this->_getService('CurrentUser')->getReadWorkspaces();
 
