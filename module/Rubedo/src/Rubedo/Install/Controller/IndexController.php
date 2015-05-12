@@ -275,7 +275,6 @@ class IndexController extends AbstractActionController
             if ($this->getRequest()->isPost() && $dbForm->isValid()) {
                 $params = $dbForm->getData();
                 unset($params['buttonGroup']);
-                DataAbstract::lazyLoadConfig();
                 DataAbstract::setOptions($params);
                 $query = Manager::getService('ElasticDataIndex');
                 $query->init();
