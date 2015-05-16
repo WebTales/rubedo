@@ -21,6 +21,7 @@ use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Exceptions\APIAuthException;
 use RubedoAPI\Exceptions\APIEntityException;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Class UsersResource
@@ -214,6 +215,34 @@ class UsersResource extends AbstractResource
         ) {
             throw new APIEntityException('User not consistent: ' . json_encode($user), 400);
         }
+
+        $alreadyExistingUser = $this->getUsersCollection()->findByEmail($user['email']);
+        if ($alreadyExistingUser) {
+            $filters = Filter::factory();
+            $filters->addFilter(Filter::factory('Value')->setName('UTType')
+                ->setValue("email"));
+            $emailUserType = $this->getUserTypesCollection()->findOne($filters);
+            if ($alreadyExistingUser['typeId']!=$emailUserType['id']){
+                return (array(
+                    "success" => false,
+                    "msg" => "Email already used"
+                ));
+            }
+            if (isset($alreadyExistingUser['mailingLists'])){
+                $user['mailingLists']=$alreadyExistingUser['mailingLists'];
+            }
+            if (isset($alreadyExistingUser['mailingListHash'])){
+                $user['mailingListHash']=$alreadyExistingUser['mailingListHash'];
+            }
+            $destroyOldUser=$this->getUsersCollection()->destroy($alreadyExistingUser);
+            if (!$destroyOldUser['success']){
+                return (array(
+                    "success" => false,
+                    "msg" => "Unable to switch from email account"
+                ));
+            }
+        }
+        //test here
         $createdUser = $this->getUsersCollection()->create($user);
 
         if (!$createdUser['success']) {

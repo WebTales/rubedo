@@ -339,9 +339,7 @@ class Users extends AbstractCollection implements IUsers
      */
     protected function _unIndexUser($obj)
     {
-        $ElasticDataIndexService = \Rubedo\Services\Manager::getService('ElasticDataIndex');
-        $ElasticDataIndexService->init();
-        $ElasticDataIndexService->deleteUser($obj['typeId'], $obj['id']);
+        Manager::getService('ElasticUsers')->delete($obj['typeId'], $obj['id']);
     }
 
     /**
