@@ -65,6 +65,9 @@ class Url extends \Rubedo\Router\Url
         }
 
         if (isset($content['taxonomy']['navigation']) && $content['taxonomy']['navigation'] !== "" && !$pageValid) {
+            if (!is_array($content['taxonomy']['navigation'])){
+                $content['taxonomy']['navigation']=array($content['taxonomy']['navigation']);
+            }
             foreach ($content['taxonomy']['navigation'] as $pageId) {
                 if ($pageId == 'all') {
                     continue;
