@@ -9,8 +9,7 @@
         <echo msg='     set-rights      set the good rights on cache and build folders' />
         <echo msg=' ' />
         <echo msg='Specific actions :' />
-        <echo msg='     phpunit         launch test suit for Rubedo' />
-        <echo msg='     phpunit-slim    launch test suit for Rubedo whithout reporting' />
+        <echo msg='     phpunit-slim    launch test suits whithout reporting' />
         <echo msg=' ' />
         <echo msg='     prepare-cache   create cache folders and set rights on it' />
         <echo msg='     clean-cache     delete all cache folders' />
