@@ -39,7 +39,7 @@ class Orders extends AbstractCollection
      * @param $orderData
      * @return array
      */
-    public function createOrder($orderData)
+    public function createOrder($orderData,$decrementStock = true)
     {
         $date = new \DateTime();
         $date = $date->format('Y-m-d');
@@ -52,23 +52,28 @@ class Orders extends AbstractCollection
         if (!$createdOrder['success']) {
             return $createdOrder;
         }
-        $orderData = $createdOrder['data'];
-        $contentTypesService = Manager::getService("ContentTypes");
-        $contentsService = Manager::getService("Contents");
-        $stockService = Manager::getService("Stock");
-        foreach ($orderData['detailedCart']['cart'] as $value) {
-            $content = $contentsService->findById($value['productId'], true, false);
-            $productType = $contentTypesService->findById($content['typeId']);
-            if ($productType['manageStock']) {
-                $stockExtraction = $stockService->decreaseStock($value['productId'], $value['variationId'], $value['amount']);
-                if (!$stockExtraction['success']) {
-                    $orderData['hasStockDecrementIssues'] = true;
-                    $orderData['stockDecrementIssues'][] = $value;
+        if ($decrementStock) {
+            $orderData = $createdOrder['data'];
+            $contentTypesService = Manager::getService("ContentTypes");
+            $contentsService = Manager::getService("Contents");
+            $stockService = Manager::getService("Stock");
+            foreach ($orderData['detailedCart']['cart'] as $value) {
+                $content = $contentsService->findById($value['productId'], true, false);
+                $productType = $contentTypesService->findById($content['typeId']);
+                if ($productType['manageStock']) {
+                    $stockExtraction = $stockService->decreaseStock($value['productId'], $value['variationId'], $value['amount']);
+                    if (!$stockExtraction['success']) {
+                        $orderData['hasStockDecrementIssues'] = true;
+                        $orderData['stockDecrementIssues'][] = $value;
+                    }
                 }
             }
+            $updatedOrder = $this->update($orderData);
+            return $updatedOrder;
+        } else {
+            return $createdOrder;
         }
-        $updatedOrder = $this->update($orderData);
-        return $updatedOrder;
+
     }
 
     public function getIncrement($dateCode)
