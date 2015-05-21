@@ -180,7 +180,7 @@ class DataSearch extends DataAbstract
     	return $result;
     }
     
-    protected function _addRangeFacet($facetName, $fieldName = null, $ranges) {
+    protected function _addDateRangeFacet($facetName, $fieldName = null, $ranges) {
     
     	// Set default value for fieldName   	 
     	If (is_null($fieldName)) $fieldName = $facetName;
@@ -206,7 +206,34 @@ class DataSearch extends DataAbstract
     	 
     	return $result;
     }
-        
+
+    protected function _addRangeFacet($facetName, $fieldName = null, $ranges) {
+    
+    	// Set default value for fieldName
+    	If (is_null($fieldName)) $fieldName = $facetName;
+    
+    	// Exclude active Facets for this vocabulary
+    	$exclude = $this->_excludeActiveFacets($facetName);
+    
+    	// Apply filters from other facets
+    	$facetFilter = self::_getFacetFilter($facetName);
+    
+    	// Build facet
+    	$result = [
+    		'filter' => $facetFilter,
+    		'aggs' => [
+    			'aggregation' => [
+	    			'range' => [
+	    				'field' => 	$fieldName,
+	    				'ranges' => $ranges
+	    			]
+    			]
+    		]
+    	];
+    
+    	return $result;
+    }    
+    
     protected function _excludeActiveFacets ($facetName) {
     	$exclude = [''];
     	if ($this->_facetDisplayMode != 'checkbox' and isset ($this->_filters [$facetName])) {
@@ -281,7 +308,7 @@ class DataSearch extends DataAbstract
             return false;
         }
     }
-
+        
     /**
      * ES search
      *
@@ -589,19 +616,41 @@ class DataSearch extends DataAbstract
 
         // filter on lastupdatetime
         if (array_key_exists('lastupdatetime', $this->_params)) {
+        	$rangeFrom = strtotime(substr($this->_params ['lastupdatetime'],0,24));
+        	$rangeTo = strtotime(substr($this->_params ['lastupdatetime'],-24));
+        	$range = [];
+        	if ($rangeFrom) $range['gte'] = $rangeFrom;
+        	if ($rangeTo) $range['lte'] = $rangeTo;
             $filter = [
             	'range' => [
-            		'lastUpdateTime' => [
-            			'gte' => $this->_params ['lastupdatetime']
-            		]
+            		'lastUpdateTime' => $range
            		]
         	];
-            
            	$this->_globalFilterList ['lastupdatetime'] = $filter;
             $this->_filters ['lastupdatetime'] = $this->_params ['lastupdatetime'];
             $this->_setFilter = true;
         }
-        
+
+        // filter on price
+        if (array_key_exists('price', $this->_params)) {
+
+        	$splitPriceRange = explode('-',$this->_params ['price']);
+        	
+        	$rangeFrom = ($splitPriceRange[0]!='*') ? $splitPriceRange[0] : false;
+        	$rangeTo = ($splitPriceRange[1]!='*') ? $splitPriceRange[1] : false;
+        	$range = [];
+        	if ($rangeFrom) $range['gte'] = (int) $rangeFrom;
+        	if ($rangeTo) $range['lte'] = (int) $rangeTo;
+        	$filter = [
+        		'range' => [
+        			'productProperties.variations.price' => $range
+        		]
+        	];
+        	$this->_globalFilterList ['price'] = $filter;
+        	$this->_filters ['price'] = $this->_params ['price'];
+        	$this->_setFilter = true;
+        }
+            
         // filter on geolocalisation if inflat, suplat, inflon and suplon are
         // set
         if (isset ($this->_params ['inflat']) && isset ($this->_params ['suplat']) && isset ($this->_params ['inflon']) && isset ($this->_params ['suplon'])) {
@@ -827,15 +876,15 @@ class DataSearch extends DataAbstract
         $lastyear = ( string )mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1) * 1000;
         
         $ranges = [
-        	['from' => $lastday, 'to' => 'now'],
-        	['from' => $lastweek, 'to' => 'now'],
-        	['from' => $lastmonth, 'to' => 'now'],
-        	['from' => $lastyear, 'to' => 'now'],
+        	['from' => $lastday],
+        	['from' => $lastweek],
+        	['from' => $lastmonth],
+        	['from' => $lastyear],
         ];
         
-        $searchParams['body']['aggs']['lastupdatetime'] = $this->_addRangeFacet('lastUpdateTime','lastUpdateTime',$ranges);
+        $searchParams['body']['aggs']['lastupdatetime'] = $this->_addDateRangeFacet('lastUpdateTime','lastUpdateTime',$ranges);
             
-        // init time label array
+        // Init time label array
         $timeLabel = array();
         $timeLabel [$lastday] = $this->_getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Day', 'Past 24H');
         $timeLabel [$lastweek] = $this->_getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Week', 'Past week');
@@ -873,7 +922,21 @@ class DataSearch extends DataAbstract
             	
              }
         }
-
+		
+        // Define the price facet for products
+        if ($this->_isFacetDisplayed('price')) {
+        	
+        	$ranges = [
+        		['from' => 0, 'to' => 5],
+        		['from' => 6, 'to' => 15],
+        		['from' => 16, 'to' => 25],
+        		['from' => 26, 'to' => 50],
+        		['from' => 51],
+        	];
+        	
+        	$searchParams['body']['aggs']['price'] = $this->_addDateRangeFacet('price','productProperties.variations.price',$ranges);        	
+        }
+        
         // Add size and from to paginate results       
         if (isset($this->_params['start']) && isset($this->_params['limit'])) {
          	$searchParams['body']['size'] = $this->_params ['limit'];
@@ -1200,15 +1263,38 @@ class DataSearch extends DataAbstract
 	                                	$temp ['ranges'] [$key] ['label'] = isset($timeLabel [$value ['from']]) ? $timeLabel [$value ['from']] : 'Time label';
 	                                    $temp ['ranges'] [$key] ['count'] = $rangeCount;
 	                                    unset( $temp ['ranges'] [$key] ['doc_count']);
-	                                } else {
-	                                    unset ($temp ['ranges'] [$key]);
 	                                }
 	                            }
 	                        } else {
 	                            $renderFacet = false;
 	                        }
-	
 	                        break;
+	                        
+	                    case 'price' :
+	                    	
+	                    	$temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.Price', 'Price');
+	                    	if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+	                    		
+	                    		$temp ['_type'] = 'range';
+	                    		$temp ['ranges'] = array_values($temp ['buckets']);
+	                    		
+	                    		foreach ($temp ['buckets'] as $key => $value) {
+	                    			$rangeCount = $value ['doc_count'];
+	                    			// unset facet when count = 0 or total results
+	                    			// count when display mode is not set to
+	                    			// checkbox
+	                    			if ($this->_facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount <= $result ['total'])) {
+										$from = isset($value['from']) ? $value['from'] : null;
+										$to = isset($value['to']) ? $value['to'] : null;
+	                    				$temp ['ranges'] [$key] ['label'] = $this->getRangeLabel($from,$to);
+	                    				$temp ['ranges'] [$key] ['count'] = $rangeCount;
+	                    				unset( $temp ['ranges'] [$key] ['doc_count']);
+	                    			}
+	                    		}
+	                    	} else {
+	                    		$renderFacet = false;
+	                    	}	  
+	                    	break;
 	
 	                    default :
 	                        $regex = '/^[0-9a-z]{24}$/';
@@ -1342,7 +1428,7 @@ class DataSearch extends DataAbstract
                             'terms' => array(
                                 array(
                                     'term' => $termId,
-                                    'label' => $timeLabel [( string ) $termId]
+                                    'label' => $timeLabel [strtotime(substr($termId,0,24))*1000]
                                 )
                             )
                         );
@@ -1387,6 +1473,20 @@ class DataSearch extends DataAbstract
                             )
                         );
                         break;
+                    case 'price' :
+                    	$priceRange = explode('-',$termId);
+                    	$priceLabel = $this->getRangeLabel($priceRange[0], $priceRange[1]);
+                    	$temp = array(
+                    			'id' => 'price',
+                    			'label' => 'Prix',
+                    			'terms' => array(
+                    				array(
+                    					'term' => $termId,
+                    					'label' => $priceLabel
+                    				)
+                    			)
+                    	);
+                    	break;
                     case 'navigation' :
                     default :
                         $regex = '/^[0-9a-z]{24}$/';
@@ -1504,6 +1604,22 @@ class DataSearch extends DataAbstract
     public static function setIsFrontEnd($_isFrontEnd)
     {
         DataSearch::$_isFrontEnd = $_isFrontEnd;
+    }
+    
+    protected function getRangeLabel($from, $to, $currency = "€") {
+    	
+    	if (isset($from) && $from!='*') {
+    		if (isset($to) && $to!='*') {
+    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeFrom', 'From') .' '.$from. ' '. self::$_currency. ' '. $this->_getService('Translate')->translate('Search.Facets.Label.RangeTo', 'To').' '.$to. ' '.$currency;
+    		} else {
+    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeGreaterThan', 'Greater Than') .' '.$from.' '.$currency;
+    		}
+    	} else {
+    		if (isset($to) && $to!='*') {
+    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeLessThan', 'Less Than') .' '.$to.' '.$currency;
+    		}
+    	}
+    	return $label;
     }
 
     protected function searchLabel($array, $key, $value)
