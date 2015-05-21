@@ -1610,7 +1610,7 @@ class DataSearch extends DataAbstract
     	
     	if (isset($from) && $from!='*') {
     		if (isset($to) && $to!='*') {
-    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeFrom', 'From') .' '.$from. ' '. self::$_currency. ' '. $this->_getService('Translate')->translate('Search.Facets.Label.RangeTo', 'To').' '.$to. ' '.$currency;
+    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeFrom', 'From') .' '.$from. ' '. $currency. ' '. $this->_getService('Translate')->translate('Search.Facets.Label.RangeTo', 'To').' '.$to. ' '.$currency;
     		} else {
     			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeGreaterThan', 'Greater Than') .' '.$from.' '.$currency;
     		}
