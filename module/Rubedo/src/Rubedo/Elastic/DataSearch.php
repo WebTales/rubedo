@@ -1260,6 +1260,7 @@ class DataSearch extends DataAbstract
 		                              	$termItem = $collection->findById($value ['key']);
 		                              	$temp ['terms'] [$key] ['label'] = $termItem ['name'];
 		                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
+		                                $temp['terms'] [$key] ['position'] = isset($termItem['fields']['position']['location']['coordinates']) ? $termItem['fields']['position']['location']['coordinates'] : null;
 	                            	}
 	                            }
 	                        } else {
