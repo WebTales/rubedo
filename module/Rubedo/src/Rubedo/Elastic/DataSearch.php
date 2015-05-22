@@ -949,9 +949,15 @@ class DataSearch extends DataAbstract
         }
 
         // add sort
-        $searchParams['body']['sort'] = [
-        	[$this->_params ['orderby'] => ['order' => strtolower($this->_params ['orderbyDirection']), 'ignore_unmapped' => true] ]   	
-        ];   
+        if (!isset($this->_params ['sort'])) {
+        	// order by field value
+	        $searchParams['body']['sort'] = [
+	        	[$this->_params ['orderby'] => ['order' => strtolower($this->_params ['orderbyDirection']), 'ignore_unmapped' => true] ]   	
+	        ];   
+        } else {
+        	// custom sort object
+        	$searchParams['body']['sort'] = $this->_params ['sort'];
+        }
         
         // retrieve all stored fields       
         $searchParams['body']['fields'] = ['*'];
