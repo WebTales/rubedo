@@ -275,9 +275,7 @@ class ContentTypes extends DataAbstract
 	 */
 	public function delete($typeId)
 	{
-		
-		return $this->delete($this->_indexName, $typeId);
-
+		$this->deleteMapping($this->_indexName, $typeId);
 	}	
 
 	/**

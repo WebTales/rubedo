@@ -190,13 +190,11 @@ class UserTypes extends DataAbstract
 	 */
 	public function setMapping($typeId, $data)
 	{
-	
-		// Delete existing content type
+			// Delete existing content type
 		$this->deleteMapping($this->_indexName, $typeId);
 	
 		// Create mapping
 		return $this->putMapping($this->_indexName, $typeId, $this->getMapping($data));
-	
 	}
 	
 	/**
@@ -208,9 +206,7 @@ class UserTypes extends DataAbstract
 	 */
 	public function delete($typeId)
 	{
-	
-		return $this->delete($this->_indexName, $typeId);
-	
+		return $this->deleteMapping($this->_indexName, $typeId);
 	}
 	
 	/**

@@ -476,8 +476,11 @@ class DataAbstract
     		'index' => $indexName,
     		'type' => $typeId
     	];
-  		if ($this->_client->indices()->existsType($params)) {
-    		$this->_client->indices()->deleteMapping($params);
+    	
+		if ($this->_client->indices()->existsType($params)) {
+    		return $this->_client->indices()->deleteMapping($params);
+    	} else {
+    		return true;
     	}
     }
     
