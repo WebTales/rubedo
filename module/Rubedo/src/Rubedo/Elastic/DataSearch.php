@@ -1680,13 +1680,13 @@ class DataSearch extends DataAbstract
     	
     	if (isset($from) && $from!='*') {
     		if (isset($to) && $to!='*') {
-    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeFrom', 'From') .' '.$from. ' '. $currency. ' '. $this->_getService('Translate')->translate('Search.Facets.Label.RangeTo', 'To').' '.$to. ' '.$currency;
+    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeFrom', 'De') .' '.$from. ' '. $currency. ' '. $this->_getService('Translate')->translate('Search.Facets.Label.RangeTo', 'à').' '.$to. ' '.$currency;
     		} else {
-    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeGreaterThan', 'Greater Than') .' '.$from.' '.$currency;
+    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeGreaterThan', 'Plus de') .' '.$from.' '.$currency;
     		}
     	} else {
     		if (isset($to) && $to!='*') {
-    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeLessThan', 'Less Than') .' '.$to.' '.$currency;
+    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeLessThan', 'Moins que') .' '.$to.' '.$currency;
     		}
     	}
     	return $label;
