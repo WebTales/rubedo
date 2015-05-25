@@ -46,7 +46,7 @@ class SearchResource extends AbstractResource
         parent::__construct();
         $this->searchOption = 'all';
         $this->searchParamsArray = array('orderby', 'orderbyDirection', 'query', 'objectType', 'type', 'damType', 'userType', 'author',
-            'userName', 'lastupdatetime', 'start', 'limit', 'searchMode');
+            'userName', 'lastupdatetime', 'start', 'limit', 'searchMode','price','inStock');
         $this
             ->definition
             ->setName('Search')
@@ -102,6 +102,16 @@ class SearchResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setKey('author')
                             ->setDescription('Author')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('price')
+                            ->setDescription('Price')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('inStock')
+                            ->setDescription('In stock')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
