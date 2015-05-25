@@ -1342,7 +1342,7 @@ class DataSearch extends DataAbstract
 	                    			// unset facet when count = 0 or total results
 	                    			// count when display mode is not set to
 	                    			// checkbox
-	                    			if ($this->_facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount <= $result ['total'])) {
+	                    			if ($rangeCount > 0) {
 	                    				$from = isset($value['from']) ? $value['from'] : null;
 	                    				$to = isset($value['to']) ? $value['to'] : null;
 	                    				$temp ['ranges'] [$key] ['label'] = 'Yes';
@@ -1597,7 +1597,6 @@ class DataSearch extends DataAbstract
                 $result ['activeFacets'] [] = $temp;
             }
         }
-        
 
         return ($result);
     }
