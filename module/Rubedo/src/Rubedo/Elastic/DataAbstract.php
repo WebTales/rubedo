@@ -340,6 +340,7 @@ class DataAbstract
     						}
     					}
     					break;
+    				case 'Rubedo.view.localiserField' :
     				case 'localiserField' :
     					$config = [
     						'properties' => [
