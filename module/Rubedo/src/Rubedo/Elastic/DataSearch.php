@@ -1561,7 +1561,7 @@ class DataSearch extends DataAbstract
                     case 'navigation' :
                     default :
                         $regex = '/^[0-9a-z]{24}$/';
-                        if (preg_match($regex, $id)) { // Taxonomy facet use
+                        if (preg_match($regex, $id)||$id=="navigation") { // Taxonomy facet use
                             // mongoID
                             $vocabularyItem = $this->_getService('Taxonomy')->findById($id);
 
