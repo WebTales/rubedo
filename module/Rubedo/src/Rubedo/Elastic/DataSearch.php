@@ -1678,6 +1678,8 @@ class DataSearch extends DataAbstract
     
     protected function getRangeLabel($from, $to, $currency = "€") {
     	
+    	$from = (int) $from;
+    	$to = (int) $to;
     	if (isset($from) && $from!='*') {
     		if (isset($to) && $to!='*') {
     			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeFrom', 'De') .' '.$from. ' '. $currency. ' '. $this->_getService('Translate')->translate('Search.Facets.Label.RangeTo', 'à').' '.$to. ' '.$currency;
