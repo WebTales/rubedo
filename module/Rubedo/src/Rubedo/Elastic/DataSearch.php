@@ -184,10 +184,7 @@ class DataSearch extends DataAbstract
     
     	// Set default value for fieldName   	 
     	If (is_null($fieldName)) $fieldName = $facetName;
-    	 
-    	// Exclude active Facets for this vocabulary 
-    	$exclude = $this->_excludeActiveFacets($facetName);
-    	 
+    	     	 
     	// Apply filters from other facets
     	$facetFilter = self::_getFacetFilter($facetName);
     
@@ -211,10 +208,7 @@ class DataSearch extends DataAbstract
     
     	// Set default value for fieldName
     	If (is_null($fieldName)) $fieldName = $facetName;
-    
-    	// Exclude active Facets for this vocabulary
-    	$exclude = $this->_excludeActiveFacets($facetName);
-    
+       
     	// Apply filters from other facets
     	$facetFilter = self::_getFacetFilter($facetName);
     
@@ -949,7 +943,7 @@ class DataSearch extends DataAbstract
         		['from' => 51],
         	];
         	
-        	$searchParams['body']['aggs']['price'] = $this->_addDateRangeFacet('price','productProperties.variations.price',$ranges);        	
+        	$searchParams['body']['aggs']['price'] = $this->_addRangeFacet('price','productProperties.variations.price',$ranges);        	
         }
         
         // Define the stock facet for products
