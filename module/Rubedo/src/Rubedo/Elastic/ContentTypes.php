@@ -219,10 +219,17 @@ class ContentTypes extends DataAbstract
 					'store' => 'yes',
 					'type' => 'object',
 					'properties'=>[
+						'basePrice' => [
+							'type' => 'float'
+						],
 						'variations'=>[
 							'dynamic' => true,
 							'type' => 'object',
-							'properties'=>[]
+							'properties'=>[
+								'price' => [
+									'type' => 'float'
+								]
+							]
 						]
 					]
 				];
