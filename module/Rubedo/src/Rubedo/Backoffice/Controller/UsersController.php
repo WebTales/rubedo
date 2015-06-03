@@ -280,6 +280,9 @@ class UsersController extends DataAccessController
                 }
                 break;
             default:
+                if (is_array($value)){
+                    return "";
+                }
                 return ($value);
                 break;
         }
