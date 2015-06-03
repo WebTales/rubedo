@@ -331,8 +331,10 @@ class ContentsController extends DataAccessController
             "summary" => "Summary"
         );
         $fieldsArray["createTime"] = null;
+        $fieldsArray["createUser"] = null;
         $multivaluedFieldsArray = array();
         $headerArray["createTime"] = "Creation";
+        $headerArray["createUser"] = "Nom du créateur";
         $exportableFieldTypes = [
             "Ext.form.field.Text",
             "textfield",
@@ -386,13 +388,21 @@ class ContentsController extends DataAccessController
             $csvLine[] = $taxoHeaderArray[$field];
         }
         fputcsv($csvResource, $csvLine, ';');
-
+        $usersService=Manager::getService("Users");
         foreach ($contents['data'] as $content) {
             $csvLine = array();
             foreach ($fieldsArray as $field => $fieldType) {
                 switch ($field) {
                     case 'createTime':
                         $csvLine[] = date('d-m-Y H:i:s', $content["createTime"]);
+                        break;
+                    case 'createUser':
+                        $foundUser=$usersService->findByid($content["createUser"]["id"]);
+                        if ($foundUser){
+                            $csvLine[] = $foundUser["name"];
+                        } else {
+                            $csvLine[] = "";
+                        }
                         break;
                     case 'text':
                         $csvLine[] = isset($content[$field]) ? $content[$field] : '';
