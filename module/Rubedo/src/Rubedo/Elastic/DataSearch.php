@@ -151,7 +151,7 @@ class DataSearch extends DataAbstract
      * @return 	array
      */
     
-    protected function _addTermsFacet($facetName, $fieldName = null, $orderField = '_count', $orderDirection = 'desc', $size = 1000) {
+    protected function _addTermsFacet($facetName, $fieldName = null, $orderField = '_count', $orderDirection = 'desc', $size = 100) {
 
     	// Set default value for fieldName
     	If (is_null($fieldName)) $fieldName = $facetName;
@@ -927,7 +927,7 @@ class DataSearch extends DataAbstract
 
             if ($this->_isFacetDisplayed($field ['name'])) {
 
-            	$searchParams['body']['aggs'][$field ['name']] = $this->_addTermsFacet($field ['name'],$field ['name'],'_count','desc',10);
+            	$searchParams['body']['aggs'][$field ['name']] = $this->_addTermsFacet($field ['name'],$field ['name'],'_count','desc');
             	
              }
         }
