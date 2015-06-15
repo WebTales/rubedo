@@ -906,7 +906,7 @@ class DataSearch extends DataAbstract
 
             if ($this->_isFacetDisplayed($vocabulary)) {
 
-            	$searchParams['body']['aggs'][$vocabulary] = $this->_addTermsFacet($vocabulary,'taxonomy.' . $taxonomy ['id'],'_count','desc',10);
+            	$searchParams['body']['aggs'][$vocabulary] = $this->_addTermsFacet($vocabulary,'taxonomy.' . $taxonomy ['id'],'_count','desc',100);
 
             }
         }
