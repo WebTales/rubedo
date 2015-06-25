@@ -894,4 +894,61 @@ abstract class AbstractCollection implements IAbstractCollection
             "count" => count($response['result'])
         );
     }
+
+    /**
+     * Add to the field list the array passed in argument
+     *
+     * @param array $fields
+     */
+    public function addToFieldList(array $fields)
+    {
+        $this->_dataService->addToFieldList($fields);
+    }
+
+    /**
+     * Add to the exclude field list the array passed in argument
+     *
+     * @param array $fields
+     */
+    public function addToExcludeFieldList(array $fields)
+    {
+        $this->_dataService->addToExcludeFieldList($fields);
+    }
+
+    /**
+     * Allow to remove one field in the current array
+     *
+     * @param array $fieldToRemove
+     */
+    public function removeFromFieldList(array $fieldToRemove)
+    {
+        $this->_dataService->removeFromFieldList($fieldToRemove);
+    }
+
+    /**
+     * Allow to remove one field in the current excludeFieldList array
+     *
+     * @param array $fieldToRemove
+     */
+    public function removeFromExcludeFieldList(array $fieldToRemove)
+    {
+        $this->_dataService->removeFromExcludeFieldList($fieldToRemove);
+    }
+
+    /**
+     * Clear the excludeFieldList array
+     */
+    public function clearExcludeFieldList()
+    {
+        $this->_dataService->clearExcludeFieldList();
+    }
+
+    /**
+     * Clear the fieldList array
+     */
+    public function clearFieldList()
+    {
+        $this->_dataService->clearFieldList();
+    }
+
 }
