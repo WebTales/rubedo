@@ -185,4 +185,8 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/contentContribution.json'
     ),
+    'megaMenu' => array(
+    		'maxlifeTime' => 60,
+    		'definitionFile' => $blocksPath . '/megaMenu.json'
+    ),
 );

@@ -1,0 +1,205 @@
+{
+    "type": "Mega Menu",
+    "description": "The 'Mega Menu' block displays a mega navigation menu, from the selected level.",
+    "configBasique": {
+        "title": "Mega Menu",
+        "bType": "megaMenu",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
+                {
+                    "categorie": "#ext-gen1287#",
+                    "champs": [
+                        {
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1288#",
+                                "name": "rootPage"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.ComboBox",
+                            "config": {
+                                "fieldLabel": "Fallback root",
+                                "name": "fallbackRoot",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local",
+                                "value": "current",
+                                "store": [
+                                    [
+                                        "current",
+                                        "Current"
+                                    ],
+                                    [
+                                        "parent",
+                                        "Parent"
+                                    ]
+                                ]
+                            }
+                        },
+                        {
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1289#",
+                                "name": "searchPage"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1290#",
+                                "name": "menuLevel",
+                                "allowDecimals": false,
+                                "editable": false,
+                                "minValue": 0
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1291#",
+                                "name": "useSearchEngine",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1292#",
+                                "name": "displayRootPage",
+                                "inputValue": true
+                            }
+                        }
+                    ]
+				},
+				{
+					"categorie": "Menu",
+                    "champs": [
+                   		{
+                            "type": "Ext.form.field.ComboBox",
+                            "config": {
+                                "fieldLabel": "Align",
+                                "name": "menuAlign",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local",
+                                "value": "right",
+                                "store": [
+                                    [
+                                        "left",
+                                        "Left"
+                                    ],
+                                    [
+                                        "right",
+                                        "Right"
+                                    ]
+                                ]
+                            }
+                        },
+                        {
+                        	"type": "Ext.form.field.ComboBox",
+                            "config": {
+                                "fieldLabel": "Width",
+                                "name": "menuWidth",
+                                "editable": false,
+                                "forceSelection": true,
+                                "queryMode": "local",
+                                "value": "3",
+                                "store": [
+                                    [
+                                        "2",
+                                        "2/12"
+                                    ],
+                                    [
+                                        "3",
+                                        "3/12"
+                                    ],
+                                    [
+                                        "4",
+                                        "4/12"
+                                    ],
+                                    [
+                                        "5",
+                                        "5/12"
+                                    ],
+                                    [
+                                        "6",
+                                        "6/12"
+                                    ],
+                                    [
+                                        "7",
+                                        "7/12"
+                                    ],
+                                    [
+                                        "8",
+                                        "8/12"
+                                    ],
+                                    [
+                                        "9",
+                                        "9/12"
+                                    ],
+                                    [
+                                        "10",
+                                        "10/12"
+                                    ]
+                                ]
+                            }
+                        }				
+					]
+				
+				
+				},
+				{                   
+                    "categorie": "#ext-gen1104#",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.DCEField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1104#",
+                                "name": "contentId",
+                                "allowedCT": "richText",
+                                "addOnly": true
+                            }
+                        }
+                    ]
+                }
+            ],
+            "avance": [
+                 {
+                    "categorie": "Display settings",
+                    "champs": [
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "Disable level two pages",
+                                "name": "disableLevelTwo",
+                                "inputValue": true
+                            }
+                        }
+                        
+                    ]
+                },
+                {
+                    "categorie": "Template",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "Custom template",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/megaMenu.html",
+                                "twigMode": false
+
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "configBloc": []
+    },
+    "category": "#ext-gen1277#",
+    "bType": "megaMenu",
+    "id": "5579b02fbdd0f8246cd63af3"
+}
