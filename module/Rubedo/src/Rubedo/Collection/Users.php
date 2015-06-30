@@ -172,17 +172,6 @@ class Users extends AbstractCollection implements IUsers
      */
     public function create(array $obj, $options = array())
     {
-        if(isset($obj["login"]) && is_string($obj["login"])) {
-            $loginFilter = Filter::factory()->addFilter(Filter::factory('Value')->setName('login')->setValue(new \MongoRegex("/^".$obj["login"]."$/i")));
-            $rawUser = Manager::getService("Users")->getList($loginFilter);
-
-            if(count($rawUser["data"]) === 0) {
-                $obj["login"] = strtolower($obj["login"]);
-            } else {
-                throw new \Rubedo\Exceptions\User('Failed to create user', "Exception45");
-            }
-        }
-
         if (!isset($obj['groups']) || $obj['groups'] == "") {
             $groups = array();
         } else {
@@ -288,17 +277,6 @@ class Users extends AbstractCollection implements IUsers
      */
     public function update(array $obj, $options = array())
     {
-        if(isset($obj["login"]) && is_string($obj["login"])) {
-            $loginFilter = Filter::factory()->addFilter(Filter::factory('Value')->setName('login')->setValue(new \MongoRegex("/^".$obj["login"]."$/i")));
-            $rawUser = Manager::getService("Users")->getList($loginFilter);
-
-            if((count($rawUser["data"]) === 0) || (count($rawUser["data"]) === 1 && $rawUser["data"][0]["id"] === $obj["id"])) {
-                $obj["login"] = strtolower($obj["login"]);
-            } else {
-                throw new \Rubedo\Exceptions\User('Failed to update user', "Exception103");
-            }
-        }
-
         // Define default workspace for a user if it's not set
         if (!isset($obj['workspace']) || $obj['workspace'] == "") {
             $obj['workspace'] = array(
