@@ -53,7 +53,7 @@ class CoreAdapter extends AbstractAdapter
 
         $loginCond = Filter::factory('Or');
 
-        $loginFilter = Filter::factory('Value')->setName('login')->setValue($this->_login);
+        $loginFilter = Filter::factory('Value')->setName('login')->setValue(new \MongoRegex("/^".$this->_login."$/i"));
         $loginCond->addFilter($loginFilter);
 
         $emailFilter = Filter::factory('Value')->setName('email')->setValue($this->_login);
