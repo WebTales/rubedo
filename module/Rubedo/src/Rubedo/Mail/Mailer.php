@@ -17,7 +17,7 @@ use Rubedo\Interfaces\Mail\IMailer;
 use Rubedo\Services\Manager;
 use Swift_Mailer;
 use Swift_SmtpTransport;
-use Swift_Message;
+use Rubedo\Mail\Rubedo_Swift_Message as Swift_Message;
 
 /**
  * Mailer Service

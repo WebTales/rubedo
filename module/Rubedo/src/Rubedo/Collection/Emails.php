@@ -19,7 +19,7 @@ namespace Rubedo\Collection;
 use Rubedo\Interfaces\Collection\IEmails;
 use Rubedo\Services\Manager;
 use Swift_Image;
-use Swift_Message;
+use Rubedo\Mail\Rubedo_Swift_Message as Swift_Message;
 
 /**
  * Service to handle Emails
