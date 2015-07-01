@@ -35,7 +35,7 @@ class RestoreController extends DataAccessController
     /**
      * Temporary file path
      */
-    protected $_zipFileName = '/Users/webtales/Demo/dump/ecommerce.zip';
+    protected $_zipFileName = '/home/mickael/dump/dumpMG01-07-15.zip';
     
     /**
      * Default restore mode : INSERT or UPSERT
@@ -47,66 +47,81 @@ class RestoreController extends DataAccessController
     	$contentService = Manager::getService('MongoDataAccess');
     	$fileService = Manager::getService('MongoFileAccess');
     	$fileService->init();
-    	$zipFileName = $this->_zipFileName;
-    	$zip = zip_open($zipFileName);
-    	if (is_resource($zip)) {
-    		while ($zip_entry = zip_read($zip)) {
-    			$fileName = zip_entry_name($zip_entry);
-    			$fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
-    			$fileMimeType = mime_content_type($fileName);
-    			switch ($fileExtension) {
-    				case 'json': // collection
-    					if (zip_entry_open($zip, $zip_entry, "r")) {
-    						$buf = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
-    						$obj = json_decode($buf,TRUE);
-    						if (is_array($obj)) {
-    							$collectionName = array_keys($obj)[0];
-    							$contentService->init($collectionName);
-    							foreach ($obj[$collectionName]['data'] as $data) {
-    								echo $data['id'];
-    								if (\MongoId::isValid($data['id'])) {
-    									$data['_id'] = new \MongoId($data['id']);
-    									unset($data['id']);
-    									switch ($this->_restoreMode) {
-    										case 'insert':
-    											try {
-    												$contentService->insert($data);
-    											} catch (\Exception $e) {
-    												continue;
-    											}
-    											break;
-    										case 'upsert':
-    											try {
-    												$contentService->insert($data, ['upsert'=>TRUE]);
-    											} catch (\Exception $e) {
-    												continue;
-    											}
-    											break;
-    									}
-    								}
-    							}
-    						}
-    						zip_entry_close($zip_entry);
-    					}
-    					break;
-    				default: // file
-    					if (zip_entry_open($zip, $zip_entry, "r")) {
-    						$buf = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
-	    					$originalFileId = substr($fileName,0,24);
-	    					$originalFileName = substr($fileName,25,strlen($fileName)-25);
-	    					$obj = [
-								'_id' => new \MongoId($originalFileId),
-								'filename' => $originalFileName,
-								'Content-Type' => $fileMimeType,
-								'bytes' => $buf
-	    					];
-	    					$fileService->createBinary($obj);
-    					}
-    					break;
-    			}
-    		} 
-    	} else {
-    			echo "Erreur";
-   		}
+
+        $request = $this->getRequest();
+
+        if($request->isPost()) {
+            $mimeTypes = finfo_open(FILEINFO_MIME_TYPE);
+            $zipObj = new \ZipArchive();
+
+            $fileUploadInfo = $request->getFiles("zipFile");
+            $tmpFullPath = $fileUploadInfo["tmp_name"];
+            $originalZipFileName = $fileUploadInfo["name"];
+            $fileMimeType = $fileUploadInfo["type"];
+
+            if($zipObj->open($tmpFullPath)) {
+                $randomTmpFolder = hash("sha1", $tmpFullPath.$originalZipFileName.mt_rand());
+                $extractTmpFolder = sys_get_temp_dir()."/".$randomTmpFolder;
+
+                if($zipObj->extractTo($extractTmpFolder)) {
+                    $extractedFiles = scandir($extractTmpFolder);
+
+                    foreach($extractedFiles as $file) {
+                        if($file !== "." && $file !== "..") {
+                            $filePath = $extractTmpFolder."/".$file;
+                            $fileExtension = finfo_file($mimeTypes, $filePath);
+
+                            switch ($fileExtension) {
+                                case 'text/plain': // collection
+                                    $fileContent = file_get_contents($filePath);
+                                    $obj = json_decode($fileContent,TRUE);
+                                    if (is_array($obj)) {
+                                        $collectionName = array_keys($obj)[0];
+                                        $contentService->init($collectionName);
+                                        foreach ($obj[$collectionName]['data'] as $data) {
+                                            echo $data['id'];
+                                            if (\MongoId::isValid($data['id'])) {
+                                                $data['_id'] = new \MongoId($data['id']);
+                                                unset($data['id']);
+                                                switch ($this->_restoreMode) {
+                                                    case 'insert':
+                                                        try {
+                                                            $contentService->insert($data);
+                                                        } catch (\Exception $e) {
+                                                            continue;
+                                                        }
+                                                        break;
+                                                    case 'upsert':
+                                                        try {
+                                                            $contentService->insert($data, ['upsert'=>TRUE]);
+                                                        } catch (\Exception $e) {
+                                                            continue;
+                                                        }
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+                                default: // file
+                                    $buf = file_get_contents($filePath);
+                                    $originalFileId = substr($file,0,24);
+                                    $originalFileName = substr($file,25,strlen($file)-25);
+                                    $obj = [
+                                        '_id' => new \MongoId($originalFileId),
+                                        'filename' => $originalFileName,
+                                        'Content-Type' => $fileExtension,
+                                        'bytes' => $buf
+                                    ];
+                                    $fileService->createBinary($obj);
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                $zipObj->close();
+            }
+        }
    	} 
 }
