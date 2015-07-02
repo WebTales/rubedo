@@ -83,7 +83,7 @@ class DumpController extends DataAccessController
     	} else {
     		$collections = [$collection];
     	}
-    	   	
+
     	foreach($collections as $collection) {
 	    	$this->_dataService = Manager::getService('MongoDataAccess');
 	    	$this->_dataService->init($collection);
@@ -126,16 +126,20 @@ class DumpController extends DataAccessController
 	    		$zip->addFile($file, basename($file));
 	    	}
 	    	$zip->close();
-	    	$content = file_get_contents($zipFileName);
-	    	$response = $this->getResponse();
-	    	$headers = $response->getHeaders();
-	    	$headers->addHeaderLine('Content-Type', 'application/zip');
-	    	$headers->addHeaderLine('Content-Disposition', "attachment; filename=\"rubedo.zip\"");
 
-	    	$response->setContent($content);
-	    	return $response;	    	
+            $zipFileSize = filesize($zipFileName);
+
+            $zipFileStream = fopen($zipFileName, "rb");
+
+            header('Content-Type:application/zip');
+            header('Content-Disposition:attachment; filename="rubedo.zip"');
+            header('Content-Length:'.$zipFileSize);
+            header('Cache-Control:private');
+
+            readfile($zipFileStream);
     	}
 
+        return $this->getResponse();
     }
 
 
