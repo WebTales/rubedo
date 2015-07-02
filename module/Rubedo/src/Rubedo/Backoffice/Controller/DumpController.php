@@ -75,6 +75,8 @@ class DumpController extends DataAccessController
      */
     public function indexAction()
     {
+        set_time_limit(0);
+
     	$fileService = Manager::getService('Files');
     	
     	$collection = $this->params()->fromQuery('collection','all');
