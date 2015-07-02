@@ -136,7 +136,11 @@ class DumpController extends DataAccessController
             header('Content-Length:'.$zipFileSize);
             header('Cache-Control:private');
 
-            readfile($zipFileStream);
+            while(!feof($zipFileStream)) {
+                echo fread($zipFileStream, 1*(1024*1024));
+                ob_flush();
+                flush();
+            }
     	}
 
         return $this->getResponse();
