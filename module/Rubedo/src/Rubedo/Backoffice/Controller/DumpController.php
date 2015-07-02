@@ -107,7 +107,7 @@ class DumpController extends DataAccessController
             			$damPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $damFileName;
             			$fp = fopen($damPath, 'w+');
             			while (!feof($stream)) {
-            				echo fwrite($fp, fread($stream, 8192));
+            				fwrite($fp, fread($stream, 8192));
             			}
             			$this->_files[] = $damPath;
             			fclose($fp);
@@ -126,16 +126,12 @@ class DumpController extends DataAccessController
 	    		$zip->addFile($file, basename($file));
 	    	}
 	    	$zip->close();
-	    	var_dump($zipFileName);
 	    	$content = file_get_contents($zipFileName);
 	    	$response = $this->getResponse();
 	    	$headers = $response->getHeaders();
-	    	//$headers->addHeaderLine('Content-Description: File Transfer');
 	    	$headers->addHeaderLine('Content-Type', 'application/zip');
 	    	$headers->addHeaderLine('Content-Disposition', "attachment; filename=\"rubedo.zip\"");
-	    	//$headers->addHeaderLine('Accept-Ranges', 'bytes');
-	    	//$headers->addHeaderLine('Content-Length', strlen($content));
-	    	//$headers->addHeaderLine('Content-Transfer-Encoding: binary');
+
 	    	$response->setContent($content);
 	    	return $response;	    	
     	}
