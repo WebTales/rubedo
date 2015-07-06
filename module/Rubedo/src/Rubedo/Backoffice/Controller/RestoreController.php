@@ -86,7 +86,7 @@ class RestoreController extends DataAccessController
                                                         break;
                                                     case 'UPSERT':
                                                         try {
-                                                        	$data['id'] = $data['_id'];
+                                                        	$data['id'] = (string) $data['_id'];
                                                         	unset($data['_id']);
                                                             $dataAccessService->update($data, ['upsert'=>TRUE]);
                                                             $restoredElements[$collectionName]++;
