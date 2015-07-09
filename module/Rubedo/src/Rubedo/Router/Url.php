@@ -846,7 +846,7 @@ class Url implements IUrl
             'ö'=>'o', 'ő' => 'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y' , '%'=>'');
         $clean = strtr($fragmentToSlug, $unwanted_array);
         $clean = strtolower(trim($clean, '-'));
-        $clean = preg_replace('/[\/_|+ -]+/', '-', $clean);
+        $clean = preg_replace('/[\/_|+ -\']+/', '-', $clean);
 
         return $clean;
     }
