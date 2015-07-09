@@ -42,6 +42,7 @@ class DumpController extends DataAccessController
 		'Dam',
 		'DamTypes',
 		'Directories',
+		'Files',
 		'Groups',
 		'Languages',
 		'Masks',
@@ -79,14 +80,14 @@ class DumpController extends DataAccessController
 
     	$fileService = Manager::getService('Files');
     	
-    	$collection = $this->params()->fromQuery('collection','all');
-    	if ($collection=='all') {
+    	$collections = $this->params()->fromQuery('collection',['all']);
+
+    	if ($collections==['all']) {
     		$collections = $this->_collections;
-    	} else {
-    		$collections = [$collection];
     	}
 
     	foreach($collections as $collection) {
+    		
 	    	$this->_dataService = Manager::getService('MongoDataAccess');
 	    	$this->_dataService->init($collection);
 	    	$response = array();
@@ -99,7 +100,7 @@ class DumpController extends DataAccessController
 	    	fclose($fp);
 	    	$this->_files[] = $filePath;
 	    	
-	    	if ($collection=='Dam') {
+	    	if ($collection=='Dam') { // Export binary files related to Dam
 	    		foreach ($response[$collection]['data'] as $dam) {
 	    			$obj = $fileService->findById($dam['originalFileId']);
 	    			if ($obj instanceof \MongoGridFSFile) {
@@ -116,10 +117,31 @@ class DumpController extends DataAccessController
 	    			}
 	    		}
 	    	}
+	    	
+	    	if ($collection=='Users') { // Export photo files related to Users
+	    		foreach ($response[$collection]['data'] as $user) {
+	    			if (isset($user['photo']) && $user['photo']!='') {
+		    			$obj = $fileService->findById($user['photo']);
+		    			if ($obj instanceof \MongoGridFSFile) {
+		    				$meta = $obj->file;
+		    				$damFileName = $user['photo'].'_'.$meta['filename'];
+		    				$stream = $obj->getResource();
+		    				$damPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $damFileName;
+		    				$fp = fopen($damPath, 'w+');
+		    				while (!feof($stream)) {
+		    					fwrite($fp, fread($stream, 8192));
+		    				}
+		    				$this->_files[] = $damPath;
+		    				fclose($fp);
+		    			}
+	    			}
+	    		}	    		
+	    	}
     	}
 
     	$zip = new \ZipArchive();
     	$zipFileName = sys_get_temp_dir() . DIRECTORY_SEPARATOR . "rubedo.zip";
+    	unlink($zipFileName);
     	$archive = $zip->open($zipFileName,\ZipArchive::CREATE);
 
     	if ($archive === TRUE) {

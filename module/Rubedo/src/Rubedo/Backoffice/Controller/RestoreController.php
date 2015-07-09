@@ -31,30 +31,21 @@ use Mongo\DataAccess;
  */
 class RestoreController extends DataAccessController
 {
-
-    /**
-     * Temporary file path
-     */
-    protected $_zipFileName = '/Users/webtales/Demo/dump/ecommerce.zip';
-    
-    /**
-     * Default restore mode : INSERT or UPSERT
-     */
-    protected $_restoreMode = "upsert";    
-       
+     
     public function indexAction()
     {
-    	$contentService = Manager::getService('MongoDataAccess');
+    	$dataAccessService = Manager::getService('MongoDataAccess');
     	$fileService = Manager::getService('MongoFileAccess');
     	$fileService->init();
     	$fileCollectionService = Manager::getService('Files');
+    	$restoredElements = array();
 
         $request = $this->getRequest();
 
         if($request->isPost()) {
             $mimeTypes = finfo_open(FILEINFO_MIME_TYPE);
             $zipObj = new \ZipArchive();
-
+            $restoreMode = $this->params()->fromPost('mode','INSERT');
             $fileUploadInfo = $request->getFiles("zipFile");
             $tmpFullPath = $fileUploadInfo["tmp_name"];
             $originalZipFileName = $fileUploadInfo["name"];
@@ -73,29 +64,34 @@ class RestoreController extends DataAccessController
                             $fileExtension = finfo_file($mimeTypes, $filePath);
 
                             switch (pathinfo($filePath, PATHINFO_EXTENSION)) {
-                                case 'json': // collection
+                                case 'json': // collection 
                                     $fileContent = file_get_contents($filePath);
                                     $obj = json_decode($fileContent,TRUE);
                                     if (is_array($obj)) {
                                         $collectionName = array_keys($obj)[0];
-                                        $contentService->init($collectionName);
+                                        $dataAccessService->init($collectionName);
+                                        $restoredElements[$collectionName] = 0;
                                         foreach ($obj[$collectionName]['data'] as $data) {
                                             if (\MongoId::isValid($data['id'])) {
                                                 $data['_id'] = new \MongoId($data['id']);
                                                 unset($data['id']);
-                                                switch ($this->_restoreMode) {
-                                                    case 'insert':
+                                                switch ($restoreMode) {
+                                                    case 'INSERT':
                                                         try {
-                                                            $contentService->insert($data);
+                                                            $dataAccessService->insert($data);
+                                                            $restoredElements[$collectionName]++;
                                                         } catch (\Exception $e) {
                                                             continue;
                                                         }
                                                         break;
-                                                    case 'upsert':
+                                                    case 'UPSERT':
                                                         try {
-                                                            $contentService->insert($data, ['upsert'=>TRUE]);
+                                                        	$data['id'] = (string) $data['_id'];
+                                                        	unset($data['_id']);
+                                                            $dataAccessService->update($data, ['upsert'=>TRUE]);
+                                                            $restoredElements[$collectionName]++;
                                                         } catch (\Exception $e) {
-                                                            continue;
+                                                        	continue;
                                                         }
                                                         break;
                                                 }
@@ -118,15 +114,15 @@ class RestoreController extends DataAccessController
                                     		'_id' => new \MongoId($originalFileId)
                                     );
    
-                                    switch ($this->_restoreMode) {
-                                    	case 'insert':
+                                    switch ($restoreMode) {
+                                    	case 'INSERT':
                                     		try {
                                     			$fileService->createBinary($fileObj);
                                     		} catch (\Exception $e) {
                                     			continue;
                                     		}
                                     		break;
-                                    	case 'upsert':
+                                    	case 'UPSERT':
                                     		try {
                                     			$fileService->destroy(array(
                                     				'id' => $originalFileId,
@@ -147,5 +143,14 @@ class RestoreController extends DataAccessController
                 $zipObj->close();
             }
         }
+        
+        $returnArray['success'] = true;
+        $returnArray['message'] = "OK";
+        $returnArray['restoredElements'] = $restoredElements;
+
+        if (!$returnArray['success']) {
+        	$this->getResponse()->setStatusCode(500);
+        }
+        return new JsonModel($returnArray);
    	} 
 }
