@@ -415,13 +415,16 @@ class Queries extends AbstractCollection implements IQueries
                     'property' => $property,
                     'direction' => $value['sort']
                 );
-            } else {
-                $sort[] = array(
-                    'property' => 'id',
-                    'direction' => 'DESC'
-                );
             }
         }
+		
+		/*
+		 * Add Default Sort On ID
+		*/
+		$sort[] = array(
+			'property' => 'id',
+			'direction' => 'DESC'
+		);
 
         return array(
             "filter" => $filters,
