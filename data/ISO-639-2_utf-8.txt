@@ -76,7 +76,6 @@ cha||ch|Chamorro|chamorro
 chb|||Chibcha|chibcha
 che||ce|Chechen|tchétchène
 chg|||Chagatai|djaghataï
-chi|zho|zh|Chinese|chinois
 chk|||Chuukese|chuuk
 chm|||Mari|mari
 chn|||Chinook jargon|chinook, jargon
@@ -135,6 +134,8 @@ fin||fi|Finnish|finnois
 fiu|||Finno-Ugrian languages|finno-ougriennes, langues
 fon|||Fon|fon
 fre|fra|fr|French|français
+zh-CN|zh-CN|zh-CN|Chinese Simplified|Chinois Simplifié
+zh-TW|zh-TW|zh-TW|Chinese Traditional|Chinois Traditionnel
 frm|||French, Middle (ca.1400-1600)|français moyen (1400-1600)
 fro|||French, Old (842-ca.1400)|français ancien (842-ca.1400)
 frr|||Northern Frisian|frison septentrional

@@ -48,17 +48,17 @@ class Language
      */
     function __construct($languageString)
     {
-        $lengthString = strlen($languageString);
-        if (2 == $lengthString) {
+
+        if (strpos($languageString,"|")) {
+            $splitted=explode("|",$languageString);
+            $this->locale = $splitted[0];
+            $this->fallback  = $splitted[1];
+            return;
+        } else {
             $this->locale = $languageString;
             return;
         }
-        if (5 == $lengthString) {
-            $this->locale = substr($languageString, 0, 2);
-            $this->fallback = substr($languageString, -2, 2);
-            return;
-        }
-        throw new APIEntityException('Language value is not compliant', 400);
+
     }
 
     /**
