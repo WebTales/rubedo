@@ -79,12 +79,16 @@ class FrontOfficeTranslate extends \Twig_Extension
      *
      * @return string Translated text
      */
-    public function translate($text, $placeholders = array())
+    public function translate($text, $placeholders = array(), $lang)
     {
+        if(!isset($lang) || empty($lang)) {
+            $lang = $this->lang;
+        }
+
         $label = Manager::getService('Translate')
             ->getTranslation(
                 $text,
-                $this->lang,
+                $lang,
                 $this->fallbackLang,
                 $placeholders
             );
