@@ -16,6 +16,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Interfaces;
+use Rubedo\Services\Manager;
 
 /**
  * Static class which contains the interface/serviceName association and the concerns class list
@@ -104,10 +105,11 @@ class config
      */
     public static function getCollectionServices()
     {
+        $serviceArray=Manager::getService("config")["service_manager"]["invokables"];
         $collectionServicesArray = array();
-        foreach (self::$_interfaceArray as $service => $interface) {
-            if (in_array('Rubedo\\Interfaces\\Collection\\IAbstractCollection', class_implements($interface))) {
-                $collectionServicesArray[] = $service;
+        foreach ($serviceArray as $name => $class) {
+            if (class_exists($class)&&in_array('Rubedo\\Collection\\AbstractCollection', class_parents($class))) {
+                $collectionServicesArray[] = $name;
             }
         }
         return $collectionServicesArray;
