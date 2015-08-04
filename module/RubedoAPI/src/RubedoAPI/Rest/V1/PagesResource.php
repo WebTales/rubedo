@@ -428,6 +428,7 @@ class PagesResource extends AbstractResource
         $block = array();
         $block['configBloc'] = array(
             'contentId' => $id,
+            'isAutoInjected'=>true, //used to differentiate auto-injected detail block from purposely added block
         );
         $block['bType'] = 'contentDetail';
         $block['id'] = 'single';

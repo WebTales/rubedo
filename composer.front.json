@@ -6,7 +6,7 @@
         "jquery/timepicker": "0.3.2",
         "eternicode/bootstrap-datepicker": "~1.3",
         "sencha/extjs": "4.2.1",
-        "webtales/ckeditor": "2.2.0",
+        "webtales/ckeditor": "dev-master",
         "webtales/rubedo-backoffice-ui": "dev-future",
         "longtailvideo/jwplayer": "6.*",
         "webtales/rubedo-localization": "dev-master",
