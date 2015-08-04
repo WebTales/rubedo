@@ -50,5 +50,23 @@ class UpdateController extends AbstractActionController
         );
         return new JsonModel($result);
     }
+
+    public function applyIndexesAction(){
+        $serviceArray=Manager::getService("config")["service_manager"]["invokables"];
+        $collectionServicesArray = array();
+        foreach ($serviceArray as $name => $class) {
+            if (class_exists($class)&&in_array('Rubedo\\Collection\\AbstractCollection', class_parents($class))) {
+                $collectionServicesArray[] = $name;
+            }
+        }
+        $result = true;
+        foreach ($collectionServicesArray as $service) {
+            if (!Manager::getService($service)->checkIndexes()) {
+                Manager::getService($service)->dropIndexes();
+                $result = $result && Manager::getService($service)->ensureIndexes();
+            }
+        }
+        return new JsonModel(["success"=>$result]);
+    }
 }
 
