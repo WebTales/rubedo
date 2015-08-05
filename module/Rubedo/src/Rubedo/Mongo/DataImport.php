@@ -280,7 +280,7 @@ class DataImport extends DataAccess
 				   				'path' => $termPath,
 				   				'vocabularyId' => $vocabularyId,
 				   				'parentId' => $parent,
-				   				'expandable' => true,
+				   				'expandable' => false,
 				   				'nativeLanguage' => $this->_workingLanguage,
 				   				'i18n' => [
 					   				$this->_workingLanguage => [

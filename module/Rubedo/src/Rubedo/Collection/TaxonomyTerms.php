@@ -88,7 +88,37 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         if ($obj['vocabularyId'] == 'navigation') {
             throw new \Rubedo\Exceptions\Access('You can not create navigation terms', "Exception54");
         }
+
+        if(!isset($obj["orderValue"]) || $obj["orderValue"] != "") {
+            $obj["orderValue"] = $this->getIncrement($obj);
+        }
+
         return parent::create($obj, $options);
+    }
+
+    public function getIncrement($obj)
+    {
+        $pipeline = array();
+        $pipeline[] = array(
+            '$match' => array(
+                'vocabularyId' => $obj['vocabularyId'],
+                "parentId" => $obj['parentId']
+            )
+        );
+        $pipeline[] = array(
+            '$group' => array(
+                '_id' => '$vocabularyId',
+                'greatestValue' => array(
+                    '$max' => '$orderValue'
+                ),
+            )
+        );
+        $response = $this->_dataService->aggregate($pipeline);
+        if (empty($response['result'])) {
+            return 100;
+        }
+        return ($response['result'][0]['greatestValue'] + 100);
+
     }
 
     /*
