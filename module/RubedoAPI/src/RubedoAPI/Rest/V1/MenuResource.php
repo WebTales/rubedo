@@ -76,6 +76,10 @@ class MenuResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setKey('menuLevel')
                             ->setDescription('Level limit')
+                    )->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('includeRichText')
+                            ->setDescription('Include rich text in pages')
                     )
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
@@ -102,7 +106,7 @@ class MenuResource extends AbstractResource
             'reset' => true
         );
 
-        $menu["pages"] = $this->_getPagesByLevel($rootPage['id'], $levelLimit, 1, $params["menuLocale"]);
+        $menu["pages"] = $this->_getPagesByLevel($rootPage['id'], $levelLimit, 1, $params["menuLocale"],$params);
 
         $menu['url'] = $this->getContext()->url()->fromRoute('rewrite', array(
             'pageId' => $menu['id'],
@@ -124,7 +128,7 @@ class MenuResource extends AbstractResource
      * @param $locale
      * @return array
      */
-    protected function _getPagesByLevel($rootPage, $targetLevel, $currentLevel = 1, $locale)
+    protected function _getPagesByLevel($rootPage, $targetLevel, $currentLevel = 1, $locale,$params)
     {
         $pages = $this->getPagesCollection()->readChild($rootPage, $this->excludeFromMenuCondition);
 
@@ -134,6 +138,11 @@ class MenuResource extends AbstractResource
                     'pageId' => $page['id'],
                     'locale' => $locale
                 ), $this->urlOptions);
+                if(isset($params["includeRichText"])&&isset($page["richTextId"])&&$page["richTextId"]&&$page["richTextId"]!=""){
+                    $pages[$key]["includedRichText"]=$this->getContentsCollection()->findById($page["richTextId"], true, false);
+                }
+                $pages[$key]= array_intersect_key($pages[$key], array_flip(array('title','description' ,'id', 'text','pages','url','eCTitle','eCDescription','eCImage','richTextId','includedRichText','taxonomy','orderValue')));
+
             }
 
             return $pages;
@@ -145,11 +154,15 @@ class MenuResource extends AbstractResource
                 'locale' => $locale
             ), $this->urlOptions);
 
-            $nextLevel = $this->_getPagesByLevel($page['id'], $targetLevel, $currentLevel + 1, $locale);
+            $nextLevel = $this->_getPagesByLevel($page['id'], $targetLevel, $currentLevel + 1, $locale,$params);
 
             if (is_array($nextLevel) && !empty($nextLevel)) {
                 $pages[$key]["pages"] = $nextLevel;
             }
+            if(isset($params["includeRichText"])&&isset($page["richTextId"])&&$page["richTextId"]&&$page["richTextId"]!=""){
+                $pages[$key]["includedRichText"]=$this->getContentsCollection()->findById($page["richTextId"], true, false);
+            }
+            $pages[$key]= array_intersect_key($pages[$key], array_flip(array('title','description', 'id', 'text','pages','url','eCTitle','eCDescription','eCImage','richTextId','includedRichText','taxonomy','orderValue')));
         }
 
         return $pages;
