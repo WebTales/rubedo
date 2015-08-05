@@ -149,21 +149,7 @@
 					]
 				
 				
-				},
-				{                   
-                    "categorie": "#ext-gen1104#",
-                    "champs": [
-                        {
-                            "type": "Rubedo.view.DCEField",
-                            "config": {
-                                "fieldLabel": "#ext-gen1104#",
-                                "name": "contentId",
-                                "allowedCT": "richText",
-                                "addOnly": true
-                            }
-                        }
-                    ]
-                }
+				}
             ],
             "avance": [
                  {
