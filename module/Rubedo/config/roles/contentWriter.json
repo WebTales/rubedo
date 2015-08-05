@@ -21,7 +21,8 @@
         "execute.controller.contenttypes.find-one.backoffice",
         "execute.controller.queries.update.backoffice",
         "exceptionClass",
-        "execute.controller.xhrgetmongoid.index.backoffice"
+        "execute.controller.xhrgetmongoid.index.backoffice",
+        "execute.controller.extfinder.index.backoffice"
     ],
     "includes": [
         "contentReader"
