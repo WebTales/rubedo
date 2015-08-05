@@ -132,7 +132,7 @@ class MenuResource extends AbstractResource
             foreach ($pages as $key => $page) {
                 $pages[$key]["url"] = $this->getContext()->url()->fromRoute('rewrite', array(
                     'pageId' => $page['id'],
-                    'locale' => $page['locale']
+                    'locale' => $locale
                 ), $this->urlOptions);
             }
 
@@ -142,7 +142,7 @@ class MenuResource extends AbstractResource
         foreach ($pages as $key => $page) {
             $pages[$key]["url"] = $this->getContext()->url()->fromRoute('rewrite', array(
                 'pageId' => $page['id'],
-                'locale' => $page['locale']
+                'locale' => $locale
             ), $this->urlOptions);
 
             $nextLevel = $this->_getPagesByLevel($page['id'], $targetLevel, $currentLevel + 1, $locale);
