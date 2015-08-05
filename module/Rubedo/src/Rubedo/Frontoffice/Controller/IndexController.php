@@ -183,7 +183,7 @@ class IndexController extends AbstractActionController
         }
         $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], $this->params('locale'), $cookieValue);
         if ($lang && !$this->params('locale')) {
-            return $this->redirect()->toUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $domain . '/' . $lang . $uri->getPath() . '?' . $uri->getQuery());
+            return $this->redirect()->toUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $domain . '/' . $lang . $uri->getPath() . '?' . $uri->getQuery())->setStatusCode(301);
         }
 
         if ($domain && !$this->_site['useBrowserLanguage']) {
