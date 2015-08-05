@@ -267,7 +267,7 @@ class Notification implements INotification
     {
         $config = Manager::getService('config');
         $options = $config['rubedo_config'];
-        if (isset($options['enableEmailNotification'])) {
+        if (isset($options['enableEmailNotification'])&&$options['enableEmailNotification']=="1") {
             \Rubedo\Mail\Notification::setSendNotification(true);
             \Rubedo\Mail\Notification::setOptions('defaultBackofficeHost', isset($options['defaultBackofficeHost']) ? $options['defaultBackofficeHost'] : null);
             \Rubedo\Mail\Notification::setOptions('isBackofficeSSL', isset($options['isBackofficeSSL']) ? $options['isBackofficeSSL'] : false);
