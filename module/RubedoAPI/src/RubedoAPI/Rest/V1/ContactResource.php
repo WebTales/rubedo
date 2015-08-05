@@ -99,6 +99,7 @@ class ContactResource extends AbstractResource
             $mailerObject->setTo([$mailingList['replyToAddress'] => $mailingList['replyToName']]);
         $mailerObject->setFrom($params['from']);
         $mailerObject->setSubject($params['subject']);
+        $params['fields']["email"]=$params['from'];
         $mailerObject->setBody($this->buildEmail($params['fields']));
 
         // Send e-mail
