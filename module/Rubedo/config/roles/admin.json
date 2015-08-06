@@ -2,7 +2,7 @@
     "id": "admin",
     "label": {
         "fr": "Administration de la plate-forme",
-        "en": "administer plateform"
+        "en": "administer platform"
     },
     "rights": [
         "@dot*"
