@@ -16,8 +16,10 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Exceptions\Server;
 use Rubedo\Interfaces\Collection\IUserTypes;
 use Rubedo\Services\Events;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle UserTypes
@@ -35,6 +37,11 @@ class UserTypes extends AbstractCollection implements IUserTypes
         parent::__construct();
     }
 
+    public function findById($contentId, $forceReload = false) {
+        $userType = parent::findById($contentId, $forceReload);
+
+        return $this->localizeUserTypeFields($userType);
+    }
 
     public function destroy(array $obj, $options = array())
     {
@@ -50,5 +57,59 @@ class UserTypes extends AbstractCollection implements IUserTypes
         $args['data'] = $obj;
         Events::getEventManager()->trigger(self::POST_DELETE_COLLECTION, $this, $args);
         return $result;
+    }
+
+    /**
+     * Localize fiels tooltip and label in user type
+     *
+     * @param $userTypeObj array User type object to localize
+     * @return array Localized user type
+     * @throws Server Throw an exception when the user type object is not well formated
+     */
+    private function localizeUserTypeFields($userTypeObj) {
+        $site = $site = Manager::getService("Sites")->getCurrent();
+
+        $localizationStrategy = isset($site["locStrategy"]) ? $site["locStrategy"] : "onlyOne";
+
+        if(!isset($site["nativeLanguage"]) || $site["nativeLanguage"] == "") {
+            throw new Server("Missing key 'nativeLanguage' in site object");
+        }
+
+        $currentLanguage = Manager::getService("CurrentLocalization")->getCurrentLocalization();
+        $fallbackLanguage = $site["nativeLanguage"];
+
+        if(!isset($userTypeObj["fields"]) || !is_array($userTypeObj["fields"])) {
+            $userTypeObj["fields"] = [];
+        }
+
+        foreach($userTypeObj["fields"] as &$field) {
+            if(!isset($field["config"]["i18n"])) {
+                continue;
+            }
+
+            if($localizationStrategy == "onlyOne") {
+                if(isset($field["config"]["i18n"][$currentLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$currentLanguage]["fieldLabel"])) {
+                    $field["config"]["fieldLabel"] = $field["config"]["i18n"][$currentLanguage]["fieldLabel"];
+                }
+
+                if(isset($field["config"]["i18n"][$currentLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$currentLanguage]["tooltip"])) {
+                    $field["config"]["tooltip"] = $field["config"]["i18n"][$currentLanguage]["tooltip"];
+                }
+            } elseif($localizationStrategy == "fallback") {
+                if(isset($field["config"]["i18n"][$currentLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$currentLanguage]["fieldLabel"])) {
+                    $field["config"]["fieldLabel"] = $field["config"]["i18n"][$currentLanguage]["fieldLabel"];
+                } elseif(isset($field["config"]["i18n"][$fallbackLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$fallbackLanguage]["fieldLabel"])) {
+                    $field["config"]["fieldLabel"] = $field["config"]["i18n"][$fallbackLanguage]["fieldLabel"];
+                }
+
+                if(isset($field["config"]["i18n"][$currentLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$currentLanguage]["tooltip"])) {
+                    $field["config"]["tooltip"] = $field["config"]["i18n"][$currentLanguage]["tooltip"];
+                } elseif(isset($field["config"]["i18n"][$fallbackLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$fallbackLanguage]["tooltip"])) {
+                    $field["config"]["tooltip"] = $field["config"]["i18n"][$fallbackLanguage]["tooltip"];
+                }
+            }
+        }
+
+        return $userTypeObj;
     }
 }
