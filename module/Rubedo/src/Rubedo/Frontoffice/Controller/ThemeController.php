@@ -97,32 +97,37 @@ class ThemeController extends AbstractActionController
                 $consolidatedFilePath = Manager::getService('FrontOfficeTemplates')->getFilePath("default", $filePath);
             }
 
-            if ($consolidatedFilePath) {
-                $extension = pathinfo($consolidatedFilePath, PATHINFO_EXTENSION);
-                switch ($extension) {
-                    case 'php':
-                        throw new \Rubedo\Exceptions\NotFound('File does not exist');
-                        break;
-                    case 'js':
-                        $mimeType = 'application/javascript';
-                        break;
-                    case 'css':
-                        $mimeType = 'text/css';
-                        break;
-                    case 'html':
-                        $mimeType = 'text/html';
-                        break;
-                    case 'json':
-                        $mimeType = 'application/json';
-                        break;
-                    default:
-                        if (class_exists('finfo')) {
-                            $finfo = new \finfo(FILEINFO_MIME);
-                            $mimeType = $finfo->file($consolidatedFilePath);
-                        }
-                        break;
-                }
+            if ($consolidatedFilePath||$filePath=="css/rubedo-all.css") {
+                if ($filePath=="css/rubedo-all.css"&&!$consolidatedFilePath){
+                    $extension="css";
+                    $mimeType = 'text/css';
+                } else {
+                    $extension = pathinfo($consolidatedFilePath, PATHINFO_EXTENSION);
 
+                    switch ($extension) {
+                        case 'php':
+                            throw new \Rubedo\Exceptions\NotFound('File does not exist');
+                            break;
+                        case 'js':
+                            $mimeType = 'application/javascript';
+                            break;
+                        case 'css':
+                            $mimeType = 'text/css';
+                            break;
+                        case 'html':
+                            $mimeType = 'text/html';
+                            break;
+                        case 'json':
+                            $mimeType = 'application/json';
+                            break;
+                        default:
+                            if (class_exists('finfo')) {
+                                $finfo = new \finfo(FILEINFO_MIME);
+                                $mimeType = $finfo->file($consolidatedFilePath);
+                            }
+                            break;
+                    }
+                }
                 $publicThemePath = APPLICATION_PATH . '/public/theme';
                 $composedPath = $publicThemePath . '/' . $theme;
                 if (!file_exists($composedPath)) {
@@ -135,7 +140,12 @@ class ThemeController extends AbstractActionController
                 }
                 $targetPath = $publicThemePath . '/' . $theme . '/' . $filePath;
 
-                $content = file_get_contents($consolidatedFilePath);
+                if ($filePath=="css/rubedo-all.css"&&!$consolidatedFilePath){
+                    $content=$this->getAllCss($theme,$config);
+                } else {
+                    $content = file_get_contents($consolidatedFilePath);
+                }
+
 
                 if (isset($config['rubedo_config']['minify']) && $config['rubedo_config']['minify'] == "1") {
                     if ($mimeType == 'text/css') {
@@ -156,7 +166,9 @@ class ThemeController extends AbstractActionController
         if (isset($mimeType)) {
             $headers['Content-type'] = $mimeType;
         }
-        if (isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == "1" && file_put_contents($targetPath, $content)) {
+        if ((((isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == "1"))||$filePath=="css/rubedo-all.css") && file_put_contents($targetPath, $content)) {
+
+
             $stream = fopen($targetPath, 'r');
         } elseif ($hasFileInDatabase) {
             $stream = $gridFSFile->getResource();
@@ -214,5 +226,75 @@ class ThemeController extends AbstractActionController
             }
         }
         return false;
+    }
+
+    protected function getAllCss($theme,$config){
+        $concatResult="";
+        $cssDependencyArray=["css/rubedo.css","libraryOverrides/chosen.css"];
+        $themesService = Manager::getService('Themes');
+        $themeObj = $themesService->findByName($theme);
+        if ($themeObj) {
+            /** @var \Rubedo\Collection\DAM $DAMService */
+            $DAMService = Manager::getService('DAM');
+            $filters = Filter::factory()
+                ->addFilter(
+                    Filter::factory('Value')
+                        ->setName('loadOnLaunch')
+                        ->setValue(true)
+                )
+                ->addFilter(
+                    Filter::factory('Value')
+                        ->setName('themeId')
+                        ->setValue($themeObj['id'])
+                )
+                ->addFilter(
+                    Filter::factory('OperatorToValue')
+                        ->setName('title')
+                        ->setOperator('$regex')
+                        ->setValue('.+(css|js)$')
+                );
+            $themeFilesToLoad = $DAMService->getList($filters)['data'];
+            foreach ($themeFilesToLoad as &$fileToLoad) {
+                $themeFile =implode('/', $this->discoverDirNames(array(), $fileToLoad['directory'],$theme)). '/' . $fileToLoad['title'];
+                $extension = substr(strrchr($themeFile, '.'), 1);
+                if ($extension == 'css') {
+                    $cssDependencyArray[] = $themeFile;
+                }
+            }
+        }
+        $themeName = strtolower($theme);
+        if (isset($config['templates']['themes'][$themeName])) {
+            $themeConf = $config['templates']['themes'][$themeName];
+
+            if (isset($themeConf['css'])) {
+                foreach ($themeConf['css'] as $css) {
+                    $cssDependencyArray[] =  $css;
+                }
+            }
+
+        }
+        foreach($cssDependencyArray as $cssDependency){
+            $redirectedResult=$this->forward()->dispatch("Rubedo\\Frontoffice\\Controller\\Theme", array(
+                'action' => 'index',
+                'theme' => $theme,
+                'filepath' => $cssDependency,
+            ));
+            $concatResult=$concatResult." ".$redirectedResult->getBody();
+        }
+        return($concatResult);
+    }
+
+    function discoverDirNames($dirs, $nextDir,$theme)
+    {
+        if ($nextDir === 'root') {
+            return $dirs;
+        }
+        /** @var \Rubedo\Collection\Directories $dirService */
+        $dirService = Manager::getService('Directories');
+        $directory = $dirService->findById($nextDir);
+        if ($directory&&$directory['text']&&$directory['text']!="theme"&&$directory['text']!=$theme) {
+            array_unshift($dirs, $directory['text']);
+        }
+        return $this->discoverDirNames($dirs, $directory['parentId'],$theme);
     }
 }

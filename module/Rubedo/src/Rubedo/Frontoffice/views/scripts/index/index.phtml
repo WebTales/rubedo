@@ -34,14 +34,18 @@
     <?php if ($this->includeBaseBootstrap){ ?>
     <link rel="stylesheet" type="text/css" href="/components/twbs/bootstrap/dist/css/bootstrap.min.css">
     <?php } ?>
-    <link rel="stylesheet" type="text/css" href="/theme/<?php echo $this->siteTheme; ?>/css/rubedo.css">
+    <?php if ($this->minifyResources) { ?>
+        <link rel="stylesheet" type="text/css" href="/theme/<?php echo $this->siteTheme; ?>/css/rubedo-all.css">
+    <?php } else { ?>
+        <link rel="stylesheet" type="text/css" href="/theme/<?php echo $this->siteTheme; ?>/css/rubedo.css">
+        <link rel="stylesheet" type="text/css" href="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/chosen.css">
+    <?php } ?>
     <link href='/components/jquery/fullCalendar/fullcalendar.css' rel='stylesheet' type="text/css" />
     <link href='/components/jquery/fullCalendar/fullcalendar.print.css' rel='stylesheet' media='print' type="text/css" />
     <link rel="stylesheet" type="text/css" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" type="text/css" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.theme.css">
     <link rel="stylesheet" type="text/css" href="/components/vitalets/angular-xeditable/dist/css/xeditable.css">
     <link rel="stylesheet" type="text/css" href="/components/dalelotts/angular-bootstrap-datetimepicker/src/css/datetimepicker.css">
-    <link rel="stylesheet" type="text/css" href="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/chosen.css">
     <!--external resource styles-->
     <?php foreach ($this->siteResources['externalStyles'] as $externalStyle): ?>
         <link rel="stylesheet" type="text/css" href="<?php echo $externalStyle['url']; ?>">

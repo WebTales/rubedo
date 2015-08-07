@@ -191,6 +191,10 @@ class IndexController extends AbstractActionController
         }
 
         $config = Manager::getService("config");
+        $minifyResources=false;
+        if (isset($config['rubedo_config']['minify']) && $config['rubedo_config']['minify'] == "1") {
+            $minifyResources=true;
+        }
         $defaultResources = array(
             "externalStyles" => array(),
             "externalScripts" => array(),
@@ -228,7 +232,7 @@ class IndexController extends AbstractActionController
                     . implode('/', $this->discoverDirNames(array(), $fileToLoad['directory']))
                     . '/' . $fileToLoad['title'];
                 $extension = substr(strrchr($themeFile, '.'), 1);
-                if ($extension == 'css') {
+                if ($extension == 'css'&&!$minifyResources) {
                     $siteResources['internalStyles'][] = $themeFile;
                 } elseif ($extension == 'js') {
                     $siteResources['internalScripts'][] = $themeFile;
@@ -246,7 +250,7 @@ class IndexController extends AbstractActionController
             }
             $prepend = '/theme/' . $themeName;
             $propagatedSiteTheme = $themeName;
-            if (isset($theme['css'])) {
+            if (isset($theme['css'])&&!$minifyResources) {
                 foreach ($theme['css'] as $css) {
                     $siteResources['internalStyles'][] = strpos($css, '//') === false ? $prepend . $css : $css;
                 }
@@ -308,7 +312,8 @@ class IndexController extends AbstractActionController
             'activateMagic' => (isset($config['rubedo_config']['activateMagic']) && ($config['rubedo_config']['activateMagic'] == "1")) ? true : false,
             'angularLocale' => $lang,
             'siteTheme' => $propagatedSiteTheme,
-            'includeBaseBootstrap'=>$includeBaseBootstrap
+            'includeBaseBootstrap'=>$includeBaseBootstrap,
+            'minifyResources'=>$minifyResources
         );
 
         $viewModel = new ViewModel($this->viewData);
