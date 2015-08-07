@@ -490,17 +490,17 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
     private function localizeContentTypeFields($contentTypeObj) {
         $almostOneSite = Manager::getService("Sites")->count();
 
-        if($almostOneSite > 0) {
+        if($almostOneSite > 0 && self::$_isFrontEnd) {
             $site = Manager::getService("Sites")->getCurrent();
 
             $localizationStrategy = isset($site["locStrategy"]) ? $site["locStrategy"] : "onlyOne";
 
-            if(!isset($site["nativeLanguage"]) || $site["nativeLanguage"] == "") {
-                throw new Server("Missing key 'nativeLanguage' in site object");
+            if(!isset($site["defaultLanguage"]) || $site["defaultLanguage"] == "") {
+                throw new Server("Missing key 'defaultLanguage' in site object");
             }
 
             $currentLanguage = Manager::getService("CurrentLocalization")->getCurrentLocalization();
-            $fallbackLanguage = $site["nativeLanguage"];
+            $fallbackLanguage = $site["defaultLanguage"];
 
             if(!isset($contentTypeObj["fields"]) || !is_array($contentTypeObj["fields"])) {
                 $contentTypeObj["fields"] = [];
@@ -512,23 +512,23 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
                 }
 
                 if($localizationStrategy == "onlyOne") {
-                    if(isset($field["config"]["i18n"][$currentLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$currentLanguage]["fieldLabel"])) {
+                    if(!empty($field["config"]["i18n"][$currentLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$currentLanguage]["fieldLabel"])) {
                         $field["config"]["fieldLabel"] = $field["config"]["i18n"][$currentLanguage]["fieldLabel"];
                     }
 
-                    if(isset($field["config"]["i18n"][$currentLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$currentLanguage]["tooltip"])) {
+                    if(!empty($field["config"]["i18n"][$currentLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$currentLanguage]["tooltip"])) {
                         $field["config"]["tooltip"] = $field["config"]["i18n"][$currentLanguage]["tooltip"];
                     }
                 } elseif($localizationStrategy == "fallback") {
-                    if(isset($field["config"]["i18n"][$currentLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$currentLanguage]["fieldLabel"])) {
+                    if(!empty($field["config"]["i18n"][$currentLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$currentLanguage]["fieldLabel"])) {
                         $field["config"]["fieldLabel"] = $field["config"]["i18n"][$currentLanguage]["fieldLabel"];
-                    } elseif(isset($field["config"]["i18n"][$fallbackLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$fallbackLanguage]["fieldLabel"])) {
+                    } elseif(!empty($field["config"]["i18n"][$fallbackLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$fallbackLanguage]["fieldLabel"])) {
                         $field["config"]["fieldLabel"] = $field["config"]["i18n"][$fallbackLanguage]["fieldLabel"];
                     }
 
-                    if(isset($field["config"]["i18n"][$currentLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$currentLanguage]["tooltip"])) {
+                    if(!empty($field["config"]["i18n"][$currentLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$currentLanguage]["tooltip"])) {
                         $field["config"]["tooltip"] = $field["config"]["i18n"][$currentLanguage]["tooltip"];
-                    } elseif(isset($field["config"]["i18n"][$fallbackLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$fallbackLanguage]["tooltip"])) {
+                    } elseif(!empty($field["config"]["i18n"][$fallbackLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$fallbackLanguage]["tooltip"])) {
                         $field["config"]["tooltip"] = $field["config"]["i18n"][$fallbackLanguage]["tooltip"];
                     }
                 }

@@ -69,17 +69,17 @@ class UserTypes extends AbstractCollection implements IUserTypes
     private function localizeUserTypeFields($userTypeObj) {
         $almostOneSite = Manager::getService("Sites")->count();
 
-        if($almostOneSite > 0) {
+        if($almostOneSite > 0 && self::$_isFrontEnd) {
             $site = Manager::getService("Sites")->getCurrent();
 
             $localizationStrategy = isset($site["locStrategy"]) ? $site["locStrategy"] : "onlyOne";
 
-            if(!isset($site["nativeLanguage"]) || $site["nativeLanguage"] == "") {
-                throw new Server("Missing key 'nativeLanguage' in site object");
+            if(!isset($site["defaultLanguage"]) || $site["defaultLanguage"] == "") {
+                throw new Server("Missing key 'defaultLanguage' in site object");
             }
 
             $currentLanguage = Manager::getService("CurrentLocalization")->getCurrentLocalization();
-            $fallbackLanguage = $site["nativeLanguage"];
+            $fallbackLanguage = $site["defaultLanguage"];
 
             if(!isset($userTypeObj["fields"]) || !is_array($userTypeObj["fields"])) {
                 $userTypeObj["fields"] = [];
