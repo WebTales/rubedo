@@ -72,4 +72,32 @@ class CacheController extends AbstractActionController
         Manager::getService('ApiCache')->ensureIndexes();
         return new JsonModel($countArray);
     }
+
+    public function clearConfigAction()
+    {
+        $installObject = new Install();
+        $installObject->clearConfigCache();
+        return new JsonModel(array("success"=>true));
+    }
+
+    public function clearFilesAction()
+    {
+        $installObject = new Install();
+        $installObject->clearFileCaches();
+        return new JsonModel(array("success"=>true));
+    }
+
+    public function clearApiAction(){
+        Manager::getService('ApiCache')->drop();
+        Manager::getService('ApiCache')->ensureIndexes();
+        return new JsonModel(array("success"=>true));
+    }
+
+    public function clearUrlAction(){
+        Manager::getService('UrlCache')->drop();
+        Manager::getService('UrlCache')->ensureIndexes();
+        return new JsonModel(array("success"=>true));
+    }
+
+
 }
