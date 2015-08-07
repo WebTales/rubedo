@@ -142,12 +142,18 @@ class RestoreController extends DataAccessController
 
                 $zipObj->close();
             }
+            
+            $returnArray['success'] = true;
+            $returnArray['message'] = "OK";
+            $returnArray['restoredElements'] = $restoredElements;
+            
+        } else {
+        	
+        	$returnArray['success'] = FALSE;
+        	$returnArray['message'] = "KO";
+        	$returnArray['restoredElements'] = $restoredElements;
         }
         
-        $returnArray['success'] = true;
-        $returnArray['message'] = "OK";
-        $returnArray['restoredElements'] = $restoredElements;
-
         if (!$returnArray['success']) {
         	$this->getResponse()->setStatusCode(500);
         }
