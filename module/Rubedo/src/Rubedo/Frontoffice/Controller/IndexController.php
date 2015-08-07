@@ -191,6 +191,10 @@ class IndexController extends AbstractActionController
         }
 
         $config = Manager::getService("config");
+        $minifyResources=false;
+        if (isset($config['rubedo_config']['minify']) && $config['rubedo_config']['minify'] == "1") {
+            $minifyResources=true;
+        }
         $defaultResources = array(
             "externalStyles" => array(),
             "externalScripts" => array(),
@@ -308,7 +312,8 @@ class IndexController extends AbstractActionController
             'activateMagic' => (isset($config['rubedo_config']['activateMagic']) && ($config['rubedo_config']['activateMagic'] == "1")) ? true : false,
             'angularLocale' => $lang,
             'siteTheme' => $propagatedSiteTheme,
-            'includeBaseBootstrap'=>$includeBaseBootstrap
+            'includeBaseBootstrap'=>$includeBaseBootstrap,
+            'minifyResources'=>$minifyResources
         );
 
         $viewModel = new ViewModel($this->viewData);
