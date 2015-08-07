@@ -99,5 +99,10 @@ class CacheController extends AbstractActionController
         return new JsonModel(array("success"=>true));
     }
 
+    public function clearObjectsAction(){
+        Cache::getCache()->clean();
+        return new JsonModel(array("success"=>true));
+    }
+
 
 }
