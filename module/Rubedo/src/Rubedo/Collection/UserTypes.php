@@ -67,45 +67,49 @@ class UserTypes extends AbstractCollection implements IUserTypes
      * @throws Server Throw an exception when the user type object is not well formated
      */
     private function localizeUserTypeFields($userTypeObj) {
-        $site = $site = Manager::getService("Sites")->getCurrent();
+        $almostOneSite = Manager::getService("Sites")->count();
 
-        $localizationStrategy = isset($site["locStrategy"]) ? $site["locStrategy"] : "onlyOne";
+        if($almostOneSite > 0) {
+            $site = Manager::getService("Sites")->getCurrent();
 
-        if(!isset($site["nativeLanguage"]) || $site["nativeLanguage"] == "") {
-            throw new Server("Missing key 'nativeLanguage' in site object");
-        }
+            $localizationStrategy = isset($site["locStrategy"]) ? $site["locStrategy"] : "onlyOne";
 
-        $currentLanguage = Manager::getService("CurrentLocalization")->getCurrentLocalization();
-        $fallbackLanguage = $site["nativeLanguage"];
-
-        if(!isset($userTypeObj["fields"]) || !is_array($userTypeObj["fields"])) {
-            $userTypeObj["fields"] = [];
-        }
-
-        foreach($userTypeObj["fields"] as &$field) {
-            if(!isset($field["config"]["i18n"])) {
-                continue;
+            if(!isset($site["nativeLanguage"]) || $site["nativeLanguage"] == "") {
+                throw new Server("Missing key 'nativeLanguage' in site object");
             }
 
-            if($localizationStrategy == "onlyOne") {
-                if(isset($field["config"]["i18n"][$currentLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$currentLanguage]["fieldLabel"])) {
-                    $field["config"]["fieldLabel"] = $field["config"]["i18n"][$currentLanguage]["fieldLabel"];
+            $currentLanguage = Manager::getService("CurrentLocalization")->getCurrentLocalization();
+            $fallbackLanguage = $site["nativeLanguage"];
+
+            if(!isset($userTypeObj["fields"]) || !is_array($userTypeObj["fields"])) {
+                $userTypeObj["fields"] = [];
+            }
+
+            foreach($userTypeObj["fields"] as &$field) {
+                if(!isset($field["config"]["i18n"])) {
+                    continue;
                 }
 
-                if(isset($field["config"]["i18n"][$currentLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$currentLanguage]["tooltip"])) {
-                    $field["config"]["tooltip"] = $field["config"]["i18n"][$currentLanguage]["tooltip"];
-                }
-            } elseif($localizationStrategy == "fallback") {
-                if(isset($field["config"]["i18n"][$currentLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$currentLanguage]["fieldLabel"])) {
-                    $field["config"]["fieldLabel"] = $field["config"]["i18n"][$currentLanguage]["fieldLabel"];
-                } elseif(isset($field["config"]["i18n"][$fallbackLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$fallbackLanguage]["fieldLabel"])) {
-                    $field["config"]["fieldLabel"] = $field["config"]["i18n"][$fallbackLanguage]["fieldLabel"];
-                }
+                if($localizationStrategy == "onlyOne") {
+                    if(isset($field["config"]["i18n"][$currentLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$currentLanguage]["fieldLabel"])) {
+                        $field["config"]["fieldLabel"] = $field["config"]["i18n"][$currentLanguage]["fieldLabel"];
+                    }
 
-                if(isset($field["config"]["i18n"][$currentLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$currentLanguage]["tooltip"])) {
-                    $field["config"]["tooltip"] = $field["config"]["i18n"][$currentLanguage]["tooltip"];
-                } elseif(isset($field["config"]["i18n"][$fallbackLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$fallbackLanguage]["tooltip"])) {
-                    $field["config"]["tooltip"] = $field["config"]["i18n"][$fallbackLanguage]["tooltip"];
+                    if(isset($field["config"]["i18n"][$currentLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$currentLanguage]["tooltip"])) {
+                        $field["config"]["tooltip"] = $field["config"]["i18n"][$currentLanguage]["tooltip"];
+                    }
+                } elseif($localizationStrategy == "fallback") {
+                    if(isset($field["config"]["i18n"][$currentLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$currentLanguage]["fieldLabel"])) {
+                        $field["config"]["fieldLabel"] = $field["config"]["i18n"][$currentLanguage]["fieldLabel"];
+                    } elseif(isset($field["config"]["i18n"][$fallbackLanguage]["fieldLabel"]) && is_string($field["config"]["i18n"][$fallbackLanguage]["fieldLabel"])) {
+                        $field["config"]["fieldLabel"] = $field["config"]["i18n"][$fallbackLanguage]["fieldLabel"];
+                    }
+
+                    if(isset($field["config"]["i18n"][$currentLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$currentLanguage]["tooltip"])) {
+                        $field["config"]["tooltip"] = $field["config"]["i18n"][$currentLanguage]["tooltip"];
+                    } elseif(isset($field["config"]["i18n"][$fallbackLanguage]["tooltip"]) && is_string($field["config"]["i18n"][$fallbackLanguage]["tooltip"])) {
+                        $field["config"]["tooltip"] = $field["config"]["i18n"][$fallbackLanguage]["tooltip"];
+                    }
                 }
             }
         }
