@@ -232,7 +232,7 @@ class IndexController extends AbstractActionController
                     . implode('/', $this->discoverDirNames(array(), $fileToLoad['directory']))
                     . '/' . $fileToLoad['title'];
                 $extension = substr(strrchr($themeFile, '.'), 1);
-                if ($extension == 'css') {
+                if ($extension == 'css'&&!$minifyResources) {
                     $siteResources['internalStyles'][] = $themeFile;
                 } elseif ($extension == 'js') {
                     $siteResources['internalScripts'][] = $themeFile;
@@ -250,7 +250,7 @@ class IndexController extends AbstractActionController
             }
             $prepend = '/theme/' . $themeName;
             $propagatedSiteTheme = $themeName;
-            if (isset($theme['css'])) {
+            if (isset($theme['css'])&&!$minifyResources) {
                 foreach ($theme['css'] as $css) {
                     $siteResources['internalStyles'][] = strpos($css, '//') === false ? $prepend . $css : $css;
                 }

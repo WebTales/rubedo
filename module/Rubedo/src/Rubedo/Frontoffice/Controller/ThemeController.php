@@ -17,7 +17,6 @@
 namespace Rubedo\Frontoffice\Controller;
 
 use WebTales\MongoFilters\Filter;
-use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
@@ -274,7 +273,6 @@ class ThemeController extends AbstractActionController
             }
 
         }
-
         foreach($cssDependencyArray as $cssDependency){
             $redirectedResult=$this->forward()->dispatch("Rubedo\\Frontoffice\\Controller\\Theme", array(
                 'action' => 'index',
