@@ -105,6 +105,7 @@
     <script type="text/javascript">
         window.rubedoConfig = {
             siteTheme: "<?php echo $this->siteTheme; ?>",
+            isMimified:<?php echo $this->minifyResources ? "true" : "false" ?>,
             extensionAngularModules:<?php if(isset($this->siteResources['angularModules'])){
             echo json_encode($this->siteResources['angularModules']);
             } else {

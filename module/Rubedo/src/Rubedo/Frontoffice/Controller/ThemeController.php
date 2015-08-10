@@ -17,6 +17,7 @@
 namespace Rubedo\Frontoffice\Controller;
 
 use WebTales\MongoFilters\Filter;
+use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
@@ -40,7 +41,6 @@ class ThemeController extends AbstractActionController
         $theme = $this->params()->fromRoute('theme');
         $filePath = $this->params()->fromRoute('filepath');
         $config = manager::getService('Config');
-
         /** @var \Rubedo\Collection\Directories $directoriesCollection */
         $directoriesCollection = Manager::getService('Directories');
         $filters = Filter::factory('And');
@@ -97,14 +97,17 @@ class ThemeController extends AbstractActionController
                 $consolidatedFilePath = Manager::getService('FrontOfficeTemplates')->getFilePath("default", $filePath);
             }
 
-            if ($consolidatedFilePath||$filePath=="css/rubedo-all.css"||$filePath=="js/rubedo-all.js") {
+            if ($consolidatedFilePath||$filePath=="css/rubedo-all.css"||$filePath=="js/rubedo-all.js"||$filePath="js/rubedo-all-blocks.js") {
                 if ($filePath=="css/rubedo-all.css"&&!$consolidatedFilePath){
                     $extension="css";
                     $mimeType = 'text/css';
                 } elseif ($filePath=="js/rubedo-all.js"&&!$consolidatedFilePath){
                     $extension="js";
                     $mimeType = 'application/javascript';
-                } else {
+                } elseif ($filePath=="js/rubedo-all-blocks.js"&&!$consolidatedFilePath){
+                    $extension="js";
+                    $mimeType = 'application/javascript';
+                }else {
                     $extension = pathinfo($consolidatedFilePath, PATHINFO_EXTENSION);
 
                     switch ($extension) {
@@ -155,6 +158,8 @@ class ThemeController extends AbstractActionController
                     $content=$this->getAllCss($theme,$config);
                 } elseif ($filePath=="js/rubedo-all.js"&&!$consolidatedFilePath){
                     $content=$this->getAllJs($theme,$config);
+                } elseif ($filePath=="js/rubedo-all-blocks.js"&&!$consolidatedFilePath){
+                    $content=$this->getAllBlocks($theme,$config,$this->params()->fromQuery());
                 } else {
                     $content = file_get_contents($consolidatedFilePath);
                 }
@@ -179,7 +184,7 @@ class ThemeController extends AbstractActionController
         if (isset($mimeType)) {
             $headers['Content-type'] = $mimeType;
         }
-        if ((((isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == "1"))||$filePath=="css/rubedo-all.css") && file_put_contents($targetPath, $content)) {
+        if (isset($targetPath)&&(((isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == "1"))||$filePath=="css/rubedo-all.css"||$filePath=="js/rubedo-all.js"||$filePath=="js/rubedo-all-blocks.js") && file_put_contents($targetPath, $content)) {
             $stream = fopen($targetPath, 'r');
         } elseif ($hasFileInDatabase) {
             $stream = $gridFSFile->getResource();
@@ -356,6 +361,24 @@ class ThemeController extends AbstractActionController
                     $jsDependencyArray[] =  $js;
                 }
             }
+        }
+        foreach($jsDependencyArray as $jsDependency){
+            $redirectedResult=$this->forward()->dispatch("Rubedo\\Frontoffice\\Controller\\Theme", array(
+                'action' => 'index',
+                'theme' => $theme,
+                'filepath' => $jsDependency,
+            ));
+            $concatResult=$concatResult." ".$redirectedResult->getBody();
+        }
+        return($concatResult);
+    }
+
+    protected function getAllBlocks($theme,$config,$params){
+        $concatResult="";
+
+        $jsDependencyArray=[];
+        if (isset($params["blockconfig"])&&is_string($params["blockconfig"])){
+            $jsDependencyArray=Json::decode($params["blockconfig"],Json::TYPE_ARRAY);
         }
         foreach($jsDependencyArray as $jsDependency){
             $redirectedResult=$this->forward()->dispatch("Rubedo\\Frontoffice\\Controller\\Theme", array(
