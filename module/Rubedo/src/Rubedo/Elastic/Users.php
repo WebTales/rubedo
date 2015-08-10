@@ -67,6 +67,10 @@ class Users extends DataAbstract
         	'fields' => $data['fields'],
         	'photo' => $photo
         ];
+
+        if(isset($data["status"])) {
+            $indexData["status"] = $data["status"];
+        }
         
         // Add taxonomy
         if (isset($data["taxonomy"])) {

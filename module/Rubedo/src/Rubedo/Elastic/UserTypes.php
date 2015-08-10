@@ -101,7 +101,12 @@ class UserTypes extends DataAbstract
 			'type' => 'string',
 			'index' => 'not_analyzed',
 			'store' => 'yes'
-		]		
+		],
+		'status' => [
+			'type' => 'string',
+			'index' => 'no',
+			'store' => 'yes'
+		]
 	];
 
 	/**
