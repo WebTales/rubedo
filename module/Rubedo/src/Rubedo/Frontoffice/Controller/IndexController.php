@@ -206,7 +206,7 @@ class IndexController extends AbstractActionController
         /** @var \Rubedo\Collection\Themes $themesService */
         $themesService = Manager::getService('Themes');
         $themeObj = $themesService->findByName($theme);
-        if ($themeObj) {
+        if ($themeObj&&!$minifyResources) {
             /** @var \Rubedo\Collection\DAM $DAMService */
             $DAMService = Manager::getService('DAM');
             $filters = Filter::factory()
@@ -232,7 +232,7 @@ class IndexController extends AbstractActionController
                     . implode('/', $this->discoverDirNames(array(), $fileToLoad['directory']))
                     . '/' . $fileToLoad['title'];
                 $extension = substr(strrchr($themeFile, '.'), 1);
-                if ($extension == 'css'&&!$minifyResources) {
+                if ($extension == 'css') {
                     $siteResources['internalStyles'][] = $themeFile;
                 } elseif ($extension == 'js') {
                     $siteResources['internalScripts'][] = $themeFile;
@@ -255,7 +255,7 @@ class IndexController extends AbstractActionController
                     $siteResources['internalStyles'][] = strpos($css, '//') === false ? $prepend . $css : $css;
                 }
             }
-            if (isset($theme['js'])) {
+            if (isset($theme['js'])&&!$minifyResources) {
                 foreach ($theme['js'] as $js) {
                     $siteResources['internalScripts'][] = strpos($js, '//') === false ? $prepend . $js : $js;
                 }
@@ -268,7 +268,9 @@ class IndexController extends AbstractActionController
                     $siteResources['angularModules'] = array();
                 }
                 foreach ($theme['angularModules'] as $angularModule => $angularModulePath) {
-                    $siteResources['angularModulesPaths'][] = strpos($angularModulePath, '//') === false ? $prepend . $angularModulePath : $angularModulePath;
+                    if(!$minifyResources){
+                        $siteResources['angularModulesPaths'][] = strpos($angularModulePath, '//') === false ? $prepend . $angularModulePath : $angularModulePath;
+                    }
                     $siteResources['angularModules'][] = $angularModule;
                 }
             }

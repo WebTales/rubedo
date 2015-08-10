@@ -297,18 +297,66 @@ class ThemeController extends AbstractActionController
 
     protected function getAllJs($theme,$config){
         $concatResult="";
+        $themeName = strtolower($theme);
+        $themesService = Manager::getService('Themes');
+        $themeObj = $themesService->findByName($theme);
         $jsDependencyArray=[
             "libraryOverrides/angular-google-map.js",
             "libraryOverrides/chosen.jquery.js",
             "lib/toaster/jquery.toaster.js",
             "lib/angularStrap/ngStrap.js",
         ];
-        //ext dependecies
+        //ext dependencies modules
+        if (isset($config['templates']['themes'][$themeName])) {
+            $themeConf = $config['templates']['themes'][$themeName];
+            if (isset($themeConf['angularModules'])) {
+                foreach ($themeConf['angularModules'] as $angularModule => $angularModulePath) {
+                    $jsDependencyArray[] = $angularModulePath;
+                }
+            }
+        }
         $jsDependencyArray[]="src/modules/rubedoDataAccess/rubedoDataAccess.js";
         $jsDependencyArray[]="src/modules/rubedoFields/rubedoFields.js";
         $jsDependencyArray[]="src/modules/rubedoBlocks/rubedoBlocks.js";
         $jsDependencyArray[]="src/modules/rubedo/rubedo.js";
-
+        //ext dependencies js
+        if ($themeObj) {
+            /** @var \Rubedo\Collection\DAM $DAMService */
+            $DAMService = Manager::getService('DAM');
+            $filters = Filter::factory()
+                ->addFilter(
+                    Filter::factory('Value')
+                        ->setName('loadOnLaunch')
+                        ->setValue(true)
+                )
+                ->addFilter(
+                    Filter::factory('Value')
+                        ->setName('themeId')
+                        ->setValue($themeObj['id'])
+                )
+                ->addFilter(
+                    Filter::factory('OperatorToValue')
+                        ->setName('title')
+                        ->setOperator('$regex')
+                        ->setValue('.+(css|js)$')
+                );
+            $themeFilesToLoad = $DAMService->getList($filters)['data'];
+            foreach ($themeFilesToLoad as &$fileToLoad) {
+                $themeFile =implode('/', $this->discoverDirNames(array(), $fileToLoad['directory'],$theme)). '/' . $fileToLoad['title'];
+                $extension = substr(strrchr($themeFile, '.'), 1);
+                if ($extension == 'js') {
+                    $jsDependencyArray[] = $themeFile;
+                }
+            }
+        }
+        if (isset($config['templates']['themes'][$themeName])) {
+            $themeConf = $config['templates']['themes'][$themeName];
+            if (isset($themeConf['js'])) {
+                foreach ($themeConf['js'] as $js) {
+                    $cssDependencyArray[] =  $js;
+                }
+            }
+        }
         foreach($jsDependencyArray as $jsDependency){
             $redirectedResult=$this->forward()->dispatch("Rubedo\\Frontoffice\\Controller\\Theme", array(
                 'action' => 'index',
