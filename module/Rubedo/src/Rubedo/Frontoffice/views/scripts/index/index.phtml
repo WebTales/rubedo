@@ -86,12 +86,9 @@
     <script type="text/javascript" src="/components/longtailvideo/jwplayer/jwplayer.js"></script>
     <script type="text/javascript" src="/components/ivpusic/angular-cookie/angular-cookie.min.js"></script>
     <script type="text/javascript" src="/components/ded/script.js/dist/script.min.js"></script>
-    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/angular-google-map.js"></script>
-    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/chosen.jquery.js"></script>
-    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/lib/toaster/jquery.toaster.js"></script>
-    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/lib/angularStrap/ngStrap.js"></script>
     <script type="text/javascript" src="/components/jquery/fullCalendar/lib/moment.min.js"></script>
     <script type="text/javascript"  src="/components/dalelotts/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
+
     <?php if ($this->activateMagic): ?>
         <script type="text/javascript" src="/components/fingerprintjs/fingerprint.js"></script>
     <?php endif; ?>
@@ -117,10 +114,19 @@
     </script>
 
     <!--frontoffice scripts-->
-    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>
-    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoFields/rubedoFields.js"></script>
-    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoBlocks/rubedoBlocks.js"></script>
-    <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedo/rubedo.js"></script>
+    <?php if ($this->minifyResources) { ?>
+        <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/js/rubedo-all.js"></script>
+    <?php } else { ?>
+        <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/angular-google-map.js"></script>
+        <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/chosen.jquery.js"></script>
+        <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/lib/toaster/jquery.toaster.js"></script>
+        <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/lib/angularStrap/ngStrap.js"></script>
+        <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoDataAccess/rubedoDataAccess.js"></script>
+        <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoFields/rubedoFields.js"></script>
+        <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedoBlocks/rubedoBlocks.js"></script>
+        <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/src/modules/rubedo/rubedo.js"></script>
+    <?php } ?>
+
     <!--external resource scripts-->
     <?php foreach ($this->siteResources['externalScripts'] as $externalScript): ?>
         <script type="text/javascript" src="<?php echo $externalScript['url']; ?>"></script>

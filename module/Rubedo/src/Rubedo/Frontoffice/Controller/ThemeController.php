@@ -97,10 +97,13 @@ class ThemeController extends AbstractActionController
                 $consolidatedFilePath = Manager::getService('FrontOfficeTemplates')->getFilePath("default", $filePath);
             }
 
-            if ($consolidatedFilePath||$filePath=="css/rubedo-all.css") {
+            if ($consolidatedFilePath||$filePath=="css/rubedo-all.css"||$filePath=="js/rubedo-all.js") {
                 if ($filePath=="css/rubedo-all.css"&&!$consolidatedFilePath){
                     $extension="css";
                     $mimeType = 'text/css';
+                } elseif ($filePath=="js/rubedo-all.js"&&!$consolidatedFilePath){
+                    $extension="js";
+                    $mimeType = 'application/javascript';
                 } else {
                     $extension = pathinfo($consolidatedFilePath, PATHINFO_EXTENSION);
 
@@ -150,6 +153,8 @@ class ThemeController extends AbstractActionController
 
                 if ($filePath=="css/rubedo-all.css"&&!$consolidatedFilePath){
                     $content=$this->getAllCss($theme,$config);
+                } elseif ($filePath=="js/rubedo-all.js"&&!$consolidatedFilePath){
+                    $content=$this->getAllJs($theme,$config);
                 } else {
                     $content = file_get_contents($consolidatedFilePath);
                 }
@@ -284,6 +289,31 @@ class ThemeController extends AbstractActionController
                 'action' => 'index',
                 'theme' => $theme,
                 'filepath' => $cssDependency,
+            ));
+            $concatResult=$concatResult." ".$redirectedResult->getBody();
+        }
+        return($concatResult);
+    }
+
+    protected function getAllJs($theme,$config){
+        $concatResult="";
+        $jsDependencyArray=[
+            "libraryOverrides/angular-google-map.js",
+            "libraryOverrides/chosen.jquery.js",
+            "lib/toaster/jquery.toaster.js",
+            "lib/angularStrap/ngStrap.js",
+        ];
+        //ext dependecies
+        $jsDependencyArray[]="src/modules/rubedoDataAccess/rubedoDataAccess.js";
+        $jsDependencyArray[]="src/modules/rubedoFields/rubedoFields.js";
+        $jsDependencyArray[]="src/modules/rubedoBlocks/rubedoBlocks.js";
+        $jsDependencyArray[]="src/modules/rubedo/rubedo.js";
+
+        foreach($jsDependencyArray as $jsDependency){
+            $redirectedResult=$this->forward()->dispatch("Rubedo\\Frontoffice\\Controller\\Theme", array(
+                'action' => 'index',
+                'theme' => $theme,
+                'filepath' => $jsDependency,
             ));
             $concatResult=$concatResult." ".$redirectedResult->getBody();
         }
