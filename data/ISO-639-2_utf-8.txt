@@ -346,7 +346,7 @@ phn|||Phoenician|phénicien
 pli||pi|Pali|pali
 pol||pl|Polish|polonais
 pon|||Pohnpeian|pohnpei
-por||pt-PT|Portuguese|portugais
+por||pt|Portuguese|portugais
 pra|||Prakrit languages|prâkrit, langues
 pro|||Provençal, Old (to 1500)|provençal ancien (jusqu'à 1500)
 pus||ps|Pushto; Pashto|pachto
@@ -399,7 +399,7 @@ sog|||Sogdian|sogdien
 som||so|Somali|somali
 son|||Songhai languages|songhai, langues
 sot||st|Sotho, Southern|sotho du Sud
-spa||es-ES|Spanish; Castilian|espagnol; castillan
+spa||es|Spanish; Castilian|espagnol; castillan
 srd||sc|Sardinian|sarde
 srn|||Sranan Tongo|sranan tongo
 srp||sr|Serbian|serbe
