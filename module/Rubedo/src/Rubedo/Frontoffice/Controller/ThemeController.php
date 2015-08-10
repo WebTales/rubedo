@@ -353,7 +353,7 @@ class ThemeController extends AbstractActionController
             $themeConf = $config['templates']['themes'][$themeName];
             if (isset($themeConf['js'])) {
                 foreach ($themeConf['js'] as $js) {
-                    $cssDependencyArray[] =  $js;
+                    $jsDependencyArray[] =  $js;
                 }
             }
         }
