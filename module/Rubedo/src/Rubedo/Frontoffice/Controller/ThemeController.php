@@ -130,13 +130,21 @@ class ThemeController extends AbstractActionController
                 }
                 $publicThemePath = APPLICATION_PATH . '/public/theme';
                 $composedPath = $publicThemePath . '/' . $theme;
-                if (!file_exists($composedPath)) {
-                    mkdir($composedPath, 0777);
+                try {
+                    if (!file_exists($composedPath)) {
+                        mkdir($composedPath, 0777);
+                    }
+                } catch(\Exception $e){
+                    \Monolog\Handler\error_log($e->getMessage());
                 }
 
                 $composedPath = $composedPath . '/' . dirname($filePath);
-                if (!file_exists($composedPath)) {
-                    mkdir($composedPath, 0777, true);
+                try {
+                    if (!file_exists($composedPath)) {
+                        mkdir($composedPath, 0777, true);
+                    }
+                } catch(\Exception $e){
+                    \Monolog\Handler\error_log($e->getMessage());
                 }
                 $targetPath = $publicThemePath . '/' . $theme . '/' . $filePath;
 
@@ -167,8 +175,6 @@ class ThemeController extends AbstractActionController
             $headers['Content-type'] = $mimeType;
         }
         if ((((isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == "1"))||$filePath=="css/rubedo-all.css") && file_put_contents($targetPath, $content)) {
-
-
             $stream = fopen($targetPath, 'r');
         } elseif ($hasFileInDatabase) {
             $stream = $gridFSFile->getResource();
