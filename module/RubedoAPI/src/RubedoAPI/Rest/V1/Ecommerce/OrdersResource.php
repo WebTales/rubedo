@@ -154,6 +154,7 @@ class OrdersResource extends AbstractResource
         $order['shipper'] = $usedShipper;
         $order['userId'] = $currentUser['id'];
         $order['userName'] = $currentUser['name'];
+        $order['userEmail'] = $currentUser['email'];
         $order['billingAddress'] = $currentUser['billingAddress'];
         $order['shippingAddress'] = $currentUser['shippingAddress'];
         $order['hasStockDecrementIssues'] = false;

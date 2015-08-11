@@ -65,7 +65,7 @@ class OrdersController extends DataAccessController
         $csvResource = fopen($filePath, 'w+');
 
         $csvHeader = array(
-            'OrderNumber', 'PaymentMean', 'Status', 'PriceInclTax', 'PriceExclTax',
+            'OrderNumber','User name','User email' ,'PaymentMean', 'Status', 'PriceInclTax', 'PriceExclTax',
             'BillingAddress1', 'BillingAddress2', 'BillingCity', 'BillingPostalCode', 'BillingCountry', 'BillingRegionState',
             'ShippingAddress1', 'ShippingAddress', 'ShippingCity', 'ShippingPostalCode', 'ShippingCountry', 'ShippingRegionState',
             'ProductName', 'ProductSubtitle', 'ProductAmount', 'UnitPriceInclTax', 'UnitPriceExclTax', 'ProductPriceInclTax', 'ProductPriceExclTax'
@@ -88,7 +88,7 @@ class OrdersController extends DataAccessController
             $shippingA = &$order['shippingAddress'];
             $product = array_shift($order['detailedCart']['cart']);
             $firstLine = array(
-                $order['orderNumber'], $order['paymentMeans'], $order['status'], $order['finalPrice'], $order['finalTFPrice'],
+                $order['orderNumber'], $order['userName'], isset($order['userEmail']) ? $order['userEmail'] : "",$order['paymentMeans'], $order['status'], $order['finalPrice'], $order['finalTFPrice'],
                 //Billing address
                 isset($billingA['address1']) ? $billingA['address1'] : '',
                 isset($billingA['address2']) ? $billingA['address2'] : '',
