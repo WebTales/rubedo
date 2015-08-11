@@ -6,7 +6,21 @@
         "bType": "userProfile",
         "flex": 1,
         "champsConfig": {
-            "simple": [],
+            "simple": [
+                {
+                    "categorie": "#ext-gen1063#",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.MailingListPickerField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1155#",
+                                "name": "mailingListId",
+                                "multiSelect": true
+                            }
+                        }
+                    ]
+                }
+            ],
             "avance": [
                 {
                     "categorie": "Template",

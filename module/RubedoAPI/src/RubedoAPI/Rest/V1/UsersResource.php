@@ -81,6 +81,7 @@ class UsersResource extends AbstractResource
                     'readOnly',
                     'typeId',
                     'photoUrl',
+                    'mailingLists',
                 )
             )
         );

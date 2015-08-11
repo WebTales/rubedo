@@ -79,7 +79,7 @@ class SubscribeResource extends AbstractResource
             }
         }
         foreach ($mailingLists as &$mailingListTargeted) {
-            $result = $this->getMailingListCollection()->subscribe($mailingListTargeted, $params['email'], true, $params['name'], $params['fields']);
+            $result = $this->getMailingListCollection()->subscribe($mailingListTargeted, $params['email'], false, $params['name'], $params['fields']);
             if (!$result['success']) {
                 return $result;
             }
@@ -103,8 +103,10 @@ class SubscribeResource extends AbstractResource
             $mailingLists = (array)$params['mailingLists'];
             foreach ($mailingLists as &$mailingListTargeted) {
                 $result = $this->getMailingListCollection()->unSubscribe($mailingListTargeted, $params['email']);
-                if (!$result['success']) {
-                    return $result;
+                if (!$result) {
+                    return array(
+                        'success' => false
+                    );
                 }
             }
         }
