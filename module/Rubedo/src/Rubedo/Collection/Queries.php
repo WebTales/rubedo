@@ -291,13 +291,22 @@ class Queries extends AbstractCollection implements IQueries
                 }
                 break;
             case "numberfield":
+            case "textfield":
             case "timefield":
-                $filters->addFilter(
-                    Filter::factory('OperatorToValue')
-                        ->setName($property)
-                        ->setOperator($ruleOperator)
-                        ->setValue($value['value'])
-                );
+                if ($ruleOperator=="eq"){
+                    $filters->addFilter(
+                        Filter::factory('Value')
+                            ->setName($property)
+                            ->setValue($value['value'])
+                    );
+                } else {
+                    $filters->addFilter(
+                        Filter::factory('OperatorToValue')
+                            ->setName($property)
+                            ->setOperator($ruleOperator)
+                            ->setValue($value['value'])
+                    );
+                }
                 break;
             default:
                 throw new \Rubedo\Exceptions\Server('not implemented ' . $fieldType);
