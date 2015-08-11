@@ -18,6 +18,14 @@
                             }
                         },
                         {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "Redirect on connection",
+                                "name": "redirectOnConnection",
+                                "inputValue": true
+                            }
+                        },
+                        {
                             "type": "Ext.ux.TreePicker",
                             "config": {
                                 "fieldLabel": "#ext-gen1462#",
@@ -67,7 +75,8 @@
             ]
         },
         "configBloc": {
-            "displayMode": "pop-in"
+            "displayMode": "pop-in",
+            "redirectOnConnection": false
         }
 
 
