@@ -296,11 +296,18 @@ class ContentsResource extends AbstractResource
                     unset($data["taxonomy"][$vocabId]);
                 } else {
                     $isVocabExtendable=isset($currentVocabulary["expandable"])&&$currentVocabulary["expandable"];
+                    $wasArray=false;
+                    if (!is_array($terms)){
+                        $terms=array($terms);
+                        $wasArray=true;
+                    }
                     foreach($terms as $key =>&$value){
                         try{
                             new \MongoId($value);
                         } catch(\Exception $e){
                             if (!$isVocabExtendable){
+                                unset($terms[$key]);
+                            } elseif ($value=="") {
                                 unset($terms[$key]);
                             } else {
                                 $newTerm=array(
@@ -326,6 +333,13 @@ class ContentsResource extends AbstractResource
                             }
                         }
 
+                    }
+                    if($wasArray){
+                        if (isset($terms[0])){
+                            $terms=$terms[0];
+                        } else {
+                            unset($data["taxonomy"][$vocabId]);
+                        }
                     }
                 }
             }
@@ -522,11 +536,18 @@ class ContentsResource extends AbstractResource
                     unset($data["taxonomy"][$vocabId]);
                 } else {
                     $isVocabExtendable=isset($currentVocabulary["expandable"])&&$currentVocabulary["expandable"];
+                    $wasArray=false;
+                    if (!is_array($terms)){
+                        $terms=array($terms);
+                        $wasArray=true;
+                    }
                     foreach($terms as $key =>&$value){
                         try{
                             new \MongoId($value);
                         } catch(\Exception $e){
                             if (!$isVocabExtendable){
+                                unset($terms[$key]);
+                            } elseif ($value=="") {
                                 unset($terms[$key]);
                             } else {
                                 $newTerm=array(
@@ -553,6 +574,14 @@ class ContentsResource extends AbstractResource
                         }
 
                     }
+                    if($wasArray){
+                        if (isset($terms[0])){
+                            $terms=$terms[0];
+                        } else {
+                            unset($data["taxonomy"][$vocabId]);
+                        }
+                    }
+
                 }
             }
         }
