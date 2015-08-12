@@ -460,7 +460,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
                             $value
                         );
                     }
-                    if ($value[0] == "") {
+                    if (!isset($value[0])||$value[0] == "") {
                         $value = array();
                     }
                     foreach ($value as $valueItem) {
