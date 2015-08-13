@@ -89,6 +89,9 @@ class DamController extends DataAccessController
             $queryString = $this->getRequest()->getQuery();
             $queryString->set('file-id', $media['originalFileId']);
             $queryString->set('version', $version);
+            if (isset($media["mainFileType"])&&$media["mainFileType"]&&$media["mainFileType"]!=""){
+                $queryString->set('file-type', $media["mainFileType"]);
+            }
             return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\File', array(
                 'action' => 'get-thumbnail'
             ));
