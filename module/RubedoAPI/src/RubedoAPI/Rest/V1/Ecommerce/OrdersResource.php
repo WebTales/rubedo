@@ -197,6 +197,9 @@ class OrdersResource extends AbstractResource
             $myContent = $this->getContentsCollection()->findById($value['productId'], true, false);
             if ($myContent) {
                 $value['title'] = $myContent['text'];
+                if (isset($myContent["fields"]["image"])&&!empty($myContent["fields"]["image"])){
+                    $value["image"]=$myContent["fields"]["image"];
+                }
                 $value['subtitle'] = '';
                 $value['variationProperties'] = array();
                 $unitPrice = 0;
@@ -277,13 +280,7 @@ class OrdersResource extends AbstractResource
             ->addFilter(Filter::factory('Value')->setName('userId')->setValue($user['id']))
             ->addFilter(Filter::factory('Uid')->setValue($id));
         $order = $this->getOrdersCollection()->findOne($filters);
-        if(isset($order["detailedCart"]["cart"]) && is_array($order["detailedCart"]["cart"])) {
-            foreach($order["detailedCart"]["cart"] as &$product) {
-                if(!empty($product["productId"])) {
 
-                }
-            }
-        }
         if (empty($order)) {
             throw new APIEntityException('Order not found', 404);
         }
