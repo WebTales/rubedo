@@ -167,6 +167,9 @@ class DamController extends AbstractActionController
             $queryString->set('version', $version);
             if (isset($media["mainFileType"])&&$media["mainFileType"]&&$media["mainFileType"]!=""){
                 $queryString->set('file-type', $media["mainFileType"]);
+                if ($media["mainFileType"]=="Document"&&isset($media["Content-Type"])&&$media["Content-Type"]&&$media["Content-Type"]!=""){
+                    $queryString->set('content-type', $media["Content-Type"]);
+                }
             }
             return $this->forward()->dispatch('Rubedo\\Frontoffice\\Controller\\File', array(
                 'action' => 'get-thumbnail'
