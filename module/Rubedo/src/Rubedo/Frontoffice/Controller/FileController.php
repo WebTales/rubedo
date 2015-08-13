@@ -165,6 +165,31 @@ class FileController extends AbstractActionController
             case 'Animation':
                 $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/palette.png');
                 break;
+            case 'Document':
+                switch ($this->params()->fromQuery('content-type')) {
+                    case 'application/msword':
+                    case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                    case 'application/vnd.oasis.opendocument.text':
+                        $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/generic/filetypes/word.png');
+                        break;
+                    case 'application/vnd.ms-excel':
+                    case 'text/csv':
+                    case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                    case 'application/vnd.oasis.opendocument.spreadsheet':
+                        $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/generic/filetypes/excel.png');
+                        break;
+                    case 'application/vnd.ms-powerpoint':
+                    case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+                    case 'application/vnd.oasis.opendocument.presentation':
+                        $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/generic/filetypes/powerpoint.png');
+                        break;
+                    case 'application/pdf':
+                        $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/generic/filetypes/pdf.png');
+                        break;
+                    default:
+                        break;
+                }
+                break;
             default:
                 break;
         }
