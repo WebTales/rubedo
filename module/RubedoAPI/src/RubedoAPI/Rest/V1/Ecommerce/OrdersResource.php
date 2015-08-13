@@ -277,6 +277,13 @@ class OrdersResource extends AbstractResource
             ->addFilter(Filter::factory('Value')->setName('userId')->setValue($user['id']))
             ->addFilter(Filter::factory('Uid')->setValue($id));
         $order = $this->getOrdersCollection()->findOne($filters);
+        if(isset($order["detailedCart"]["cart"]) && is_array($order["detailedCart"]["cart"])) {
+            foreach($order["detailedCart"]["cart"] as &$product) {
+                if(!empty($product["productId"])) {
+
+                }
+            }
+        }
         if (empty($order)) {
             throw new APIEntityException('Order not found', 404);
         }

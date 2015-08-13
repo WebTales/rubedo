@@ -249,14 +249,14 @@ class Groups extends AbstractCollection implements IGroups
     {
         if (!self::isUserFilterDisabled()) {
             // Set the workspace for old items in database
-            if (!isset($obj['workspace'])) {
+            if (!isset($obj['workspace']) || $obj['workspace'] == "") {
                 $obj['workspace'] = 'global';
             }
 
             $aclServive = Manager::getService('Acl');
             $writeWorkspaces = Manager::getService('CurrentUser')->getWriteWorkspaces();
 
-            if (!in_array($obj['workspace'], $writeWorkspaces) || !$aclServive->hasAccess("write.ui.groups")) {
+            if ((!in_array($obj['workspace'], $writeWorkspaces) && !in_array("all", $writeWorkspaces)) || !$aclServive->hasAccess("write.ui.groups"))  {
                 $obj['readOnly'] = true;
             }
         }
