@@ -54,7 +54,7 @@ class DataAccessTest extends \PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         // create a db connection and tell Phactory to use it
-        $mongo = new \Mongo(DataAccess::getDefaultMongo());
+        $mongo = new \MongoClient(DataAccess::getDefaultMongo());
         $mongoDb = $mongo->test_db;
 
         static::$phactory = new Phactory($mongoDb);

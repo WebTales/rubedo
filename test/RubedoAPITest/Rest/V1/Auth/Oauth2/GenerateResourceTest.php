@@ -98,7 +98,8 @@ class GenerateResourceTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('getVariables')
             ->will($this->returnValue(array(
-                'rights' => array('myRights')
+                'rights' => array('myRights'),
+                'currentUser' => "toto"
             )));
         $this->forwardResult
             ->expects($this->once())

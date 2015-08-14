@@ -43,11 +43,6 @@ class ContentsTest extends \PHPUnit_Framework_TestCase
     private $mockContentTypesService;
 
     /**
-     * @var \Rubedo\Elastic\DataIndex
-     */
-    private $mockDataIndexService;
-
-    /**
      * @var \Rubedo\User\CurrentUser
      */
     private $mockCurrentUserService;
@@ -70,9 +65,6 @@ class ContentsTest extends \PHPUnit_Framework_TestCase
 
         $this->mockContentTypesService = $this->getMock('Rubedo\Collection\ContentTypes');
         Manager::setMockService('ContentTypes', $this->mockContentTypesService);
-
-        $this->mockDataIndexService = $this->getMock('Rubedo\Elastic\DataIndex');
-        Manager::setMockService('ElasticDataIndex', $this->mockDataIndexService);
 
         parent::setUp();
     }
