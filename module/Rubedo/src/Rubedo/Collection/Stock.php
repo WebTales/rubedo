@@ -16,6 +16,8 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\IStock;
+
 /**
  * Special service to handle stock through aggregation or direct access (no workflow) to contents
  *
@@ -23,7 +25,7 @@ namespace Rubedo\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-class Stock extends AbstractCollection
+class Stock extends AbstractCollection implements IStock
 {
     public function __construct()
     {
@@ -32,7 +34,7 @@ class Stock extends AbstractCollection
     }
 
     /**
-     * Get stock from products using aggregation
+     * @see \Rubedo\Interfaces\Collection\IStock::getStock
      */
     public function getStock($typeId, $workingLanguage)
     {
@@ -77,7 +79,7 @@ class Stock extends AbstractCollection
     }
 
     /**
-     * Add a specific amount to stock of a product variation
+     * @see \Rubedo\Interfaces\Collection\IStock::increaseStock
      */
     public function increaseStock($productId, $variationId, $amount)
     {
@@ -119,7 +121,7 @@ class Stock extends AbstractCollection
     }
 
     /**
-     * Remove a specific amount from stock of a product variation
+     * @see \Rubedo\Interfaces\Collection\IStock::decreaseStock
      */
     public function decreaseStock($productId, $variationId, $amount)
     {

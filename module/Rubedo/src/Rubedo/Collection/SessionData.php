@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\ISessionData;
 use WebTales\MongoFilters\Filter;
 
 /**
@@ -25,7 +26,7 @@ use WebTales\MongoFilters\Filter;
  * @category Rubedo
  * @package Rubedo
  */
-class SessionData extends AbstractCollection
+class SessionData extends AbstractCollection implements ISessionData
 {
 
     /**
@@ -50,6 +51,9 @@ class SessionData extends AbstractCollection
         return $this->findOne($filter);
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\ISessionData::decode
+     */
     public function decode($session_data)
     {
         $return_data = array();
@@ -70,8 +74,7 @@ class SessionData extends AbstractCollection
     }
 
     /**
-     *
-     * @return the $sessionName
+     * @see \Rubedo\Interfaces\Collection\ISessionData::getSessionName
      */
     public function getSessionName()
     {
@@ -79,8 +82,7 @@ class SessionData extends AbstractCollection
     }
 
     /**
-     *
-     * @param field_type $sessionName
+     * @see \Rubedo\Interfaces\Collection\ISessionData::setSessionName
      */
     public static function setSessionName($sessionName)
     {

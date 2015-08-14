@@ -16,6 +16,8 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\IContentViewLog;
+
 /**
  * Service to handle content view logging
  *
@@ -23,7 +25,7 @@ namespace Rubedo\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-class ContentViewLog extends AbstractCollection
+class ContentViewLog extends AbstractCollection implements IContentViewLog
 {
 
     public function __construct()
@@ -37,6 +39,9 @@ class ContentViewLog extends AbstractCollection
 
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IContentViewLog::log
+     */
     public function log($contentId, $locale, $fingerprint, $timestamp)
     {
         $this->_dataService->directCreate(array(

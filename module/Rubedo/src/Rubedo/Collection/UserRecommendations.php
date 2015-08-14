@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\IUserRecommendations;
 use Rubedo\Services\Manager;
 
 /**
@@ -25,7 +26,7 @@ use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class UserRecommendations extends AbstractCollection
+class UserRecommendations extends AbstractCollection implements IUserRecommendations
 {
     public function __construct()
     {
@@ -37,6 +38,9 @@ class UserRecommendations extends AbstractCollection
     {
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IUserRecommendations::read
+     */
     public function read($limit = 50)
     {
         $fingerprint = Manager::getService("Session")->get("fingerprint");
@@ -82,6 +86,9 @@ class UserRecommendations extends AbstractCollection
 
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IUserRecommendations::build
+     */
     public function build()
     {
 
@@ -113,6 +120,9 @@ class UserRecommendations extends AbstractCollection
         return $response;
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IUserRecommendations::flush
+     */
     public function flush()
     {
 

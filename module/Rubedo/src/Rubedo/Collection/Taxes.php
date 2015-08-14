@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\ITaxes;
 use WebTales\MongoFilters\Filter;
 
 /**
@@ -25,7 +26,7 @@ use WebTales\MongoFilters\Filter;
  * @category Rubedo
  * @package Rubedo
  */
-class Taxes extends AbstractCollection
+class Taxes extends AbstractCollection implements ITaxes
 {
 
     public function __construct()
@@ -34,6 +35,9 @@ class Taxes extends AbstractCollection
         parent::__construct();
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\ITaxes::getTaxValue
+     */
     public function getTaxValue($productTypeId, $userTypeId, $country, $region, $postalCode, $basePrice)
     {
         $filters = Filter::factory()->addFilter(Filter::factory('Value')->setName('active')->setValue(true))

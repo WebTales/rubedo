@@ -16,6 +16,8 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\IImportData;
+
 /**
  * Service to handle Raw Data Import
  *
@@ -23,7 +25,7 @@ namespace Rubedo\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-class ImportData extends AbstractCollection
+class ImportData extends AbstractCollection implements IImportData
 {
 	
 	protected $_indexes = array(
@@ -42,7 +44,7 @@ class ImportData extends AbstractCollection
     
     
     /**
-     * Write file to Import collection
+     * @see \Rubedo\Interfaces\Collection\IImportData::writeImportFile
      */
     public function writeImportFile($fileName, $separator, $userEncoding, $importKeyValue)
     {

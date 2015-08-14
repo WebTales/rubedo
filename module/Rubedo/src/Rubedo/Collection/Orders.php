@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\IOrders;
 use Rubedo\Services\Manager;
 
 /**
@@ -25,7 +26,7 @@ use Rubedo\Services\Manager;
  * @category Rubedo
  * @package Rubedo
  */
-class Orders extends AbstractCollection
+class Orders extends AbstractCollection implements IOrders
 {
     public function __construct()
     {
@@ -38,6 +39,8 @@ class Orders extends AbstractCollection
      *
      * @param $orderData
      * @return array
+     *
+     * @see \Rubedo\Interfaces\Collection\IOrders::createOrder
      */
     public function createOrder($orderData,$decrementStock = true)
     {
@@ -76,6 +79,9 @@ class Orders extends AbstractCollection
 
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IOrders::getIncrement
+     */
     public function getIncrement($dateCode)
     {
         $pipeline = array();

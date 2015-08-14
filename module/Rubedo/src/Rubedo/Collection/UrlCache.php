@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\IUrlCache;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\EventManager\EventInterface;
@@ -27,7 +28,7 @@ use Zend\EventManager\EventInterface;
  * @category Rubedo
  * @package Rubedo
  */
-class UrlCache extends AbstractCollection
+class UrlCache extends AbstractCollection implements IUrlCache
 {
 
     protected $_indexes = array(
@@ -76,6 +77,9 @@ class UrlCache extends AbstractCollection
 
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IUrlCache::verifyIndexes
+     */
     public function verifyIndexes()
     {
         $this->_dataService->ensureIndex(array(
@@ -91,6 +95,9 @@ class UrlCache extends AbstractCollection
         ));
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IUrlCache::findByPageId
+     */
     public function findByPageId($pageId, $locale)
     {
         if ($pageId instanceof \MongoId) {
@@ -129,6 +136,9 @@ class UrlCache extends AbstractCollection
         parent::create($obj, $options);
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IUrlCache::findByUrl
+     */
     public function findByUrl($url, $siteId)
     {
         if ($this->noDbConnection) {
@@ -153,6 +163,9 @@ class UrlCache extends AbstractCollection
         return static::$urlToPage[$siteId][$url];
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IUrlCache::urlToPageReadCacheEvent
+     */
     public function urlToPageReadCacheEvent(EventInterface $event)
     {
         $params = $event->getParams();
@@ -172,6 +185,9 @@ class UrlCache extends AbstractCollection
         }
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IUrlCache::pageToUrlReadCacheEvent
+     */
     public function pageToUrlReadCacheEvent(EventInterface $event)
     {
         $params = $event->getParams();
@@ -184,6 +200,9 @@ class UrlCache extends AbstractCollection
         }
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IUrlCache::urlToPageWriteCacheEvent
+     */
     public function urlToPageWriteCacheEvent(EventInterface $event)
     {
         if ($this->noDbConnection) {

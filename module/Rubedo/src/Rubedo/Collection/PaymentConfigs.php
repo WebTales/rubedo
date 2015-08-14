@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\IPaymentConfigs;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 
@@ -26,7 +27,7 @@ use WebTales\MongoFilters\Filter;
  * @category Rubedo
  * @package Rubedo
  */
-class PaymentConfigs extends AbstractCollection
+class PaymentConfigs extends AbstractCollection implements IPaymentConfigs
 {
     public function __construct()
     {
@@ -39,8 +40,9 @@ class PaymentConfigs extends AbstractCollection
      *
      * @param $pmName
      * @return array
+     *
+     * @see \Rubedo\Interfaces\Collection\IPaymentConfigs::getConfigForPM
      */
-
     public function getConfigForPM($pmName)
     {
         $rConfig = Manager::getService('config');

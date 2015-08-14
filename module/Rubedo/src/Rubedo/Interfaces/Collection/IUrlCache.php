@@ -16,6 +16,8 @@
  */
 namespace Rubedo\Interfaces\Collection;
 
+use Zend\EventManager\EventInterface;
+
 /**
  * Interface of service handling users
  *
@@ -28,21 +30,45 @@ interface IUrlCache extends IAbstractCollection
 {
 
     /**
-     * Return cached URL for a given PageId
-     *
-     * @param string $pageId
-     *            page ID
-     * @return array
+     * Ensure that collection's indexes are applied
      */
-    public function findByPageId($pageId);
+    public function verifyIndexes();
 
     /**
+     * Return cached URL for a given PageId
      *
-     * @param string $url
-     * @param string $siteid
-     * @return array
+     * @param string    $pageId     page ID
+     * @param string    $locale     Current language
+     *
+     * @return array    Contains the page's data
      */
-    public function findByUrl($url, $siteid);
+    public function findByPageId($pageId, $locale);
 
-    public function verifyIndexes();
+    /**
+     * Return cached URL for a given URL
+     *
+     * @param   string  $url        URL of the cached page
+     * @param   string  $siteId     Site ID
+     * @return  array   Contains    the page's data
+     */
+    public function findByUrl($url, $siteId);
+
+    /**
+     * @param EventInterface $event
+     * @return mixed
+     */
+    public function urlToPageReadCacheEvent(EventInterface $event);
+
+    /**
+     * @param EventInterface $event
+     * @return mixed
+     */
+    public function pageToUrlReadCacheEvent(EventInterface $event);
+
+    /**
+     * @param EventInterface $event
+     * @return mixed
+     */
+    public function urlToPageWriteCacheEvent(EventInterface $event);
+
 }

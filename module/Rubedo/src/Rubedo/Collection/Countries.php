@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\ICountries;
 use WebTales\MongoFilters\Filter;
 
 /**
@@ -25,7 +26,7 @@ use WebTales\MongoFilters\Filter;
  * @category Rubedo
  * @package Rubedo
  */
-class Countries extends AbstractCollection
+class Countries extends AbstractCollection implements ICountries
 {
 
     public function __construct()
@@ -34,6 +35,9 @@ class Countries extends AbstractCollection
         parent::__construct();
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\ICountries::findOneByAlpha2
+     */
     public function findOneByAlpha2($alpha2)
     {
         $filter = Filter::factory('Value')->setValue($alpha2)->setName('alpha-2');

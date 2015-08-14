@@ -16,6 +16,8 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\IShippers;
+
 /**
  * Service to handle Shippers
  *
@@ -23,7 +25,7 @@ namespace Rubedo\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-class Shippers extends AbstractCollection
+class Shippers extends AbstractCollection implements IShippers
 {
     public function __construct()
     {
@@ -31,6 +33,9 @@ class Shippers extends AbstractCollection
         parent::__construct();
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IShippers::getApplicableShippers
+     */
     public function getApplicableShippers($country, $items)
     {
         $pipeline = array();
@@ -82,6 +87,8 @@ class Shippers extends AbstractCollection
      * @param $id
      * @param $country
      * @return array
+     *
+     * @see \Rubedo\Interfaces\Collection\IShippers::findByIdAndWindApplicable
      */
     public function findByIdAndWindApplicable($id, $country)
     {

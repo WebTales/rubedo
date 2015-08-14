@@ -16,6 +16,8 @@
  */
 namespace Rubedo\Collection;
 
+use Rubedo\Interfaces\Collection\IItemRecommendations;
+
 /**
  * Service to handle Item to item recommendations
  *
@@ -23,7 +25,7 @@ namespace Rubedo\Collection;
  * @category Rubedo
  * @package Rubedo
  */
-class ItemRecommendations extends AbstractCollection
+class ItemRecommendations extends AbstractCollection implements IItemRecommendations
 {
     public function __construct()
     {
@@ -35,6 +37,9 @@ class ItemRecommendations extends AbstractCollection
     {
     }
 
+    /**
+     * @see \Rubedo\Interfaces\Collection\IItemRecommendations::build
+     */
     public function build()
     {
 
