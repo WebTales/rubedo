@@ -610,11 +610,11 @@ class DataSearch extends DataAbstract
 
         // filter on lastupdatetime
         if (array_key_exists('lastupdatetime', $this->_params)) {
-        	$rangeFrom = strtotime(substr($this->_params ['lastupdatetime'],0,24));
-        	$rangeTo = strtotime(substr($this->_params ['lastupdatetime'],-24));
+        	$rangeFrom = substr($this->_params ['lastupdatetime'],0,24);
+        	$rangeTo = substr($this->_params ['lastupdatetime'],25, strlen($this->_params ['lastupdatetime'])-25);
         	$range = [];
-        	if ($rangeFrom) $range['gte'] = $rangeFrom;
-        	if ($rangeTo) $range['lte'] = $rangeTo;
+        	if ($rangeFrom && $rangeFrom != '*') $range['gte'] = $rangeFrom;
+        	if ($rangeTo && $rangeTo != '*') $range['lte'] = $rangeTo;
             $filter = [
             	'range' => [
             		'lastUpdateTime' => $range
