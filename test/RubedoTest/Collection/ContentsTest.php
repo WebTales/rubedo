@@ -611,6 +611,7 @@ class ContentsTest extends \PHPUnit_Framework_TestCase
             "target" => array(
                 "test"
             ),
+            "status" => "published",
             "writeWorkspace" => "test"
         );
 
