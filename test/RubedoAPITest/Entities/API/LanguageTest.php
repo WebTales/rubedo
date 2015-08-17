@@ -36,19 +36,4 @@ class LanguageTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    /**
-     * @expectedException        \RubedoAPI\Exceptions\APIEntityException
-     */
-    public function testConstructLowerInput()
-    {
-        new Language('f');
-    }
-
-    /**
-     * @expectedException        \RubedoAPI\Exceptions\APIEntityException
-     */
-    public function testConstructGreaterInput()
-    {
-        new Language('enfoofr');
-    }
 }
