@@ -741,16 +741,13 @@ class DataSearch extends DataAbstract
             if ($field ['useAsVariation']) {
                 $fieldName = 'productProperties.variations.' . $field ['name'];
             } else {
-                if (!$field ['localizable']) {
-                    $fieldName = $field ['name'];
-                } else {
-                    $fieldName = $field ['name'] . '_' . $currentLocale;
-                }
+            	$fieldName = $field ['name'];
             }
 
             if (array_key_exists(urlencode($field ['name']), $this->_params)) {
                 $this->_addTermFilter($field ['name'], $fieldName);
             }
+            
         }
         
         $searchParams=[];
