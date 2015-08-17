@@ -32,7 +32,12 @@
     <!--css-->
     <link rel="stylesheet" type="text/css" href="/components/jtrussell/angular-snap.js-bower/angular-snap-only.min.css">
     <?php if ($this->includeBaseBootstrap){ ?>
-    <link rel="stylesheet" type="text/css" href="/components/twbs/bootstrap/dist/css/bootstrap.min.css">
+        <?php if ($this->useCdn) { ?>
+            <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <?php } else {?>
+        <link rel="stylesheet" type="text/css" href="/components/twbs/bootstrap/dist/css/bootstrap.min.css">
+    <?php } ?>
+
     <?php } ?>
     <?php if ($this->minifyResources) { ?>
         <link rel="stylesheet" type="text/css" href="/theme/<?php echo $this->siteTheme; ?>/css/rubedo-all.css">
@@ -40,10 +45,18 @@
         <link rel="stylesheet" type="text/css" href="/theme/<?php echo $this->siteTheme; ?>/css/rubedo.css">
         <link rel="stylesheet" type="text/css" href="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/chosen.css">
     <?php } ?>
-    <link href='/components/jquery/fullCalendar/fullcalendar.css' rel='stylesheet' type="text/css" />
-    <link href='/components/jquery/fullCalendar/fullcalendar.print.css' rel='stylesheet' media='print' type="text/css" />
-    <link rel="stylesheet" type="text/css" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.carousel.css">
-    <link rel="stylesheet" type="text/css" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.theme.css">
+
+    <?php if ($this->useCdn) { ?>
+        <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.0.3/fullcalendar.css' rel='stylesheet' type="text/css" />
+        <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.0.3/fullcalendar.print.css' rel='stylesheet' media='print' type="text/css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.2/owl.carousel.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.2/owl.theme.min.css">
+    <?php } else {?>
+        <link href='/components/jquery/fullCalendar/fullcalendar.css' rel='stylesheet' type="text/css" />
+        <link href='/components/jquery/fullCalendar/fullcalendar.print.css' rel='stylesheet' media='print' type="text/css" />
+        <link rel="stylesheet" type="text/css" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.carousel.css">
+        <link rel="stylesheet" type="text/css" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.theme.css">
+    <?php } ?>
     <link rel="stylesheet" type="text/css" href="/components/vitalets/angular-xeditable/dist/css/xeditable.css">
     <link rel="stylesheet" type="text/css" href="/components/dalelotts/angular-bootstrap-datetimepicker/src/css/datetimepicker.css">
     <!--external resource styles-->
