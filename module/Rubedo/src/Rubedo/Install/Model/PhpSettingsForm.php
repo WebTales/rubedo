@@ -91,7 +91,7 @@ class PhpSettingsForm extends BootstrapForm
             ->add($levelSelect);
 
         $minify = (new Checkbox('minify'))
-            ->setValue(isset($params['rubedo_config']['minify']) ? $params['rubedo_config']['minify'] : 0)
+            ->setValue(isset($params['rubedo_config']['minify']) ? $params['rubedo_config']['minify'] : 1)
             ->setLabel('Minify CSS & Js');
 
         $cachePage = (new Checkbox('cachePage'))
@@ -101,6 +101,10 @@ class PhpSettingsForm extends BootstrapForm
         $apiCache = (new Checkbox('apiCache'))
             ->setValue(isset($params['rubedo_config']['apiCache']) ? $params['rubedo_config']['apiCache'] : 1)
             ->setLabel('API cache');
+
+        $useCdn = (new Checkbox('useCdn'))
+            ->setValue(isset($params['rubedo_config']['useCdn']) ? $params['rubedo_config']['useCdn'] : 1)
+            ->setLabel('Use CDN');
 
         $extDebug = (new Checkbox('extDebug'))
             ->setValue(isset($params['rubedo_config']['extDebug']) ? $params['rubedo_config']['extDebug'] : null)
@@ -170,6 +174,7 @@ class PhpSettingsForm extends BootstrapForm
             ->add($minify)
             ->add($cachePage)
             ->add($apiCache)
+            ->add($useCdn)
             ->add($extDebug)
             ->add($eCommerce)
             ->add($magicActivator)

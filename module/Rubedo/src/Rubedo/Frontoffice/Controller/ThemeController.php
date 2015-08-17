@@ -306,6 +306,7 @@ class ThemeController extends AbstractActionController
         $themesService = Manager::getService('Themes');
         $themeObj = $themesService->findByName($theme);
         $jsDependencyArray=[
+            "libraryOverrides/lrInfiniteScroll.js",
             "libraryOverrides/angular-google-map.js",
             "libraryOverrides/chosen.jquery.js",
             "lib/toaster/jquery.toaster.js",

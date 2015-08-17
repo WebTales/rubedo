@@ -62,31 +62,48 @@
     <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/respond.js"></script>
     <![endif]-->
     <!--library scripts-->
-    <script type="text/javascript" src="/components/jquery/jquery/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="/components/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <?php if ($this->useCdn) { ?>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <?php } else {?>
+        <script type="text/javascript" src="/components/jquery/jquery/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/components/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <?php } ?>
     <!--[if lte IE 9]>
     <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/angular.js"></script>
     <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/legacyFixes/history.js"></script>
     <![endif]-->
     <![if !lte IE 9]>
-    <script type="text/javascript" src="/components/angular/angular.js/angular.min.js"></script>
+    <?php if ($this->useCdn) { ?>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
+    <?php } else {?>
+        <script type="text/javascript" src="/components/angular/angular.js/angular.min.js"></script>
+    <?php } ?>
     <![endif]>
-    <script type="text/javascript" src="/components/angular/angular.js/angular-route.min.js"></script>
-    <script type="text/javascript" src="/components/angular/lrInfiniteScroll.js/lrInfiniteScroll.js"></script>
+    <?php if ($this->useCdn) { ?>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular-route.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/snap.js/1.9.2/snap.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.1/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/script.js/2.5.7/script.min.js"></script>
+        <script type="text/javascript" src="http://p.jwpcdn.com/6/10/jwplayer.js"></script>
+    <?php } else {?>
+        <script type="text/javascript" src="/components/angular/angular.js/angular-route.min.js"></script>
+        <script type="text/javascript" src='/components/lodash/lodash/dist/lodash.underscore.min.js'></script>
+        <script type="text/javascript" src='/components/jakiestfu/Snap.js/snap.min.js'></script>
+        <script type="text/javascript" src="/components/jquery/fullCalendar/lib/moment.min.js"></script>
+        <script type="text/javascript" src="/components/ded/script.js/dist/script.min.js"></script>
+        <script type="text/javascript" src="/components/longtailvideo/jwplayer/jwplayer.js"></script>
+    <?php } ?>
     <script type="text/javascript" src="/components/jquery/htmlClean/jquery.htmlClean.min.js"></script>
-    <script type="text/javascript" src='/components/jakiestfu/Snap.js/snap.min.js'></script>
     <script type="text/javascript" src='/components/jtrussell/angular-snap.js-bower/angular-snap.min.js'></script>
     <script type="text/javascript" src='/components/vitalets/angular-xeditable/dist/js/xeditable.min.js'></script>
     <script type="text/javascript" src='/components/vitalets/angular-xeditable/libs/checklist-model.js'></script>
     <script type="text/javascript" src='/components/webtales/ckeditor/ckeditor.js'></script>
     <script type="text/javascript" src='/components/lemonde/angular-ckeditor/angular-ckeditor.min.js'></script>
     <script type="text/javascript" src='//maps.googleapis.com/maps/api/js?sensor=true&libraries=places'></script>
-    <script type="text/javascript" src='/components/lodash/lodash/dist/lodash.underscore.min.js'></script>
     <script type="text/javascript" src='/components/angular-ui/angular-google-maps/dist/angular-google-maps.js'></script>
-    <script type="text/javascript" src="/components/longtailvideo/jwplayer/jwplayer.js"></script>
     <script type="text/javascript" src="/components/ivpusic/angular-cookie/angular-cookie.min.js"></script>
-    <script type="text/javascript" src="/components/ded/script.js/dist/script.min.js"></script>
-    <script type="text/javascript" src="/components/jquery/fullCalendar/lib/moment.min.js"></script>
     <script type="text/javascript"  src="/components/dalelotts/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
 
     <?php if ($this->activateMagic): ?>
@@ -118,6 +135,7 @@
     <?php if ($this->minifyResources) { ?>
         <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/js/rubedo-all.js"></script>
     <?php } else { ?>
+        <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/lrInfiniteScroll.js"></script>
         <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/angular-google-map.js"></script>
         <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/libraryOverrides/chosen.jquery.js"></script>
         <script type="text/javascript" src="/theme/<?php echo $this->siteTheme; ?>/lib/toaster/jquery.toaster.js"></script>

@@ -312,6 +312,7 @@ class IndexController extends AbstractActionController
             'siteResources' => $siteResources,
             'googleAnalyticsKey' => $googleAnalyticsKey,
             'activateMagic' => (isset($config['rubedo_config']['activateMagic']) && ($config['rubedo_config']['activateMagic'] == "1")) ? true : false,
+            'useCdn' => (isset($config['rubedo_config']['useCdn']) && ($config['rubedo_config']['useCdn'] == "1")) ? true : false,
             'angularLocale' => $lang,
             'siteTheme' => $propagatedSiteTheme,
             'includeBaseBootstrap'=>$includeBaseBootstrap,
