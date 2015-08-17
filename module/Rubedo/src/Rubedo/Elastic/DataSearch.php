@@ -1290,7 +1290,9 @@ class DataSearch extends DataAbstract
 	                                	$temp ['ranges'] [$key] ['label'] = isset($timeLabel [$value ['from']]) ? $timeLabel [$value ['from']] : 'Time label';
 	                                    $temp ['ranges'] [$key] ['count'] = $rangeCount;
 	                                    unset( $temp ['ranges'] [$key] ['doc_count']);
-	                                }
+	                                } else {
+	                    				unset($temp ['ranges'] [$key] );
+	                    			}
 	                            }
 	                        } else {
 	                            $renderFacet = false;
@@ -1316,6 +1318,8 @@ class DataSearch extends DataAbstract
 	                    				$temp ['ranges'] [$key] ['label'] = $this->getRangeLabel($from,$to);
 	                    				$temp ['ranges'] [$key] ['count'] = $rangeCount;
 	                    				unset( $temp ['ranges'] [$key] ['doc_count']);
+	                    			} else {
+	                    				unset($temp ['ranges'] [$key] );
 	                    			}
 	                    		}
 	                    	} else {
@@ -1342,6 +1346,8 @@ class DataSearch extends DataAbstract
 	                    				$temp ['ranges'] [$key] ['label'] = 'Yes';
 	                    				$temp ['ranges'] [$key] ['count'] = $rangeCount;
 	                    				unset( $temp ['ranges'] [$key] ['doc_count']);
+	                    			} else {
+	                    				unset($temp ['ranges'] [$key] );
 	                    			}
 	                    		}
 	                    	} else {
