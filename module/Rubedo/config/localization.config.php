@@ -49,6 +49,7 @@ return array(
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Checkout/checkout.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/ShoppingCart/shoppingcart.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/UserOrders/userOrders.json',
+    'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/ContentContribution/contrib.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Edition/edition.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Errors/errors.json',
     'public/components/webtales/rubedo-localization/languagekey/FrontOffice/Blocks/Navigation/nav.json',
