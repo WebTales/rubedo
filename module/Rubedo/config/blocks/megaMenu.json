@@ -20,7 +20,7 @@
                         {
                             "type": "Ext.form.field.ComboBox",
                             "config": {
-                                "fieldLabel": "Fallback root",
+                                "fieldLabel": "#ext-gen1465#",
                                 "name": "fallbackRoot",
                                 "editable": false,
                                 "forceSelection": true,
@@ -72,14 +72,14 @@
                             }
                         }
                     ]
-				},
-				{
-					"categorie": "Menu",
+                },
+                {
+                    "categorie": "Menu",
                     "champs": [
-                   		{
+                           {
                             "type": "Ext.form.field.ComboBox",
                             "config": {
-                                "fieldLabel": "Align",
+                                "fieldLabel": "#ext-gen1464#",
                                 "name": "menuAlign",
                                 "editable": false,
                                 "forceSelection": true,
@@ -98,9 +98,9 @@
                             }
                         },
                         {
-                        	"type": "Ext.form.field.ComboBox",
+                            "type": "Ext.form.field.ComboBox",
                             "config": {
-                                "fieldLabel": "Width",
+                                "fieldLabel": "#ext-gen1391#",
                                 "name": "menuWidth",
                                 "editable": false,
                                 "forceSelection": true,
@@ -145,11 +145,11 @@
                                     ]
                                 ]
                             }
-                        }				
-					]
-				
-				
-				}
+                        }
+                    ]
+
+
+                }
             ],
             "avance": [
                  {
@@ -158,12 +158,12 @@
                         {
                             "type": "Ext.form.field.Checkbox",
                             "config": {
-                                "fieldLabel": "Disable level two pages",
+                                "fieldLabel": "#ext-gen1466#",
                                 "name": "disableLevelTwo",
                                 "inputValue": true
                             }
                         }
-                        
+
                     ]
                 },
                 {
@@ -172,7 +172,7 @@
                         {
                             "type": "Rubedo.view.ACEField",
                             "config": {
-                                "fieldLabel": "Custom template",
+                                "fieldLabel": "#ext-gen1452#",
                                 "name": "customTemplate",
                                 "defaultTemplateUrl": "blocks/megaMenu.html",
                                 "twigMode": false
