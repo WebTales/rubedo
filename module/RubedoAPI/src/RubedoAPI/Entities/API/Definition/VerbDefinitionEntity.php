@@ -310,7 +310,7 @@ class VerbDefinitionEntity implements JsonSerializable
             if (!($filter instanceof FilterDefinitionEntity))
                 throw new APIEntityException('Filter in VerbDefinition must be FilterDefinitionEntity', 500);
             if ($filter->isRequired() && !array_key_exists($key, $toFilter))
-                throw new APIFilterException('"' . $key . '" must be back.', 500);
+                throw new APIFilterException('The parameter "' . $key . '" must be present in API response.', 500);
             elseif (!array_key_exists($key, $toFilter))
                 continue;
             $filtered[$key] = $filter->filter($toFilter[$key]);

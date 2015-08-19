@@ -132,7 +132,7 @@ class UsersResource extends AbstractResource
             throw new APIEntityException('UserType not found.', 404);
         }
         if ($this->getCurrentUserAPIService()->getCurrentUser()['id'] != $user['id']) {
-            throw new APIAuthException('You have no suffisants rights', 403);
+            throw new APIAuthException('You have insufficient rights', 403);
         }
         if (isset($data['fields'])) {
             $existingFields = array();
@@ -170,6 +170,7 @@ class UsersResource extends AbstractResource
      */
     public function postAction($params)
     {
+        $currentLang = $this->getCurrentLocalizationAPIService()->getCurrentLocalization();
         $userType = $this->getUserTypesCollection()->findById($params['usertype']);
         if (empty($userType))
             throw new APIEntityException('Usertype not exist', 404);
@@ -204,7 +205,7 @@ class UsersResource extends AbstractResource
             $user['status'] = 'emailUnconfirmed';
             $user['signupTime'] = $this->getCurrentTimeService()->getCurrentTime();
         } else {
-            throw new APIEntityException('Usertype not authorised', 403);
+            throw new APIEntityException($this->getTranslateService()->getTranslation('Blocks.SignUp.fail.BadUserType', $currentLang, 'en'), 403);
         }
         if (
             empty($user['groups'])
@@ -226,7 +227,8 @@ class UsersResource extends AbstractResource
             if ($alreadyExistingUser['typeId']!=$emailUserType['id']){
                 return (array(
                     "success" => false,
-                    "msg" => "Email already used"
+                    "msg" => "Email already used",
+                    "user" => []
                 ));
             }
             if (isset($alreadyExistingUser['mailingLists'])){
@@ -239,7 +241,8 @@ class UsersResource extends AbstractResource
             if (!$destroyOldUser['success']){
                 return (array(
                     "success" => false,
-                    "msg" => "Unable to switch from email account"
+                    "msg" => "Unable to switch from email account",
+                    "user" => []
                 ));
             }
         }
@@ -268,7 +271,6 @@ class UsersResource extends AbstractResource
             $mailBody = $this->getFrontOfficeTemplatesService()->render($etemplate, $emailVars);
 
             $options = $this->getconfigService()['rubedo_config'];
-            $currentLang = $this->getCurrentLocalizationAPIService()->getCurrentLocalization();
             $subject = $this->getTranslateService()->getTranslation(
                 'Blocks.SignUp.confirmEmail.subject',
                 $currentLang,
