@@ -30,7 +30,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title ng-bind-template="{{rubedo.current.page.title}}"></title>
     <!--css-->
-    <link rel="stylesheet" type="text/css" href="/components/jtrussell/angular-snap.js-bower/angular-snap-only.min.css">
+    <?php if ($this->useCdn) { ?>
+        <link rel="stylesheet" type="text/css" href="http://cdn.rubedo-project.org/3.2.0/css/angular-snap-only.min.css">
+    <?php } else {?>
+        <link rel="stylesheet" type="text/css" href="/components/jtrussell/angular-snap.js-bower/angular-snap-only.min.css">
+    <?php } ?>
+
     <?php if ($this->includeBaseBootstrap){ ?>
         <?php if ($this->useCdn) { ?>
             <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
@@ -51,14 +56,17 @@
         <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.0.3/fullcalendar.print.css' rel='stylesheet' media='print' type="text/css" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.2/owl.carousel.min.css">
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.2/owl.theme.min.css">
+        <link rel="stylesheet" type="text/css" href="http://cdn.rubedo-project.org/3.2.0/css/xeditable.css">
+        <link rel="stylesheet" type="text/css" href="http://cdn.rubedo-project.org/3.2.0/css/datetimepicker.css">
     <?php } else {?>
         <link href='/components/jquery/fullCalendar/fullcalendar.css' rel='stylesheet' type="text/css" />
         <link href='/components/jquery/fullCalendar/fullcalendar.print.css' rel='stylesheet' media='print' type="text/css" />
         <link rel="stylesheet" type="text/css" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.carousel.css">
         <link rel="stylesheet" type="text/css" href="/components/OwlFonk/OwlCarousel/owl-carousel/owl.theme.css">
+        <link rel="stylesheet" type="text/css" href="/components/vitalets/angular-xeditable/dist/css/xeditable.css">
+        <link rel="stylesheet" type="text/css" href="/components/dalelotts/angular-bootstrap-datetimepicker/src/css/datetimepicker.css">
     <?php } ?>
-    <link rel="stylesheet" type="text/css" href="/components/vitalets/angular-xeditable/dist/css/xeditable.css">
-    <link rel="stylesheet" type="text/css" href="/components/dalelotts/angular-bootstrap-datetimepicker/src/css/datetimepicker.css">
+
     <!--external resource styles-->
     <?php foreach ($this->siteResources['externalStyles'] as $externalStyle): ?>
         <link rel="stylesheet" type="text/css" href="<?php echo $externalStyle['url']; ?>">
@@ -100,6 +108,23 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.1/moment.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/script.js/2.5.7/script.min.js"></script>
         <script type="text/javascript" src="http://p.jwpcdn.com/6/10/jwplayer.js"></script>
+        <script type="text/javascript" src="http://cdn.rubedo-project.org/3.2.0/js/jquery.htmlClean.min.js"></script>
+        <script type="text/javascript" src='http://cdn.rubedo-project.org/3.2.0/js/angular-snap.min.js'></script>
+        <script type="text/javascript" src='http://cdn.rubedo-project.org/3.2.0/js/xeditable.min.js'></script>
+        <script type="text/javascript" src='http://cdn.rubedo-project.org/3.2.0/js/checklist-model.js'></script>
+
+        <script type="text/javascript" src='/components/webtales/ckeditor/ckeditor.js'></script>
+
+        <script type="text/javascript" src='http://cdn.rubedo-project.org/3.2.0/js/angular-ckeditor.min.js'></script>
+
+        <script type="text/javascript" src='//maps.googleapis.com/maps/api/js?sensor=true&libraries=places'></script>
+
+        <script type="text/javascript" src='http://cdn.rubedo-project.org/3.2.0/js/angular-google-maps.min.js'></script>
+        <script type="text/javascript" src="http://cdn.rubedo-project.org/3.2.0/js/angular-cookie.min.js"></script>
+        <script type="text/javascript"  src="http://cdn.rubedo-project.org/3.2.0/js/datetimepicker.js"></script>
+        <?php if ($this->activateMagic): ?>
+            <script type="text/javascript" src="http://cdn.rubedo-project.org/3.2.0/js/fingerprint2.min.js"></script>
+        <?php endif; ?>
     <?php } else {?>
         <script type="text/javascript" src="/components/angular/angular.js/angular-route.min.js"></script>
         <script type="text/javascript" src='/components/lodash/lodash/dist/lodash.underscore.min.js'></script>
@@ -107,25 +132,27 @@
         <script type="text/javascript" src="/components/jquery/fullCalendar/lib/moment.min.js"></script>
         <script type="text/javascript" src="/components/ded/script.js/dist/script.min.js"></script>
         <script type="text/javascript" src="/components/longtailvideo/jwplayer/jwplayer.js"></script>
+        <script type="text/javascript" src="/components/jquery/htmlClean/jquery.htmlClean.min.js"></script>
+        <script type="text/javascript" src='/components/jtrussell/angular-snap.js-bower/angular-snap.min.js'></script>
+        <script type="text/javascript" src='/components/vitalets/angular-xeditable/dist/js/xeditable.min.js'></script>
+        <script type="text/javascript" src='/components/vitalets/angular-xeditable/libs/checklist-model.js'></script>
+
+        <script type="text/javascript" src='/components/webtales/ckeditor/ckeditor.js'></script>
+
+        <script type="text/javascript" src='/components/lemonde/angular-ckeditor/angular-ckeditor.min.js'></script>
+
+        <script type="text/javascript" src='//maps.googleapis.com/maps/api/js?sensor=true&libraries=places'></script>
+
+        <script type="text/javascript" src='/components/angular-ui/angular-google-maps/dist/angular-google-maps.min.js'></script>
+        <script type="text/javascript" src="/components/ivpusic/angular-cookie/angular-cookie.min.js"></script>
+        <script type="text/javascript"  src="/components/dalelotts/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
+        <?php if ($this->activateMagic): ?>
+            <script type="text/javascript" src="/components/Valve/fingerprintjs2/dist/fingerprint2.min.js"></script>
+        <?php endif; ?>
     <?php } ?>
-    <script type="text/javascript" src="/components/jquery/htmlClean/jquery.htmlClean.min.js"></script>
-    <script type="text/javascript" src='/components/jtrussell/angular-snap.js-bower/angular-snap.min.js'></script>
-    <script type="text/javascript" src='/components/vitalets/angular-xeditable/dist/js/xeditable.min.js'></script>
-    <script type="text/javascript" src='/components/vitalets/angular-xeditable/libs/checklist-model.js'></script>
 
-    <script type="text/javascript" src='/components/webtales/ckeditor/ckeditor.js'></script>
 
-    <script type="text/javascript" src='/components/lemonde/angular-ckeditor/angular-ckeditor.min.js'></script>
 
-    <script type="text/javascript" src='//maps.googleapis.com/maps/api/js?sensor=true&libraries=places'></script>
-
-    <script type="text/javascript" src='/components/angular-ui/angular-google-maps/dist/angular-google-maps.min.js'></script>
-    <script type="text/javascript" src="/components/ivpusic/angular-cookie/angular-cookie.min.js"></script>
-    <script type="text/javascript"  src="/components/dalelotts/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
-
-    <?php if ($this->activateMagic): ?>
-        <script type="text/javascript" src="/components/Valve/fingerprintjs2/dist/fingerprint2.min.js"></script>
-    <?php endif; ?>
     <?php if ($this->angularLocale): ?>
         <script type="text/javascript"
                 src="/components/angular/angular.js/i18n/angular-locale_<?php echo $this->angularLocale; ?>.js"></script>
