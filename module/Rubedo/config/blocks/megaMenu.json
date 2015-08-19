@@ -74,7 +74,7 @@
                     ]
                 },
                 {
-                    "categorie": "Menu",
+                    "categorie": "#ext-gen1284#",
                     "champs": [
                            {
                             "type": "Ext.form.field.ComboBox",
