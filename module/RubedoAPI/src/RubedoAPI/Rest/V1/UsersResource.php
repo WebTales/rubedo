@@ -227,7 +227,7 @@ class UsersResource extends AbstractResource
             if ($alreadyExistingUser['typeId']!=$emailUserType['id']){
                 return (array(
                     "success" => false,
-                    "msg" => "Email already used",
+                    "message" => $this->getTranslateService()->getTranslation('Blocks.SignUp.fail.EmailUsed', $currentLang, 'en'),
                     "user" => []
                 ));
             }
@@ -241,7 +241,7 @@ class UsersResource extends AbstractResource
             if (!$destroyOldUser['success']){
                 return (array(
                     "success" => false,
-                    "msg" => "Unable to switch from email account",
+                    "message" => "Unable to switch from email account",
                     "user" => []
                 ));
             }

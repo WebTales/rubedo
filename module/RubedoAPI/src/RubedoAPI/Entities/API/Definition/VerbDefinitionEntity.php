@@ -304,7 +304,7 @@ class VerbDefinitionEntity implements JsonSerializable
     public function filterOutput($toFilter)
     {
         if (!isset($toFilter) || !is_array($toFilter))
-            throw new APIRequestException('Each action must be return an array.', 500);
+            throw new APIRequestException('Each action must return an array.', 500);
         $filtered = [];
         foreach ($this->getOutputFilters() as $key => $filter) {
             if (!($filter instanceof FilterDefinitionEntity))
