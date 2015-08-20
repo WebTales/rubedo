@@ -241,7 +241,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             if ($dataSize > $mongoConf['maximumDataSize']) {
                 $returnArray = array(
                     'success' => false,
-                    'msg' => 'Maximum database size reached.'
+                    'message' => 'Maximum database size reached.'
                 );
                 return $returnArray;
             }
@@ -254,7 +254,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         } else {
             $returnArray = array(
                 'success' => false,
-                'msg' => 'invalid input data',
+                'message' => 'invalid input data',
                 'inputErrors' => $this->_inputDataErrors
             );
         }
