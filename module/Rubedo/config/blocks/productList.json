@@ -71,12 +71,12 @@
                     ]
                 },
               {
-                "categorie": "Product editing",
+                "categorie": "#ext-gen1473#",
                 "champs": [
                   {
                     "type": "Ext.form.field.Checkbox",
                     "config": {
-                      "fieldLabel": "Enable editing",
+                      "fieldLabel": "#ext-gen1474#",
                       "name": "enableFOContrib",
                       "inputValue": true
                     }
@@ -84,7 +84,7 @@
                   {
                     "type": "Ext.ux.TreePicker",
                     "config": {
-                      "fieldLabel": "Editor page",
+                      "fieldLabel": "#ext-gen1475#",
                       "name": "editorPageId"
                     }
                   }
@@ -122,12 +122,12 @@
                     ]
                 },
                 {
-                    "categorie": "Infinite Scroll",
+                    "categorie": "#ext-gen1476#",
                     "champs": [
                         {
                             "type": "Ext.form.field.Checkbox",
                             "config": {
-                                "fieldLabel": "Infinite Scroll",
+                                "fieldLabel": "#ext-gen1476#",
                                 "name": "infiniteScroll",
                                 "inputValue": false
                             }
@@ -135,7 +135,7 @@
                         {
                             "type": "Ext.form.field.Number",
                             "config": {
-                                "fieldLabel": "Scroll Threshold",
+                                "fieldLabel": "#ext-gen1477#",
                                 "name": "scrollThreshold",
                                 "allowDecimals": false,
                                 "minValue": 50,
@@ -145,7 +145,7 @@
                         {
                             "type": "Ext.form.field.Number",
                             "config": {
-                                "fieldLabel": "Time Threshold",
+                                "fieldLabel": "#ext-gen1478#",
                                 "allowDecimals": false,
                                 "name": "timeThreshold",
                                 "minValue": 50,
@@ -155,7 +155,7 @@
                     ]
                 },
                 {
-                    "categorie": "Image options",
+                    "categorie": "#ext-gen1479#",
                     "champs": [
                         {
                             "type": "Ext.form.field.Text",
@@ -177,7 +177,7 @@
                         {
                             "type": "Ext.form.field.Number",
                             "config": {
-                                "fieldLabel": "Image width",
+                                "fieldLabel": "#ext-gen1450#",
                                 "name": "imageWidth",
                                 "allowDecimals": false,
                                 "minValue": 0
@@ -203,12 +203,12 @@
             ],
             "avance": [
                 {
-                    "categorie": "Template",
+                    "categorie": "#ext-gen1472#",
                     "champs": [
                         {
                             "type": "Rubedo.view.ACEField",
                             "config": {
-                                "fieldLabel": "Custom template",
+                                "fieldLabel": "#ext-gen1452#",
                                 "name": "customTemplate",
                                 "defaultTemplateUrl": "blocks/productList.html",
                                 "twigMode": false

@@ -70,12 +70,12 @@
                     ]
                 },
                 {
-                    "categorie": "Content editing",
+                    "categorie": "#ext-gen1480#",
                     "champs": [
                         {
                             "type": "Ext.form.field.Checkbox",
                             "config": {
-                                "fieldLabel": "Enable editing",
+                                "fieldLabel": "#ext-gen1474#",
                                 "name": "enableFOContrib",
                                 "inputValue": true
                             }
@@ -83,7 +83,7 @@
                         {
                             "type": "Ext.ux.TreePicker",
                             "config": {
-                                "fieldLabel": "Editor page",
+                                "fieldLabel": "#ext-gen1475#",
                                 "name": "editorPageId"
                             }
                         }
@@ -121,12 +121,12 @@
                     ]
                 },
                 {
-                    "categorie": "Infinite Scroll",
+                    "categorie": "#ext-gen1476#",
                     "champs": [
                         {
                             "type": "Ext.form.field.Checkbox",
                             "config": {
-                                "fieldLabel": "Infinite Scroll",
+                                "fieldLabel": "#ext-gen1476#",
                                 "name": "infiniteScroll",
                                 "inputValue": false
                             }
@@ -134,7 +134,7 @@
                         {
                             "type": "Ext.form.field.Number",
                             "config": {
-                                "fieldLabel": "Scroll Threshold",
+                                "fieldLabel": "#ext-gen1477#",
                                 "name": "scrollThreshold",
                                 "allowDecimals": false,
                                 "minValue": 50,
@@ -144,7 +144,7 @@
                         {
                             "type": "Ext.form.field.Number",
                             "config": {
-                                "fieldLabel": "Time Threshold",
+                                "fieldLabel": "#ext-gen1478#",
                                 "allowDecimals": false,
                                 "name": "timeThreshold",
                                 "minValue": 50,
@@ -156,12 +156,12 @@
             ],
             "avance": [
                 {
-                    "categorie": "Template",
+                    "categorie": "#ext-gen1472#",
                     "champs": [
                         {
                             "type": "Rubedo.view.ACEField",
                             "config": {
-                                "fieldLabel": "Custom template",
+                                "fieldLabel": "#ext-gen1452#",
                                 "name": "customTemplate",
                                 "defaultTemplateUrl": "blocks/contentList.html",
                                 "twigMode": false
