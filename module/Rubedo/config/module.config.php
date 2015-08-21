@@ -22,6 +22,7 @@ $controllerArray = include(__DIR__ . '/controllers.config.php');
 $viewArray = include(__DIR__ . '/views.config.php');
 $localizationConfig = include(__DIR__ . '/localization.config.php');
 $router = include(__DIR__ . '/router.config.php');
+$consoleRouter = include(__DIR__ . '/router.console.config.php');
 $blocksDefinition = include(__DIR__ . '/blocks.definition.config.php');
 $templateConfig = include(__DIR__ . '/templates.config.php');
 $appExtension = include(__DIR__ . '/app.extensions.config.php');
@@ -37,6 +38,9 @@ foreach ($serviceMapArray as $key => $value) {
 }
 
 $config = array(
+    'console' => array(
+        'router' => $consoleRouter
+    ),
     'router' => $router,
     'controllers' => array(
         'invokables' => $controllerArray

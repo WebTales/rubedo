@@ -13,10 +13,8 @@
  */
 
 /**
- * Combine all controllers lists
+ * Console controllers list
  */
-$backControllers = include 'backoffice.controllers.config.php';
-$frontControllers = include 'frontoffice.controllers.config.php';
-$installControllers = include 'install.controllers.config.php';
-$consoleControllers = include 'console.controllers.config.php';
-return array_merge($backControllers, $frontControllers, $installControllers, $consoleControllers);
+return array(
+    'Rubedo\\Console\\Controller\\Cache' => 'Rubedo\\Console\\Controller\\CacheController'
+);

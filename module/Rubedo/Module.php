@@ -36,6 +36,9 @@ use Zend\Session\Container;
 use Zend\Session\SaveHandler\MongoDB;
 use Zend\Session\SaveHandler\MongoDBOptions;
 use Zend\Session\SessionManager;
+use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
+use Zend\ModuleManager\Feature\ConsoleBannerProviderInterface;
+use Zend\Console\Adapter\AdapterInterface as Console;
 
 /**
  * Loading class for the Rubedo Main module
@@ -45,7 +48,7 @@ use Zend\Session\SessionManager;
  * @author jbourdin
  *
  */
-class Module
+class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInterface
 {
 
     /**
@@ -61,6 +64,24 @@ class Module
      * @var unknown
      */
     protected $pageHit = false;
+
+    public function getConsoleBanner(Console $console)
+    {
+        return 'Rubedo 3.2';
+    }
+
+    public function getConsoleUsage(Console $console)
+    {
+        return [
+            'cache clear [config|files|mongo|url|api]' => 'Clear all or specific application caches',
+            ["config", "Clear configuration files in cache"],
+            ["files", "Clear cached files (*.js, *.css, etc.)"],
+            ["mongo", "Clear mongo objects in cache"],
+            ["url", "Clear URL in cache"],
+            ["api", "Clear API's requests in cache"],
+            'cache count' => 'Returns the number of cached elements',
+        ];
+    }
 
     /**
      * Initialize Services, session, listeners for Rubedo
@@ -287,7 +308,7 @@ class Module
             $controllerName = strtolower($controllerName);
             $moduleName = strtolower($moduleName);
             $ressourceName = 'execute.controller.' . $controllerName . '.' . $action . '.' . $moduleName;
-            if ($moduleName == 'install' || $moduleName == 'frontoffice') {
+            if ($moduleName == 'install' || $moduleName == 'frontoffice' || $moduleName == 'console') {
                 $hasAccess = true;
             } else {
                 $aclService = Manager::getService('Acl');
