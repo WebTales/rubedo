@@ -11,7 +11,7 @@ return array(
              * Expects: bool
              * Default: true
              */
-            'enabled' => true,
+            'enabled' => false,
 
             /**
              * Enables or disables the strict mode. If the strict mode is enabled, any error will throw an exception,
@@ -20,7 +20,7 @@ return array(
              * Expects: bool
              * Default: true
              */
-            'strict' => true,
+            'strict' => false,
 
             /**
              * If enabled, the profiler tries to flush the content before the it starts collecting data. This option
@@ -72,7 +72,7 @@ return array(
              * Expects: bool
              * Default: false
              */
-            'enabled' => true,
+            'enabled' => false,
 
             /**
              * Contains a list with all event-level collectors that should run. Zend Developer Tools ships with 'time'
@@ -103,7 +103,7 @@ return array(
              * Expects: bool
              * Default: false
              */
-            'enabled' => true,
+            'enabled' => false,
 
             /**
              * If enabled, every empty collector will be hidden.
@@ -128,7 +128,7 @@ return array(
              * Expects: bool
              * Default: false
              */
-            'version_check' => true,
+            'version_check' => false,
 
             /**
              * Contains a list with all collector toolbar templates. The name  of the array key must be same as the name
