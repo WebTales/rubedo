@@ -1,6 +1,6 @@
 {
     "type": "Product list",
-    "description": "Similar to a content list but designed for product display.",
+    "description": "#ext-gen1484#",
     "configBasique": {
         "title": "Product list",
         "bType": "productList",
