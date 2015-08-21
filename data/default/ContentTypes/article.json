@@ -1,81 +1,82 @@
 {
-	"dependant": false ,
-	"dependantTypes": [] ,
-	"fields": [
-		{
-			"cType": "datefield" ,
-			"config": {
-				"name": "date" ,
-				"fieldLabel": "###Article.date###" ,
-				"i18n":{
-				    "###Locale###":{
-				        "fieldLabel": "###Article.date###"
-				    }
-				},
-				"allowBlank": true ,
-				"localizable": false ,
-				"searchable": false ,
-				"multivalued": false ,
-				"tooltip": "" ,
-				"labelSeparator": " "
-			} ,
-			"protoId": "506441f8c64804391200001b" ,
-			"openWindow": null
-		} , {
-			"cType": "CKEField" ,
-			"config": {
-				"name": "body" ,
-				"fieldLabel": "###Article.body###" ,
-				"i18n":{
-				    "###Locale###":{
-				        "fieldLabel": "###Article.body###"
-				    }
-				},
-				"maxLength": 600000 ,
-				"minLength": 0 ,
-				"allowBlank": true ,
-				"localizable": true ,
-				"searchable": true ,
-				"multivalued": false ,
-				"resumed": false ,
-				"hidden": false ,
-				"tooltip": "" ,
-				"vtype": null  ,
-				"CKETBConfig": "Standard"
-			} ,
-			"protoId": "506441f8c648043912000020" ,
-			"openWindow": null
-		} , {
-			"cType": "ImagePickerField" ,
-			"config": {
-				"name": "image" ,
-				"fieldLabel": "###Article.image###" ,
-				"i18n":{
-				    "###Locale###":{
-				        "fieldLabel": "###Article.image###"
-				    }
-				},				
-				"localizable": false ,
-				"searchable": false ,
-				"multivalued": false ,
-				"resumed": false ,
-				"hidden": false ,
-				"tooltip": "" ,
-				"allowedDAMTypes": null  ,
-				"allowedFileType": "Image"
-			} ,
-			"protoId": "506441f8c648043912991123" ,
-			"openWindow": null
-		}
-	] ,
-	"defaultId": "51a60bb0c1c3dac60700000e",
-	"system": false ,
-	"type": "###Article.type###" ,
-	"code": "article",
-	"version": 1 ,
-	"vocabularies": ["navigation"] ,
-	"workflow": "Basique" ,
-	"workspaces": ["global"],
+    "dependant": false ,
+    "dependantTypes": [] ,
+    "fields": [
+        {
+            "cType": "datefield" ,
+            "config": {
+                "name": "date" ,
+                "fieldLabel": "###Article.date###" ,
+                "i18n":{
+                    "###Locale###":{
+                        "fieldLabel": "###Article.date###"
+                    }
+                },
+                "allowBlank": true ,
+                "localizable": false ,
+                "searchable": false ,
+                "multivalued": false ,
+                "tooltip": "" ,
+                "labelSeparator": " "
+            } ,
+            "protoId": "506441f8c64804391200001b" ,
+            "openWindow": null
+        } , {
+            "cType": "CKEField" ,
+            "config": {
+                "name": "body" ,
+                "fieldLabel": "###Article.body###" ,
+                "i18n":{
+                    "###Locale###":{
+                        "fieldLabel": "###Article.body###"
+                    }
+                },
+                "maxLength": 600000 ,
+                "minLength": 0 ,
+                "allowBlank": true ,
+                "localizable": true ,
+                "searchable": true ,
+                "multivalued": false ,
+                "resumed": false ,
+                "hidden": false ,
+                "tooltip": "" ,
+                "vtype": null  ,
+                "CKETBConfig": "Standard"
+            } ,
+            "protoId": "506441f8c648043912000020" ,
+            "openWindow": null
+        } , {
+            "cType": "ImagePickerField" ,
+            "config": {
+                "name": "image" ,
+                "fieldLabel": "###Article.image###" ,
+                "i18n":{
+                    "###Locale###":{
+                        "fieldLabel": "###Article.image###"
+                    }
+                },
+                "allowBlank": true ,
+                "localizable": false ,
+                "searchable": false ,
+                "multivalued": false ,
+                "resumed": false ,
+                "hidden": false ,
+                "tooltip": "" ,
+                "allowedDAMTypes": null  ,
+                "allowedFileType": "Image"
+            } ,
+            "protoId": "506441f8c648043912991123" ,
+            "openWindow": null
+        }
+    ] ,
+    "defaultId": "51a60bb0c1c3dac60700000e",
+    "system": false ,
+    "type": "###Article.type###" ,
+    "code": "article",
+    "version": 1 ,
+    "vocabularies": ["navigation"] ,
+    "workflow": "Basique" ,
+    "workspaces": ["global"],
     "nativeLanguage":"###Locale###",
     "i18n":{
         "###Locale###":{
