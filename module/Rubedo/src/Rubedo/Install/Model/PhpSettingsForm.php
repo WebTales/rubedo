@@ -103,7 +103,7 @@ class PhpSettingsForm extends BootstrapForm
             ->setLabel('API cache');
 
         $useCdn = (new Checkbox('useCdn'))
-            ->setValue(isset($params['rubedo_config']['useCdn']) ? $params['rubedo_config']['useCdn'] : 1)
+            ->setValue(isset($params['rubedo_config']['useCdn']) ? $params['rubedo_config']['useCdn'] : 0)
             ->setLabel('Use CDN');
 
         $extDebug = (new Checkbox('extDebug'))
