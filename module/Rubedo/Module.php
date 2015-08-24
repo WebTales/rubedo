@@ -80,6 +80,8 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             ["url", "Clear URL in cache"],
             ["api", "Clear API's requests in cache"],
             'cache count' => 'Returns the number of cached elements',
+            'index [<type>]' => 'Index all items or specific index in ElasticSearch',
+            ["type", "Name of the index"],
         ];
     }
 

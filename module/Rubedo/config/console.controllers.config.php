@@ -16,5 +16,6 @@
  * Console controllers list
  */
 return array(
-    'Rubedo\\Console\\Controller\\Cache' => 'Rubedo\\Console\\Controller\\CacheController'
+    'Rubedo\\Console\\Controller\\Cache' => 'Rubedo\\Console\\Controller\\CacheController',
+    'Rubedo\\Console\\Controller\\Search' => 'Rubedo\\Console\\Controller\\SearchController'
 );

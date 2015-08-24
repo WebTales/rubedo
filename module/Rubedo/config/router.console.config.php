@@ -35,5 +35,14 @@ return array(
                 )
             )
         ),
+        'index' => array(
+            'options' => array(
+                'route'    => 'index [<type>]',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Search',
+                    'action'     => 'index'
+                )
+            )
+        )
     )
 );

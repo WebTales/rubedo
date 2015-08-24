@@ -40,7 +40,7 @@ class ElasticIndexerController extends AbstractActionController
         // get params
         $params = $this->params()->fromQuery();
 
-        // get option : all, dam, content
+        // get option : all, dam, content, user
 
         $option = isset($params['option']) ? $params['option'] : 'all';
 
