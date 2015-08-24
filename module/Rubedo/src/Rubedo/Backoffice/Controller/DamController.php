@@ -334,13 +334,13 @@ class DamController extends DataAccessController
 
     public function deleteByDamTypeIdAction()
     {
-        $typeId = $this->getParam('type-id');
+        $typeId = $this->params()->fromPost('type-id');
         if (!$typeId) {
             throw new User('This action needs a type-id as argument.', 'Exception3');
         }
         $deleteResult = $this->_dataService->deleteByDamType($typeId);
 
-        $this->_returnJson($deleteResult);
+        return $this->_returnJson($deleteResult);
     }
 
     /**
