@@ -164,6 +164,8 @@ class UsersController extends DataAccessController
             "slider",
             "Rubedo.view.CKEField",
             "CKEField",
+            "Rubedo.view.localiserField",
+            "localiserField",
         ];
         foreach ($userType['fields'] as $typeField) {
             if (in_array($typeField['cType'], $exportableFieldTypes)) {
@@ -277,6 +279,16 @@ class UsersController extends DataAccessController
                     return implode(", ", $value);
                 } else {
                     return $value;
+                }
+                break;
+            case 'localiserField':
+            case 'Rubedo.view.localiserField':
+                if (isset($value["lat"])&&isset($value["lon"])){
+                    $stringLat= (string) $value["lat"];
+                    $stringLon= (string) $value["lon"];
+                    return($stringLat.",".$stringLon);
+                } else {
+                    return "";
                 }
                 break;
             default:
