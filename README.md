@@ -38,7 +38,7 @@ See http://docs.rubedo-project.org/en/homepage/install-rubedo for detailed instr
 ### PreRequisites
 * A full PHP 5.4+ stack (i.e. http://www.zend.com/products/server/)
 * MongoDB (http://www.mongodb.org) >= 2.6.x 
-* PHP MongoDB Driver : latest compatible with your MongoDB version
+* PHP MongoDB Driver: latest compatible with your MongoDB version
 * intl PHP extension (http://www.php.net/manual/intro.intl.php) which you should use anyway
 * ElasticSearch (http://www.elasticsearch.org) 1.5.x
 * Mapper Attachments Type for ElasticSearch (https://github.com/elasticsearch/elasticsearch-mapper-attachments) 
