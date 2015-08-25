@@ -741,7 +741,7 @@ class DataSearch extends DataAbstract
             if ($field ['useAsVariation']) {
                 $fieldName = 'productProperties.variations.' . $field ['name'];
             } else {
-            	$fieldName = $field ['name'];
+				$fieldName = 'i18n.'.$currentLocale.'.fields.'.$field ['name'];
             }
 
             if (array_key_exists(urlencode($field ['name']), $this->_params)) {
@@ -918,13 +918,13 @@ class DataSearch extends DataAbstract
                 if (!$field ['localizable']) {
                     $fieldName = $field ['name'];
                 } else {
-                    $fieldName = $field ['name'] . '_' . $currentLocale;
+                    $fieldName = 'i18n.'.$currentLocale.'.fields.'.$field ['name'];
                 }
             }
 
             if ($this->_isFacetDisplayed($field ['name'])) {
 
-            	$searchParams['body']['aggs'][$field ['name']] = $this->_addTermsFacet($field ['name'],$field ['name'],'_count','desc');
+            	$searchParams['body']['aggs'][$field ['name']] = $this->_addTermsFacet($field ['name'],$fieldName,'_count','desc');
             	
              }
         }
