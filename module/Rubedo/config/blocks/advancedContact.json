@@ -86,7 +86,17 @@
                                 "fieldLabel": "#ext-gen1082#",
                                 "name": "displayType"
                             }
+                        },
+                      {
+                        "type": "Ext.form.field.Number",
+                        "config": {
+                          "fieldLabel": "#ext-gen1491#",
+                          "name": "blockMinHeight",
+                          "allowDecimals": false,
+                          "editable": true,
+                          "minValue": 0
                         }
+                      }
                     ]
                 }
             ]

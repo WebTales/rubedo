@@ -41,7 +41,17 @@
                                 "twigMode": false
 
                             }
+                        },
+                      {
+                        "type": "Ext.form.field.Number",
+                        "config": {
+                          "fieldLabel": "#ext-gen1491#",
+                          "name": "blockMinHeight",
+                          "allowDecimals": false,
+                          "editable": true,
+                          "minValue": 0
                         }
+                      }
                     ]
                 }
             ]
