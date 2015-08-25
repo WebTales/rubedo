@@ -8,7 +8,31 @@
         "flex": 1,
         "champsConfig": {
             "simple": [],
-            "avance": []
+            "avance": [{
+              "categorie": "Template",
+              "champs": [
+                {
+                  "type": "Rubedo.view.ACEField",
+                  "config": {
+                    "fieldLabel": "Custom template",
+                    "name": "customTemplate",
+                    "defaultTemplateUrl": "blocks/orderDetail.html",
+                    "twigMode": false
+
+                  }
+                },
+                {
+                  "type": "Ext.form.field.Number",
+                  "config": {
+                    "fieldLabel": "#ext-gen1491#",
+                    "name": "blockMinHeight",
+                    "allowDecimals": false,
+                    "editable": true,
+                    "minValue": 0
+                  }
+                }
+              ]
+            }]
         },
         "configBloc": {}
 
