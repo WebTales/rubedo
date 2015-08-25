@@ -84,6 +84,9 @@ class Install
     public function loadLocalConfig()
     {
         if (is_file($this->configFilePath)) {
+            if (function_exists("opcache_invalidate")) {
+                opcache_invalidate($this->configFilePath, true);
+            }
             $this->localConfig = require $this->configFilePath;
         }
     }
@@ -144,7 +147,12 @@ class Install
                         if (!$collectionService->findOne(Filter::factory('Value')->setName('defaultId')
                             ->setValue($item['defaultId']))
                         ) {
-                            if (isset($item["CTType"])&&in_array($item["CTType"],array("simpleText","richText"))){
+                            if (isset($item['defaultId'])){
+                            	try {
+                            	    $item["_id"] = new \MongoId($item['defaultId']);
+                            	} catch(\Exception $e) {
+                            	    throw new \Rubedo\Exceptions\Server('You tried to insert a bad MongoId in database: ' . $item['defaultId']);
+                            	}
                                 $item["_id"]=new \MongoId($item['defaultId']);
                             }
                             $result = $collectionService->create($item);
