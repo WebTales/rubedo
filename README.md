@@ -37,10 +37,10 @@ See http://docs.rubedo-project.org/en/homepage/install-rubedo for detailed instr
 
 ### PreRequisites
 * A full PHP 5.4+ stack (i.e. http://www.zend.com/products/server/)
-* MongoDB (http://www.mongodb.org) 2.6.x
-* PHP MongoDB Driver >= 1.4.0
+* MongoDB (http://www.mongodb.org) >= 2.6.x 
+* PHP MongoDB Driver : latest compatible with your MongoDB version
 * intl PHP extension (http://www.php.net/manual/intro.intl.php) which you should use anyway
-* ElasticSearch (http://www.elasticsearch.org) 1.4.x
+* ElasticSearch (http://www.elasticsearch.org) 1.5.x
 * Mapper Attachments Type for ElasticSearch (https://github.com/elasticsearch/elasticsearch-mapper-attachments) 
 * ICU Analysis plugin for ElasticSearch (https://github.com/elasticsearch/elasticsearch-analysis-icu)
 
@@ -63,7 +63,7 @@ See http://docs.rubedo-project.org/en/homepage/install-rubedo for detailed instr
 ### For Developpers
 * You'll need Git!
 * Clone form gitHub to your server `git clone git://github.com/WebTales/rubedo.git`
-* Inside project root, choose the branch you want to use (v3-stable or v3-dev) : `git checkout v3-dev`
+* Inside project root, choose the branch you want to use (3.2.x or v3-dev) : `git checkout v3-dev`
 * Do as in normal install process
 
 
