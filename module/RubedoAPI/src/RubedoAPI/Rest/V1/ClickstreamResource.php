@@ -81,6 +81,11 @@ class ClickstreamResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setKey('os')
+                            ->setDescription('OS')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
                             ->setKey('url')
                             ->setDescription('URL')
                     );
@@ -103,6 +108,7 @@ class ClickstreamResource extends AbstractResource
             "event"=>$params["event"],
             "sessionId"=>$params["sessionId"],
             "eventArgs"=>isset ($params["eventArgs"]) ? $params["eventArgs"] : [ ],
+            "lang"=>$params['lang']->getLocale()
         ];
         if (isset($params["userAgent"])){
             $newEvent["userAgent"]=$params["userAgent"];
@@ -112,6 +118,9 @@ class ClickstreamResource extends AbstractResource
         }
         if (isset($params["url"])){
             $newEvent["url"]=$params["url"];
+        }
+        if (isset($params["os"])){
+            $newEvent["os"]=$params["os"];
         }
         $logCreationResult=Manager::getService("ClickStream")->log($newEvent);
         return [
