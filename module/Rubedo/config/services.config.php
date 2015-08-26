@@ -105,6 +105,7 @@ return array(
     'ContentViewLog' => 'Rubedo\\Collection\\ContentViewLog',
     'UserRecommendations' => 'Rubedo\\Collection\\UserRecommendations',
     'ItemRecommendations' => 'Rubedo\\Collection\\ItemRecommendations',
+    'ClickStream' => 'Rubedo\\Collection\\ClickStream',
     'RubedoAPI\\Storage\\MongoStorage' => 'RubedoAPI\\Storage\\MongoStorage',
     'CheckPayment'=>'Rubedo\\Payment\\CheckPayment',
     'CreditTransferPayment'=>'Rubedo\\Payment\\CreditTransferPayment',
