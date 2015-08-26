@@ -52,6 +52,10 @@ class ClickStream extends AbstractCollection implements IClickStream
 
     public function log($obj)
     {
+        if (!isset($obj["fingerprint"],$obj["event"],$obj["sessionId"],$obj["timestamp"])){
+            return false;
+        }
         $this->_dataService->directCreate($obj);
+        return true;
     }
 }
