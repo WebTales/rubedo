@@ -39,6 +39,7 @@ use Zend\Session\SessionManager;
 use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleBannerProviderInterface;
 use Zend\Console\Adapter\AdapterInterface as Console;
+use Zend\Console\Request as ConsoleRequest;
 
 /**
  * Loading class for the Rubedo Main module
@@ -292,6 +293,10 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             ->get('Config');
 
         if (!isset($config['installed']) || ((!isset($config['installed']['status']) || $config['installed']['status'] !== 'finished') && $controller !== 'Rubedo\Install\Controller\Index')) {
+            if($event->getRequest() instanceof ConsoleRequest) {
+                throw new AccessException("You must run the install tool before using console routes");
+            }
+
             $routeMatches = $event->getRouteMatch();
             $routeMatches->setParam('controller', 'Rubedo\Install\Controller\Index');
             $routeMatches->setParam('action', 'index');
