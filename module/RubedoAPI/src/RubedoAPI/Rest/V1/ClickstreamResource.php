@@ -122,6 +122,10 @@ class ClickstreamResource extends AbstractResource
         if (isset($params["os"])){
             $newEvent["os"]=$params["os"];
         }
+        $currentUser=$this->getCurrentUserAPIService()->getCurrentUser();
+        if ($currentUser){
+            $newEvent["userId"]=$currentUser["id"];
+        }
         $logCreationResult=Manager::getService("ClickStream")->log($newEvent);
         return [
             "success"=>$logCreationResult
