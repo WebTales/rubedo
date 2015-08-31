@@ -73,7 +73,7 @@ class Users extends DataAbstract
         }
         
         // Add taxonomy
-        if (isset($data["taxonomy"])) {
+        if (isset($data["taxonomy"]) && is_array($data["taxonomy"])) {
         
         	$taxonomyService = $this->_getService('Taxonomy');
         	$taxonomyTermsService = $this->_getService('TaxonomyTerms');
