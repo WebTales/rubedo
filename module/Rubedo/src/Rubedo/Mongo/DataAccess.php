@@ -978,7 +978,14 @@ class DataAccess implements IDataAccess
 
     public function getId($idString = null)
     {
-        return new \MongoId($idString);
+        try {
+            $idString = new \MongoId($idString);
+        } catch(\Exception $e) {
+            if(!is_string($idString)) {
+                throw new Exception('Invalid MongoId :' . $idString);
+            }
+        }
+        return $idString;
     }
 
     /**
