@@ -68,6 +68,6 @@ abstract class AbstractResource extends \RubedoAPI\Rest\V1\AbstractResource
     protected function subUserFilter(&$user)
     {
         $user = $this->getUsersCollection()->findById($user['id']);
-        return array_intersect_key($user, array_flip(array('id', 'login', 'name','fields','email')));
+        return array_intersect_key($user, array_flip(array('id', 'login', 'name','fields','email','mailingLists')));
     }
 }
