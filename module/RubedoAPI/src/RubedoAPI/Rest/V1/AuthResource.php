@@ -68,7 +68,7 @@ class AuthResource extends AbstractResource
      */
     public function getAction()
     {
-        $currentUser=array_intersect_key($this->getCurrentUserAPIService()->getCurrentUser(), array_flip(array('id', 'login', 'name','fields')));
+        $currentUser=array_intersect_key($this->getCurrentUserAPIService()->getCurrentUser(), array_flip(array('id', 'login', 'name','fields','email')));
         $currentUser['rights']=array(
             'boAccess' => $this->getAclService()->hasAccess('ui.backoffice'),
             'canEdit' => $this->getAclService()->hasAccess('write.frontoffice.contents'),
