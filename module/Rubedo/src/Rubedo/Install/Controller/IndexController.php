@@ -174,6 +174,7 @@ class IndexController extends AbstractActionController
         $this->config = $this->installObject->getLocalConfig();
         $this->config['installed']['status'] = 'finished';
         $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->clearConfigCache();
         $redirectParams = array(
             'controller' => 'index',
             'action' => 'index'
