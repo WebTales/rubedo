@@ -288,9 +288,13 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             return;
         }
 
-        $config = $event->getApplication()
-            ->getServiceManager()
-            ->get('Config');
+        $configFilePath = realpath(APPLICATION_PATH . '/config/autoload/') . '/local.php';
+        if (is_file($configFilePath)) {
+            if (function_exists("opcache_invalidate")) {
+                opcache_invalidate($configFilePath, true);
+            }
+            $config = require $configFilePath;
+        }
 
         if (!isset($config['installed']) || ((!isset($config['installed']['status']) || $config['installed']['status'] !== 'finished') && $controller !== 'Rubedo\Install\Controller\Index')) {
             if($event->getRequest() instanceof ConsoleRequest) {
