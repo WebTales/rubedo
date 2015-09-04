@@ -84,9 +84,6 @@ class Install
     public function loadLocalConfig()
     {
         if (is_file($this->configFilePath)) {
-            if (function_exists("opcache_invalidate")) {
-                opcache_invalidate($this->configFilePath, true);
-            }
             $this->localConfig = require $this->configFilePath;
         }
     }
