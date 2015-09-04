@@ -78,6 +78,9 @@ class Install
         if (function_exists('accelerator_reset')) { // As config is a php file, we should reset bytecode cache to have new configuration
             accelerator_reset();
         }
+        if (function_exists("opcache_invalidate")) {
+            opcache_invalidate($this->configFilePath, true);
+        }
         Events::getEventManager()->trigger(static::SAVECONFIG);
     }
 
