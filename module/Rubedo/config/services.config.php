@@ -106,6 +106,7 @@ return array(
     'UserRecommendations' => 'Rubedo\\Collection\\UserRecommendations',
     'ItemRecommendations' => 'Rubedo\\Collection\\ItemRecommendations',
     'ClickStream' => 'Rubedo\\Collection\\ClickStream',
+    'FingerprintData' => 'Rubedo\\Collection\\FingerprintData',
     'RubedoAPI\\Storage\\MongoStorage' => 'RubedoAPI\\Storage\\MongoStorage',
     'CheckPayment'=>'Rubedo\\Payment\\CheckPayment',
     'CreditTransferPayment'=>'Rubedo\\Payment\\CreditTransferPayment',
