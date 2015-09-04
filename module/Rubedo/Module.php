@@ -287,13 +287,9 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             return;
         }
 
-        $configFilePath = realpath(APPLICATION_PATH . '/config/autoload/') . '/local.php';
-        if (is_file($configFilePath)) {
-            if (function_exists("opcache_invalidate")) {
-                opcache_invalidate($configFilePath, true);
-            }
-            $config = require $configFilePath;
-        }
+        $config = $event->getApplication()
+            ->getServiceManager()
+            ->get('Config');
 
         if (!isset($config['installed']) || ((!isset($config['installed']['status']) || $config['installed']['status'] !== 'finished') && $controller !== 'Rubedo\Install\Controller\Index')) {
             $routeMatches = $event->getRouteMatch();
