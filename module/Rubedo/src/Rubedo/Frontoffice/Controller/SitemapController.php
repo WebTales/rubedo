@@ -16,9 +16,7 @@
  */
 namespace Rubedo\Frontoffice\Controller;
 
-use Rubedo\Collection\AbstractLocalizableCollection;
 use WebTales\MongoFilters\Filter;
-use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
@@ -57,7 +55,6 @@ class SitemapController extends AbstractActionController
         if (!$currentSite){
             throw new \Rubedo\Exceptions\NotFound('Site not found');
         }
-
         $pagesFilter=Filter::factory();
         $pagesFilter->addFilter(Filter::factory("Value")->setName("site")->setValue($currentSite["id"]));
         $pagesTree = $this->pageService->readTree($pagesFilter);
@@ -83,7 +80,6 @@ class SitemapController extends AbstractActionController
     }
     protected function getPages($pagesTree, $siteName, $pages = array(), $parentUrl = "",$defaultLanguage, $languages)
     {
-
         foreach($pagesTree as $page){
             if (empty($page['noIndex']))
             {
@@ -94,10 +90,12 @@ class SitemapController extends AbstractActionController
                     if ($lang==$defaultLanguage){
                         $res['loc'] = 'http://' . $siteName . '/' . $lang . '/' . (empty($parentUrl)?'':($parentUrl.'/')) . $page['pageURL'];
                     }
-                    $res['altLocs'][]=[
-                        "lang"=>$lang,
-                        "loc"=>'http://' . $siteName . '/' . $lang . '/' . (empty($parentUrl)?'':($parentUrl.'/')) . $page['pageURL']
-                    ];
+                    if (in_array($lang,$languages)){
+                        $res['altLocs'][]=[
+                            "lang"=>$lang,
+                            "loc"=>'http://' . $siteName . '/' . $lang . '/' . (empty($parentUrl)?'':($parentUrl.'/')) . $page['pageURL']
+                        ];
+                    }
                 }
                 $res['lastmod'] = date('Y-m-d', $page['lastUpdateTime']);
                 $pages[] = $res;
