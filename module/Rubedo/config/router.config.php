@@ -72,6 +72,18 @@ return array(
             ),
             'may_terminate' => true
         ),
+        //Sitemap generation
+        'sitemap' => array(
+            'type' => 'Literal',
+            'options' => array(
+                'route' => '/sitemap.xml',
+                'defaults' => array(
+                    '__NAMESPACE__' => 'Rubedo\\Frontoffice\\Controller',
+                    'controller' => 'Sitemap',
+                    'action' => 'index'
+                )
+            ),
+        ),
         // Payment controller
         'payment' => array(
             'type' => 'Segment',
