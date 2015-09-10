@@ -67,6 +67,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
         "recaptcha_private_key",
         "enableECommerceFeatures",
         "resources",
+        "sitemapContentTypes",
         "iframelyKey"
     );
 

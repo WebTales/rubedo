@@ -17,6 +17,7 @@
 namespace Rubedo\Frontoffice\Controller;
 
 use WebTales\MongoFilters\Filter;
+use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
@@ -71,6 +72,16 @@ class SitemapController extends AbstractActionController
             }
             $body=$body.'</url>';
         }
+        if (isset($currentSite["sitemapContentTypes"])&&is_array($currentSite["sitemapContentTypes"])&&count($currentSite["sitemapContentTypes"])>0){
+            $contentsFilter=Filter::factory();
+            $contentsFilter->addFilter(Filter::factory('In')->setName('typeId')->setValue($currentSite["sitemapContentTypes"]));
+            $contents=$this->contentService->getOnlineList($contentsFilter);
+            $urlAPIService=Manager::getService("RubedoAPI\\Services\\Router\\Url");
+            $contentUrlsArray=[
+
+            ];
+        }
+        
         $content = "<?xml version='1.0' encoding='UTF-8'?><urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xhtml='http://www.w3.org/1999/xhtml'>".$body."</urlset>";
         $response = $this->getResponse();
         $headers = $response->getHeaders();
