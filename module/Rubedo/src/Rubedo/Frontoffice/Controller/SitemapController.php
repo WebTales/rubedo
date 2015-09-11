@@ -17,7 +17,6 @@
 namespace Rubedo\Frontoffice\Controller;
 
 use WebTales\MongoFilters\Filter;
-use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 
@@ -77,9 +76,37 @@ class SitemapController extends AbstractActionController
             $contentsFilter->addFilter(Filter::factory('In')->setName('typeId')->setValue($currentSite["sitemapContentTypes"]));
             $contents=$this->contentService->getOnlineList($contentsFilter);
             $urlAPIService=Manager::getService("RubedoAPI\\Services\\Router\\Url");
-            $contentUrlsArray=[
+            $contentUrlsArray=[ ];
+            foreach($contents["data"] as $content){
+                if (isset($content["i18n"][$currentSite["defaultLanguage"]])){
+                    $newContentUrl=[
+                        "loc"=>'http://' . $siteName .$urlAPIService->displayUrlApi($content, 'canonical', $currentSite, null, $currentSite["defaultLanguage"], null),
+                        "lastmod"=> date('Y-m-d', $content['lastUpdateTime']),
+                        "altLocs"=>[ ]
+                    ];
+                    foreach ($content['i18n'] as $lang => $value) {
 
-            ];
+                        if (in_array($lang,$currentSite["languages"])){
+                            $newContentUrl['altLocs'][]=[
+                                "lang"=>$lang,
+                                "loc"=>'http://' . $siteName .$urlAPIService->displayUrlApi($content, 'canonical', $currentSite, null, $lang, null),
+                            ];
+                        }
+                    }
+                    $contentUrlsArray[]=$newContentUrl;
+                }
+            }
+            foreach($contentUrlsArray as $contentUrl){
+                $body = $body . '<url>' . '<loc>' . str_replace("&","&amp;",$contentUrl['loc']) . '</loc>' . '<lastmod>' . $contentUrl['lastmod'] . '</lastmod>';
+                foreach($contentUrl["altLocs"] as $altLoc){
+                    $body=$body.'<xhtml:link
+                 rel="alternate"
+                 hreflang="'.$altLoc["lang"].'"
+                 href="'.str_replace("&","&amp;",$altLoc['loc']).'"
+                     />';
+                }
+                $body=$body.'</url>';
+            }
         }
         
         $content = "<?xml version='1.0' encoding='UTF-8'?><urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xhtml='http://www.w3.org/1999/xhtml'>".$body."</urlset>";
