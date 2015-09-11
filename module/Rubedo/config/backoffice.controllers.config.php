@@ -87,5 +87,6 @@ return array(
     'Rubedo\\Backoffice\\Controller\\Magic' => 'Rubedo\\Backoffice\\Controller\\MagicController',
     'Rubedo\\Backoffice\\Controller\\XhrEncodeImage' => 'Rubedo\\Backoffice\\Controller\\XhrEncodeImageController',
     'Rubedo\\Backoffice\\Controller\\Dump' => 'Rubedo\\Backoffice\\Controller\\DumpController',
-    'Rubedo\\Backoffice\\Controller\\Restore' => 'Rubedo\\Backoffice\\Controller\\RestoreController'
+    'Rubedo\\Backoffice\\Controller\\Restore' => 'Rubedo\\Backoffice\\Controller\\RestoreController',
+    'Rubedo\\Backoffice\\Controller\\RssFeeds' => 'Rubedo\\Backoffice\\Controller\\RssFeedsController'
 );
