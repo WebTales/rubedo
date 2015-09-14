@@ -116,7 +116,7 @@ class SitemapController extends AbstractActionController
         $response->setContent(utf8_decode($content));
         return $response;
     }
-    protected function getPages($pagesTree, $siteName, $pages = array(), $parentUrl = "",$defaultLanguage, $languages)
+    protected function getPages($pagesTree, $siteName, $pages = array(), $parentUrl = array(),$defaultLanguage, $languages)
     {
         foreach($pagesTree as $page){
             if (empty($page['noIndex']))
@@ -126,12 +126,12 @@ class SitemapController extends AbstractActionController
                 ];
                 foreach ($page['i18n'] as $lang => $value) {
                     if ($lang==$defaultLanguage){
-                        $res['loc'] = 'http://' . $siteName . '/' . $lang . '/' . (empty($parentUrl)?'':($parentUrl.'/')) . $page['pageURL'];
+                        $res['loc'] = 'http://' . $siteName . '/' . $lang . '/' . (empty($parentUrl[$lang])?'':($parentUrl[$lang].'/')) . $page["i18n"][$lang]['pageURL'];
                     }
                     if (in_array($lang,$languages)){
                         $res['altLocs'][]=[
                             "lang"=>$lang,
-                            "loc"=>'http://' . $siteName . '/' . $lang . '/' . (empty($parentUrl)?'':($parentUrl.'/')) . $page['pageURL']
+                            "loc"=>'http://' . $siteName . '/' . $lang . '/' . (empty($parentUrl[$lang])?'':($parentUrl[$lang].'/')) . $page["i18n"][$lang]['pageURL']
                         ];
                     }
                 }
@@ -140,7 +140,18 @@ class SitemapController extends AbstractActionController
             }
             if (empty($page['noFollow']) && !empty($page['children']))
             {
-                $pages = $this->getPages($page['children'], $siteName, $pages, $page['pageURL'],$defaultLanguage, $languages);
+                $newParentUrl=$parentUrl;
+                foreach($page['i18n'] as $lang => $value) {
+                    if (in_array($lang,$languages)){
+                        if (isset($parentUrl[$lang])){
+                            $newParentUrl[$lang]=$newParentUrl[$lang]."/".$page["i18n"][$lang]['pageURL'];
+                        } else {
+                            $newParentUrl[$lang]=$page["i18n"][$lang]['pageURL'];
+                        }
+
+                    }
+                }
+                $pages = $this->getPages($page['children'], $siteName, $pages, $newParentUrl,$defaultLanguage, $languages);
             }
         }
         return $pages;
