@@ -294,6 +294,9 @@ class PagesResource extends AbstractResource
     public function getEntityAction($id, $params)
     {
         $page = $this->getPagesCollection()->findById($id);
+        if (!$page) {
+            throw new APIEntityException('Page not found', 404);
+        }
         $urlOptions = array(
             'encode' => true,
             'reset' => true,
