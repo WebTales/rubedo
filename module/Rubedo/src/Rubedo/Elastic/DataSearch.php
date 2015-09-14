@@ -1056,7 +1056,7 @@ class DataSearch extends DataAbstract
 
         foreach ($resultsList as $resultItem) {
             $data = $resultItem['fields'];
-
+            $resultData=[ ];
             $resultData ['id'] = $resultItem['_id'];
             $resultData ['typeId'] = $resultItem['_type'];
             $score = $resultItem['_score'];
