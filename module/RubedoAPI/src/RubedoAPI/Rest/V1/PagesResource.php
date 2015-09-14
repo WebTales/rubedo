@@ -114,6 +114,10 @@ class PagesResource extends AbstractResource
                             ->setDescription('Title for the page')
                             ->setKey('title')
                             ->setRequired()
+                    )->addOutputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setDescription('SEO and e-commerce page data for link display')
+                            ->setKey('pageData')
                     );
             });
     }
@@ -302,6 +306,7 @@ class PagesResource extends AbstractResource
             'success' => true,
             'url' => $url,
             'title' => $page['title'],
+            'pageData'=>array_intersect_key($page, array_flip([ 'title','description','eCTitle','eCDescription','eCImage','richTextId','includedRichText']))
         );
     }
 
