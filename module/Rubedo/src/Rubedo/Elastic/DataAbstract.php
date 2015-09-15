@@ -125,17 +125,13 @@ class DataAbstract
      * @param string $port
      *            http port
      */
-    public function init($host = null, $port = null)
+    public function init($host = null)
     {
         if (is_null($host)) {
             $host = self::$_options['host'];
         }
 
-        if (is_null($port)) {
-            $port = self::$_options['port'];
-        }
-
-        $hosts =["$host:$port"];
+        $hosts =["$host"];
         $clientBuilder = ClientBuilder::create();
         $clientBuilder->setHosts($hosts);
         $this->_client = $clientBuilder->build();
