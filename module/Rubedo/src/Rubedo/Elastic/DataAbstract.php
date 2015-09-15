@@ -131,7 +131,7 @@ class DataAbstract
             $host = self::$_options['host'];
         }
 
-        $hosts =["$host"];
+        $hosts = explode(",",$host);
         $clientBuilder = ClientBuilder::create();
         $clientBuilder->setHosts($hosts);
         $this->_client = $clientBuilder->build();
