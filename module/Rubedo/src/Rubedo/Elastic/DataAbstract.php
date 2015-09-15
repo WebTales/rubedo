@@ -19,6 +19,7 @@ namespace Rubedo\Elastic;
 use Rubedo\Services\Manager;
 use Zend\Json\Json;
 use WebTales\MongoFilters\Filter;
+use Elasticsearch\ClientBuilder;
 
 /**
  * Class implementing the Rubedo API to Elastic Search indexing services using Elasticsearch API
@@ -134,10 +135,10 @@ class DataAbstract
             $port = self::$_options['port'];
         }
 
-        $params = array();
-        $params['hosts'] = array ("$host:$port");
-
-        $this->_client = new \Elasticsearch\Client($params);
+        $hosts =["$host:$port"];
+        $clientBuilder = ClientBuilder::create();
+        $clientBuilder->setHosts($hosts);
+        $this->_client = $clientBuilder->build();
 
         //$this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
 
