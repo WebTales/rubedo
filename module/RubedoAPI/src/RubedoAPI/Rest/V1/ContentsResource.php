@@ -97,7 +97,25 @@ class ContentsResource extends AbstractResource
         }
         $queryId = &$params['queryId'];
         $this->getQueriesCollection()->setCurrentPage((string)$params['pageId']);
-        $filters = $this->getQueriesCollection()->getFilterArrayById($queryId);
+        $query=$this->getQueriesCollection()->findById($queryId);
+        if (!$query) {
+            throw new APIEntityException('Query not found', 404);
+        }
+        if ($query["type"]!="manual"&&isset($params["contextContentId"],$params["contextualTaxonomyRule"],$params["contextualTaxonomy"])){
+            $contextualContent=$this->getContentsCollection()->findById($params["contextContentId"], true, false);
+            if ($contextualContent&&isset($contextualContent["taxonomy"])&&is_array($contextualContent["taxonomy"])&&is_array($params["contextualTaxonomy"])){
+                foreach ($contextualContent["taxonomy"] as $contextVocabId=>$contextVocabValue){
+                    if (in_array($contextVocabId,$params["contextualTaxonomy"])&&!empty($contextVocabValue)&&$contextVocabValue!=""){
+                        $query["query"]["vocabularies"][$contextVocabId]=[
+                            "terms"=>is_array($contextVocabValue) ? $contextVocabValue : [$contextVocabValue],
+                            "rule"=>$params["contextualTaxonomyRule"]
+                        ];
+                    }
+                }
+
+            }
+        }
+        $filters = $this->getQueriesCollection()->getFilterArrayByQuery($query);
         $ismagic = false;
 
         if (isset($params['date']) && isset($params['dateFieldName'])) {
@@ -154,7 +172,6 @@ class ContentsResource extends AbstractResource
         }
 
         $queryType = $filters['queryType'];
-        $query = $this->getQueriesCollection()->getQueryById($queryId);
 
 
         $filters['filter']->addFilter(
@@ -866,6 +883,19 @@ class ContentsResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setKey('ismagic')
                     ->setDescription('Enable magic queries')
+            )->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('contextContentId')
+                    ->setDescription('Context content id')
+                    ->setFilter('\\MongoId')
+            )->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('contextualTaxonomy')
+                    ->setDescription('Context taxonomy array')
+            )->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('contextualTaxonomyRule')
+                    ->setDescription('Context taxonomy rule ')
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())

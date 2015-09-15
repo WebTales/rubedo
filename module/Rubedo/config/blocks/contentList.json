@@ -69,6 +69,43 @@
                         }
                     ]
                 },
+              {
+                "categorie": "Contextualization",
+                "champs": [
+                  {
+                    "type": "Ext.form.field.Checkbox",
+                    "config": {
+                      "fieldLabel": "Enable content detail context",
+                      "name": "enableContext",
+                      "inputValue": true
+                    }
+                  },
+                  {
+                    "type": "Rubedo.view.TXField",
+                    "config": {
+                      "fieldLabel": "Contextual taxonomy",
+                      "name": "contextualTaxonomy"
+                    }
+                  },{
+                    "type": "Ext.form.field.ComboBox",
+                    "config": {
+                      "fieldLabel": "Contextual taxonomy rule",
+                      "name": "contextualTaxonomyRule",
+                      "editable": false,
+                      "forceSelection": true,
+                      "queryMode": "local",
+                      "store": [
+                        ["all","Contains all the terms"],
+                        ["allRec","Contains all the terms or at least a descendant per term"],
+                        ["some","Contains at least one of the terms"],
+                        ["someRec","Contains at least one of the terms or at least one of the descendants of one of the terms"],
+                        ["not","Does not contain any of the following terms"],
+                        ["notRec","Does not contain the following terms or their descendants"]
+                      ]
+                    }
+                  }
+                ]
+              },
                 {
                     "categorie": "#ext-gen1480#",
                     "champs": [
