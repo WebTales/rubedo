@@ -68,6 +68,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
         "enableECommerceFeatures",
         "resources",
         "sitemapContentTypes",
+        "defaultNotFound",
         "iframelyKey"
     );
 

@@ -187,6 +187,12 @@ class Url implements IUrl
         }
 
         if ($this->nbMatched == 0) {
+            if (isset($site['defaultNotFound'])&&$site['defaultNotFound']!="") {
+                return array(
+                    'pageId' => $site['defaultNotFound'],
+                    'locale' => $locale
+                );
+            }
             return null;
         }
         $contentId = null;
@@ -212,6 +218,12 @@ class Url implements IUrl
         }
 
         if ($nbSegments > $this->nbMatched) {
+            if (isset($site['defaultNotFound'])&&$site['defaultNotFound']!="") {
+                return array(
+                    'pageId' => $site['defaultNotFound'],
+                    'locale' => $locale
+                );
+            }
             return null;
         }
 

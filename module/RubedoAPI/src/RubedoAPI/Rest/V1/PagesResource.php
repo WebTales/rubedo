@@ -144,6 +144,7 @@ class PagesResource extends AbstractResource
         if (empty($params['route'])) {
             $lastMatchedNode = $this->getPagesCollection()->findById($site['homePage']);
         } else {
+            $nbMatched = 0;
             $urlSegments = explode('/', trim($params['route'], '/'));
             $lastMatchedNode = ['id' => 'root'];
             foreach ($urlSegments as $key => $value) {
@@ -171,12 +172,32 @@ class PagesResource extends AbstractResource
                         }
                     $pages[] = array('title' => $matchedPageTitle, 'url' => $url);
                     $lastMatchedNode = $matchedNode;
+                    $nbMatched++;
+                }
+            }
+            if ($lastMatchedNode['id'] == 'root'||(empty($content)&&($nbMatched<count($urlSegments)))) {
+                if (isset($site['defaultNotFound'])&&$site['defaultNotFound']!="") {
+                    $matchedNode=$this->getPagesCollection()->findById($site['defaultNotFound']);
+                    if (!$matchedNode){
+                        throw new APIEntityException('Page not found', 404);
+                    }
+                    $lastMatchedNode["id"] = $site['defaultNotFound'];
+                    $matchedPageTitle=$matchedNode['text'];
+                    if (isset($matchedNode['i18n'][$params['lang']->getLocale()]['text'])){
+                        $matchedPageTitle=$matchedNode['i18n'][$params['lang']->getLocale()]['text'];
+                    } elseif (isset($matchedNode['i18n'][$params['lang']->getFallback()]['text'])){
+                        $matchedPageTitle=$matchedNode['i18n'][$params['lang']->getFallback()]['text'];
+                    }
+                    $lastMatchedNode = $matchedNode;
+                    $getUrl = $this->getEntityAction($matchedNode['id'], $params);
+                    $url = $getUrl['url'];
+                    $pages[] = array('title' => $matchedPageTitle, 'url' => $url);
+                } else {
+                    throw new APIEntityException('Page not found', 404);
                 }
             }
         }
-        if ($lastMatchedNode['id'] == 'root') {
-            throw new APIEntityException('Page not found', 404);
-        }
+
         $lastMatchedNode['blocks'] = $this->getBlocksCollection()->getListByPage($lastMatchedNode['id'])['data'];
 
         //Translate block titles
