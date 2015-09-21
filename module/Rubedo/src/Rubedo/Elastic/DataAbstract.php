@@ -305,6 +305,23 @@ class DataAbstract
                             }
                         }
                         break;
+                    case 'urlField' :
+                    case 'Rubedo.view.urlField' :
+                        $config = [
+                            'type' => 'object',
+                            'store' => $store
+                        ];
+                        if ($notAnalyzed) {
+                            $config ['index'] = 'not_analyzed';
+                        }
+                        if (!$field ['config'] ['localizable']) {
+                            $mapping ['fields'] ['properties'] [$name] = $config;
+                        } else {
+                            foreach ($this->_activeLanguages as $lang) {
+                                $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+                            }
+                        }
+                        break;
                     case 'numberfield' :
                         $config = [
                             'type' => 'float',
