@@ -305,6 +305,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $this->_indexContent($returnArray['data']);
         }
 
+        if ($returnArray["success"]){
+            Manager::getService("ApiCache")->clearForEntity($obj["id"]);
+        }
+
         return $returnArray;
     }
 
@@ -322,6 +326,9 @@ class Contents extends WorkflowAbstractCollection implements IContents
         $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"] && (isset($origObj['status']) && $origObj['status'] == 'published')) {
             $this->_unIndexContent($obj);
+        }
+        if ($returnArray["success"]){
+            Manager::getService("ApiCache")->clearForEntity($obj["id"]);
         }
         return $returnArray;
     }

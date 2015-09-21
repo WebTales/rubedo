@@ -39,6 +39,11 @@ class ApiCache extends AbstractCollection
         ),
         array(
             'keys' => array(
+                'entity' => 1
+            )
+        ),
+        array(
+            'keys' => array(
                 'expireAt' => 1
             ),
             'options' => array(
@@ -91,6 +96,15 @@ class ApiCache extends AbstractCollection
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function clearForEntity ($id){
+        if (!empty($id)&&$id!=""){
+            $updateCond = Filter::factory('Value');
+            $updateCond->setName('entity')->setValue($id);
+            $options = array("w"=>0);
+            $this->_dataService->customDelete($updateCond, $options);
         }
     }
 

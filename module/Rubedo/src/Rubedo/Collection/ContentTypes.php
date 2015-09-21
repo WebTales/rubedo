@@ -186,6 +186,7 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
 
         if ($returnArray["success"]) {
             $this->indexContentType($returnArray['data']);
+            Manager::getService("ApiCache")->clearForEntity($obj["id"]);
         }
 
         return $returnArray;
@@ -199,7 +200,9 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"]) {
             $this->unIndexContentType($obj);
+            Manager::getService("ApiCache")->clearForEntity($obj["id"]);
         }
+
         return $returnArray;
     }
 

@@ -242,7 +242,6 @@ class Pages extends AbstractLocalizableCollection implements IPages
                 "msg" => $resultArray["err"]
             );
         }
-
         $this->_clearCacheForPage($obj);
         return $returnArray;
     }
@@ -423,6 +422,7 @@ class Pages extends AbstractLocalizableCollection implements IPages
     protected function _clearCacheForPage($obj)
     {
         $pageId = $obj['id'];
+        Manager::getService("ApiCache")->clearForEntity($pageId);
         Manager::getService('UrlCache')->customDelete(
             Filter::factory('Value')
                 ->setName('pageId')
