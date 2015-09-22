@@ -309,7 +309,11 @@ class DataAbstract
                     case 'Rubedo.view.urlField' :
                         $config = [
                             'type' => 'object',
-                            'store' => $store
+                            'store' => $store,
+                            'properties'=>[
+                                "url" => ["type" => "string",'store' => $store],
+                                "title" => ["type" => "string",'store' => $store],
+                            ]
                         ];
                         if ($notAnalyzed) {
                             $config ['index'] = 'not_analyzed';
