@@ -60,6 +60,7 @@ class Dam extends DataAbstract
             'damType' => $typeId,
             'text' => $data['title'],
             'fields' => isset($data['fields']) ? $data['fields'] : null,
+            'mainFileType' => isset($data['mainFileType']) ? $data['mainFileType'] : null,
             'i18n' => $data['i18n'],
             'writeWorkspace' => $data['writeWorkspace'],
             'lastUpdateTime' => (isset($data['lastUpdateTime'])) ? (string)($data['lastUpdateTime'] *

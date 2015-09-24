@@ -116,6 +116,11 @@ class DamTypes extends DataAbstract
 			'index' => 'not_analyzed',
 			'store' => 'yes'
 		],
+        'mainFileType' => [
+			'type' => 'string',
+			'index' => 'not_analyzed',
+			'store' => 'yes'
+		],
 		'fileSize' => [
 			'type' => 'integer',
 			'store' => 'yes'
