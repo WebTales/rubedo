@@ -326,6 +326,28 @@ class DataAbstract
                             }
                         }
                         break;
+                    case 'externalMediaField' :
+                    case 'Rubedo.view.externalMediaField' :
+                        $config = [
+                            'type' => 'object',
+                            'store' => $store,
+                            'properties'=>[
+                                "url" => ["type" => "string",'store' => $store],
+                                "maxHeight" => ["type" => "integer",'store' => $store,"index"=>"no"],
+                                "minHeight" => ["type" => "integer",'store' => $store,"index"=>"no"],
+                            ]
+                        ];
+                        if ($notAnalyzed) {
+                            $config ['index'] = 'not_analyzed';
+                        }
+                        if (!$field ['config'] ['localizable']) {
+                            $mapping ['fields'] ['properties'] [$name] = $config;
+                        } else {
+                            foreach ($this->_activeLanguages as $lang) {
+                                $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+                            }
+                        }
+                        break;
                     case 'numberfield' :
                         $config = [
                             'type' => 'float',
