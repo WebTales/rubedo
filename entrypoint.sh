@@ -1,11 +1,11 @@
 #!/bin/bash
-if [ ! -d /var/www/html/rubedo ]; then
-    mkdir -p /var/www/html/rubedo
+if [ ! -d /var/sources/${VERSION}]; then
+    mkdir -p /var/sources/${VERSION}
 fi
 if [ "${VERSION}" != "**None**" ] && [ "${GITHUB_APIKEY}" != "**None**" ]; then
-    git clone -b "$VERSION" https://github.com/WebTales/rubedo.git /var/www/html/rubedo
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/var/www/html/rubedo
-    cd /var/www/html/rubedo/
+    git clone -b "$VERSION" https://github.com/WebTales/rubedo.git /var/sources/${VERSION}
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/var/sources/${VERSION}
+    cd /var/sources/${VERSION}
     php composer.phar config -g github-oauth.github.com "$GITHUB_APIKEY"
     ./rubedo.sh
 fi
