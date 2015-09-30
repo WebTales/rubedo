@@ -3,7 +3,7 @@ FROM centos:centos7
 RUN yum -y update; yum -y clean all
 RUN yum install -y make openssl-devel epel-release; yum -y clean all
 # Install PHP env
-RUN yum install -y git vim php php-gd php-ldap php-odbc php-pear php-xml php-xmlrpc php-mbstring php-snmp php-soap curl curl-devel gcc php-devel php-intl tar wget; yum -y clean all
+RUN yum install -y git vim php php-cli php-gd php-ldap php-odbc php-pear php-xml php-xmlrpc php-mbstring php-snmp php-soap curl curl-devel gcc php-devel php-intl tar wget; yum -y clean all
 # Install PHP Mongo extension
 RUN pecl install mongo
 ADD mongo.ini /etc/php.d/mongo.ini
