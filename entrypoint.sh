@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ ! -d /var/sources/${VERSION}]; then
+if [ ! -d /var/sources/${VERSION} ]; then
     mkdir -p /var/sources/${VERSION}
 fi
 if [ "${VERSION}" != "**None**" ] && [ "${GITHUB_APIKEY}" != "**None**" ]; then
