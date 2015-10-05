@@ -84,7 +84,8 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             'index [<type>]' => 'Index all items or specific index in ElasticSearch',
             ["type", "Name of the index"],
             'config setdb --server= --port= --db= [--replicaSetName=] [--adminLogin=] [--adminPassword=] [--login=] [--password=]'=>"Configure instance database connection",
-            'config setes --host= --port= --contentIndex= --damIndex= --userIndex='=>"Reconfigure instance elasticsearch connection",
+            'config setes --host= --port= --contentIndex= --damIndex= --userIndex='=>"Configure instance elasticsearch connection",
+            'config setlang <lang>'=>"Configure instance default language",
         ];
     }
 
@@ -293,11 +294,9 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
         $config = $event->getApplication()
             ->getServiceManager()
             ->get('Config');
+        $isConsole=$event->getRequest() instanceof ConsoleRequest;
+        if (!$isConsole&&(!isset($config['installed']) || ((!isset($config['installed']['status']) || $config['installed']['status'] !== 'finished') && $controller !== 'Rubedo\Install\Controller\Index'))) {
 
-        if (!isset($config['installed']) || ((!isset($config['installed']['status']) || $config['installed']['status'] !== 'finished') && $controller !== 'Rubedo\Install\Controller\Index')) {
-            if($event->getRequest() instanceof ConsoleRequest) {
-                throw new AccessException("You must run the install tool before using console routes");
-            }
 
             $routeMatches = $event->getRouteMatch();
             $routeMatches->setParam('controller', 'Rubedo\Install\Controller\Index');

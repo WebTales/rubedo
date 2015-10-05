@@ -61,6 +61,15 @@ return array(
                     'action'     => 'setes'
                 )
             )
+        ),
+        'configlang' => array(
+            'options' => array(
+                'route'    => 'config setlang <lang>',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'setlang'
+                )
+            )
         )
     )
 );

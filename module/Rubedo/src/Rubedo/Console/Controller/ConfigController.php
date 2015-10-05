@@ -16,6 +16,8 @@
  */
 namespace Rubedo\Console\Controller;
 
+use Rubedo\Interfaces\config;
+use Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Console\Console;
@@ -45,7 +47,10 @@ class ConfigController extends AbstractActionController
         $this->installObject->loadLocalConfig();
         $this->config = $this->installObject->getLocalConfig();
         if (!isset($this->config['installed'])) {
-            $this->config['installed'] = array();
+            $this->config['installed'] = array(
+                'status' => 'begin',
+                'action' => 'start-wizard',
+            );
         }
     }
 
@@ -70,8 +75,13 @@ class ConfigController extends AbstractActionController
             $this->config["datastream"]=array();
         }
         $this->config["datastream"]["mongo"] = $mongoParams;
+
+        if($this->config["installed"]["status"]!="finished"&&($this->config["installed"]["action"]=="start-wizard"||$this->config["installed"]["action"]=="set-db")){
+            $this->config["installed"]["action"]='set-elastic-search';
+        }
+
         $this->installObject->saveLocalConfig($this->config);
-        $this->console->writeLine("Database connection reconfigured", ColorInterface::GREEN);
+        $this->console->writeLine("Database connection configured", ColorInterface::GREEN);
         return;
     }
 
@@ -92,9 +102,43 @@ class ConfigController extends AbstractActionController
         if (!isset($this->config["elastic"])){
             $this->config["elastic"]=array();
         }
+        if($this->config["installed"]["status"]!="finished"&&$this->config["installed"]["action"]=="set-elastic-search"){
+            $this->config["installed"]["action"]='define-languages';
+        }
         $this->config["elastic"] = $esParams;
         $this->installObject->saveLocalConfig($this->config);
-        $this->console->writeLine("Elastisearch connection reconfigured", ColorInterface::GREEN);
+        $this->console->writeLine("Elastisearch connection configured", ColorInterface::GREEN);
+        return;
+    }
+
+    public function setlangAction()
+    {
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $languageService = Manager::getService('Languages');
+        $languageListResult = $languageService->getList(null, array(
+            array(
+                'property' => 'label',
+                'direction' => 'asc'
+            )
+        ));
+        if ($languageListResult['count'] == 0) {
+            Install::importLanguages();
+            $languageListResult = $languageService->getList(null, array(
+                array(
+                    'property' => 'label',
+                    'direction' => 'asc'
+                )
+            ));
+        }
+        $update = $this->installObject->setDefaultRubedoLanguage($request->getParam("lang"));
+        if($this->config["installed"]["status"]!="finished"&&$this->config["installed"]["action"]=="define-languages"){
+            $this->config["installed"]["action"]='set-db-contents';
+        }
+        $this->installObject->saveLocalConfig($this->config);
+        $this->console->writeLine("Default language set", ColorInterface::GREEN);
         return;
     }
 

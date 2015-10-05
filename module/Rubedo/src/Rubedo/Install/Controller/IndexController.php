@@ -264,6 +264,7 @@ class IndexController extends AbstractActionController
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-elastic-search';
             $this->installObject->saveLocalConfig($this->config);
+            $this->installObject->saveLocalConfig($this->config);
         }
 
         $esOptions = isset($this->config["elastic"]) ? $this->config["elastic"] : array();
