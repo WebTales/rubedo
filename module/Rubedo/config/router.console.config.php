@@ -44,12 +44,21 @@ return array(
                 )
             )
         ),
-        'config' => array(
+        'configdb' => array(
             'options' => array(
                 'route'    => 'config setdb --server= --port= --db= [--replicaSetName=] [--adminLogin=] [--adminPassword=] [--login=] [--password=]',
                 'defaults' => array(
                     'controller' => 'Rubedo\Console\Controller\Config',
                     'action'     => 'setdb'
+                )
+            )
+        ),
+        'configes' => array(
+            'options' => array(
+                'route'    => 'config setes --host= --port= --contentIndex= --damIndex= --userIndex=',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'setes'
                 )
             )
         )

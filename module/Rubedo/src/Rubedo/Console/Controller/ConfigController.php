@@ -16,15 +16,11 @@
  */
 namespace Rubedo\Console\Controller;
 
-use Rubedo\Services\Manager;
-use Zend\Debug\Debug;
-use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Console\Console;
 use Zend\Console\ColorInterface;
 use Rubedo\Update\Install;
-use Rubedo\Services\Cache;
 
 /**
  * Console cache controller
@@ -76,6 +72,29 @@ class ConfigController extends AbstractActionController
         $this->config["datastream"]["mongo"] = $mongoParams;
         $this->installObject->saveLocalConfig($this->config);
         $this->console->writeLine("Database connection reconfigured", ColorInterface::GREEN);
+        return;
+    }
+
+    public function setesAction()
+    {
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $esParams=array(
+            "host"=>$request->getParam("host"),
+            "port"=>$request->getParam("port"),
+            "contentIndex"=>$request->getParam("contentIndex"),
+            "damIndex"=>$request->getParam("damIndex"),
+            "userIndex"=>$request->getParam("userIndex"),
+        );
+
+        if (!isset($this->config["elastic"])){
+            $this->config["elastic"]=array();
+        }
+        $this->config["elastic"] = $esParams;
+        $this->installObject->saveLocalConfig($this->config);
+        $this->console->writeLine("Elastisearch connection reconfigured", ColorInterface::GREEN);
         return;
     }
 

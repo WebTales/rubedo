@@ -83,7 +83,8 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             'cache count' => 'Returns the number of cached elements',
             'index [<type>]' => 'Index all items or specific index in ElasticSearch',
             ["type", "Name of the index"],
-            'config setdb --server= --port= --db= [--replicaSetName=] [--adminLogin=] [--adminPassword=] [--login=] [--password=]'=>"Reconfigure instance database connection",
+            'config setdb --server= --port= --db= [--replicaSetName=] [--adminLogin=] [--adminPassword=] [--login=] [--password=]'=>"Configure instance database connection",
+            'config setes --host= --port= --contentIndex= --damIndex= --userIndex='=>"Reconfigure instance elasticsearch connection",
         ];
     }
 
