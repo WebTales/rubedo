@@ -86,6 +86,7 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             'config setdb --server= --port= --db= [--replicaSetName=] [--adminLogin=] [--adminPassword=] [--login=] [--password=]'=>"Configure instance database connection",
             'config setes --host= --port= --contentIndex= --damIndex= --userIndex='=>"Configure instance elasticsearch connection",
             'config setlang <lang>'=>"Configure instance default language",
+            'config reset'=>"Reset intance config",
         ];
     }
 

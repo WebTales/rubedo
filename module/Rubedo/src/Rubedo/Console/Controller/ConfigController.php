@@ -142,5 +142,21 @@ class ConfigController extends AbstractActionController
         return;
     }
 
+    public function resetAction(){
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $this->config=array(
+            "installed"=>array(
+                'status' => 'begin',
+                'action' => 'start-wizard',
+            )
+        );
+        $this->installObject->saveLocalConfig($this->config);
+        $this->console->writeLine("Config reset", ColorInterface::GREEN);
+        return;
+    }
+
 
 }

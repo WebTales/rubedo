@@ -70,6 +70,15 @@ return array(
                     'action'     => 'setlang'
                 )
             )
+        ),
+        'configreset' => array(
+            'options' => array(
+                'route'    => 'config reset',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'reset'
+                )
+            )
         )
     )
 );
