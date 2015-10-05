@@ -17,5 +17,6 @@
  */
 return array(
     'Rubedo\\Console\\Controller\\Cache' => 'Rubedo\\Console\\Controller\\CacheController',
-    'Rubedo\\Console\\Controller\\Search' => 'Rubedo\\Console\\Controller\\SearchController'
+    'Rubedo\\Console\\Controller\\Search' => 'Rubedo\\Console\\Controller\\SearchController',
+    'Rubedo\\Console\\Controller\\Config' => 'Rubedo\\Console\\Controller\\ConfigController'
 );
