@@ -88,6 +88,24 @@ return array(
                     'action'     => 'initdb'
                 )
             )
+        ),
+        'configfinished' => array(
+            'options' => array(
+                'route'    => 'config setfinished',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'setfinished'
+                )
+            )
+        ),
+        'configadmin' => array(
+            'options' => array(
+                'route'    => 'config setadmin --name=  --email= --login= --password=',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'setadmin'
+                )
+            )
         )
     )
 );

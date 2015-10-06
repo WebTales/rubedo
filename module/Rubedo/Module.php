@@ -88,6 +88,8 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             'config setlang <lang>'=>"Configure instance default language",
             'config reset'=>"Reset intance config",
             'config initdb'=>"Do DB init",
+            'config setfinished'=>"Set install status to finished",
+            'config setadmin --name=  --email= --login= --password='=>"Create admin user",
         ];
     }
 

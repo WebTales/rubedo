@@ -20,6 +20,7 @@ use Rubedo\Collection\AbstractCollection;
 use Rubedo\Update\Update;
 use Rubedo\Collection\Pages;
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Console\Console;
@@ -175,6 +176,53 @@ class ConfigController extends AbstractActionController
         return;
 
     }
+    public function setadminAction()
+    {
+        $request = $this->getRequest();
+        if (!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        $hashService = Manager::getService('Hash');
+        $salt=$hashService->generateRandomString();
+        $adminGroup = Manager::getService('Groups')->findByName('admin');
+        $filters = Filter::factory();
+        $filters->addFilter(Filter::factory('Value')->setName('UTType')
+            ->setValue("default"));
+        $defaultUserType = Manager::getService("UserTypes")->findOne($filters);
+        $admin=[
+            "name"=>$request->getParam("name"),
+            "email"=>$request->getParam("email"),
+            "login"=>$request->getParam("login"),
+            "status"=>"approved",
+            "taxonomy"=>[],
+            "fields"=>[],
+            "salt"=>"salt",
+            "defaultGroup"=>$adminGroup["id"],
+            "typeId"=>$defaultUserType["id"],
+            "password"=>$hashService->derivatePassword($request->getParam("password"), $salt),
+        ];
+        $userService = Manager::getService('Users');
+        $response = $userService->create($admin);
+        if ($response['success']){
+            $groupService = Manager::getService('Groups');
+            $adminGroup['members'][] = $response['data']['id'];
+            $groupService->update($adminGroup);
+            if($this->config["installed"]["status"]!="finished"&&$this->config["installed"]["action"]=='set-admin'){
+                $this->config["installed"]=array(
+                    'status' => 'finished',
+                    'action' => 'set-php-setting',
+                );
+            }
+            $this->installObject->saveLocalConfig($this->config);
+            $this->console->writeLine("Admin user created", ColorInterface::GREEN);
+
+        } else {
+            $this->console->writeLine("Admin user creation failed", ColorInterface::RED);
+        }
+        AbstractCollection::disableUserFilter($wasFiltered);
+        return;
+    }
 
     public function resetAction(){
         $request = $this->getRequest();
@@ -189,6 +237,20 @@ class ConfigController extends AbstractActionController
         );
         $this->installObject->saveLocalConfig($this->config);
         $this->console->writeLine("Config reset", ColorInterface::GREEN);
+        return;
+    }
+
+    public function setfinishedtAction(){
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $this->config["installed"]=array(
+            'status' => 'finished',
+            'action' => 'set-php-setting',
+        );
+        $this->installObject->saveLocalConfig($this->config);
+        $this->console->writeLine("Install status set to finish", ColorInterface::GREEN);
         return;
     }
 
