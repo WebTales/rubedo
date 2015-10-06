@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
+use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractActionController;
 
 use Zend\View\Model\JsonModel;
@@ -41,17 +42,30 @@ class ConfigController extends AbstractActionController
         $this->config = $this->installObject->getLocalConfig();
     }
 
-    /**
-     * The default read Action
-     *
-     * Return the content of the collection, get filters from the request
-     * params, get sort from request params
-     */
+
     public function indexAction()
     {
         $returnedArray =  array_intersect_key($this->config, array_flip(array('swiftmail','rubedo_config')));
 
         return new JsonModel($returnedArray);
+    }
+
+    public function updateAction()
+    {
+        $data = $this->params()->fromPost('data');
+        if (empty($data)){
+            $this->getResponse()->setStatusCode(500);
+            return new JsonModel(array("success"=>false));
+        }
+        $updateData = Json::decode($data, Json::TYPE_ARRAY);
+        if (!isset($this->config["rubedo_config"])){
+            $this->config["rubedo_config"]=[];
+        }
+        if (isset($updateData["rubedo_config"])&&is_array($updateData["rubedo_config"])){
+            $this->config["rubedo_config"] = array_merge($this->config["rubedo_config"], $updateData["rubedo_config"]);
+        }
+        $this->installObject->saveLocalConfig($this->config);
+        return new JsonModel(array("success"=>true));
     }
 
 
