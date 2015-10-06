@@ -79,6 +79,15 @@ return array(
                     'action'     => 'reset'
                 )
             )
+        ),
+        'configinitdb' => array(
+            'options' => array(
+                'route'    => 'config initdb',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'initdb'
+                )
+            )
         )
     )
 );

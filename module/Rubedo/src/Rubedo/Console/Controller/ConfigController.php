@@ -16,7 +16,9 @@
  */
 namespace Rubedo\Console\Controller;
 
-use Rubedo\Interfaces\config;
+use Rubedo\Collection\AbstractCollection;
+use Rubedo\Update\Update;
+use Rubedo\Collection\Pages;
 use Rubedo\Services\Manager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Console\Request as ConsoleRequest;
@@ -140,6 +142,38 @@ class ConfigController extends AbstractActionController
         $this->installObject->saveLocalConfig($this->config);
         $this->console->writeLine("Default language set", ColorInterface::GREEN);
         return;
+    }
+    public function initdbAction()
+    {
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        $success=$this->installObject->doEnsureIndexes();
+        if ($success){
+            $success=$this->installObject->doCreateDefaultsGroups();
+        }
+        if ($success){
+            $success = Install::doInsertContents();
+        }
+        if ($success) {
+            Update::update();
+            Pages::localizeAllCollection();
+        }
+        AbstractCollection::disableUserFilter($wasFiltered);
+        if ($success){
+            if($this->config["installed"]["status"]!="finished"&&$this->config["installed"]["action"]=='set-db-contents'){
+                $this->config["installed"]["action"]='set-admin';
+            }
+            $this->installObject->saveLocalConfig($this->config);
+            $this->console->writeLine("DB init completed", ColorInterface::GREEN);
+
+        } else {
+            $this->console->writeLine("DB init failed", ColorInterface::RED);
+        }
+        return;
+
     }
 
     public function resetAction(){
