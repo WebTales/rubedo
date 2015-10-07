@@ -61,8 +61,16 @@ class ConfigController extends AbstractActionController
         if (!isset($this->config["rubedo_config"])){
             $this->config["rubedo_config"]=[];
         }
+        if (!isset($this->config["swiftmail"]["smtp"])){
+            $this->config["swiftmail"]=[
+                "smtp"=>[]
+            ];
+        }
         if (isset($updateData["rubedo_config"])&&is_array($updateData["rubedo_config"])){
             $this->config["rubedo_config"] = array_merge($this->config["rubedo_config"], $updateData["rubedo_config"]);
+        }
+        if (isset($updateData["swiftmail"]["smtp"])&&is_array($updateData["swiftmail"]["smtp"])){
+            $this->config["swiftmail"]["smtp"] = array_merge($this->config["swiftmail"]["smtp"], $updateData["swiftmail"]["smtp"]);
         }
         $this->installObject->saveLocalConfig($this->config);
         return new JsonModel(array("success"=>true));
