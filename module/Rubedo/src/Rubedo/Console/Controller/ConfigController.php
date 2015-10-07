@@ -197,7 +197,7 @@ class ConfigController extends AbstractActionController
             "status"=>"approved",
             "taxonomy"=>[],
             "fields"=>[],
-            "salt"=>"salt",
+            "salt"=>$salt,
             "defaultGroup"=>$adminGroup["id"],
             "typeId"=>$defaultUserType["id"],
             "password"=>$hashService->derivatePassword($request->getParam("password"), $salt),
