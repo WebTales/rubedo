@@ -106,6 +106,15 @@ return array(
                     'action'     => 'setadmin'
                 )
             )
+        ),
+        'configsetdefault' => array(
+            'options' => array(
+                'route'    => 'config setdefault',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'setdefault'
+                )
+            )
         )
     )
 );

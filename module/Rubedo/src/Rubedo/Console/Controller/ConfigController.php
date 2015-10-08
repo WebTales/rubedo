@@ -254,5 +254,22 @@ class ConfigController extends AbstractActionController
         return;
     }
 
+    public function setdefaultAction(){
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        if (!isset($this->config["rubedo_config"])){
+            $this->config["rubedo_config"]=[];
+        }
+        $this->config["rubedo_config"]['minify']="1";
+        $this->config["rubedo_config"]['cachePage']="1";
+        $this->config["rubedo_config"]['apiCache']="1";
+        $this->config["rubedo_config"]['addECommerce']="1";
+        $this->installObject->saveLocalConfig($this->config);
+        $this->console->writeLine("Default settings applied", ColorInterface::GREEN);
+        return;
+    }
+
 
 }

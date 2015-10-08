@@ -90,6 +90,7 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             'config initdb'=>"Do DB init",
             'config setfinished'=>"Set install status to finished",
             'config setadmin --name=  --email= --login= --password='=>"Create admin user",
+            'config setdefault'=>"Set default php settings",
         ];
     }
 
