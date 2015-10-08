@@ -115,6 +115,15 @@ return array(
                     'action'     => 'setdefault'
                 )
             )
+        ),
+        'configcreatesite' => array(
+            'options' => array(
+                'route'    => 'config createsite --domain= --lang= [--theme=]',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'createsite'
+                )
+            )
         )
     )
 );

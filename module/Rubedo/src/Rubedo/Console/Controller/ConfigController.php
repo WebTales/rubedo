@@ -271,5 +271,47 @@ class ConfigController extends AbstractActionController
         return;
     }
 
+    public function createsiteAction()
+    {
+        $request = $this->getRequest();
+        if (!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $wasFiltered = AbstractCollection::disableUserFilter();
+        $theme=$request->getParam("theme") ? $request->getParam("lang") : "default";
+        $newSite=[
+            "text"=>$request->getParam("domain"),
+            "defaultLanguage"=>$request->getParam("lang"),
+            "languages"=>[$request->getParam("lang")],
+            "protocol"=>['HTTP'],
+            "theme"=>$theme,
+            "author"=> "Powered by Rubedo",
+            "workspace"=> "global",
+            "builtOnEmptySite"=> true,
+            "locStrategy"=> "onlyOne",
+            "useBrowserLanguage"=> false,
+            "enableECommerceFeatures"=> false,
+            "locale"=> "en",
+            "nativeLanguage"=> "en",
+            "title"=> "",
+            "description"=> "",
+            "i18n"=>[]
+        ];
+        $newSite["i18n"][$request->getParam("lang")]=[
+            "title"=> "",
+            "description"=> "",
+            "author"=> "Powered by Rubedo"
+        ];
+        $result=Manager::getService('Sites')->createFromEmpty($newSite);
+        if ($result["success"]){
+            $this->console->writeLine("Site created", ColorInterface::GREEN);
+
+        } else {
+            $this->console->writeLine("Site creation failed", ColorInterface::RED);
+        }
+        AbstractCollection::disableUserFilter($wasFiltered);
+        return;
+    }
+
 
 }
