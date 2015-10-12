@@ -21,6 +21,7 @@ use Rubedo\Update\Update;
 use Rubedo\Collection\Pages;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
+use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Console\Console;
@@ -310,6 +311,28 @@ class ConfigController extends AbstractActionController
             $this->console->writeLine("Site creation failed", ColorInterface::RED);
         }
         AbstractCollection::disableUserFilter($wasFiltered);
+        return;
+    }
+
+    public function getfullAction(){
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $this->console->writeLine(Json::encode($this->config), ColorInterface::WHITE);
+        return;
+    }
+
+    public function setfullAction(){
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $conf=$request->getParam("conf");
+        $decodedConf=Json::decode($conf,Json::TYPE_ARRAY);
+        $this->config=$decodedConf;
+        $this->installObject->saveLocalConfig($this->config);
+        $this->console->writeLine("Config set", ColorInterface::GREEN);
         return;
     }
 

@@ -124,6 +124,24 @@ return array(
                     'action'     => 'createsite'
                 )
             )
+        ),
+        'configcgetfull' => array(
+            'options' => array(
+                'route'    => 'config getfull',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'getfull'
+                )
+            )
+        ),
+        'configcsetfull' => array(
+            'options' => array(
+                'route'    => 'config setfull --conf=',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'setfull'
+                )
+            )
         )
     )
 );
