@@ -241,7 +241,7 @@ class ConfigController extends AbstractActionController
         return;
     }
 
-    public function setfinishedtAction(){
+    public function setfinishedAction(){
         $request = $this->getRequest();
         if(!$this->getRequest() instanceof ConsoleRequest) {
             throw new \RuntimeException("You can only call this action from the console");
