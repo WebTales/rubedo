@@ -357,7 +357,7 @@ class DataImport extends DataAccess
 	   		}");		
 	   	
 	   	$reduce = new \MongoCode ( "
-	   		function(key, values) {
+	   		function(key, values) {  			
 	    		var value = values[0];
 	   			var productProperties = {
 	   				preparationDelay: 1,
@@ -380,10 +380,8 @@ class DataImport extends DataAccess
 	   				});
 					variations.push(variation);
 	    		});
-	   	
-	    		productProperties['variations'] = variations;
+				productProperties['variations'] = variations;
 	    		value['productProperties'] = productProperties;
-	   	
 	    		delete value['sku'];
 	    		delete value['price'];
 	    		delete value['stock'];
@@ -391,15 +389,49 @@ class DataImport extends DataAccess
 				   	delete value[v.name];
 				});
 	   			return value;
-	   	
 	    	}");
 	   	
+	   	$finalize = new \MongoCode ( "
+	   		function(key, value) {
+	   			if (typeof(value.productProperties) == 'undefined') {
+		   			var productProperties = {
+		   				preparationDelay: 1,
+						canOrderNotInStock: false,
+						outOfStockLimit: 1,
+						notifyForQuantityBelow : 1,
+						resupplyDelay : 1
+		    		};
+					oid = ObjectId();
+	   				var variations = [];
+					var variation = {
+	    				price: value.price,
+	    				stock: value.stock,
+	    				sku: value.sku,
+	    				id: oid.valueOf()
+					};
+	   				variationFields.forEach(function(field) {
+	   					variation[field.name] = value[field.name];
+	   				});
+	   				variations.push(variation);
+	   				productProperties['variations'] = variations;
+	   				value['productProperties'] = productProperties;
+	   				delete value['sku'];
+	    			delete value['price'];
+	    			delete value['stock'];
+					variationFields.forEach(function(v) {
+					   	delete value[v.name];
+					});
+	   			}
+	   			return value;	   					
+	   		}");
+	   		
 	   	$params = array(
 	   			"mapreduce" => "ImportData", // collection
 	   			"query" => array("importKey" => $this->_importKeyValue), // query
 	   			"scope" => $scope,
 	   			"map" => $map, // map
 	   			"reduce" => $reduce, // reduce
+	   			"finalize" => $finalize,
 	   			"out" => array("replace" => "ImportProducts") // out
 	   	);
 	   	
