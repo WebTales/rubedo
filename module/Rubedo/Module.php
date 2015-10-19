@@ -93,7 +93,7 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             'config setdefault'=>"Set default php settings",
             'config createsite --domain= --lang= [--theme=]'=>"Create website",
             'config getfull'=>"Get full config as JSON",
-            'config setfull'=>"Set full config from JSON",
+            'config setfull --conf='=>"Set full config from JSON",
         ];
     }
 
