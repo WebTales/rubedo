@@ -319,7 +319,9 @@ class ConfigController extends AbstractActionController
         if(!$this->getRequest() instanceof ConsoleRequest) {
             throw new \RuntimeException("You can only call this action from the console");
         }
-        $this->console->writeLine(Json::encode($this->config), ColorInterface::WHITE);
+        $encoded =Json::encode($this->config);
+        $encoded=str_replace('"','\'',$encoded);
+        $this->console->writeLine($encoded, ColorInterface::WHITE);
         return;
     }
 
@@ -329,6 +331,7 @@ class ConfigController extends AbstractActionController
             throw new \RuntimeException("You can only call this action from the console");
         }
         $conf=$request->getParam("conf");
+        $conf=str_replace('\'','"',$conf);
         $decodedConf=Json::decode($conf,Json::TYPE_ARRAY);
         $this->config=$decodedConf;
         $this->installObject->saveLocalConfig($this->config);
