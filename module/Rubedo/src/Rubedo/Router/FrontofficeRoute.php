@@ -81,7 +81,7 @@ class FrontofficeRoute implements RouteInterface
             return false;
         }
         //ensure that no url like /dam or /image can match, without complex queries.
-        $frontControllerList = array('dam', 'image');
+        $frontControllerList = array('dam', 'image','file');
 
         try {
             if (method_exists($request, 'getUri')) {
