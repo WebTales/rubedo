@@ -321,7 +321,7 @@ class ConfigController extends AbstractActionController
         }
         $encoded =Json::encode($this->config);
         $encoded=str_replace('"','\'',$encoded);
-        $this->console->writeLine($encoded, ColorInterface::WHITE);
+        $this->console->writeLine($encoded);
         return;
     }
 
