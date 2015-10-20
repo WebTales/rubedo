@@ -137,6 +137,7 @@ class Pages extends AbstractLocalizableCollection implements IPages
         'noIndex',
         'taxonomy',
         'noFollow',
+        'UXInstructions',
         'richTextId'
     );
 
