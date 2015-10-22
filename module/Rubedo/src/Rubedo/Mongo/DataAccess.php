@@ -101,6 +101,12 @@ class DataAccess implements IDataAccess
      */
     protected static $_replicaSetName;
     /**
+     * Read Preference
+     *
+     * @var string
+     */
+    protected static $_readPreference;
+    /**
      * Filter condition to be used when reading
      *
      * @var \WebTales\MongoFilters\CompositeFilter
@@ -216,6 +222,10 @@ class DataAccess implements IDataAccess
 			
             if (isset($options['mongo']['replicaSetName'])) { 
             	self::$_replicaSetName = $options['mongo']['replicaSetName'];
+            }
+
+            if (isset($options['mongo']['readPreference'])) {
+                self::$_readPreference = $options['mongo']['readPreference'];
             }
         	
             self::setDefaultMongo(str_replace(' ','',$connectionString));
@@ -501,7 +511,11 @@ class DataAccess implements IDataAccess
             	if (!self::$_replicaSetName) {
             		$adapter = new \MongoClient($mongo);
             	} else {
-            		$mongo .= "?readPreference=nearest";
+                    if (!self::$_readPreference) {
+                        $mongo .= "?readPreference=nearest";
+                    } else {
+                        $mongo .= self::$_readPreference;
+                    }
             		$adapter = new \MongoClient($mongo,array('replicaSet' => self::$_replicaSetName));
             	}
             } catch (\Exception $e) {
