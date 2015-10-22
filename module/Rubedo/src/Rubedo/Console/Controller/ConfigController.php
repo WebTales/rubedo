@@ -70,7 +70,7 @@ class ConfigController extends AbstractActionController
             "port"=>$request->getParam("port"),
             "db"=>$request->getParam("db"),
         );
-        foreach(array("replicaSetName","adminLogin","adminPassword","login","password") as $configOption){
+        foreach(array("replicaSetName","adminLogin","adminPassword","login","password","readPreference") as $configOption){
             if ($request->getParam($configOption)){
                 $mongoParams[$configOption]=$request->getParam($configOption);
             }

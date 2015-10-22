@@ -46,7 +46,7 @@ return array(
         ),
         'configdb' => array(
             'options' => array(
-                'route'    => 'config setdb --server= --port= --db= [--replicaSetName=] [--adminLogin=] [--adminPassword=] [--login=] [--password=]',
+                'route'    => 'config setdb --server= --port= --db= [--replicaSetName=] [--adminLogin=] [--adminPassword=] [--login=] [--password=] [--readPreference=]',
                 'defaults' => array(
                     'controller' => 'Rubedo\Console\Controller\Config',
                     'action'     => 'setdb'
