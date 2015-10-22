@@ -305,6 +305,33 @@ class DataAbstract
                             }
                         }
                         break;
+                    case 'RECField' :
+                    case 'Rubedo.view.RECField' :
+                        $config = [
+                            'type' => 'object',
+                            'store' => $store,
+                            'properties'=>[ ]
+                        ];
+                        if (isset($field['config']['usedCT'])&&$field['config']['usedCT']!=""){
+                            $subCT=Manager::getService("ContentTypes")->findById($field['config']['usedCT']);
+                            if($subCT){
+                                foreach ($subCT["fields"] as $subfield) {
+                                    $this->addFieldMapping($subfield,$config['properties']);
+                                }
+                            }
+
+                        }
+                        if ($notAnalyzed) {
+                            $config ['index'] = 'not_analyzed';
+                        }
+                        if (!$field ['config'] ['localizable']) {
+                            $mapping ['fields'] ['properties'] [$name] = $config;
+                        } else {
+                            foreach ($this->_activeLanguages as $lang) {
+                                $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+                            }
+                        }
+                        break;
                     case 'urlField' :
                     case 'Rubedo.view.urlField' :
                         $config = [
