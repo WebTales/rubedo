@@ -9,5 +9,13 @@ if [ "${VERSION}" != "**None**" ] && [ "${GITHUB_APIKEY}" != "**None**" ]; then
     cd /var/sources
     php composer.phar config -g github-oauth.github.com "$GITHUB_APIKEY"
     ./rubedo.sh
+    del_folder=($(find public/ -type d -name doc*; find public/ -type d -name test*;find vendor/ -type d -name doc*; find vendor/ -type d -name test*))
+    echo "Find and delete docs and tests folders :"
+    for i in "${del_folder[@]}"
+    do
+        echo "    - Deleting $i"
+        rm -rf $i
+    done
+    echo "Folder cleaned !"
 fi
 exec "$@"
