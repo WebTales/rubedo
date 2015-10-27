@@ -407,8 +407,8 @@ class DataImport extends DataAccess
 					oid = ObjectId();
 	   				var variations = [];
 					var variation = {
-	    				price: parseFloat(v.price.replace(',', '.')),
-	    				stock: parseFloat(v.stock.replace(',', '.')),
+	    				price: parseFloat(value.price.replace(',', '.')),
+	    				stock: parseFloat(value.stock.replace(',', '.')),
 	    				sku: value.sku,
 	    				id: oid.valueOf()
 					};
