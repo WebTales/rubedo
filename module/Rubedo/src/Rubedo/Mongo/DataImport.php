@@ -370,8 +370,8 @@ class DataImport extends DataAccess
 	    		values.forEach(function(v) {
 					oid = ObjectId();
 					var variation = {
-	    				price: v.price,
-	    				stock: v.stock,
+	    				price: parseFloat(v.price.replace(',', '.')),
+	    				stock: parseFloat(v.stock.replace(',', '.')),
 	    				sku: v.sku,
 	    				id: oid.valueOf()
 					};
@@ -407,8 +407,8 @@ class DataImport extends DataAccess
 					oid = ObjectId();
 	   				var variations = [];
 					var variation = {
-	    				price: value.price,
-	    				stock: value.stock,
+	    				price: parseFloat(v.price.replace(',', '.')),
+	    				stock: parseFloat(v.stock.replace(',', '.')),
 	    				sku: value.sku,
 	    				id: oid.valueOf()
 					};
