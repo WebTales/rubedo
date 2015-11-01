@@ -164,8 +164,11 @@ class ProductsResource extends ContentsResource
         $queryReturnedFields = !empty($query["returnedFields"]) && is_array($query["returnedFields"]) ? $query["returnedFields"] : array();
         $fields = array_merge($fields, $queryReturnedFields);
         $urlService = $this->getUrlAPIService();
-        $page = $this->getPagesCollection()->findById($params['pageId']);
-        $site = $this->getSitesCollection()->findById($params['siteId']);
+        if (isset($params['pageId'],$params['siteId'])){
+            $page = $this->getPagesCollection()->findById($params['pageId']);
+            $site = $this->getSitesCollection()->findById($params['siteId']);
+        }
+
         $mask = array('isProduct', 'i18n', 'pageId', 'blockId', 'maskId');
         $userTypeId = "*";
         $country = "*";
@@ -203,8 +206,10 @@ class ProductsResource extends ContentsResource
                 $content["productProperties"]["lowestFinalPrice"]=$lowestFinalPrice;
             }
             $content['fields'] = array_intersect_key($content['fields'], array_flip($fields));
-            $content['detailPageUrl'] = $urlService->displayUrlApi($content, 'default', $site,
-                $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
+            if (isset($params['pageId'],$params['siteId'])) {
+                $content['detailPageUrl'] = $urlService->displayUrlApi($content, 'default', $site,
+                    $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
+            }
             $content = array_diff_key($content, array_flip($mask));
         }
         return $contents;
