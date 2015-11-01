@@ -714,6 +714,27 @@ class ContentsResource extends AbstractResource
             $content['canonicalUrl'] = $this->getUrlAPIService()->displayUrlApi($content, 'canonical', $site,
                 $page, $params['lang']->getLocale(), null);
         }
+        if (isset($params["includeTermLabels"],$content["taxonomy"])&&is_array($content["taxonomy"])){
+            $content["termLabels"]=[];
+            $termCollection=Manager::getService("TaxonomyTerms");
+            foreach($content["taxonomy"] as $taxoId=>$taxoValue){
+                if(is_array($taxoValue)){
+                    foreach($taxoValue as $termId){
+                        if(!empty($termId)&&$termId!=""){
+                            $foundTerm=$termCollection->findById($termId);
+                            if($foundTerm){
+                                $content["termLabels"][$foundTerm["id"]]=$foundTerm["text"];
+                            }
+                        }
+                    }
+                } elseif(!empty($taxoValue)&&$taxoValue!=""){
+                    $foundTerm=$termCollection->findById($taxoValue);
+                    if($foundTerm){
+                        $content["termLabels"][$foundTerm["id"]]=$foundTerm["text"];
+                    }
+                }
+            }
+        }
 
         $content['type'] = array_intersect_key(
             $contentType,
@@ -992,6 +1013,10 @@ class ContentsResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setKey('fingerprint')
                     ->setDescription('Fingerprint')
+            )->addInputFilter(
+                (new FilterDefinitionEntity())
+                    ->setKey('includeTermLabels')
+                    ->setDescription('Include labels for taxonomy terms')
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
