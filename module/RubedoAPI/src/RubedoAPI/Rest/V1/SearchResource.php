@@ -57,14 +57,12 @@ class SearchResource extends AbstractResource
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('siteId')
-                            ->setRequired()
                             ->setDescription('Id of the site')
                             ->setFilter('\\MongoId')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('pageId')
-                            ->setRequired()
                             ->setDescription('Id of the page')
                             ->setFilter('\\MongoId')
                     )
@@ -156,12 +154,6 @@ class SearchResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('siteId')
-                            ->setDescription('Id of the site')
-                            ->setFilter('\\MongoId')
-                    )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
                             ->setKey('profilePageId')
                             ->setDescription('Id of the profile page')
                             ->setFilter('\\MongoId')
@@ -210,7 +202,6 @@ class SearchResource extends AbstractResource
     public function getAction($queryParams)
     {
         $params = $this->initParams($queryParams);
-
         $query = $this->getElasticDataSearchService();
         $query::setIsFrontEnd(true);
         $query->init();
@@ -298,8 +289,11 @@ class SearchResource extends AbstractResource
                 'locale' => $params['lang']->getLocale(),
             ), $urlOptions);
         }
-        $page = $this->getPagesCollection()->findById($params['pageId']);
-        $site = $this->getSitesCollection()->findById($params['siteId']);
+        if (isset($params['pageId'],$params['siteId'])){
+            $page = $this->getPagesCollection()->findById($params['pageId']);
+            $site = $this->getSitesCollection()->findById($params['siteId']);
+        }
+
         foreach ($results['data'] as $key => $value) {
             switch ($value['objectType']) {
                 case 'dam':
@@ -309,8 +303,10 @@ class SearchResource extends AbstractResource
                     }
                     break;
                 case 'content':
-                    $results['data'][$key]['url'] = $this->getUrlAPIService()->displayUrlApi($results['data'][$key], 'default', $site,
-                    $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
+                    if (isset($params['pageId'],$params['siteId'])) {
+                        $results['data'][$key]['url'] = $this->getUrlAPIService()->displayUrlApi($results['data'][$key], 'default', $site,
+                            $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
+                    }
                     if (isset($results['data'][$key]['author'])) {
                         $results['data'][$key]['authorUrl'] = isset($profilePageUrl) ? $profilePageUrl . '?userprofile=' . $results['data'][$key]['id'] : '';
                     }
