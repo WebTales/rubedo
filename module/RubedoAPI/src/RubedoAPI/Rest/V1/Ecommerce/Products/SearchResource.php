@@ -106,10 +106,15 @@ class SearchResource extends GlobalSearch
                 $postalCode = $currentUser['shippingAddress']['postCode'];
             }
         }
-        $page = $this->getPagesCollection()->findById($params['pageId']);
-        $site = $this->getSitesCollection()->findById($params['siteId']);
+        if (isset($params['pageId'],$params['siteId'])){
+            $page = $this->getPagesCollection()->findById($params['pageId']);
+            $site = $this->getSitesCollection()->findById($params['siteId']);
+        }
+
         foreach ($results['data'] as $key => &$value) {
-            $value['url'] = $this->getUrlAPIService()->displayUrlApi($value, 'default', $site, $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
+            if (isset($params['pageId'],$params['siteId'])) {
+                $value['url'] = $this->getUrlAPIService()->displayUrlApi($value, 'default', $site, $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
+            }
             if (isset($value['author'])) {
                 $value['authorUrl'] = isset($profilePageUrl) ? $profilePageUrl . '?userprofile=' . $value['id'] : '';
             }
