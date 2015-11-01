@@ -96,7 +96,9 @@ class ContentsResource extends AbstractResource
             Manager::getService('CurrentTime')->setSimulatedTime($params['simulatedTime']);
         }
         $queryId = &$params['queryId'];
-        $this->getQueriesCollection()->setCurrentPage((string)$params['pageId']);
+        if(isset($params['pageId'])){
+            $this->getQueriesCollection()->setCurrentPage((string)$params['pageId']);
+        }
         $query=$this->getQueriesCollection()->findById($queryId);
         if (!$query) {
             throw new APIEntityException('Query not found', 404);
@@ -440,13 +442,18 @@ class ContentsResource extends AbstractResource
         $queryReturnedFields = !empty($query["returnedFields"]) && is_array($query["returnedFields"]) ? $query["returnedFields"] : array();
         $fields = array_merge($fields, $queryReturnedFields);
         $urlService = $this->getUrlAPIService();
-        $page = $this->getPagesCollection()->findById($params['pageId']);
-        $site = $this->getSitesCollection()->findById($params['siteId']);
+        if (isset($params['pageId'],$params['siteId'])){
+            $page = $this->getPagesCollection()->findById($params['pageId']);
+            $site = $this->getSitesCollection()->findById($params['siteId']);
+        }
+
         $mask = array('isProduct', 'i18n', 'pageId', 'blockId', 'maskId');
         foreach ($contents as &$content) {
             $content['fields'] = array_intersect_key($content['fields'], array_flip($fields));
-            $content['detailPageUrl'] = $urlService->displayUrlApi($content, 'default', $site,
-                $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
+            if (isset($params['pageId'],$params['siteId'])) {
+                $content['detailPageUrl'] = $urlService->displayUrlApi($content, 'default', $site,
+                    $page, $params['lang']->getLocale(), isset($params['detailPageId']) ? (string)$params['detailPageId'] : null);
+            }
             $content = array_diff_key($content, array_flip($mask));
         }
         return $contents;
@@ -801,14 +808,12 @@ class ContentsResource extends AbstractResource
             ->addInputFilter(
                 (new FilterDefinitionEntity())
                     ->setKey('siteId')
-                    ->setRequired()
                     ->setDescription('Id of the site')
                     ->setFilter('\\MongoId')
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
                     ->setKey('pageId')
-                    ->setRequired()
                     ->setDescription('Id of the page')
                     ->setFilter('\\MongoId')
             )
