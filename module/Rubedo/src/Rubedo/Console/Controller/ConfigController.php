@@ -184,8 +184,6 @@ class ConfigController extends AbstractActionController
             throw new \RuntimeException("You can only call this action from the console");
         }
         $wasFiltered = AbstractCollection::disableUserFilter();
-        $hashService = Manager::getService('Hash');
-        $salt=$hashService->generateRandomString();
         $adminGroup = Manager::getService('Groups')->findByName('admin');
         $filters = Filter::factory();
         $filters->addFilter(Filter::factory('Value')->setName('UTType')
@@ -198,11 +196,20 @@ class ConfigController extends AbstractActionController
             "status"=>"approved",
             "taxonomy"=>[],
             "fields"=>[],
-            "salt"=>$salt,
             "defaultGroup"=>$adminGroup["id"],
             "typeId"=>$defaultUserType["id"],
-            "password"=>$hashService->derivatePassword($request->getParam("password"), $salt),
         ];
+        $hashedPassword = $request->getParam("hashedPassword");
+        $salt = $request->getParam("salt");
+        if (isset($hashedPassword) && isset($salt)){
+            $admin["salt"] = $salt;
+            $admin["password"] = $hashedPassword;
+        } else {
+            $hashService = Manager::getService('Hash');
+            $salt=$hashService->generateRandomString();
+            $admin["salt"] = $salt;
+            $admin["password"] = $hashService->derivatePassword($request->getParam("password"), $salt);
+        }
         $userService = Manager::getService('Users');
         $response = $userService->create($admin);
         if ($response['success']){

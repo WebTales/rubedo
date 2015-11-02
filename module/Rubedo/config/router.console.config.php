@@ -100,7 +100,7 @@ return array(
         ),
         'configadmin' => array(
             'options' => array(
-                'route'    => 'config setadmin --name=  --email= --login= --password=',
+                'route'    => 'config setadmin --name=  --email= --login= [--password=] [--salt=] [--hashedPassword=]',
                 'defaults' => array(
                     'controller' => 'Rubedo\Console\Controller\Config',
                     'action'     => 'setadmin'
