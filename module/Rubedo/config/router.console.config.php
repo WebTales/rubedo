@@ -80,6 +80,15 @@ return array(
                 )
             )
         ),
+        'configweb' => array(
+            'options' => array(
+                'route'    => 'config setweb --servers=',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'setweb'
+                )
+            )
+        ),
         'configinitdb' => array(
             'options' => array(
                 'route'    => 'config initdb',

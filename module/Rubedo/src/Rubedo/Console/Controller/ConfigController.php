@@ -145,6 +145,21 @@ class ConfigController extends AbstractActionController
         $this->console->writeLine("Default language set", ColorInterface::GREEN);
         return;
     }
+
+    public function setwebAction()
+    {
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $serversString = $request->getParam("servers");
+        $servers = explode(',', $serversString);
+        $this->config["webCluster"] = $servers;
+        $this->installObject->saveLocalConfig($this->config);
+        $this->console->writeLine("Web Cluster set", ColorInterface::GREEN);
+        return;
+    }
+
     public function initdbAction()
     {
         $request = $this->getRequest();
