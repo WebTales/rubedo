@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Backoffice\Controller;
 
+use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use Rubedo\Services\Cache;
@@ -57,20 +58,52 @@ class CacheController extends AbstractActionController
 
     public function clearAction()
     {
-        $installObject = new Install();
-        $installObject->clearConfigCache();
-        $installObject->clearFileCaches();
-        $countArray = array();
-        $countArray['Cached items'] = Cache::getCache()->clean();
-        if (Manager::getService('UrlCache')->count() > 0) {
-            $countArray['Cached Url'] = Manager::getService('UrlCache')->drop();
-            Manager::getService('UrlCache')->ensureIndexes();
-        } else {
-            $countArray['Cached Url'] = true;
+        $isMultiNode=false;
+        $config=Manager::getService("config");
+        if (isset($config["webCluster"])&&is_array($config["webCluster"])){
+            $isMultiNode=true;
         }
-        Manager::getService('ApiCache')->drop();
-        Manager::getService('ApiCache')->ensureIndexes();
-        return new JsonModel($countArray);
+        $isReplicated=$this->params()->fromPost("isReplicated",null);
+        if ($isMultiNode&&!$isReplicated){
+            $mainRequest=$this->getRequest();
+            $path=$mainRequest->getUri()->getPath();
+            $post=$mainRequest->getPost()->toArray();
+            $post["isReplicated"]=true;
+            $cookie=$mainRequest->getCookie()->__toString();
+            $lastResult=[];
+            $allResults=[];
+            $protocol=isset($_SERVER['HTTPS'])&&$_SERVER['HTTPS'] ? "https://" : "http://";
+            foreach($config["webCluster"] as $clusterHost){
+                $curlUrl = $protocol . $clusterHost . $path;
+                $curly = curl_init();
+                curl_setopt($curly,CURLOPT_URL, $curlUrl);
+                curl_setopt($curly,CURLOPT_POST, true);
+                curl_setopt($curly,CURLOPT_POSTFIELDS, $post);
+                curl_setopt($curly,CURLOPT_COOKIE, $cookie);
+                curl_setopt($curly, CURLOPT_RETURNTRANSFER, true);
+                $result=Json::decode(curl_exec($curly),Json::TYPE_ARRAY);
+                $lastResult=$result;
+                $allResults[]=$result;
+                curl_close($curly);
+            }
+            $lastResult["clusterResults"]=$allResults;
+            return new JsonModel($lastResult);
+        } else {
+            $installObject = new Install();
+            $installObject->clearConfigCache();
+            $installObject->clearFileCaches();
+            $countArray = array();
+            $countArray['Cached items'] = Cache::getCache()->clean();
+            if (Manager::getService('UrlCache')->count() > 0) {
+                $countArray['Cached Url'] = Manager::getService('UrlCache')->drop();
+                Manager::getService('UrlCache')->ensureIndexes();
+            } else {
+                $countArray['Cached Url'] = true;
+            }
+            Manager::getService('ApiCache')->drop();
+            Manager::getService('ApiCache')->ensureIndexes();
+            return new JsonModel($countArray);
+        }
     }
 
     public function clearConfigAction()
