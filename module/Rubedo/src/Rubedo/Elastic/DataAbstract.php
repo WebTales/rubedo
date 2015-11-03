@@ -340,6 +340,7 @@ class DataAbstract
                             'properties'=>[
                                 "url" => ["type" => "string",'store' => $store],
                                 "title" => ["type" => "string",'store' => $store],
+                                "openInNewWindow" => ["type" => "boolean",'store' => $store],
                             ]
                         ];
                         if ($notAnalyzed) {
