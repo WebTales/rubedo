@@ -83,6 +83,10 @@ class ClickStream extends AbstractCollection implements IClickStream
             for (var i in vals) {
                 for (var j in vals[i]){
                     var term=vals[i][j];
+        			if (!projectorArray[term]) {
+        				projectorArray[term]={};
+        				projectorArray[term]['ponderation'] = 1;
+        			}
                     if (vector[term]){
                         vector[term]=vector[term]+projectorArray[term]['ponderation'];
                     } else {
@@ -91,6 +95,10 @@ class ClickStream extends AbstractCollection implements IClickStream
                     var ancestors=projectorArray[term]['ancestors'];
                     for (var s in ancestors){
                         var subTerm=ancestors[s];
+        		        if (!projectorArray[subTerm]) {
+        					projectorArray[subTerm]={};
+        					projectorArray[subTerm]['ponderation'] = 1;
+        				}
                         if (vector[subTerm]){
                             vector[subTerm]=vector[subTerm]+projectorArray[subTerm]['ponderation'];
                         } else {
