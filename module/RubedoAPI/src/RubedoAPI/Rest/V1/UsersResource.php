@@ -261,6 +261,9 @@ class UsersResource extends AbstractResource
             }
         }
         if ($userType['signUpType'] == "emailConfirmation") {
+            if (!isset($params['currentUrl'])){
+                throw new APIEntityException('Missing required param : currentUrl');
+            }
             $emailVars = array();
             $emailVars["name"] = $user["name"];
             $emailVars["confirmUrl"] = $params['currentUrl']
@@ -354,7 +357,6 @@ class UsersResource extends AbstractResource
                     ->setDescription('Current URL')
                     ->setKey('currentUrl')
                     ->setFilter('validate_url')
-                    ->setRequired()
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
