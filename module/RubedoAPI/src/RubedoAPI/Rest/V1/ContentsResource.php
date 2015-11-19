@@ -957,6 +957,10 @@ class ContentsResource extends AbstractResource
                     ->setDescription('The content to post')
                     ->setKey('content')
                     ->setMultivalued()
+            )->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Content creation result')
+                    ->setKey('data')
             )
             ->identityRequired();
     }
