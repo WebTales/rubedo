@@ -754,25 +754,20 @@ class ContentsResource extends AbstractResource
             )
         );
 
-        //remove inactive layouts
-
+        //Filter layouts
+        $layouts = [];
         if (isset($content['type']['layouts'])&&is_array($content['type']['layouts'])) {
             foreach ($content['type']['layouts'] as $key => $value) {
-                if (!$value['active']) {
-                    unset ($content['type']['layouts'][$key]);
+                if (isset($params['siteId'])) {
+                    if($value['site'] == $params['siteId'] && $value['active']) {
+                        $layouts[] = $content['type']['layouts'][$key];
+                    }
+                } elseif($value['active']) {
+                    $layouts[] = $content['type']['layouts'][$key];
                 }
             }
         }
-
-        //if site is set filter layouts
-
-        if (isset($content['type']['layouts']) &&is_array($content['type']['layouts']) && isset($params['siteId'])) {
-            foreach ($content['type']['layouts'] as $key => $value) {
-                if ($value['site'] != $params['siteId']) {
-                    unset ($content['type']['layouts'][$key]);
-                }
-            }
-        }
+        $content['type']['layouts'] = $layouts;
 
         return [
             'success' => true,
