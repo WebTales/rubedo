@@ -169,13 +169,14 @@ class DataSearch extends DataAbstract
     			'aggregation' => [
     				'terms' => [
     					'field' => 	$fieldName,
-    					'exclude' => $exclude,
     					'size' => $size,
     					'order' => [$orderField => $orderDirection]
     				]
     			]
     		]
     	];
+    	
+    	if ($exclude!=['']) $result['aggs']['aggregation']['terms']['exclude'] = $exclude;
     	
     	return $result;
     }
@@ -741,7 +742,11 @@ class DataSearch extends DataAbstract
             if ($field ['useAsVariation']) {
                 $fieldName = 'productProperties.variations.' . $field ['name'];
             } else {
-				$fieldName = 'i18n.'.$currentLocale.'.fields.'.$field ['name'];
+            	if ($field['localizable']) {
+					$fieldName = 'i18n.'.$currentLocale.'.fields.'.$field ['name'];
+            	} else {
+            		$fieldName = 'fields.'.$field ['name'];
+            	}
             }
 
             if (array_key_exists(urlencode($field ['name']), $this->_params)) {
@@ -914,9 +919,8 @@ class DataSearch extends DataAbstract
             if ($field ['useAsVariation']) {
                 $fieldName = 'productProperties.variations.' . $field ['name'];
             } else {
-
                 if (!$field ['localizable']) {
-                    $fieldName = $field ['name'];
+                    $fieldName = 'fields.'.$field ['name'];
                 } else {
                     $fieldName = 'i18n.'.$currentLocale.'.fields.'.$field ['name'];
                 }
@@ -925,7 +929,7 @@ class DataSearch extends DataAbstract
             if ($this->_isFacetDisplayed($field ['name'])) {
 
             	$searchParams['body']['aggs'][$field ['name']] = $this->_addTermsFacet($field ['name'],$fieldName,'_count','desc');
-            	
+
              }
         }
 		
@@ -1046,6 +1050,7 @@ class DataSearch extends DataAbstract
 
         // Update data        
         $resultsList = $elasticResultSet['hits']['hits'];
+
         $result ['total'] = $elasticResultSet['hits']['total'];
         $result ['query'] = $this->_params ['query'];
         $userWriteWorkspaces = $this->_getService('CurrentUser')->getWriteWorkspaces();
@@ -1764,4 +1769,3 @@ class DataSearch extends DataAbstract
     }
 
 }
-

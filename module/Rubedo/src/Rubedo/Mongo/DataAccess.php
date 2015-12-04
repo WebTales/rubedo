@@ -512,10 +512,9 @@ class DataAccess implements IDataAccess
             		$adapter = new \MongoClient($mongo);
             	} else {
                     if (!self::$_readPreference) {
-                        $mongo .= "?readPreference=nearest";
-                    } else {
-                        $mongo .= self::$_readPreference;
+                    	self::$_readPreference = "nearest";
                     }
+					$mongo .= "?readPreference=".self::$_readPreference;
             		$adapter = new \MongoClient($mongo,array('replicaSet' => self::$_replicaSetName));
             	}
             } catch (\Exception $e) {
