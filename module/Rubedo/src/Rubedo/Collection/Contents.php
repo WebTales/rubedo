@@ -431,9 +431,11 @@ class Contents extends WorkflowAbstractCollection implements IContents
             $fieldsArray[$value['config']['name']] = $value;
             if (!isset($value['config']['allowBlank']) || !$value['config']['allowBlank']) {
                 $result = false;
+                $field = $value['config']['name'];
                 if ($value['config']['name'] == "text" || $value['config']['name'] == "summary") {
-                    $field = $value['config']['name'];
                     $result = $this->_controlAllowBlank($tempFields[$field], false);
+                } else {
+                    $result = $this->_controlAllowBlank($obj["fields"][$field], false) || $this->_controlAllowBlank($obj['i18n'][$obj['nativeLanguage']]['fields'][$field], false);
                 }
                 if (isset($value['config']['useAsVariation'])&&$value['config']['useAsVariation']){
                     $result=true;
