@@ -189,4 +189,8 @@ return array(
     		'maxlifeTime' => 60,
     		'definitionFile' => $blocksPath . '/megaMenu.json'
     ),
+    'rssFeed' => array(
+    		'maxlifeTime' => 60,
+    		'definitionFile' => $blocksPath . '/rssFeed.json'
+    ),
 );

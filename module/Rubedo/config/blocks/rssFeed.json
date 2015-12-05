@@ -1,0 +1,80 @@
+{
+    "type": "RSS Feed",
+    "description": "RSS Feed",
+    "configBasique": {
+        "title": "RSS Feed",
+        "bType": "rssFeed",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
+                {
+                    "categorie": "Data",
+                    "champs": [
+
+                        {
+                            "type": "Ext.form.field.Text",
+                            "config": {
+                                "fieldLabel": "URL",
+                                "name": "feedUrl",
+                                "allowBlank": false
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1406#",
+                                "name": "showOnlyTitle",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "Items",
+                                "name": "items",
+                                "allowDecimals": false,
+                                "minValue": 1
+                            }
+                        }
+                    ]
+                }
+
+
+            ],
+            "avance": [
+                {
+                    "categorie": "#ext-gen1472#",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1452#",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/rssFeed.html",
+                                "twigMode": false
+
+                            }
+                        },
+                      {
+                        "type": "Ext.form.field.Number",
+                        "config": {
+                          "fieldLabel": "#ext-gen1491#",
+                          "name": "blockMinHeight",
+                          "allowDecimals": false,
+                          "editable": true,
+                          "minValue": 0
+                        }
+                      }
+                    ]
+                }
+            ]
+        },
+        "configBloc": {
+            "items": 6,
+            "showOnlyTitle": false
+        }
+    },
+    "category": "#ext-gen1068#",
+    "bType": "rssFeed",
+    "id": "566305c040d0d5e813000029"
+}
