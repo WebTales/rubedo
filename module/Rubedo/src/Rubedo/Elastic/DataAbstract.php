@@ -612,6 +612,13 @@ class DataAbstract
             }
         }
 
+        // Get total items to be indexed
+        $dataService = $this->_getService($serviceData);
+        
+        $filter = Filter::factory('Value')->setName('typeId')->SetValue($id);
+        
+        $totalToBeIndexed = $dataService->count($filter);
+        
         if (!$useQueue) {
             do {
 
@@ -619,15 +626,8 @@ class DataAbstract
                         $bulkSize);
 
                 $itemCount += $nbIndexedItems;
-            } while ($nbIndexedItems == $bulkSize);
+            } while ($itemCount<$totalToBeIndexed);
         } else {
-
-            // Get total items to be indexed
-            $dataService = $this->_getService($serviceData);
-
-            $filter = Filter::factory('Value')->setName('typeId')->SetValue($id);
-
-            $totalToBeIndexed = $dataService->count($filter);
 
             $start = 0;
 
