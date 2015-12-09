@@ -51,7 +51,8 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         'online',
         'text',
         'isProduct',
-        'productProperties'
+        'productProperties',
+   		'orderByUserGroup'
     );
 
     /**

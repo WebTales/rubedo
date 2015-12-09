@@ -136,7 +136,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         'blockId',
         'taxonomy',
         'isProduct',
-        'productProperties'
+        'productProperties',
+    	'orderByUserGroup'
     );
 
     protected static $localizableFiledForCType = array();
