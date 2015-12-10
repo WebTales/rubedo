@@ -104,7 +104,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
             'keys' => array(
                 'isProduct' => 1
             )
-        )
+        ),
+		array(
+    		'keys' => array(
+    			'orderbyUserGroup' => 1
+    		)
+    	)
     );
 
     /**
@@ -136,7 +141,8 @@ class Contents extends WorkflowAbstractCollection implements IContents
         'blockId',
         'taxonomy',
         'isProduct',
-        'productProperties'
+        'productProperties',
+    	'orderByUserGroup'
     );
 
     protected static $localizableFiledForCType = array();
