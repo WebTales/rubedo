@@ -30,7 +30,7 @@
                         {
                             "type": "Ext.form.field.Number",
                             "config": {
-                                "fieldLabel": "Items",
+                                "fieldLabel": "Number of displayed results",
                                 "name": "items",
                                 "allowDecimals": false,
                                 "minValue": 1
