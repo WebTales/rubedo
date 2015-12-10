@@ -43,6 +43,26 @@ class UserTypes extends AbstractCollection implements IUserTypes
         return $this->localizeUserTypeFields($userType);
     }
 
+    public function update(array $obj, $options = array())
+    {
+        if ($obj["fields"]){
+            foreach($obj["fields"] as &$utField){
+                $utField["config"]["localizable"]=false;
+            }
+        }
+        return parent::update($obj,$options);
+    }
+
+    public function create(array $obj, $options = array())
+    {
+        if ($obj["fields"]){
+            foreach($obj["fields"] as &$utField){
+                $utField["config"]["localizable"]=false;
+            }
+        }
+        return parent::create($obj,$options);
+    }
+
     public function destroy(array $obj, $options = array())
     {
         if ((isset($obj["UTType"])) && (($obj["UTType"] == "default") || ($obj["UTType"] == "email"))) {
