@@ -104,7 +104,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
             'keys' => array(
                 'isProduct' => 1
             )
-        )
+        ),
+		array(
+    		'keys' => array(
+    			'orderbyUserGroup' => 1
+    		)
+    	)
     );
 
     /**

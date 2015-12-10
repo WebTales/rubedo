@@ -155,7 +155,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
                     ));
                     continue;
                 }
-                if (in_array($key, $this->_metaDataFields)) {
+                if (in_array(explode(".",$key)[0], $this->_metaDataFields)) {
                     $this->addSort(array(
                         $key => $value
                     ));

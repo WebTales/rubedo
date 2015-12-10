@@ -115,109 +115,41 @@ abstract class AbstractCollection implements IAbstractCollection
     public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = 0, $limit = null, $ismagic = null)
     {
 
-        // Add sort
-        if (isset($sort)) {
-            foreach ($sort as $value) {
-                $this->_dataService->addSort(array(
-                    $value["property"] => strtolower($value["direction"])
-                ));
-            }
-        }
+    	// Add start
+    	if (isset($start)) {
+    		$this->_dataService->setFirstResult($start);
+    	}
+    	
+    	// Add limit
+    	if (isset($limit)) {
+    		$this->_dataService->setNumberOfResults($limit);
+    	}
+    	$dataValues = $this->_dataService->read($filters);
 
-        // try to insert magic
-        $recNumber = 0;
-
-        if (!$ismagic) {
-
-            if (isset($start)) {
-                $this->_dataService->setFirstResult($start);
-            }
-            if (isset($limit)) {
-                $this->_dataService->setNumberOfResults($limit);
-            }
-            $dataValues = $this->_dataService->read($filters);
-
-        } else {
-            // Get all user recommendations sorted by score desc
-            $recList = Manager::getService('UserRecommendations')->read();
-
-            // If recommendations exists
-            if ($recList['total'] > 0) {
-
-                // recovers the list of recommended contents id
-                foreach ($recList['data'] as $value) {
-                    $this->_recList[] = $value['id'];
-                    $this->_sortedRecList[$value['id']] = $value['score'];
-                }
-
-                // Add InUid filter to initial query to check if recommended contents are returned by original query
-                $filter = Filter::Factory('InUid')->setValue($this->_recList);
-                $inUidfilters = clone $filters;
-                $inUidfilters->addFilter($filter);
-
-                // Get unsorted recommended items
-                $recValues = $this->_dataService->read($inUidfilters);
-
-                // Sort recommended items by score
-                usort($recValues['data'], function ($c1, $c2) {
-                    $key1 = $this->_sortedRecList[$c1['id']];
-                    $key2 = $this->_sortedRecList[$c2['id']];
-
-                    return ($key1 > $key2) ? 1 : -1;
-
-                });
-
-                // if there is some recommended items
-                $recNumber = $recValues['count'];
-
-                if ($recNumber > 0) {
-
-                    // Prepare filter for removing recommended Items from original query
-                    $ninFilter = Filter::Factory('NotInUid', array('value' => $this->_recList));
-                    $filters->addFilter($ninFilter);
-
-                    if ($start < $recNumber) { // recommendations are displayed
-
-                        if (($start + $limit) <= $recNumber) { // only recommendations
-
-                            $unRecResults = $this->_dataService->read($filters);
-                            $dataValues['data'] = array_slice($recValues['data'], $start, $limit);
-                            $dataValues['count'] = $recNumber + $unRecResults['count'];
-
-                        } else { // merge recommendations and original results
-
-                            $this->_dataService->setFirstResult(0);
-                            $this->_dataService->setNumberOfResults($start + $limit - $recNumber);
-                            $unRecResults = $this->_dataService->read($filters);
-
-                            $dataValues['data'] = array_merge(array_slice($recValues['data'], $start), $unRecResults['data']);
-                            $dataValues['count'] = $recNumber + $unRecResults['count'];
-
-                        }
-
-                    } else { // only original results
-
-                        $this->_dataService->setFirstResult($start - $recNumber);
-                        $this->_dataService->setNumberOfResults($limit);
-                        $unRecResults = $this->_dataService->read($filters);
-                        $dataValues = $unRecResults;
-                        $dataValues['count'] = $recNumber + $unRecResults['count'];
-
-                    }
-
-                } else { // No recommendations for this query
-
-                    $this->_dataService->setNumberOfResults($limit);
-                    $this->_dataService->setFirstResult($start);
-                    $dataValues = $this->_dataService->read($filters);
-
-                }
-            } else {
-                $this->_dataService->setNumberOfResults($limit);
-                $this->_dataService->setFirstResult($start);
-                $dataValues = $this->_dataService->read($filters);
-            }
-        }
+        // Add magic sort
+    	if ($ismagic) {
+    		// Try to set order on user group
+    		$fingerprint = Manager::getService("Session")->get("fingerprint");
+    		$filter=Filter::factory();
+    		$filter->addFilter(Filter::factory("Value")->setName("fingerprint")->setValue($fingerprint));
+    		$fingerprintData = Manager::getService("FingerprintData")->findOne($filter);
+    		if (isset($fingerprintData["userGroup"])) {
+	    		$this->_dataService->addSort(array(
+					"orderByUserGroup.".$fingerprintData["userGroup"] => 'desc'
+	    		));
+    		}   		
+    	}
+    	
+    	// Add standard sort
+    	if (isset($sort)) {
+    		foreach ($sort as $value) {
+    			$this->_dataService->addSort(array(
+					$value["property"] => strtolower($value["direction"])
+    			));
+    		}
+    	}
+    	
+    	$dataValues = $this->_dataService->read($filters);
 
         if ($dataValues && is_array($dataValues)) {
             foreach ($dataValues['data'] as &$obj) {
@@ -228,6 +160,7 @@ abstract class AbstractCollection implements IAbstractCollection
         }
 
         return $dataValues;
+        
     }
 
     /**
