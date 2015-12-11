@@ -1,14 +1,14 @@
 {
-    "type": "RSS Feed",
-    "description": "RSS Feed",
+    "type": "#ext-gen1495#",
+    "description": "#ext-gen1495#",
     "configBasique": {
-        "title": "RSS Feed",
+        "title": "#ext-gen1495#",
         "bType": "rssFeed",
         "flex": 1,
         "champsConfig": {
             "simple": [
                 {
-                    "categorie": "Data",
+                    "categorie": "#ext-gen1494#",
                     "champs": [
 
                         {
@@ -30,7 +30,7 @@
                         {
                             "type": "Ext.form.field.Number",
                             "config": {
-                                "fieldLabel": "Number of displayed results",
+                                "fieldLabel": "#ext-gen1095#",
                                 "name": "items",
                                 "allowDecimals": false,
                                 "minValue": 1
