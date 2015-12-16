@@ -63,8 +63,26 @@ class RssResource extends AbstractResource
         $site=Manager::getService("Sites")->findById($rssFeedConfig["siteId"]);
         $resourceObject = new ContentsResource();
         $apiResponse=$resourceObject->handler("get", $rssFeedConfig);
-        Debug::dump($apiResponse);
-        die("test");
+        $feed = new \Zend\Feed\Writer\Feed;
+        $feed->setTitle($rssFeedConfig["title"]);
+        $feed->setDescription($rssFeedConfig["description"]);
+        $feed->setLink("http://".$site["text"]);
+        $feed->setFeedLink("http://".$site["text"]."/api/v1/rss/".$rssFeedConfig["id"],"rss");
+        foreach($apiResponse["contents"] as $content){
+            $entry = $feed->createEntry();
+            $entry->setTitle($content["fields"]["text"]);
+            if(isset($content["fields"]["summary"])&&$content["fields"]["summary"]!=""){
+                $entry->setDescription($content["fields"]["summary"]);
+            }
+            $contentUrl=$this->getUrlAPIService()->displayUrlApi($content, 'canonical', $site,$site["homePage"], $rssFeedConfig["feedLang"], null);
+            $entry->setLink("http://".$site["text"].$contentUrl);
+            $entry->setDateModified($content["createTime"]);
+            $entry->setDateCreated($content["lastUpdateTime"]);
+            $feed->addEntry($entry);
+        }
+        $out = $feed->export('rss');
+        echo($out);
+        die();
     }
 
 
