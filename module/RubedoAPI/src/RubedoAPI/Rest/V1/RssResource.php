@@ -82,7 +82,7 @@ class RssResource extends AbstractResource
         }
         $out = $feed->export('rss');
         echo($out);
-        die();
+        exit();
     }
 
 
