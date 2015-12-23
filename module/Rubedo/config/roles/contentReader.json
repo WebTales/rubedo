@@ -15,7 +15,7 @@
         "execute.controller.damtypes.index.backoffice",
         "execute.controller.elasticsearchcontent.index.backoffice",
         "execute.controller.elasticsearchproduct.index.backoffice",
-        "execute.controller.elacticsearchgeo.index.backoffice",
+        "execute.controller.elasticsearchgeo.index.backoffice",
         "execute.controller.dam.index.backoffice"
     ]
 }
