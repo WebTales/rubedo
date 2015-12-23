@@ -670,7 +670,7 @@ class Url implements IUrl
             'name' => 'mediaFromDam'
         );
         $params = array(
-            'version' => $meta['version'],
+            'version' => !empty($meta['version']) ? $meta['version'] : 1,
             'download' => $forceDownload ? 'download' : 'inline',
             'mediaId' => $mediaId,
             'filename' => $meta['filename']
