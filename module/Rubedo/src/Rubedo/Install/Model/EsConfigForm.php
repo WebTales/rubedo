@@ -40,14 +40,10 @@ class EsConfigForm extends BootstrapForm
     {
         $serverNameField = (new Text('host'))
             ->setAttribute('Required', true)
-            ->setValue(isset($params['host']) ? $params['host'] : 'localhost')
-            ->setLabel('Server Name')
-            ->setAttribute('class', 'form-control');
-
-        $serverPortField = (new Number('port'))
-            ->setValue(isset($params['port']) ? $params['port'] : 9200)
-            ->setLabel('Server Port')
-            ->setAttribute('class', 'form-control');
+            ->setValue(isset($params['host']) ? $params['host'] : '')
+            ->setLabel('Host(s)')
+            ->setAttribute('class', 'form-control')
+            ->setAttribute('placeholder', 'host1, host2:9200');
 
         $contentIndexField = (new Text('contentIndex'))
             ->setAttribute('Required', true)
@@ -69,7 +65,6 @@ class EsConfigForm extends BootstrapForm
 
         $dbForm = new Form();
         $dbForm->add($serverNameField);
-        $dbForm->add($serverPortField);
         $dbForm->add($contentIndexField);
         $dbForm->add($damIndexField);
         $dbForm->add($userIndexField);
