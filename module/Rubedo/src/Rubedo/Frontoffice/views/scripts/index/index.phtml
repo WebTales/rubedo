@@ -203,6 +203,13 @@
     <!--base href for angular routing-->
     <base href="/">
 
+    <!-- Disable addThis Share thrackers in URL -->
+    ​<script type="text/javascript">
+        var addthis_config = addthis_config||{};
+        addthis_config.data_track_addressbar = false;
+        addthis_config.data_track_clickback = false;
+    </script>
+
     <!-- Script for google analytics -->
     <?php if ($this->googleAnalyticsKey): ?>
         <script type="text/javascript">
