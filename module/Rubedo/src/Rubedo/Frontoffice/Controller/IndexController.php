@@ -206,6 +206,10 @@ class IndexController extends AbstractActionController
         /** @var \Rubedo\Collection\Themes $themesService */
         $themesService = Manager::getService('Themes');
         $themeObj = $themesService->findByName($theme);
+
+        $cssFilesArray = [];
+        $scriptFilesArray = [];
+
         if ($themeObj&&!$minifyResources) {
             /** @var \Rubedo\Collection\DAM $DAMService */
             $DAMService = Manager::getService('DAM');
@@ -233,9 +237,9 @@ class IndexController extends AbstractActionController
                     . '/' . $fileToLoad['title'];
                 $extension = substr(strrchr($themeFile, '.'), 1);
                 if ($extension == 'css') {
-                    $siteResources['internalStyles'][] = $themeFile;
+                    $cssFilesArray[] = $themeFile;
                 } elseif ($extension == 'js') {
-                    $siteResources['internalScripts'][] = $themeFile;
+                    $scriptFilesArray[] = $themeFile;
                 }
             }
         }
@@ -252,12 +256,12 @@ class IndexController extends AbstractActionController
             $propagatedSiteTheme = $themeName;
             if (isset($theme['css'])&&!$minifyResources) {
                 foreach ($theme['css'] as $css) {
-                    $siteResources['internalStyles'][] = strpos($css, '//') === false ? $prepend . $css : $css;
+                    $cssFilesArray[] = strpos($css, '//') === false ? $prepend . $css : $css;
                 }
             }
             if (isset($theme['js'])&&!$minifyResources) {
                 foreach ($theme['js'] as $js) {
-                    $siteResources['internalScripts'][] = strpos($js, '//') === false ? $prepend . $js : $js;
+                    $scriptFilesArray[] = strpos($js, '//') === false ? $prepend . $js : $js;
                 }
             }
             if (isset($theme['angularModules'])) {
@@ -283,12 +287,12 @@ class IndexController extends AbstractActionController
                 $extensionPath = '/extension-path/' . $extensionName . '/';
                 if (isset ($extension['css'])) {
                     foreach ($extension['css'] as $extensionCss) {
-                        $siteResources['internalStyles'][] = strpos($extensionCss, '//') === false ? $extensionPath . $extensionCss : $extensionCss;
+                        $cssFilesArray[] = strpos($extensionCss, '//') === false ? $extensionPath . $extensionCss : $extensionCss;
                     }
                 }
                 if (isset ($extension['js'])) {
                     foreach ($extension['js'] as $extensionJs) {
-                        $siteResources['internalScripts'][] = strpos($extensionJs, '//') === false ? $extensionPath . $extensionJs : $extensionJs;
+                        $scriptFilesArray[] = strpos($extensionJs, '//') === false ? $extensionPath . $extensionJs : $extensionJs;
                     }
                 }
                 if (isset ($extension['angularModules'])) {
@@ -305,6 +309,9 @@ class IndexController extends AbstractActionController
                 }
             }
         }
+
+        $siteResources['internalStyles'] = array_merge($cssFilesArray, $siteResources['internalStyles']);
+        $siteResources['internalScripts'] = array_merge($scriptFilesArray, $siteResources['internalScripts']);
 
         $googleAnalyticsKey = isset($this->_site['googleAnalyticsKey']) ? $this->_site['googleAnalyticsKey'] : false;
 
