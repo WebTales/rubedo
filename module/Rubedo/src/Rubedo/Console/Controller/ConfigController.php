@@ -347,6 +347,40 @@ class ConfigController extends AbstractActionController
         return;
     }
 
+    public function getdbAction(){
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $encoded =Json::encode($this->config["datastream"]["mongo"]);
+        $encoded=str_replace('"','\'',$encoded);
+        $this->console->writeLine($encoded);
+    }
+
+    public function getesAction(){
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $encoded =Json::encode($this->config["elastic"]);
+        $encoded=str_replace('"','\'',$encoded);
+        $this->console->writeLine($encoded);
+    }
+
+    public function getwebAction(){
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        if(isset($this->config["webCluster"])){
+            $encoded =Json::encode($this->config["webCluster"]);
+            $encoded=str_replace('"','\'',$encoded);
+            $this->console->writeLine($encoded);
+        } else {
+            $this->console->writeLine("Null");
+        }
+    }
+
     public function setfullAction(){
         $request = $this->getRequest();
         if(!$this->getRequest() instanceof ConsoleRequest) {

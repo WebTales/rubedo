@@ -94,6 +94,9 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             'config createsite --domain= --lang= [--theme=]'=>"Create website",
             'config getfull'=>"Get full config as JSON",
             'config setfull --conf='=>"Set full config from JSON",
+            'config getdb'=>"get the mongo conf",
+            'config getes'=>"get the elasticsearch conf",
+            'config getweb'=>"get the web cluster conf",
         ];
     }
 

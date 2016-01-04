@@ -151,6 +151,33 @@ return array(
                     'action'     => 'setfull'
                 )
             )
-        )
+        ),
+        'configgetdb' => array(
+            'options' => array(
+                'route'    => 'config getdb',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'getdb'
+                )
+            )
+        ),
+        'configgetes' => array(
+            'options' => array(
+                'route'    => 'config getes',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'getes'
+                )
+            )
+        ),
+        'configgetweb' => array(
+            'options' => array(
+                'route'    => 'config getweb',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'getweb'
+                )
+            )
+        ),
     )
 );
