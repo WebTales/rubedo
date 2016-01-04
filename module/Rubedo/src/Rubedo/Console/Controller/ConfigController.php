@@ -353,7 +353,6 @@ class ConfigController extends AbstractActionController
             throw new \RuntimeException("You can only call this action from the console");
         }
         $encoded =Json::encode($this->config["datastream"]["mongo"]);
-        $encoded=str_replace('"','\'',$encoded);
         $this->console->writeLine($encoded);
     }
 
@@ -363,7 +362,6 @@ class ConfigController extends AbstractActionController
             throw new \RuntimeException("You can only call this action from the console");
         }
         $encoded =Json::encode($this->config["elastic"]);
-        $encoded=str_replace('"','\'',$encoded);
         $this->console->writeLine($encoded);
     }
 
@@ -374,7 +372,6 @@ class ConfigController extends AbstractActionController
         }
         if(isset($this->config["webCluster"])){
             $encoded =Json::encode($this->config["webCluster"]);
-            $encoded=str_replace('"','\'',$encoded);
             $this->console->writeLine($encoded);
         } else {
             $this->console->writeLine("Null");
