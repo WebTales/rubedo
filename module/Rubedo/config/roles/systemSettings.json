@@ -1,0 +1,14 @@
+{
+    "id": "systemSettings",
+    "label": {
+        "fr": "Paramétrage système",
+        "en": "System settings"
+    },
+    "rights": [
+        "exe.ui.systemSettings",
+        "execute.controller.config.index.backoffice",
+        "execute.controller.config.update.backoffice"
+    ],
+    "includes": [
+    ]
+}
