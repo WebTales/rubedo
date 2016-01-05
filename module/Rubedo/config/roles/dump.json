@@ -1,0 +1,13 @@
+{
+    "id": "dump",
+    "label": {
+        "fr": "MongoDB Dump",
+        "en": "MongoDB Dump"
+    },
+    "rights": [
+        "exe.ui.dump",
+        "execute.controller.dump.index.backoffice"
+    ],
+    "includes": [
+    ]
+}

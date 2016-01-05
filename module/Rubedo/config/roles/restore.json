@@ -1,0 +1,13 @@
+{
+    "id": "restore",
+    "label": {
+        "fr": "MongoDB Restore",
+        "en": "MongoDB Restore"
+    },
+    "rights": [
+        "exe.ui.restore",
+        "execute.controller.restore.index.backoffice"
+    ],
+    "includes": [
+    ]
+}
