@@ -460,7 +460,7 @@ class ConfigController extends AbstractActionController
         $this->config["rubedo_config"]["enableEmailNotification"] = $params["enableEmailNotification"]?"1":"0";
         $this->config["rubedo_config"]["fromEmailNotification"] = $params["fromEmailNotification"]?$params["fromEmailNotification"]:"";
         $this->installObject->saveLocalConfig($this->config);
-        $this->console->writeLine("Mail set", ColorInterface::GREEN);
+        $this->console->writeLine("rubedo_config set", ColorInterface::GREEN);
         return;
     }
 
