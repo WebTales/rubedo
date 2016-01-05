@@ -97,6 +97,10 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             'config getdb'=>"get the mongo conf",
             'config getes'=>"get the elasticsearch conf",
             'config getweb'=>"get the web cluster conf",
+            'config getmail'=>"get mail conf",
+            'config setmail --server= --port= [--ssl] --username= --password='=>"Configure the mailer",
+            'config getrubedoconfig'=>"get rubedo_config",
+            'config setrubedoconfig [--minify] [--cachePage] [--apiCache] [--useCdn] [--extDebug] [--addECommerce] [--activateMagic] [--defaultBackofficeHost=] [--isBackofficeSSL] [--enableEmailNotification] [--fromEmailNotification=]'=>"Configure rubedo_config",
         ];
     }
 

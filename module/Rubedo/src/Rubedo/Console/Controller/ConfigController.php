@@ -392,5 +392,76 @@ class ConfigController extends AbstractActionController
         return;
     }
 
+    public function getmailAction(){
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        if(isset($this->config["swiftmail"]["smtp"])){
+            $encoded =Json::encode($this->config["swiftmail"]["smtp"]);
+            $this->console->writeLine($encoded);
+        } else {
+            $this->console->writeLine("Null");
+        }
+        return;
+    }
+
+    public function setmailAction(){
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $params = $request->getParams();
+        if (!isset($this->config["swiftmail"])){
+            $this->config["swiftmail"]=["smtp"=>[]];
+        }
+        if (!isset($this->config["swiftmail"]["smtp"])){
+            $this->config["swiftmail"]["smtp"] = [];
+        }
+        $this->config["swiftmail"]["smtp"]["server"] = $params["server"];
+        $this->config["swiftmail"]["smtp"]["port"] = $params["port"];
+        $this->config["swiftmail"]["smtp"]["username"] = $params["username"];
+        $this->config["swiftmail"]["smtp"]["password"] = $params["password"];
+        $this->config["swiftmail"]["smtp"]["ssl"] = $params["ssl"]?"1":"0";
+        $this->installObject->saveLocalConfig($this->config);
+        $this->console->writeLine("Mail set", ColorInterface::GREEN);
+        return;
+    }
+
+    public function getrubedoconfigAction(){
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        if(isset($this->config["rubedo_config"])){
+            $encoded =Json::encode($this->config["rubedo_config"]);
+            $this->console->writeLine($encoded);
+        } else {
+            $this->console->writeLine("Null");
+        }
+        return;
+    }
+
+    public function setrubedoconfigAction(){
+        $request = $this->getRequest();
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $params = $request->getParams();
+        if (!isset($this->config["rubedo_config"])){
+            $this->config["rubedo_config"]=[];
+        }
+        $this->config["rubedo_config"]["minify"] = $params["minify"]?"1":"0";
+        $this->config["rubedo_config"]["cachePage"] = $params["cachePage"]?"1":"0";
+        $this->config["rubedo_config"]["apiCache"] = $params["apiCache"]?"1":"0";
+        $this->config["rubedo_config"]["useCdn"] = $params["useCdn"]?"1":"0";
+        $this->config["rubedo_config"]["extDebug"] = $params["extDebug"]?"1":"0";
+        $this->config["rubedo_config"]["activateMagic"] = $params["activateMagic"]?"1":"0";
+        $this->config["rubedo_config"]["defaultBackofficeHost"] = $params["defaultBackofficeHost"]?$params["defaultBackofficeHost"]:"";
+        $this->config["rubedo_config"]["isBackofficeSSL"] = $params["isBackofficeSSL"]?"1":"0";
+        $this->config["rubedo_config"]["enableEmailNotification"] = $params["enableEmailNotification"]?"1":"0";
+        $this->config["rubedo_config"]["fromEmailNotification"] = $params["fromEmailNotification"]?$params["fromEmailNotification"]:"";
+        $this->installObject->saveLocalConfig($this->config);
+        $this->console->writeLine("Mail set", ColorInterface::GREEN);
+        return;
+    }
 
 }

@@ -179,5 +179,41 @@ return array(
                 )
             )
         ),
+        'configgetmail' => array(
+            'options' => array(
+                'route'    => 'config getmail',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'getmail'
+                )
+            )
+        ),
+        'configsetmail' => array(
+            'options' => array(
+                'route'    => 'config setmail --server= --port= [--ssl] --username= --password=',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'setmail'
+                )
+            )
+        ),
+        'configgetrubedoconfig' => array(
+            'options' => array(
+                'route'    => 'config getrubedoconfig',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'getrubedoconfig'
+                )
+            )
+        ),
+        'configsetrubedoconfig' => array(
+            'options' => array(
+                'route'    => 'config setrubedoconfig [--minify] [--cachePage] [--apiCache] [--useCdn] [--extDebug] [--addECommerce] [--activateMagic] [--defaultBackofficeHost=] [--isBackofficeSSL] [--enableEmailNotification] [--fromEmailNotification=]',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'setrubedoconfig'
+                )
+            )
+        ),
     )
 );
