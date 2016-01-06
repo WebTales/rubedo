@@ -124,7 +124,6 @@ abstract class AbstractCollection implements IAbstractCollection
     	if (isset($limit)) {
     		$this->_dataService->setNumberOfResults($limit);
     	}
-    	$dataValues = $this->_dataService->read($filters);
 
         // Add magic sort
     	if ($ismagic) {
