@@ -27,6 +27,15 @@
                             }
                         },
                         {
+                            "type": "Rubedo.view.DCEField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1256#",
+                                "name": "introNewsletters",
+                                "allowedCT": "richText",
+                                "addOnly": true
+                            }
+                        },
+                        {
                             "type": "Ext.form.field.Checkbox",
                             "config": {
                                 "fieldLabel": "#ext-gen1414#",
