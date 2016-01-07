@@ -90,4 +90,5 @@ return array(
     'Rubedo\\Backoffice\\Controller\\Restore' => 'Rubedo\\Backoffice\\Controller\\RestoreController',
     'Rubedo\\Backoffice\\Controller\\RssFeeds' => 'Rubedo\\Backoffice\\Controller\\RssFeedsController',
     'Rubedo\\Backoffice\\Controller\\Config' => 'Rubedo\\Backoffice\\Controller\\ConfigController',
+    'Rubedo\\Backoffice\\Controller\\ML' => 'Rubedo\\Backoffice\\Controller\\MLController'
 );
