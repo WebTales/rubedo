@@ -39,7 +39,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "git://github.com/bigmlcom/bigml-php.git",
+            "url": "git://github.com/bigmlcom/bigml-php.git"
         },
         {
             "type": "vcs",
