@@ -56,7 +56,7 @@
     ],
     "autoload": {
         "classmap": ["module/Rubedo/src/Rubedo"],
-        "psr-4": {
+        "psr-0": {
             "BigML\\": "vendor/bigmlcom/bigml-php/bigml"
         }
     }
