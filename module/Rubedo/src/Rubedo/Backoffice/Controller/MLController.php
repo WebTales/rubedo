@@ -46,6 +46,7 @@ class MLController extends AbstractActionController
     	while($status!=5) {
     		echo "Status : $status, Waiting 5 secondes ... ";
     		sleep(5);
+    		$status = $api::status($source->resource);
     	}
     	echo "Status completed";
     	//echo $api::status($source['resource']);
