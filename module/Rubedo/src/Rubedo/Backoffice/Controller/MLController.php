@@ -42,10 +42,13 @@ class MLController extends AbstractActionController
     	$api = new \BigML\BigML("webtales", "42b58814745b8a66d043756f10dabb2216a82e5b");
     	var_dump($api);
     	$source = $api::create_source('http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data');
+    	echo $api::status($source);
+    	/*
     	while($api::status($source)!=5) {
     		echo "Waiting 5 secondes ... ";
     		sleep(5);
     	}
+    	*/
     	var_dump($source);
     	$dataset = $api::create_dataset($source);
     	var_dump($dataset);
