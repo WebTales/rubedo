@@ -21,7 +21,7 @@ use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\Debug\Debug;
 use BigML\BigML;
-
+use Zend\View\Model\JsonModel;
 
 /**
  * Controller providing machine learning actions for rubedo
