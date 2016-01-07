@@ -49,7 +49,7 @@ class MLController extends AbstractActionController
     		sleep(5);
     	}
     	*/
-    	var_dump($source["resource"]);
+    	var_dump($source->resource);
     	//echo $api::status($source['resource']);
     	$dataset = $api::create_dataset($source);
     	var_dump($dataset);
