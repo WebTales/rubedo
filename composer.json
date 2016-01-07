@@ -40,7 +40,11 @@
         {
             "type": "vcs",
             "url": "git://github.com/WebTales/MongoFilters.git"
-        }
+        },
+        {
+            "type": "vcs",
+            "url": "git://github.com/WebTales/bigml-php.git"
+        }        
     ],
     "autoload": {
         "classmap": ["module/Rubedo/src/Rubedo"]
