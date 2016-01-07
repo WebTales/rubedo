@@ -83,7 +83,7 @@ class Workspaces extends AbstractLocalizableCollection implements IWorkspaces
      */
     protected $_virtualGlobalWorkspace = array(
         'id' => 'global',
-        'text' => 'Global',
+        'text' => 'Public',
         'readOnly' => true
     );
 
@@ -205,8 +205,8 @@ class Workspaces extends AbstractLocalizableCollection implements IWorkspaces
      */
     public function create(array $obj, $options = array())
     {
-        if ($obj['text'] == 'Global') {
-            throw new \Rubedo\Exceptions\Access('You can not create global workspace', "Exception62");
+        if ($obj['text'] == 'Global'||$obj['text'] == 'Public') {
+            throw new \Rubedo\Exceptions\Access('You can not create global or public workspace', "Exception62");
         }
         unset($obj['canContribute']);
         return parent::create($obj, $options);
