@@ -41,11 +41,10 @@
             "type": "package",
             "package": {
                 "name": "bigmlcom/bigml-php",
-                "version": "dev-master",
+                "version": "*",
                 "source": {
                     "url": "git://github.com/bigmlcom/bigml-php.git",
-                    "type": "git",
-                    "reference": "dev-master"
+                    "type": "git"
                 }
             }
         },
