@@ -41,10 +41,14 @@ class MLController extends AbstractActionController
     public function indexAction()
     {
     	$api = new \BigML("webtales", "42b58814745b8a66d043756f10dabb2216a82e5b");
+    	$source = $api::create_source('http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data');
+    	$dataset = $api::create_dataset($source);
+    	$model = $api::create_model($dataset);
+    	$prediction = $api::create_prediction($model, array('sepal length'=> 5, 'sepal width'=> 2.5));
     	
         $returnArray = array();
         $returnArray['success'] = true;
-        $returnArray['data'] = 'none';
+        $returnArray['data'] = $api::pprint($prediction);
         return new JsonModel($returnArray);
     }
 
