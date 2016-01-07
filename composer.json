@@ -38,15 +38,8 @@
     },
     "repositories": [
         {
-            "type": "package",
-            "package": {
-                "name": "bigmlcom/bigml-php",
-                "version": "*",
-                "source": {
-                    "url": "git://github.com/bigmlcom/bigml-php.git",
-                    "type": "git"
-                }
-            }
+            "type": "vcs",
+            "url": "git://github.com/bigmlcom/bigml-php.git",
         },
         {
             "type": "vcs",
