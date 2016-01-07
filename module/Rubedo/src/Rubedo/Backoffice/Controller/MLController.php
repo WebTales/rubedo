@@ -40,7 +40,7 @@ class MLController extends AbstractActionController
      */
     public function indexAction()
     {
-    	$api = new BigML("webtales", "42b58814745b8a66d043756f10dabb2216a82e5b");
+    	$api = new \BigML("webtales", "42b58814745b8a66d043756f10dabb2216a82e5b");
     	
         $returnArray = array();
         $returnArray['success'] = true;
