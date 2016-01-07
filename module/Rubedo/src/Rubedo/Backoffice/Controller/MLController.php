@@ -20,7 +20,6 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Rubedo\Services\Manager;
 use WebTales\MongoFilters\Filter;
 use Zend\Debug\Debug;
-use BigML\BigML;
 use Zend\View\Model\JsonModel;
 
 /**
@@ -40,12 +39,16 @@ class MLController extends AbstractActionController
      */
     public function indexAction()
     {
-    	$api = new \BigML("webtales", "42b58814745b8a66d043756f10dabb2216a82e5b");
+    	$api = new \BigML\BigML("webtales", "42b58814745b8a66d043756f10dabb2216a82e5b");
+    	var_dump($api);
     	$source = $api::create_source('http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data');
+    	var_dump($source);
     	$dataset = $api::create_dataset($source);
+    	var_dump($dataset);
     	$model = $api::create_model($dataset);
+    	var_dump($model);
     	$prediction = $api::create_prediction($model, array('sepal length'=> 5, 'sepal width'=> 2.5));
-    	
+    	var_dump($prediction);
         $returnArray = array();
         $returnArray['success'] = true;
         $returnArray['data'] = $api::pprint($prediction);
