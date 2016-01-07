@@ -34,12 +34,6 @@ use BigML\BigML;
 class MLController extends AbstractActionController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-
-    }
-
     /**
      * The default index Action
      *
