@@ -44,7 +44,8 @@
                 "version": "dev-master",
                 "source": {
                     "url": "git://github.com/bigmlcom/bigml-php.git",
-                    "type": "git"
+                    "type": "git",
+                    "reference": "origin/dev-master"
                 }
             }
         },
