@@ -70,6 +70,7 @@
         <mkdir dir="${project.basedir}/cache/zend"/>
         <mkdir dir="${project.basedir}/cache/config"/>
         <mkdir dir="${project.basedir}/cache/images"/>
+        <mkdir dir="${project.basedir}/cache/twig"/>
         <mkdir dir="${project.basedir}/log"/>
         <mkdir dir="${project.basedir}/public/captcha"/>
         <mkdir dir="${project.basedir}/public/theme"/>
@@ -80,6 +81,7 @@
         <chmod file="${project.basedir}/cache/zend" mode="777"/>
         <chmod file="${project.basedir}/cache/config" mode="777"/>
         <chmod file="${project.basedir}/cache/images" mode="777"/>
+        <chmod file="${project.basedir}/cache/twig" mode="777"/>
         <chmod file="${project.basedir}/log" mode="777"/>
         <chmod file="${project.basedir}/config/autoload" mode="777"/>
         <chmod file="${project.basedir}/public/captcha" mode="777"/>

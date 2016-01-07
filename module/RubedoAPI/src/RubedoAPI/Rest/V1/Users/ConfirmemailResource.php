@@ -51,13 +51,13 @@ class ConfirmemailResource extends AbstractResource
     {
         $user = $this->getUsersCollection()->findById($params['userId']);
         if (empty($user)) {
-            throw new APIEntityException('User not found', 404);
+            throw new APIEntityException($this->getTranslateService()->translate("Blocks.SignUp.emailConfirmError.unknownUser"), 404);
         }
         if ($user['status'] != 'emailUnconfirmed') {
-            throw new APIEntityException('User already confirmed', 409);
+            throw new APIEntityException($this->getTranslateService()->translate("Blocks.SignUp.emailConfirmError.emailAlreadyConfirmed"), 409);
         }
         if ($user['signupTime'] != $params['signupTime']) {
-            throw new APIRequestException('Invalid Signup time', 400);
+            throw new APIRequestException($this->getTranslateService()->translate("Blocks.SignUp.emailConfirmError.invalidSignUpTime"), 400);
         }
         $user['status'] = 'approved';
         return $this->getUsersCollection()->update($user);
