@@ -127,6 +127,21 @@ class FileController extends AbstractActionController
                 unlink($file->getPathname());
             }
         }
+        $paths = array(
+            APPLICATION_PATH . '/public/generate-image',
+            APPLICATION_PATH . '/cache/images',
+        );
+        foreach ($paths as $path) {
+            $directoryIterator = new \DirectoryIterator($path);
+            foreach ($directoryIterator as $file) {
+                if ($file->isDot()) {
+                    continue;
+                }
+                if (strpos($file->getFilename(), $originalId) === 0) {
+                    unlink($file->getPathname());
+                }
+            }
+        }
         return $this->redirect()->toUrl('/backoffice/resources/afterPixlr.html');
     }
 
