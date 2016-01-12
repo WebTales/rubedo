@@ -1,8 +1,10 @@
 <p>{{ 'Notification.refusedBody.hello'|botrans([], lang) }}</p>
 
 <p>{{ 'Notification.refusedBody.refusedBy'|botrans({'%title%': title, '%author%': publishingAuthor}, lang) }}
+    {% if directUrl %}
     <br />
     <a href="{{ directUrl|raw }}">{{ 'Notification.refusedBody.urlText'|botrans([], lang) }}</a>
+    {% endif %}
 </p>
 <p>{{ 'Notification.refusedBody.thanks'|botrans([], lang) }}</p>
 
