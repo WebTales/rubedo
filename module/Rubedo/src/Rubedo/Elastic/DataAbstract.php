@@ -625,6 +625,11 @@ class DataAbstract
                 $nbIndexedItems = $this->bulkIndex($option, $id, $itemCount,
                         $bulkSize);
 
+                //prevent infinite loop
+                if($nbIndexedItems == 0) {
+                    break;
+                }
+
                 $itemCount += $nbIndexedItems;
             } while ($itemCount<$totalToBeIndexed);
         } else {

@@ -61,7 +61,7 @@ class SubscribeResource extends AbstractResource
             $params['name'] = null;
         }
         if (empty($params['fields'])) {
-            $params['fields'] = null;
+            $params['fields'] = array();
         } else {
             $filters = Filter::factory();
             $filters->addFilter(Filter::factory('Value')->setName('UTType')
