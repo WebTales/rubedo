@@ -87,6 +87,16 @@ class ContactResource extends AbstractResource
         $mailingListsService = Manager::getService('MailingList');
         /** @var \Rubedo\Interfaces\Mail\IMailer $mailerService */
         $mailerService = Manager::getService('Mailer');
+        $config = Manager::getService('Config');
+
+        $senderOfNotif = $config["rubedo_config"]["fromEmailNotification"];
+
+        if(empty($senderOfNotif)) {
+            return [
+                'success' => false,
+                'message' => 'The "Sender of notifications" property must be set in the install tool'
+            ];
+        }
 
         $mailingList = $mailingListsService->findById($params['mailingListId']);
         if (empty($mailingList) || empty($mailingList['replyToAddress']))
@@ -97,7 +107,9 @@ class ContactResource extends AbstractResource
             $mailerObject->setTo($mailingList['replyToAddress']);
         else
             $mailerObject->setTo([$mailingList['replyToAddress'] => $mailingList['replyToName']]);
-        $mailerObject->setFrom($params['from']);
+
+        $mailerObject->setFrom($senderOfNotif);
+        $mailerObject->setReplyTo($params['from']);
         $mailerObject->setSubject($params['subject']);
         $params['fields']["email"]=$params['from'];
         $mailerObject->setBody($this->buildEmail($params['fields']));
