@@ -218,7 +218,7 @@
                 "name": "mbostock/d3",
                 "version": "3.4.11",
                 "dist": {
-                    "url": "https://github.com/WebTales/d3/releases/tag/v3.4.11",
+                    "url": "https://github.com/WebTales/d3/archive/v3.4.11.zip",
                     "type": "zip"
                 }
             }
