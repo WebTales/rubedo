@@ -26,7 +26,6 @@ use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
 use WebTales\MongoFilters\Filter;
 use Rubedo\Content\Context;
-use Zend\Debug\Debug;
 
 /**
  * Class ContentsResource
