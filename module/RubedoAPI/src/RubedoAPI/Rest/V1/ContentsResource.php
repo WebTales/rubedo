@@ -26,6 +26,7 @@ use RubedoAPI\Exceptions\APIEntityException;
 use RubedoAPI\Exceptions\APIRequestException;
 use WebTales\MongoFilters\Filter;
 use Rubedo\Content\Context;
+use Zend\Debug\Debug;
 
 /**
  * Class ContentsResource
@@ -611,6 +612,19 @@ class ContentsResource extends AbstractResource
         }
 
         $content = array_replace_recursive($content, $data);
+        if (isset($data["taxonomy"])&&is_array($data["taxonomy"])){
+            foreach($data["taxonomy"] as $key1=>$value1){
+                $content["taxonomy"][$key1]=$value1;
+            }
+        };
+        if (isset($data['fields'])) {
+            foreach ($data["fields"] as $key2 => $value2) {
+                $content["fields"][$key2] = $value2;
+            }
+            foreach ($data['i18n'][$params['lang']->getLocale()]['fields']  as $key3 => $value3) {
+                $content['i18n'][$params['lang']->getLocale()]['fields'][$key3] = $value3;
+            }
+        }
         $update = $this->getContentsCollection()->update($content, array(), false);
         return [
             'success' => $update['success'],
