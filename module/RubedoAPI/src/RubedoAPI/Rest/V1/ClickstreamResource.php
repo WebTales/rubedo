@@ -89,16 +89,6 @@ class ClickstreamResource extends AbstractResource
                             ->setKey('url')
                             ->setDescription('URL')
                     );
-            })
-            ->editVerb('get', function (VerbDefinitionEntity &$entity) {
-                $entity
-                    ->setDescription('Get matrix')
-                    ->addOutputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setKey('matrix')
-                            ->setDescription('Matrix')
-                    );
-
             });
     }
 
@@ -139,15 +129,6 @@ class ClickstreamResource extends AbstractResource
         $logCreationResult=Manager::getService("ClickStream")->log($newEvent);
         return [
             "success"=>$logCreationResult
-        ];
-    }
-
-    public function getAction($params)
-    {
-        $matrix=Manager::getService("ClickStream")->getClusterMatrix();
-        return [
-            "success"=>true,
-            "matrix"=>$matrix,
         ];
     }
 
