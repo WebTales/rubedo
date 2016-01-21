@@ -49,7 +49,9 @@ See http://docs.rubedo-project.org/en/homepage/install-rubedo for detailed instr
 * Install preRequisites (Apache,PHP,DB,Search Engine)
 * Define a simple vHost with the *public* directory as documentRoot
 * Add an AllowOverride All on this documentRoot
+* Comment lines 33 and 34 of public/.htaccess
 * Access the documentRoot URL automatically run the config wizard
+* After install is complete uncomment lines 33 and 34 of public/.htaccess to prevent unwanted access to install tool
 
 ### From Source Install Steps
 * Download Source from gitHub (https://github.com/WebTales/rubedo/tags)
