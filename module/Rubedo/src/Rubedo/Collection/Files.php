@@ -62,7 +62,9 @@ class Files extends AbstractFileCollection implements IFiles
     protected $_allowedVideoMimeTypes = array(
         "video/mp4",
         "video/mpeg",
-        "video/x-flv"
+        "video/x-flv",
+        "video/webm",
+        "application/ogg",
     );
     protected $_allowedAnimationMimeTypes = array(
         "application/x-shockwave-flash"
