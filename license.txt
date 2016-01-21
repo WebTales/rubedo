@@ -1,5 +1,5 @@
 Rubedo - pre-release - ECM solution
-Copyright (c) 2014-2015, WebTales (http://www.webtales.fr/).
+Copyright (c) 2014-2016, WebTales (http://www.webtales.fr/).
 All rights reserved.
 licensing@webtales.fr
 
