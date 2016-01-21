@@ -60,7 +60,9 @@ See http://docs.rubedo-project.org/en/homepage/install-rubedo for detailed instr
 * Add an AllowOverride All on this documentRoot
 * If on Unix server : Inside project root, run `./rubedo.sh`
 * If on Windows server : Inside project root, run `rubedo`
+* Comment lines 33 and 34 of public/.htaccess
 * Access the documentRoot URL automatically run the config wizard
+* After install is complete uncomment lines 33 and 34 of public/.htaccess to prevent unwanted access to install tool
 
 ### For Developpers
 * You'll need Git!
