@@ -18,7 +18,7 @@ Open Source License
 ------------------------------------------------------------------------------------------
 Rubedo is licensed under the terms of the Open Source GPL 3.0 license. 
 http://www.gnu.org/licenses/gpl.html
-Copyright (c) 2015, WebTales (http://www.webtales.fr/). All rights reserved.
+Copyright (c) 2016, WebTales (http://www.webtales.fr/). All rights reserved.
 licensing@webtales.fr
 
 Documentation and Help
@@ -63,7 +63,7 @@ See http://docs.rubedo-project.org/en/homepage/install-rubedo for detailed instr
 ### For Developpers
 * You'll need Git!
 * Clone form gitHub to your server `git clone git://github.com/WebTales/rubedo.git`
-* Inside project root, choose the branch you want to use (3.2.x or v3-dev) : `git checkout v3-dev`
+* Inside project root, choose the branch you want to use (3.3.x or v3-dev) : `git checkout v3-dev`
 * Do as in normal install process
 
 
