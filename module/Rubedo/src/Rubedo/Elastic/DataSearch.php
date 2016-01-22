@@ -1296,6 +1296,7 @@ class DataSearch extends DataAbstract
 	                    				unset($temp ['ranges'] [$key] );
 	                    			}
 	                            }
+                                $temp ['ranges']=array_values($temp ['ranges']);
 	                        } else {
 	                            $renderFacet = false;
 	                        }
@@ -1324,6 +1325,7 @@ class DataSearch extends DataAbstract
 	                    				unset($temp ['ranges'] [$key] );
 	                    			}
 	                    		}
+                                $temp ['ranges']=array_values($temp ['ranges']);
 	                    	} else {
 	                    		$renderFacet = false;
 	                    	}	  
@@ -1352,6 +1354,7 @@ class DataSearch extends DataAbstract
 	                    				unset($temp ['ranges'] [$key] );
 	                    			}
 	                    		}
+                                $temp ['ranges']=array_values($temp ['ranges']);
 	                    	} else {
 	                    		$renderFacet = false;
 	                    	}
