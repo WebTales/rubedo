@@ -42,9 +42,10 @@ class XhrEncodeImageController extends AbstractActionController
     {
         $image = $this->params()->fromFiles('image');
         $path = $image["tmp_name"];
-        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $finfo = new \finfo(FILEINFO_MIME);
+        $type = $finfo->file($path);
         $data = file_get_contents($path);
-        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        $base64 = 'data:' . $type . ';base64,' . base64_encode($data);
         $returnArray=array(
             "success"=>true,
             "base64"=>$base64
