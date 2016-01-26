@@ -215,5 +215,23 @@ return array(
                 )
             )
         ),
+        'configsaveconfigtodb' => array(
+            'options' => array(
+                'route'    => 'config saveconfigtodb',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'saveconfigtodb'
+                )
+            )
+        ),
+        'configrestoreconfigfromdb' => array(
+            'options' => array(
+                'route'    => 'config restoreconfigfromdb',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'restoreconfigfromdb'
+                )
+            )
+        ),
     )
 );

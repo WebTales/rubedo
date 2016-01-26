@@ -90,6 +90,34 @@ class ConfigController extends AbstractActionController
         return;
     }
 
+    public function saveconfigtodbAction()
+    {
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        if(!isset($this->config["installed"]["status"])||$this->config["installed"]["status"]!="finished"){
+            throw new \RuntimeException("Cannot persist unfinished config");
+        }
+        Manager::getService("MongoConf")->setRubedoConf($this->config);
+        $this->console->writeLine("Config persisted to mongo", ColorInterface::GREEN);
+        return;
+    }
+
+    public function restoreconfigfromdbAction()
+    {
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $rconfig=Manager::getService("MongoConf")->getRubedoConf($this->config);
+        if($rconfig){
+            $this->installObject->saveLocalConfig($rconfig);
+            $this->console->writeLine("Config restored from db", ColorInterface::GREEN);
+        } else {
+            throw new \RuntimeException("No valid config found");
+        }
+        return;
+    }
+
     public function setesAction()
     {
         $request = $this->getRequest();
