@@ -86,6 +86,7 @@ class ConfigController extends AbstractActionController
 
         $this->installObject->saveLocalConfig($this->config);
         $this->console->writeLine("Database connection configured", ColorInterface::GREEN);
+
         return;
     }
 

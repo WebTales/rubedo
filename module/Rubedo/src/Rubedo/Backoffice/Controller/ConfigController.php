@@ -105,6 +105,7 @@ class ConfigController extends AbstractActionController
                 $this->config["swiftmail"]["smtp"] = array_merge($this->config["swiftmail"]["smtp"], $updateData["swiftmail"]["smtp"]);
             }
             $this->installObject->saveLocalConfig($this->config);
+            Manager::getService("MongoConf")->setRubedoConf($this->config);
             return new JsonModel(array("success" => true));
         }
     }

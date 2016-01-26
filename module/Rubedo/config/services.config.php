@@ -57,6 +57,7 @@ return array(
     'Mailer' => 'Rubedo\\Mail\\Mailer',
     'MailingList' => 'Rubedo\\Collection\\MailingList',
     'Masks' => 'Rubedo\\Collection\\Masks',
+    'MongoConf' => 'Rubedo\\Collection\\MongoConf',
     'MongoDataAccess' => 'Rubedo\\Mongo\\DataAccess',
     'MongoFileAccess' => 'Rubedo\\Mongo\\FileAccess',
     'MongoWorkflowDataAccess' => 'Rubedo\\Mongo\\WorkflowDataAccess',
