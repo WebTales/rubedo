@@ -72,14 +72,6 @@
                                 "allowDecimals": true,
                                 "decimalPrecision": 6
                             }
-                        },
-                        {
-                            "type": "Ext.form.field.Checkbox",
-                            "config": {
-                                "fieldLabel": "#ext-gen1062#",
-                                "name": "showCenterMarker",
-                                "inputValue": true
-                            }
                         }
                     ]
                 },

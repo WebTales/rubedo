@@ -37,6 +37,28 @@ use Zend\Http\Request;
  */
 class FileController extends AbstractActionController
 {
+    protected function deletedFolderContent($path)
+    {
+        if (!is_dir($path)) {
+            return;
+        }
+        $iterator = new \DirectoryIterator($path);
+        foreach ($iterator as $item) {
+            if ($item->isDot()) {
+                continue;
+            }
+            if ($item->isDir()) {
+                $this->deletedFolderContent($item->getPathname());
+                if ($item->isWritable()) {
+                    rmdir($item->getPathname());
+                }
+            } else {
+                if ($item->isWritable()) {
+                    unlink($item->getPathname());
+                }
+            }
+        }
+    }
 
     public function indexAction()
     {
@@ -118,13 +140,43 @@ class FileController extends AbstractActionController
         $fileService->createBinary($fileObj);
 
         // trigger deletion of cache : sys_get_temp_dir() . '/' . $fileId . '_'
-        $directoryIterator = new \DirectoryIterator(sys_get_temp_dir());
-        foreach ($directoryIterator as $file) {
-            if ($file->isDot()) {
-                continue;
+        $paths = array(
+            APPLICATION_PATH . '/public/generate-image',
+            APPLICATION_PATH . '/cache/images',
+        );
+        $paths[]=sys_get_temp_dir();
+        foreach ($paths as $path) {
+            $directoryIterator = new \DirectoryIterator($path);
+            foreach ($directoryIterator as $file) {
+                if ($file->isDot()) {
+                    continue;
+                }
+                if (strpos($file->getFilename(), $originalId) !== false) {
+                    if ($file->isDir()) {
+                        $this->deletedFolderContent($file->getPathname());
+                    } else {
+                        unlink($file->getPathname());
+                    }
+                }
             }
-            if (strpos($file->getFilename(), $originalId) === 0) {
-                unlink($file->getPathname());
+        }
+        $associatedMedia=Manager::getService("Dam")->findByOriginalFileId($originalId);
+        if($associatedMedia&&isset($associatedMedia["id"])){
+            foreach ($paths as $path) {
+                $directoryIterator = new \DirectoryIterator($path);
+                foreach ($directoryIterator as $file) {
+                    if ($file->isDot()) {
+                        continue;
+                    }
+                    if (strpos($file->getFilename(), $associatedMedia["id"]) !== false) {
+                        if ($file->isDir()) {
+                            $this->deletedFolderContent($file->getPathname());
+                        } else {
+                            unlink($file->getPathname());
+                        }
+                    }
+
+                }
             }
         }
         return $this->redirect()->toUrl('/backoffice/resources/afterPixlr.html');

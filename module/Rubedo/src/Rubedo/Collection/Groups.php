@@ -127,6 +127,14 @@ class Groups extends AbstractCollection implements IGroups
      */
     public function update(array $obj, $options = array())
     {
+        $publicGroup=$this->getPublicGroup();
+        if($publicGroup["id"]==$obj["id"]&&$publicGroup["name"]!=$obj["name"]){
+            $returnArray = array(
+                'success' => false,
+                "msg" => 'Cannot rename public group'
+            );
+            return($returnArray);
+        }
         $obj = $this->_initObject($obj);
         return parent::update($obj, $options);
     }
@@ -144,7 +152,7 @@ class Groups extends AbstractCollection implements IGroups
     public function destroy(array $obj, $options = array())
     {
 
-        if ($obj["name"]=="admin"||$obj["name"]=="public"){
+        if ($obj["name"]=="admin"||$obj["name"]=="public"||(isset($obj["system"])&&$obj["system"])){
             $returnArray = array(
                 'success' => false,
                 "msg" => 'Cannot delete this group'

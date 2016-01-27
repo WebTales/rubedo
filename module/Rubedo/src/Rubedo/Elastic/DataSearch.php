@@ -1282,7 +1282,7 @@ class DataSearch extends DataAbstract
 	                        	
 	                        	$temp ['_type'] = 'range';
 	                        	$temp ['ranges'] = array_values($temp ['buckets']);
-	                        	
+
 	                            foreach ($temp ['buckets'] as $key => $value) {
 	                                $rangeCount = $value ['doc_count'];
 	                                // unset facet when count = 0 or total results
@@ -1296,6 +1296,7 @@ class DataSearch extends DataAbstract
 	                    				unset($temp ['ranges'] [$key] );
 	                    			}
 	                            }
+                                $temp ['ranges']=array_values($temp ['ranges']);
 	                        } else {
 	                            $renderFacet = false;
 	                        }
@@ -1308,7 +1309,7 @@ class DataSearch extends DataAbstract
 	                    		
 	                    		$temp ['_type'] = 'range';
 	                    		$temp ['ranges'] = array_values($temp ['buckets']);
-	                    		
+
 	                    		foreach ($temp ['buckets'] as $key => $value) {
 	                    			$rangeCount = $value ['doc_count'];
 	                    			// unset facet when count = 0 or total results
@@ -1324,6 +1325,7 @@ class DataSearch extends DataAbstract
 	                    				unset($temp ['ranges'] [$key] );
 	                    			}
 	                    		}
+                                $temp ['ranges']=array_values($temp ['ranges']);
 	                    	} else {
 	                    		$renderFacet = false;
 	                    	}	  
@@ -1352,6 +1354,7 @@ class DataSearch extends DataAbstract
 	                    				unset($temp ['ranges'] [$key] );
 	                    			}
 	                    		}
+                                $temp ['ranges']=array_values($temp ['ranges']);
 	                    	} else {
 	                    		$renderFacet = false;
 	                    	}

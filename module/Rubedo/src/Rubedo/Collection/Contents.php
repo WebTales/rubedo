@@ -474,6 +474,10 @@ class Contents extends WorkflowAbstractCollection implements IContents
                         $value = array(
                             $value
                         );
+                    } elseif (!isset($value[0])&&!empty($value)){
+                        $value = array(
+                            $value
+                        );
                     }
                     if (!isset($value[0])||$value[0] == "") {
                         $value = array();
