@@ -20,6 +20,8 @@ namespace RubedoAPI\Rest\V1\Contents;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Rest\V1\AbstractResource;
+use WebTales\MongoFilters\Filter;
+use WebTales\MongoFilters\InFilter;
 
 /**
  * Class SearchResource
@@ -42,7 +44,19 @@ class PollingResource extends AbstractResource
      */
     public function getAction($params)
     {
-        $contents = $this->getContentsCollection()->getList();
+        $contentsFilter = null;
+        $limit = 100;
+
+        if(isset($params["typeId"])) {
+            $contentsFilter = Filter::factory();
+            $contentsFilter->addFilter(Filter::factory("In")->setName("typeId")->setValue(explode(", ", $params["typeId"])));
+        }
+
+        if(isset($params["limit"])) {
+            $limit = $params["limit"];
+        }
+
+        $contents = $this->getContentsCollection()->getList($contentsFilter, [["property" => "createTime", "direction" => "desc"]], 0, $limit);
 
         return [
             'success' => true,
@@ -82,8 +96,8 @@ class PollingResource extends AbstractResource
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
-                    ->setKey('fields')
-                    ->setDescription('Mask of fields')
+                    ->setKey('typeId')
+                    ->setDescription('A list of type ids')
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
