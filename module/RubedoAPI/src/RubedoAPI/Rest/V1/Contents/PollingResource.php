@@ -45,18 +45,20 @@ class PollingResource extends AbstractResource
     public function getAction($params)
     {
         $contentsFilter = null;
+        $start = 0;
         $limit = 100;
+        $sort = [["property" => "createTime", "direction" => "desc"]];
 
         if(isset($params["typeId"])) {
             $contentsFilter = Filter::factory();
-            $contentsFilter->addFilter(Filter::factory("In")->setName("typeId")->setValue(explode(", ", $params["typeId"])));
+            $contentsFilter->addFilter(Filter::factory("In")->setName("typeId")->setValue(explode(",", $params["typeId"])));
         }
 
         if(isset($params["limit"])) {
             $limit = $params["limit"];
         }
 
-        $contents = $this->getContentsCollection()->getList($contentsFilter, [["property" => "createTime", "direction" => "desc"]], 0, $limit);
+        $contents = $this->getContentsCollection()->getList($contentsFilter, $sort, $start, $limit);
 
         return [
             'success' => true,
