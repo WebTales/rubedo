@@ -49,9 +49,9 @@ class PollingResource extends AbstractResource
         $limit = 100;
         $sort = [["property" => "createTime", "direction" => "desc"]];
 
-        if(isset($params["typeId"])) {
+        if(isset($params["typeId"]) && is_array($params["typeId"])) {
             $contentsFilter = Filter::factory();
-            $contentsFilter->addFilter(Filter::factory("In")->setName("typeId")->setValue(explode(",", $params["typeId"])));
+            $contentsFilter->addFilter(Filter::factory("In")->setName("typeId")->setValue($params["typeId"]));
         }
 
         if(isset($params["limit"])) {
