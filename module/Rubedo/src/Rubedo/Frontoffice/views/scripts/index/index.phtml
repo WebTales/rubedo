@@ -223,6 +223,21 @@
             })();
         </script>
     <?php endif; ?>
+    <!-- Script for sitelinks search box -->
+    <?php if ($this->defaultSearchUrl): ?>
+        <script type="application/ld+json">
+        {
+          "@context": "http://schema.org",
+          "@type": "WebSite",
+          "url": "<?php echo $this->defaultSiteUrl; ?>",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "<?php echo $this->defaultSearchUrl; ?>?query={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+        </script>
+    <?php endif; ?>
 </head>
 <body ng-class="rubedo.current.page.pageProperties.bodyClass">
 <snap-drawer ng-if="rubedo.current.user.rights.canEdit" class="rubedo-admin-drawer" style="display: none;">
