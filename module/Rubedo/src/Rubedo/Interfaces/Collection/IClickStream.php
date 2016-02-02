@@ -25,5 +25,5 @@ namespace Rubedo\Interfaces\Collection;
  */
 interface IClickStream extends IAbstractCollection
 {
-    public function log($obj);
+    public function log($fingerprint,$sessionId,$event,$userId,$userAgent,$os);
 }

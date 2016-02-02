@@ -37,29 +37,40 @@ class ClickStream extends AbstractCollection implements IClickStream
         $this->_collectionName = 'ClickStream';
         parent::__construct();
     }
-
     protected $_indexes = array(
         array(
             'keys' => array(
                 'fingerprint' => 1,
-                'event' => 1,
                 'sessionId' => 1,
             )
         ),array(
             'keys' => array(
                 'fingerprint' => 1,
-                'event' => 1,
+            )
+        ),array(
+            'keys' => array(
+                'sessionId' => 1,
             )
         )
     );
 
 
-    public function log($obj)
+    public function log($fingerprint,$sessionId,$event,$userId,$userAgent,$os)
     {
-        if (!isset($obj["fingerprint"],$obj["event"],$obj["sessionId"],$obj["timestamp"])){
-            return false;
-        }
-        $this->_dataService->directCreate($obj);
+        $filter=Filter::factory();
+        $filter->addFilter(Filter::factory("Value")->setName("fingerprint")->setValue($fingerprint));
+        $filter->addFilter(Filter::factory("Value")->setName("sessionId")->setValue($sessionId));
+        $updateObj=array(
+            '$push'=>array(
+                'clickStream'=> $event,
+            ),
+            '$setOnInsert'=>array(
+                'userId'=>$userId,
+                'userAgent'=>$userAgent,
+                'os'=>$os
+            )
+        );
+        $this->_dataService->customUpdate($updateObj,$filter,array("upsert"=>true,"w"=>0));
         return true;
     }
 
