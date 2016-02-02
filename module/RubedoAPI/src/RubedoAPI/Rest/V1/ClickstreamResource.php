@@ -101,6 +101,12 @@ class ClickstreamResource extends AbstractResource
      */
     public function postAction($params)
     {
+        //avoid crawler logs
+        if (isset($params["userAgent"])&&(strpos($params["userAgent"],"PhantomJS")!==false||strpos($params["userAgent"],"Prerender")!==false)){
+            return [
+                "success"=>false
+            ];
+        }
         $currentTime = $this->getCurrentTimeService()->getCurrentTime();
         $newEvent=[
             "date"=>new \MongoDate($currentTime),
