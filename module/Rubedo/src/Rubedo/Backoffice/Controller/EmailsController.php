@@ -84,7 +84,7 @@ class EmailsController extends DataAccessController
         $count = 0;
         $badEmails = array();
         foreach ($users['data'] as $user) {
-            if (!$this->validEmailAddress($user['email'])) {
+            if (!filter_var($user['email'],FILTER_VALIDATE_EMAIL)) {
                 $badEmails[] = $user['email'];
                 continue;
             }
