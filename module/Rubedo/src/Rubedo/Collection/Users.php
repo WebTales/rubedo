@@ -98,6 +98,19 @@ class Users extends AbstractCollection implements IUsers
     }
 
     /**
+     * Escape all Regex special chars
+     *
+     * @param string $regex Regex to escape
+     * @return string Escaped regex
+     */
+    protected function escapeRegexChars($regex) {
+        $specialChars = ["\\", "^", "$", "*", "+", "?", ".", "(", ")", "|", "[", "]", "{", "}"];
+        $escapedSpecialChars = ["\\\\", "\\^", "\\$", "\\*", "\\+", "\\?", "\\.", "\\(", "\\)", "\\|", "\\[", "\\]", "\\{", "\\}"];
+
+        return str_replace($specialChars, $escapedSpecialChars, $regex);
+    }
+
+    /**
      * Change the password of the user given by its id
      * Check version conflict
      *
@@ -173,7 +186,7 @@ class Users extends AbstractCollection implements IUsers
     public function create(array $obj, $options = array())
     {
         if(isset($obj["login"]) && is_string($obj["login"])) {
-            $loginFilter = Filter::factory()->addFilter(Filter::factory('Value')->setName('login')->setValue(new \MongoRegex("/^".$obj["login"]."$/i")));
+            $loginFilter = Filter::factory()->addFilter(Filter::factory('Value')->setName('login')->setValue(new \MongoRegex("/^".$this->escapeRegexChars($obj["login"])."$/i")));
             $rawUser = Manager::getService("Users")->getList($loginFilter);
 
             if(count($rawUser["data"]) === 0) {
@@ -289,7 +302,7 @@ class Users extends AbstractCollection implements IUsers
     public function update(array $obj, $options = array())
     {
         if(isset($obj["login"]) && is_string($obj["login"])) {
-            $loginFilter = Filter::factory()->addFilter(Filter::factory('Value')->setName('login')->setValue(new \MongoRegex("/^".$obj["login"]."$/i")));
+            $loginFilter = Filter::factory()->addFilter(Filter::factory('Value')->setName('login')->setValue(new \MongoRegex("/^".$this->escapeRegexChars($obj["login"])."$/i")));
             $rawUser = Manager::getService("Users")->getList($loginFilter);
 
             if((count($rawUser["data"]) === 0) || (count($rawUser["data"]) === 1 && $rawUser["data"][0]["id"] === $obj["id"])) {
