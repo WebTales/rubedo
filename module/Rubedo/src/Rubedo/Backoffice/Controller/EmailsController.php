@@ -33,7 +33,7 @@ use Zend\View\Model\JsonModel;
  */
 class EmailsController extends DataAccessController
 {
-    const NUM_BY_MAIL = 500;
+    const NUM_BY_MAIL = 100;
 
     /**
      * Data Access Service
@@ -63,6 +63,7 @@ class EmailsController extends DataAccessController
          * @var $usersService \Rubedo\Interfaces\Collection\IUsers
          * @var $valueFilter \WebTales\MongoFilters\ValueFilter
          */
+        set_time_limit(600);
         $mailingListService = Manager::getService('MailingList');
         $usersService = Manager::getService('Users');
 
@@ -83,7 +84,7 @@ class EmailsController extends DataAccessController
         $count = 0;
         $badEmails = array();
         foreach ($users['data'] as $user) {
-            if (!$this->validEmailAddress($user['email'])) {
+            if (!filter_var($user['email'],FILTER_VALIDATE_EMAIL)) {
                 $badEmails[] = $user['email'];
                 continue;
             }
