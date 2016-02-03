@@ -33,7 +33,7 @@ use Zend\View\Model\JsonModel;
  */
 class EmailsController extends DataAccessController
 {
-    const NUM_BY_MAIL = 500;
+    const NUM_BY_MAIL = 100;
 
     /**
      * Data Access Service
