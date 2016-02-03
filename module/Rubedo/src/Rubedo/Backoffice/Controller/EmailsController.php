@@ -63,6 +63,7 @@ class EmailsController extends DataAccessController
          * @var $usersService \Rubedo\Interfaces\Collection\IUsers
          * @var $valueFilter \WebTales\MongoFilters\ValueFilter
          */
+        set_time_limit(600);
         $mailingListService = Manager::getService('MailingList');
         $usersService = Manager::getService('Users');
 
