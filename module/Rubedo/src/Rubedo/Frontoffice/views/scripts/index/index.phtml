@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="rubedo" ng-controller="RubedoController as rubedo">
+<html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="rubedo" ng-controller="RubedoController as rubedo" ng-attr-lang="{{rubedo.current.page.locale}}">
 <head>
     <!--[if lte IE 8]>
     <script type="text/javascript" >
@@ -221,6 +221,21 @@
                 ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
             })();
+        </script>
+    <?php endif; ?>
+    <!-- Script for sitelinks search box -->
+    <?php if ($this->defaultSearchUrl): ?>
+        <script type="application/ld+json">
+        {
+          "@context": "http://schema.org",
+          "@type": "WebSite",
+          "url": "<?php echo $this->defaultSiteUrl; ?>",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "<?php echo $this->defaultSearchUrl; ?>?query={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
         </script>
     <?php endif; ?>
 </head>

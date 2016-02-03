@@ -203,6 +203,16 @@ class IndexController extends AbstractActionController
         );
         $siteResources = !empty($this->_site['resources']) ? $this->_site['resources'] : $defaultResources;
         $theme = $this->_site['theme'];
+        $defaultSearchUrl=null;
+        $defaultSiteUrl=null;
+        if(isset($this->_site["defaultSearch"])&&$this->_site["defaultSearch"]!=""){
+            $searchUrlSeg=Manager::getService("Url")->getPageUrl($this->_site["defaultSearch"],$lang);
+            if($searchUrlSeg){
+                $protoString=strtolower(array_pop($this->_site['protocol']));
+                $defaultSearchUrl= $protoString . '://' . $domain .$searchUrlSeg;
+                $defaultSiteUrl=$protoString . '://' . $domain . '/' ;
+            }
+        }
         /** @var \Rubedo\Collection\Themes $themesService */
         $themesService = Manager::getService('Themes');
         $themeObj = $themesService->findByName($theme);
@@ -323,7 +333,9 @@ class IndexController extends AbstractActionController
             'angularLocale' => $lang,
             'siteTheme' => $propagatedSiteTheme,
             'includeBaseBootstrap'=>$includeBaseBootstrap,
-            'minifyResources'=>$minifyResources
+            'minifyResources'=>$minifyResources,
+            'defaultSearchUrl'=>$defaultSearchUrl,
+            'defaultSiteUrl'=>$defaultSiteUrl,
         );
 
         $viewModel = new ViewModel($this->viewData);

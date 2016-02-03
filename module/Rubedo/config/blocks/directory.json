@@ -79,32 +79,6 @@
             ],
             "avance": [
                 {
-                    "categorie": "#ext-gen1372#",
-                    "champs": [
-                        {
-                            "type": "Ext.form.field.ComboBox",
-                            "isAutoStored": true,
-                            "autoStoreData": [
-                                {
-                                    "value": "default",
-                                    "label": "#ext-gen1375#"
-                                },
-                                {
-                                    "value": "checkbox",
-                                    "label": "#ext-gen1376#"
-                                }
-                            ],
-                            "config": {
-                                "fieldLabel": "#ext-gen1374#",
-                                "name": "displayMode",
-                                "editable": false,
-                                "forceSelection": true,
-                                "queryMode": "local"
-                            }
-                        }
-                    ]
-                },
-                {
                     "categorie": "Template",
                     "champs": [
                         {

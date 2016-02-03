@@ -249,16 +249,25 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
                 unset($returnArray['data']);
             }
         } elseif ($previousStatus != 'pending' && array_key_exists('status', $obj) && $obj['status'] == "pending") {
-            $this->_notify($obj, 'pending');
+            try{
+                $this->_notify($obj, 'pending');
+            } catch(\Exception $e){
+            }
         } else {
             $returnArray = null;
         }
 
         if ($previousStatus == 'pending' && array_key_exists('status', $obj) && $obj['status'] == 'refused') {
-            $this->_notify($obj, 'refused');
+            try{
+                $this->_notify($obj, 'refused');
+            } catch(\Exception $e){
+            }
         }
         if ($previousStatus == 'pending' && array_key_exists('status', $obj) && $obj['status'] == 'published') {
-            $this->_notify($obj, 'published');
+            try{
+                $this->_notify($obj, 'published');
+            } catch(\Exception $e){
+            }
         }
 
         return true;
