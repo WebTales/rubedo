@@ -628,6 +628,7 @@ class ContentsResource extends AbstractResource
         return [
             'success' => $update['success'],
             'version' => isset($update['data'],$update['data']['version'])?$update['data']['version'] : false,
+            'inputErrors'=>isset($update["inputErrors"]) ? $update["inputErrors"] : false
         ];
     }
 
@@ -969,6 +970,10 @@ class ContentsResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('Content creation result')
                     ->setKey('data')
+            )->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Input errors')
+                    ->setKey('inputErrors')
             )
             ->identityRequired();
     }
@@ -1059,6 +1064,10 @@ class ContentsResource extends AbstractResource
                     ->setDescription('The content')
                     ->setKey('version')
                     ->setRequired()
+            )->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Input errors')
+                    ->setKey('inputErrors')
             );
     }
 
