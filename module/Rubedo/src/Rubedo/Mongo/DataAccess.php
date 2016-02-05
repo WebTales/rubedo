@@ -842,8 +842,13 @@ class DataAccess implements IDataAccess
      */
     public function create(array $obj, $options = array())
     {
+        if(!isset($options["w"])){
+            $config = Manager::getService('config');
+            if(isset($config['datastream']["mongo"]["server"])&&is_string($config['datastream']["mongo"]["server"])){
+                $options["w"]=count(explode($config['datastream']["mongo"]["server"],","));
+            }
+        }
         $obj['version'] = 1;
-
         $currentUserService = Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
         $obj['lastUpdateUser'] = $currentUser;
@@ -905,6 +910,12 @@ class DataAccess implements IDataAccess
      */
     public function update(array $obj, $options = array())
     {
+        if(!isset($options["w"])){
+            $config = Manager::getService('config');
+            if(isset($config['datastream']["mongo"]["server"])&&is_string($config['datastream']["mongo"]["server"])){
+                $options["w"]=count(explode($config['datastream']["mongo"]["server"],","));
+            }
+        }
         $id = $obj['id'];
         unset($obj['id']);
         if (!isset($obj['version'])) {
