@@ -52,7 +52,7 @@ class MailingListsController extends DataAccessController
         $result = array();
         $result['success'] = true;
         foreach ($userEmailArray as $userEmail) {
-            $resultInter = $this->_dataService->subscribe($mlId, $userEmail);
+            $resultInter = $this->_dataService->subscribe($mlId, $userEmail,false);
             $result['success'] == $result['success'] && $resultInter['success'];
         }
         return $this->_returnJson($result);
@@ -175,6 +175,7 @@ class MailingListsController extends DataAccessController
 
     public function importUsersAction()
     {
+        set_time_limit(600);
         $mlId = $this->params()->fromPost("id", null);
         $returnArray = array();
         $fileInfos = $this->params()->fromFiles('csvFile');
@@ -208,21 +209,23 @@ class MailingListsController extends DataAccessController
         $lineCounter = 0;
         $success = true;
         while (($currentLine = fgetcsv($recievedFile, 1000000, ';', '"', '\\')) !== false) {
-            if ((isset($currentLine[1])) && (isset($currentLine[2]))) {
-                $myFields = array();
-                foreach ($fieldsArray as $key => $value) {
-                    if (isset($currentLine[$key + 2])) {
-                        $myFields[$value] = $currentLine[$key + 2];
+            if (filter_var($currentLine[0],FILTER_VALIDATE_EMAIL)) {
+                if ((isset($currentLine[1])) && (isset($currentLine[2]))) {
+                    $myFields = array();
+                    foreach ($fieldsArray as $key => $value) {
+                        if (isset($currentLine[$key + 2])) {
+                            $myFields[$value] = $currentLine[$key + 2];
+                        }
                     }
+                    $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0], false, $currentLine[1], $myFields);
+                } else if (isset($currentLine[1])) {
+                    $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0], false, $currentLine[1]);
+                } else {
+                    $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0]);
                 }
-                $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0], true, $currentLine[1], $myFields);
-            } else if (isset($currentLine[1])) {
-                $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0], true, $currentLine[1]);
-            } else {
-                $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0]);
+                $success == $success && $resultInter['success'];
+                $lineCounter = $lineCounter + 1;
             }
-            $success == $success && $resultInter['success'];
-            $lineCounter = $lineCounter + 1;
         }
         fclose($recievedFile);
         $returnArray['importedContentsCount'] = $lineCounter;
