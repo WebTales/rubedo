@@ -210,21 +210,25 @@ class MailingListsController extends DataAccessController
         $success = true;
         while (($currentLine = fgetcsv($recievedFile, 1000000, ';', '"', '\\')) !== false) {
             if (filter_var($currentLine[0],FILTER_VALIDATE_EMAIL)) {
-                if ((isset($currentLine[1])) && (isset($currentLine[2]))) {
-                    $myFields = array();
-                    foreach ($fieldsArray as $key => $value) {
-                        if (isset($currentLine[$key + 2])) {
-                            $myFields[$value] = $currentLine[$key + 2];
+                try {
+                    if ((isset($currentLine[1])) && (isset($currentLine[2]))) {
+                        $myFields = array();
+                        foreach ($fieldsArray as $key => $value) {
+                            if (isset($currentLine[$key + 2])) {
+                                $myFields[$value] = $currentLine[$key + 2];
+                            }
                         }
+                        $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0], false, $currentLine[1], $myFields);
+                    } else if (isset($currentLine[1])) {
+                        $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0], false, $currentLine[1]);
+                    } else {
+                        $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0]);
                     }
-                    $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0], false, $currentLine[1], $myFields);
-                } else if (isset($currentLine[1])) {
-                    $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0], false, $currentLine[1]);
-                } else {
-                    $resultInter = $this->_dataService->subscribe($mlId, $currentLine[0]);
+                    $success == $success && $resultInter['success'];
+                    $lineCounter = $lineCounter + 1;
+                } catch (\Exception $e){
+                    
                 }
-                $success == $success && $resultInter['success'];
-                $lineCounter = $lineCounter + 1;
             }
         }
         fclose($recievedFile);
