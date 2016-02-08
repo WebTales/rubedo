@@ -68,7 +68,7 @@ class Install
         return $this->configFilePath;
     }
 
-    public function saveLocalConfig($config = null)
+    public function saveLocalConfig($config = null,$persistToDB = false)
     {
         if ($config) {
             $this->setLocalConfig($config);
@@ -81,7 +81,22 @@ class Install
         if (function_exists("opcache_invalidate")) {
             opcache_invalidate($this->configFilePath, true);
         }
+        //save to DB
+        if($persistToDB&&isset($config["datastream"]["mongo"]["server"])){
+            Manager::getService("MongoConf")->setRubedoConf($config);
+        }
+        //tell all nodes to reload if PHP cluster
         Events::getEventManager()->trigger(static::SAVECONFIG);
+        if($persistToDB&&isset($config["datastream"]["mongo"]["server"])&&isset($config["webCluster"])&&is_array($config["webCluster"])){
+            foreach($config["webCluster"] as $clusterHost){
+                $curlUrl = "http://" . $clusterHost . "/api/v1/reloadconfig";
+                $curly = curl_init();
+                curl_setopt($curly,CURLOPT_URL, $curlUrl);
+                curl_setopt($curly,CURLOPT_POST, true);
+                curl_exec($curly);
+                curl_close($curly);
+            }
+        }
     }
 
     public function loadLocalConfig()
