@@ -80,8 +80,12 @@ class ApiController extends AbstractActionController
             $paramsBody = json_decode($this->getRequest()->getContent(), true);
             if (empty($paramsBody))
                 $paramsBody = array();
-            if (!empty($_SERVER['HTTP_AUTHORIZATION']))
+            if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
                 list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+            } elseif (!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+                list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['REDIRECT_HTTP_AUTHORIZATION'], 6)));
+
+            }
             $params = array_replace_recursive(
                 $this->getRequest()->getServer()->toArray(),
                 $routes,
