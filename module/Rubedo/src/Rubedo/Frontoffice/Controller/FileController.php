@@ -71,7 +71,15 @@ class FileController extends AbstractActionController
                     $action = "download";
                     break;
             }
-            
+
+            if ($subtype == 'image') {
+                $action = "inline";
+            }
+
+            if ($subtype == 'text') {
+                $action = "inline";
+            }
+
             switch ($this->params()->fromQuery('attachment', null)) {
             	case 'download':
             		$action = "download";
@@ -82,14 +90,7 @@ class FileController extends AbstractActionController
             	default:
             		break;
             }
-            
-            if ($subtype == 'text') {
-                $action = "inline";
-            }
 
-            if ($subtype == 'image') {
-                $action = "inline";
-            }
 
             if ($subtype == 'video') {
             	$action = "stream";
