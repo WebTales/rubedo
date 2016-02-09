@@ -45,14 +45,12 @@ class GenerateResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setDescription('User to log in')
                             ->setKey('PHP_AUTH_USER')
-                            ->setRequired()
 
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('Password for the user')
                             ->setKey('PHP_AUTH_PW')
-                            ->setRequired()
                     );
             });
     }
