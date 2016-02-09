@@ -307,12 +307,11 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
         if ($controller == 'Rubedo\\Backoffice\\Controller\\XhrAuthentication' && $action == 'is-session-expiring') {
             return;
         }
-
         $config = $event->getApplication()
             ->getServiceManager()
             ->get('Config');
         $isConsole=$event->getRequest() instanceof ConsoleRequest;
-        if (!$isConsole&&(!isset($config['installed']) || ((!isset($config['installed']['status']) || $config['installed']['status'] !== 'finished') && $controller !== 'Rubedo\Install\Controller\Index'))) {
+        if (!$isConsole&&(!isset($config['installed']) || ((!isset($config['installed']['status']) || $config['installed']['status'] !== 'finished') && ($controller !== 'Rubedo\Install\Controller\Index')))&&!($controller == 'RubedoApi\Frontoffice\Controller\Api'&&strpos($_SERVER['REQUEST_URI'],'reloadconfig')!==false)) {
 
 
             $routeMatches = $event->getRouteMatch();
