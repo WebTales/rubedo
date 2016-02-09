@@ -91,9 +91,11 @@ class Install
             foreach($config["webCluster"] as $clusterHost){
                 $curlUrl = "http://" . $clusterHost . "/api/v1/reloadconfig";
                 $curly = curl_init();
-                curl_setopt($curly,CURLOPT_URL, $curlUrl);
-                curl_setopt($curly,CURLOPT_POST, true);
-                curl_setopt($curly, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curly, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($curly, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($curly, CURLOPT_AUTOREFERER, true);
+                curl_setopt($curly, CURLOPT_URL, $curlUrl);
+                curl_setopt($curly, CURLOPT_CUSTOMREQUEST, "POST");
                 $curlyresult=curl_exec($curly);
                 curl_close($curly);
             }
