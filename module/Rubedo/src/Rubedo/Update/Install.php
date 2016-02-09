@@ -93,7 +93,8 @@ class Install
                 $curly = curl_init();
                 curl_setopt($curly,CURLOPT_URL, $curlUrl);
                 curl_setopt($curly,CURLOPT_POST, true);
-                curl_exec($curly);
+                curl_setopt($curly, CURLOPT_RETURNTRANSFER, true);
+                $curlyresult=curl_exec($curly);
                 curl_close($curly);
             }
         }
