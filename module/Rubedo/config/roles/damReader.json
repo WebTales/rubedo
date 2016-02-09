@@ -17,6 +17,7 @@
         "execute.controller.file.get-thumbnail.default",
         "execute.controller.directories.read-child.backoffice",
         "execute.controller.directories.tree.backoffice",
-        "execute.controller.directories.find-one.backoffice"
+        "execute.controller.directories.find-one.backoffice",
+        "execute.controller.file.get.backoffice"
     ]
 }
