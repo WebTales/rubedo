@@ -19,6 +19,7 @@ namespace RubedoAPI\Rest\V1\Auth\Oauth2;
 
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
+use RubedoAPI\Exceptions\APIRequestException;
 
 /**
  * Class GenerateResource
@@ -44,14 +45,12 @@ class GenerateResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setDescription('User to log in')
                             ->setKey('PHP_AUTH_USER')
-                            ->setRequired()
 
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('Password for the user')
                             ->setKey('PHP_AUTH_PW')
-                            ->setRequired()
                     );
             });
     }
@@ -65,7 +64,15 @@ class GenerateResource extends AbstractResource
     function postAction($params)
     {
         $output = array('success' => true);
-        $response = $this->getAuthAPIService()->APIAuth($params['PHP_AUTH_USER'], $params['PHP_AUTH_PW']);
+        if (empty($params['PHP_AUTH_USER'])&&empty($_SERVER['PHP_AUTH_USER'])){
+            throw new APIRequestException('PHP_AUTH_USER is required', 400);
+        }
+        if (empty($params['PHP_AUTH_PW'])&&empty($_SERVER['PHP_AUTH_PW'])){
+            throw new APIRequestException('PHP_AUTH_PW is required', 400);
+        }
+        $authParamUser=!empty($params['PHP_AUTH_USER']) ? $params['PHP_AUTH_USER'] : $_SERVER['PHP_AUTH_USER'];
+        $authParamPassword=!empty($params['PHP_AUTH_PW']) ? $params['PHP_AUTH_PW'] : $_SERVER['PHP_AUTH_PW'];
+        $response = $this->getAuthAPIService()->APIAuth($authParamUser, $authParamPassword);
         $output['token'] = $this->subTokenFilter($response['token']);
         $this->subUserFilter($response['user']);
         $route = $this->getContext()->params()->fromRoute();
