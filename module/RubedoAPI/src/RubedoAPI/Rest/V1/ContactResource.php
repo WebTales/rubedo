@@ -112,7 +112,7 @@ class ContactResource extends AbstractResource
         $mailerObject->setReplyTo($params['from']);
         $mailerObject->setSubject($params['subject']);
         $params['fields']["email"]=$params['from'];
-        $mailerObject->setBody($this->buildEmail($params['fields']));
+        $mailerObject->setBody(htmlspecialchars_decode($this->buildEmail($params['fields']), ENT_QUOTES));
 
         // Send e-mail
         $errors = [];
