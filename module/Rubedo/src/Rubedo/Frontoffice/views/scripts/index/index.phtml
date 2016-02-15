@@ -223,19 +223,16 @@
             })();
         </script>
     <?php endif; ?>
-    <!-- Script for sitelinks search box -->
-    <?php if ($this->defaultSearchUrl): ?>
-        <script type="application/ld+json">
-        {
-          "@context": "http://schema.org",
-          "@type": "WebSite",
-          "url": "<?php echo $this->defaultSiteUrl; ?>",
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": "<?php echo $this->defaultSearchUrl; ?>?query={search_term_string}",
-            "query-input": "required name=search_term_string"
-          }
-        }
+    <!-- Script for google analytics -->
+    <?php if ($this->googleAnalyticsKey): ?>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', '<?php echo $this->googleAnalyticsKey; ?>', 'auto', {'allowAnchor': true});
+            ga('require', 'linkid', 'linkid.js');
         </script>
     <?php endif; ?>
 </head>
