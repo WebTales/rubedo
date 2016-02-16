@@ -86,6 +86,32 @@ class ConfigController extends AbstractActionController
 
         $this->installObject->saveLocalConfig($this->config);
         $this->console->writeLine("Database connection configured", ColorInterface::GREEN);
+
+        return;
+    }
+
+    public function saveconfigtodbAction()
+    {
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        Manager::getService("MongoConf")->setRubedoConf($this->config);
+        $this->console->writeLine("Config persisted to mongo", ColorInterface::GREEN);
+        return;
+    }
+
+    public function restoreconfigfromdbAction()
+    {
+        if(!$this->getRequest() instanceof ConsoleRequest) {
+            throw new \RuntimeException("You can only call this action from the console");
+        }
+        $rconfig=Manager::getService("MongoConf")->getRubedoConf();
+        if($rconfig){
+            $this->installObject->saveLocalConfig($rconfig);
+            $this->console->writeLine("Config restored from db", ColorInterface::GREEN);
+        } else {
+            throw new \RuntimeException("No valid config found");
+        }
         return;
     }
 
@@ -110,7 +136,7 @@ class ConfigController extends AbstractActionController
             $this->config["installed"]["action"]='define-languages';
         }
         $this->config["elastic"] = $esParams;
-        $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->saveLocalConfig($this->config,true);
         $this->console->writeLine("Elastisearch connection configured", ColorInterface::GREEN);
         return;
     }
@@ -141,7 +167,7 @@ class ConfigController extends AbstractActionController
         if($this->config["installed"]["status"]!="finished"&&$this->config["installed"]["action"]=="define-languages"){
             $this->config["installed"]["action"]='set-db-contents';
         }
-        $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->saveLocalConfig($this->config,true);
         $this->console->writeLine("Default language set", ColorInterface::GREEN);
         return;
     }
@@ -155,7 +181,7 @@ class ConfigController extends AbstractActionController
         $serversString = $request->getParam("servers");
         $servers = explode(',', $serversString);
         $this->config["webCluster"] = $servers;
-        $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->saveLocalConfig($this->config,true);
         $this->console->writeLine("Web Cluster set", ColorInterface::GREEN);
         return;
     }
@@ -183,7 +209,7 @@ class ConfigController extends AbstractActionController
             if($this->config["installed"]["status"]!="finished"&&$this->config["installed"]["action"]=='set-db-contents'){
                 $this->config["installed"]["action"]='set-admin';
             }
-            $this->installObject->saveLocalConfig($this->config);
+            $this->installObject->saveLocalConfig($this->config,true);
             $this->console->writeLine("DB init completed", ColorInterface::GREEN);
 
         } else {
@@ -237,7 +263,7 @@ class ConfigController extends AbstractActionController
                     'action' => 'set-php-setting',
                 );
             }
-            $this->installObject->saveLocalConfig($this->config);
+            $this->installObject->saveLocalConfig($this->config,true);
             $this->console->writeLine("Admin user created", ColorInterface::GREEN);
 
         } else {
@@ -258,7 +284,7 @@ class ConfigController extends AbstractActionController
                 'action' => 'start-wizard',
             )
         );
-        $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->saveLocalConfig($this->config,true);
         $this->console->writeLine("Config reset", ColorInterface::GREEN);
         return;
     }
@@ -272,7 +298,7 @@ class ConfigController extends AbstractActionController
             'status' => 'finished',
             'action' => 'set-php-setting',
         );
-        $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->saveLocalConfig($this->config,true);
         $this->console->writeLine("Install status set to finish", ColorInterface::GREEN);
         return;
     }
@@ -289,7 +315,7 @@ class ConfigController extends AbstractActionController
         $this->config["rubedo_config"]['cachePage']="1";
         $this->config["rubedo_config"]['apiCache']="1";
         $this->config["rubedo_config"]['addECommerce']="1";
-        $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->saveLocalConfig($this->config,true);
         $this->console->writeLine("Default settings applied", ColorInterface::GREEN);
         return;
     }
@@ -387,7 +413,7 @@ class ConfigController extends AbstractActionController
         $conf=str_replace('\'','"',$conf);
         $decodedConf=Json::decode($conf,Json::TYPE_ARRAY);
         $this->config=$decodedConf;
-        $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->saveLocalConfig($this->config,true);
         $this->console->writeLine("Config set", ColorInterface::GREEN);
         return;
     }
@@ -422,7 +448,7 @@ class ConfigController extends AbstractActionController
         $this->config["swiftmail"]["smtp"]["username"] = $params["username"];
         $this->config["swiftmail"]["smtp"]["password"] = $params["password"];
         $this->config["swiftmail"]["smtp"]["ssl"] = $params["ssl"]?"1":"0";
-        $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->saveLocalConfig($this->config,true);
         $this->console->writeLine("Mail set", ColorInterface::GREEN);
         return;
     }
@@ -459,7 +485,7 @@ class ConfigController extends AbstractActionController
         $this->config["rubedo_config"]["isBackofficeSSL"] = $params["isBackofficeSSL"]?"1":"0";
         $this->config["rubedo_config"]["enableEmailNotification"] = $params["enableEmailNotification"]?"1":"0";
         $this->config["rubedo_config"]["fromEmailNotification"] = $params["fromEmailNotification"]?$params["fromEmailNotification"]:"";
-        $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->saveLocalConfig($this->config,true);
         $this->console->writeLine("rubedo_config set", ColorInterface::GREEN);
         return;
     }

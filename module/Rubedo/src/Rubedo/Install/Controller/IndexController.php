@@ -173,7 +173,7 @@ class IndexController extends AbstractActionController
     {
         $this->config = $this->installObject->getLocalConfig();
         $this->config['installed']['status'] = 'finished';
-        $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->saveLocalConfig($this->config,true);
         $redirectParams = array(
             'controller' => 'index',
             'action' => 'index'
@@ -264,7 +264,7 @@ class IndexController extends AbstractActionController
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-elastic-search';
             $this->installObject->saveLocalConfig($this->config);
-            $this->installObject->saveLocalConfig($this->config);
+            $this->installObject->saveLocalConfig($this->config,true);
         }
 
         $esOptions = isset($this->config["elastic"]) ? $this->config["elastic"] : array();
@@ -292,7 +292,7 @@ class IndexController extends AbstractActionController
         if ($connectionValid) {
             $this->viewData->isReady = true;
             $this->config["elastic"] = $params;
-            $this->installObject->saveLocalConfig($this->config);
+            $this->installObject->saveLocalConfig($this->config,true);
         } else {
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'Rubedo can\'t connect itself to specified ES'
@@ -317,7 +317,7 @@ class IndexController extends AbstractActionController
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'define-languages';
-            $this->installObject->saveLocalConfig($this->config);
+            $this->installObject->saveLocalConfig($this->config,true);
         }
 
         $params = array();
@@ -371,7 +371,7 @@ class IndexController extends AbstractActionController
 
         if ($ok) {
             $this->viewData->isReady = true;
-            $this->installObject->saveLocalConfig($this->config);
+            $this->installObject->saveLocalConfig($this->config,true);
         } else {
             $this->viewData->hasError = true;
             $this->viewData->errorMsgs = 'A default language should be activated';
@@ -391,7 +391,7 @@ class IndexController extends AbstractActionController
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-mailer';
-            $this->installObject->saveLocalConfig($this->config);
+            $this->installObject->saveLocalConfig($this->config,true);
         }
 
         $mailerOptions = isset($this->config["swiftmail"]["smtp"]) ? $this->config["swiftmail"]["smtp"] : array(
@@ -425,7 +425,7 @@ class IndexController extends AbstractActionController
         }
         if ($formValid) {
             $this->config["swiftmail"]["smtp"] = $params;
-            $this->installObject->saveLocalConfig($this->config);
+            $this->installObject->saveLocalConfig($this->config,true);
         }
         if ($connectionValid) {
             $this->viewData->isSet = true;
@@ -483,7 +483,7 @@ class IndexController extends AbstractActionController
                 $this->viewData->errorMsgs = "A domain can't be used to override twice.";
             } else {
                 $this->config['site']['override'][$params["domain"]] = $params["localDomain"];
-                $this->installObject->saveLocalConfig($this->config);
+                $this->installObject->saveLocalConfig($this->config,true);
             }
         }
 
@@ -505,7 +505,7 @@ class IndexController extends AbstractActionController
         if ($this->config['installed']['status'] != 'finished') {
             $this->viewData->displayMode = "wizard";
             $this->config['installed']['action'] = 'set-php-settings';
-            $this->installObject->saveLocalConfig($this->config);
+            $this->installObject->saveLocalConfig($this->config,true);
         }
 
         $applicationConfig = Manager::getService('application')->getConfig();
@@ -520,7 +520,7 @@ class IndexController extends AbstractActionController
             $params['session']['remember_me_seconds'] = $params['session']["authLifetime"];
             unset($params["session"]["authLifetime"]);
             $this->config = array_merge($this->config, $params);
-            $this->installObject->saveLocalConfig($this->config);
+            $this->installObject->saveLocalConfig($this->config,true);
         }
 
         $this->viewData->isReady = true;
@@ -567,7 +567,7 @@ class IndexController extends AbstractActionController
             $this->viewData->isReady = true;
         }
 
-        $this->installObject->saveLocalConfig($this->config);
+        $this->installObject->saveLocalConfig($this->config,true);
         $this->layout('layout/install');
         $this->viewDataModel = new ViewModel((array)$this->viewData);
         $this->viewDataModel->setTemplate('rubedo/install/controller/index/set-db-contents');
