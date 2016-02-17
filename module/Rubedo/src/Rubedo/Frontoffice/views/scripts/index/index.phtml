@@ -219,6 +219,7 @@
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
             ga('create', '<?php echo $this->googleAnalyticsKey; ?>', 'auto', {'allowAnchor': true});
+            ga('send', 'pageview', location.pathname + location.search + location.hash);
             ga('require', 'linkid', 'linkid.js');
         </script>
     <?php endif; ?>
