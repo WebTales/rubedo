@@ -15,7 +15,7 @@
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 
-namespace RubedoAPI\Rest\V1\Contents;
+namespace RubedoAPI\Rest\V1\Mailinglists;
 
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
@@ -42,30 +42,27 @@ class PollingResource extends AbstractResource
      * @return array
      * @throws \RubedoAPI\Exceptions\APIEntityException
      */
-    public function getAction($params)
-    {
-        $contentsFilter = null;
-        $start = 0;
-        $limit = 100;
-        $sort = [["property" => "createTime", "direction" => "desc"]];
+     public function getAction($params)
+     {
+         $mailinglistFilter = Filter::factory();
+         $start = 0;
+         $limit = 100;
+         $sort = [["property" => "mailingLists." . $params['mailingList'] . ".date", "direction" => "desc"]];
 
-        if(isset($params["typeId"]) && is_array($params["typeId"])) {
-            $contentsFilter = Filter::factory();
-            $contentsFilter->addFilter(Filter::factory("In")->setName("typeId")->setValue($params["typeId"]));
-        }
+         $mailinglistFilter->addFilter(Filter::factory('Value')->setName('mailingLists.' . $params['mailingList'] . '.status')->setValue(true));
 
-        if(isset($params["limit"])) {
-            $limit = $params["limit"];
-        }
+         if(isset($params["limit"])) {
+             $limit = $params["limit"];
+         }
 
-        $contents = $this->getContentsCollection()->getList($contentsFilter, $sort, $start, $limit);
+         $users = $this->getUsersCollection()->getList($mailinglistFilter, $sort, $start, $limit);
 
-        return [
-            'success' => true,
-            'contents' => $contents["data"],
-            'count' => $contents["count"]
-        ];
-    }
+         return [
+             'success' => true,
+             'users' => $users["data"],
+             'count' => $users["count"]
+         ];
+     }
 
     /**
      * Define the resource
@@ -74,8 +71,8 @@ class PollingResource extends AbstractResource
     {
         $this
             ->definition
-            ->setName('Contents polling')
-            ->setDescription('Allow to poll contents')
+            ->setName('Mailinglists polling')
+            ->setDescription('Allow to poll users in a mailinglist')
             ->editVerb('get', function (VerbDefinitionEntity &$definition) {
                 $this->defineGet($definition);
             });
@@ -89,7 +86,7 @@ class PollingResource extends AbstractResource
     protected function defineGet(VerbDefinitionEntity &$definition)
     {
         $definition
-            ->setDescription('Get a list of contents')
+            ->setDescription('Get a list of users in a mailinglist')
             ->addInputFilter(
                 (new FilterDefinitionEntity())
                     ->setKey('siteId')
@@ -98,8 +95,9 @@ class PollingResource extends AbstractResource
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
-                    ->setKey('typeId')
-                    ->setDescription('A list of type ids')
+                    ->setKey('mailingList')
+                    ->setDescription('A mailingList ID')
+                    ->setRequired()
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
@@ -119,8 +117,8 @@ class PollingResource extends AbstractResource
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())
-                    ->setKey('contents')
-                    ->setDescription('Contents returned by query')
+                    ->setKey('users')
+                    ->setDescription('Users returned by query')
             );
     }
 
