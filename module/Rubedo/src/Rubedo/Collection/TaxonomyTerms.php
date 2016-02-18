@@ -165,7 +165,11 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
             foreach ($siteList['data'] as $site) {
                 $contentArray[] = $this->_siteToTerm($site);
             }
-            $pageList = Manager::getService('Pages')->getList($filters);
+            if ($isSpecialBOMode){
+                $pageList = Manager::getService('Pages')->getList($filters,$sort,$start,$limit);
+            } else {
+                $pageList = Manager::getService('Pages')->getList($filters);
+            }
             foreach ($pageList['data'] as $page) {
                 $contentArray[] = $this->_pageToTerm($page,$isSpecialBOMode);
             }
