@@ -60,7 +60,7 @@ class TaxonomyTermsController extends DataAccessController
             $receivedIDArray = explode(", ", $receivedID);
             $preFilter->addFilter(Filter::factory('InUid')->setValue($receivedIDArray));
             $postFilter = Filter::factory('NotInUid')->setValue($receivedIDArray);
-            $preValues = $this->_dataService->getList($preFilter, null, null, null);
+            $preValues = $this->_dataService->getList($preFilter, null, null, null,true);
             $response['total'] = $preValues['count'];
             $response['data'] = $preValues['data'];
         }
@@ -89,7 +89,7 @@ class TaxonomyTermsController extends DataAccessController
         if ($postFilter) {
             $mongoFilters->addFilter($postFilter);
         }
-        $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit);
+        $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit,true);
 
 
         $response['total'] = $response['total'] + $dataValues['count'];
