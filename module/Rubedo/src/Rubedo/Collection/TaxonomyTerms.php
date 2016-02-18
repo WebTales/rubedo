@@ -424,6 +424,8 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $term["parentId"] = ($page['parentId'] == 'root') ? $page['site'] : $page['parentId'];
         $term['text'] = $page['text'];
         $term['id'] = $page['id'];
+        $pageUrl = Manager::getService('Url')->getPageUrl($term['id'], $term['locale']);
+        $term['text']=$term['text']." - ".Manager::getService('Sites')->getHost($page['site']) . '/' . ltrim($pageUrl, '/');
         unset($term['leaf']);
         $term['expandable'] = $page['expandable'];
         $term['orderValue'] = $page['orderValue'];

@@ -49,21 +49,23 @@ class TaxonomyTermsController extends DataAccessController
         $response = array();
         $response['total'] = 0;
         $response['data'] = array();
-        if (!empty($receivedID)) {
-            $receivedIDArray = explode(", ", $receivedID);
-            $preFilter = Filter::factory('InUid')->setValue($receivedIDArray);
-            $postFilter = Filter::factory('NotInUid')->setValue($receivedIDArray);
-            $preValues = $this->_dataService->getList($preFilter, null, null, null);
-            $response['total'] = $preValues['count'];
-            $response['data'] = $preValues['data'];
-        }
-
         $filterJson = $this->params()->fromQuery('filter');
         if (isset($filterJson)) {
             $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
+        if (!empty($receivedID)) {
+            $preFilter = $this->_buildFilter($filters);
+            $receivedIDArray = explode(", ", $receivedID);
+            $preFilter->addFilter(Filter::factory('InUid')->setValue($receivedIDArray));
+            $postFilter = Filter::factory('NotInUid')->setValue($receivedIDArray);
+            $preValues = $this->_dataService->getList($preFilter, null, null, null);
+            $response['total'] = $preValues['count'];
+            $response['data'] = $preValues['data'];
+        }
+
+
         $sortJson = $this->params()->fromQuery('sort');
         if (isset($sortJson)) {
             $sort = Json::decode($sortJson, Json::TYPE_ARRAY);

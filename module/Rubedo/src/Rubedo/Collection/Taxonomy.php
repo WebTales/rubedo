@@ -79,7 +79,7 @@ class Taxonomy extends AbstractLocalizableCollection implements ITaxonomy
         'name' => 'Navigation',
         'multiSelect' => true,
         'readOnly' => true,
-        'inputAsTree' => true,
+        'inputAsTree' => false,
         'createUser' => array(
             'fullName' => 'Rubedo'
         ),
