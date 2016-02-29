@@ -32,7 +32,7 @@ class DataIndex extends DataAbstract
      * Documents queue for indexing
      */
     protected $_documents;
-       
+
     /**
      * Reindex all content or dam
      *
@@ -49,7 +49,7 @@ class DataIndex extends DataAbstract
         // Initialize result array
         $result = [];
 
-        // Destroy and re-create content, dam and user indexes        
+        // Destroy and re-create content, dam and user indexes
         if ($option == 'all' or $option == 'content') {
         	$contentsIndexName = $this->getIndexNameFromConfig('contentIndex');
           	if ($this->_client->indices()->exists(['index' => $contentsIndexName])) {
@@ -128,13 +128,13 @@ class DataIndex extends DataAbstract
      * Create or update index for existing content
      *
      * @param obj $data content data
-     * @param boolean $bulk     
+     * @param boolean $bulk
      * @return array
      */
     public function indexContent($data, $bulk = false) {
-    	
+
     	$this->_getService('ElasticContents')->index($data, $bulk = false);
-    	
+
     }
 
     /**
@@ -145,9 +145,9 @@ class DataIndex extends DataAbstract
      * @return array
      */
     public function indexDam($data, $bulk = false) {
-    	 
+
     	$this->_getService('ElasticDam')->index($data, $bulk = false);
-    	 
+
     }
 
     /**
@@ -158,9 +158,9 @@ class DataIndex extends DataAbstract
      * @return array
      */
     public function indexUser($data, $bulk = false) {
-    	 
+
     	$this->_getService('ElasticUsers')->index($data, $bulk = false);
-    	 
+
     }
 
 }

@@ -50,6 +50,8 @@ class ApplicationLogger extends Logger
 
     /**
      * Construct this object
+     * 
+     * @todo Find a compatible log library for php7
      */
     public function __construct()
     {
@@ -60,8 +62,8 @@ class ApplicationLogger extends Logger
         $level = monologger::INFO;
         try {
             $mongoClient = Manager::getService('MongoDataAccess')->getAdapter();
-            $handler = new MongoDBHandler($mongoClient, DataAccess::getDefaultDb(), static::$logCollection, $level);
-            $this->logger->pushHandler($handler);
+            //$handler = new MongoDBHandler($mongoClient, DataAccess::getDefaultDb(), static::$logCollection, $level);
+            //$this->logger->pushHandler($handler);
         } catch (\MongoConnectionException $e) {
 
         }

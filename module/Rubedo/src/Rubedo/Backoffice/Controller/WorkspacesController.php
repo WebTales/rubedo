@@ -47,25 +47,25 @@ class WorkspacesController extends DataAccessController
     public function indexAction()
     {
         $filterJson = $this->params()->fromQuery('filter');
-        if (isset($filterJson)) {
+        if (isset($filterJson) && $filterJson != "") {
             $filters = Json::decode($filterJson, Json::TYPE_ARRAY);
         } else {
             $filters = null;
         }
         $sortJson = $this->params()->fromQuery('sort');
-        if (isset($sortJson)) {
+        if (isset($sortJson) && $filterJson != "") {
             $sort = Json::decode($sortJson, Json::TYPE_ARRAY);
         } else {
             $sort = null;
         }
         $startJson = $this->params()->fromQuery('start');
-        if (isset($startJson)) {
+        if (isset($startJson) && $filterJson != "") {
             $start = Json::decode($startJson, Json::TYPE_ARRAY);
         } else {
             $start = null;
         }
         $limitJson = $this->params()->fromQuery('limit');
-        if (isset($limitJson)) {
+        if (isset($limitJson) && $filterJson != "") {
             $limit = Json::decode($limitJson, Json::TYPE_ARRAY);
         } else {
             $limit = null;

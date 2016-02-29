@@ -30,8 +30,8 @@ RewriteEngine On
 ####################################################################
 #  /!\ activate to forbid access to the install tool /!\
 ####################################################################
-RewriteRule install$ - [F,L]
-RewriteRule install/ - [F,L]
+#RewriteRule install$ - [F,L]
+#RewriteRule install/ - [F,L]
 
 RewriteCond %{REMOTE_ADDR} !^127.0.0.1
 RewriteCond %{REMOTE_ADDR} !^::1

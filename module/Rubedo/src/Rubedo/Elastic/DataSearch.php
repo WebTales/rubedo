@@ -96,7 +96,7 @@ class DataSearch extends DataAbstract
      *            filter name
      *            string $field
      *            field to apply filter
-     * @return array            
+     * @return array
      */
     protected function _addTermFilter($name, $field)
     {
@@ -144,25 +144,25 @@ class DataSearch extends DataAbstract
     /**
      * Add facet to Query
      *
-     * @param 	string $facetName 
+     * @param 	string $facetName
      *        	string $fieldName
      *        	string $orderField
      *        	string $orderDirection
      * @return 	array
      */
-    
+
     protected function _addTermsFacet($facetName, $fieldName = null, $orderField = '_count', $orderDirection = 'desc', $size = 100) {
 
     	// Set default value for fieldName
     	If (is_null($fieldName)) $fieldName = $facetName;
-    	
+
     	// Exclude active Facets for this vocabulary
     	$exclude = $this->_excludeActiveFacets($facetName);
-    	
-    	// Apply filters from other facets 
+
+    	// Apply filters from other facets
     	$facetFilter = self::_getFacetFilter($facetName);
-    	 
-    	// Build facet 
+
+    	// Build facet
     	$result = [
     		'filter' => $facetFilter,
     		'aggs' => [
@@ -175,20 +175,20 @@ class DataSearch extends DataAbstract
     			]
     		]
     	];
-    	
+
     	if ($exclude!=['']) $result['aggs']['aggregation']['terms']['exclude'] = $exclude;
-    	
+
     	return $result;
     }
-    
+
     protected function _addDateRangeFacet($facetName, $fieldName = null, $ranges) {
-    
-    	// Set default value for fieldName   	 
+
+    	// Set default value for fieldName
     	If (is_null($fieldName)) $fieldName = $facetName;
-    	     	 
+
     	// Apply filters from other facets
     	$facetFilter = self::_getFacetFilter($facetName);
-    
+
     	// Build facet
     	$result = [
     		'filter' => $facetFilter,
@@ -201,18 +201,18 @@ class DataSearch extends DataAbstract
     			]
     		]
     	];
-    	 
+
     	return $result;
     }
 
     protected function _addRangeFacet($facetName, $fieldName = null, $ranges) {
-    
+
     	// Set default value for fieldName
     	If (is_null($fieldName)) $fieldName = $facetName;
-       
+
     	// Apply filters from other facets
     	$facetFilter = self::_getFacetFilter($facetName);
-    
+
     	// Build facet
     	$result = [
     		'filter' => $facetFilter,
@@ -225,16 +225,16 @@ class DataSearch extends DataAbstract
     			]
     		]
     	];
-    
+
     	return $result;
-    }    
-    
+    }
+
     protected function _excludeActiveFacets ($facetName) {
     	$exclude = [''];
     	if ($this->_facetDisplayMode != 'checkbox' and isset ($this->_filters [$facetName])) {
     		$exclude = $this->_filters [$facetName];
     	}
-    	return $exclude;    	
+    	return $exclude;
     }
 
     protected function setLocaleFilter(array $values)
@@ -303,7 +303,7 @@ class DataSearch extends DataAbstract
             return false;
         }
     }
-        
+
     /**
      * ES search
      *
@@ -313,12 +313,12 @@ class DataSearch extends DataAbstract
      */
     public function search(array $params, $option = 'all', $withSummary = true)
     {
-	
+
         $this->_params = $params;
 
         $this->_facetDisplayMode = isset ($this->_params ['block-config'] ['displayMode']) ? $this->_params ['block-config'] ['displayMode'] : 'standard';
 
-        // front-end search        
+        // front-end search
         if ((self::$_isFrontEnd)) {
 
             // get list of displayed Facets
@@ -442,13 +442,13 @@ class DataSearch extends DataAbstract
 
         $globalFilter = array();
 
-        
+
         // Front end filters
         if (isset($this->_params['frontEndFilters'])) {
         	$this->_globalFilterList ['frontEndFilters'] = $this->_params['frontEndFilters'];
         	$this->_setFilter = true;
         }
-        
+
         // Filter on read Workspaces
         $readWorkspaceArray = $this->_getService('CurrentUser')->getReadWorkspaces();
 
@@ -464,8 +464,8 @@ class DataSearch extends DataAbstract
             $this->_globalFilterList ['target'] = $workspacesFilter;
             $this->_setFilter = true;
         }
-        
-        // Products filter        
+
+        // Products filter
         if (isset($this->_params['isProduct'])&&$this->_params['isProduct']){
         	$isProductFilter = [
         		'term' => ['isProduct' => true]
@@ -476,7 +476,7 @@ class DataSearch extends DataAbstract
         // Frontend filters, for contents only : online, start and end publication date
         if ((self::$_isFrontEnd) && ($option != 'user') && ($option != 'dam')) {
 
-            // Only 'online' contents         
+            // Only 'online' contents
         	$onlineFilter = [
         		'or' => [
         			['term' => [
@@ -490,7 +490,7 @@ class DataSearch extends DataAbstract
         			]
         		]
         	];
-        	
+
             //  Filter on start and end publication date
             $now = $this->_getService('CurrentTime')->getCurrentTime();
 
@@ -530,7 +530,7 @@ class DataSearch extends DataAbstract
             			]
             		]]
             	]
-            ];            
+            ];
 
             // build complete filter
             $frontEndFilter = [
@@ -571,10 +571,10 @@ class DataSearch extends DataAbstract
         if (array_key_exists('userType', $this->_params)) {
             $this->_addTermFilter('userType', 'userType');
         }
-        
+
         // add filter for geo search on content types with 'position' field
         if ($option == 'geo') {
-        	
+
             $contentTypeList = $this->_getService('ContentTypes')->getGeolocatedContentTypes();
             if (!empty ($contentTypeList)) {
             	$geoFilter = array();
@@ -594,7 +594,7 @@ class DataSearch extends DataAbstract
             			'geohash_grid' => [
             				'field' => 'fields.position.location.coordinates'
             			]
-            		]	
+            		]
             	]
             ];
         }
@@ -630,7 +630,7 @@ class DataSearch extends DataAbstract
         if (array_key_exists('price', $this->_params)) {
 
         	$splitPriceRange = explode('-',$this->_params ['price']);
-        	
+
         	$rangeFrom = ($splitPriceRange[0]!='*') ? $splitPriceRange[0] : false;
         	$rangeTo = ($splitPriceRange[1]!='*') ? $splitPriceRange[1] : false;
         	$range = [];
@@ -645,10 +645,10 @@ class DataSearch extends DataAbstract
         	$this->_filters ['price'] = $this->_params ['price'];
         	$this->_setFilter = true;
         }
-        
+
         // filter on stock availability
         if (array_key_exists('inStock', $this->_params)) {
-        	
+
         	$range = [];
         	$range['gte'] = 1;
         	$filter = [
@@ -660,7 +660,7 @@ class DataSearch extends DataAbstract
         	$this->_filters ['inStock'] = $this->_params ['inStock'];
         	$this->_setFilter = true;
         }
-        
+
         // filter on geolocalisation if inflat, suplat, inflon and suplon are
         // set
         if (isset ($this->_params ['inflat']) && isset ($this->_params ['suplat']) && isset ($this->_params ['inflon']) && isset ($this->_params ['suplon'])) {
@@ -679,7 +679,7 @@ class DataSearch extends DataAbstract
             		]
             	]
             ];
-            
+
             $this->_globalFilterList ['geo'] = $geoBoundingBoxFilter;
             $this->_setFilter = true;
             // set precision for geohash aggregation
@@ -731,7 +731,7 @@ class DataSearch extends DataAbstract
                 }
                 foreach ($this->_params [$vocabulary] as $term) {
 
-                    $this->_addTermFilter($vocabulary, 'taxonomy.' . $vocabulary);
+                    $this->_addTermFilter($vocabulary, 'taxonomy_' . $vocabulary);
                 }
             }
         }
@@ -752,11 +752,11 @@ class DataSearch extends DataAbstract
             if (array_key_exists(urlencode($field ['name']), $this->_params)) {
                 $this->_addTermFilter($field ['name'], $fieldName);
             }
-            
+
         }
-        
+
         $searchParams=[];
-        
+
         // Setting fields from localization strategy for content or dam search
         // only
         if ($option != 'user') {
@@ -816,9 +816,9 @@ class DataSearch extends DataAbstract
             		'all_nonlocalized'
                 ]
             ];
-            
+
         }
-        
+
         // add user query
         if ($this->_params ['query'] != '') {
         	$elasticQueryString['query'] = $this->_params ['query'];
@@ -827,8 +827,8 @@ class DataSearch extends DataAbstract
         }
 
         $searchParams['body']['query']['query_string'] = $elasticQueryString;
-        
-        // Apply filter to query and aggregations        
+
+        // Apply filter to query and aggregations
         if (!empty ($this->_globalFilterList)) {
             foreach ($this->_globalFilterList as $filter) {
             	$globalFilter['and'][] = $filter;
@@ -849,52 +849,52 @@ class DataSearch extends DataAbstract
         	$searchParams['body']['aggs']['type'] = $this->_addTermsFacet('type', 'contentType');
 
         }
-        
+
         // Define the dam type facet
         if ($this->_isFacetDisplayed('damType')) {
 
         	$searchParams['body']['aggs']['damType'] = $this->_addTermsFacet('damType');
-        	 
+
         }
-        
+
         // Define the user type facet
         if ($this->_isFacetDisplayed('userType')) {
 
 			$searchParams['body']['aggs']['userType'] = $this->_addTermsFacet('userType');
 
         }
-        
+
         // Define the author facet
         if ($this->_isFacetDisplayed('author')) {
-        
+
         	$searchParams['body']['aggs']['author'] = $this->_addTermsFacet('author','createUser.id');
- 
+
         }
-        
-        // Define the alphabetical name facet for users    
+
+        // Define the alphabetical name facet for users
         if ($option == 'user') {
 
         	$searchParams['body']['aggs']['userName'] = $this->_addTermsFacet('userName','first_letter');
 
         }
 
-        // Define the date facet    
+        // Define the date facet
         $d = $this->_getService('CurrentTime')->getCurrentTime();
-       
+
         $lastday = ( string ) mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d)) * 1000;
         $lastweek = ( string )mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d)) * 1000;
         $lastmonth = ( string )mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d)) * 1000;
         $lastyear = ( string )mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1) * 1000;
-        
+
         $ranges = [
         	['from' => $lastday],
         	['from' => $lastweek],
         	['from' => $lastmonth],
         	['from' => $lastyear],
         ];
-        
+
         $searchParams['body']['aggs']['lastupdatetime'] = $this->_addDateRangeFacet('lastUpdateTime','lastUpdateTime',$ranges);
-            
+
         // Init time label array
         $timeLabel = array();
         $timeLabel [$lastday] = $this->_getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Day', 'Past 24H');
@@ -902,18 +902,18 @@ class DataSearch extends DataAbstract
         $timeLabel [$lastmonth] = $this->_getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Month', 'Past month');
         $timeLabel [$lastyear] = $this->_getService('Translate')->translateInWorkingLanguage('Search.Facets.Label.Date.Year', 'Past year');
 
-        // Define taxonomy facets    
+        // Define taxonomy facets
         foreach ($taxonomies as $taxonomy) {
             $vocabulary = $taxonomy ['id'];
 
             if ($this->_isFacetDisplayed($vocabulary)) {
 
-            	$searchParams['body']['aggs'][$vocabulary] = $this->_addTermsFacet($vocabulary,'taxonomy.' . $taxonomy ['id'],'_count','desc',100);
+            	$searchParams['body']['aggs'][$vocabulary] = $this->_addTermsFacet($vocabulary,'taxonomy_' . $taxonomy ['id'],'_count','desc',100);
 
             }
         }
 
-        // Define the fields facets     
+        // Define the fields facets
         foreach ($facetedFields as $field) {
 
             if ($field ['useAsVariation']) {
@@ -932,10 +932,10 @@ class DataSearch extends DataAbstract
 
              }
         }
-		
+
         // Define the price facet for products
         if ($this->_isFacetDisplayed('price')) {
-        	
+
         	$ranges = [
         		['from' => 0, 'to' => 5],
         		['from' => 6, 'to' => 15],
@@ -943,25 +943,25 @@ class DataSearch extends DataAbstract
         		['from' => 26, 'to' => 50],
         		['from' => 51],
         	];
-        	
-        	$searchParams['body']['aggs']['price'] = $this->_addRangeFacet('price','productProperties.variations.price',$ranges);        	
+
+        	$searchParams['body']['aggs']['price'] = $this->_addRangeFacet('price','productProperties.variations.price',$ranges);
         }
-        
+
         // Define the stock facet for products
         if ($this->_isFacetDisplayed('inStock')) {
-        	
+
         	$ranges = [
         		['to' => 0],
         		['from' => 1],
-        	]; 
-        	
+        	];
+
         	$searchParams['body']['aggs']['inStock'] = $this->_addDateRangeFacet('inStock','productProperties.variations.stock',$ranges);
         }
 
-        // Add size and from to paginate results       
+        // Add size and from to paginate results
         if (isset($this->_params['start']) && isset($this->_params['limit'])) {
          	$searchParams['body']['size'] = $this->_params ['limit'];
-        	$searchParams['body']['from'] = $this->_params ['start'];          
+        	$searchParams['body']['from'] = $this->_params ['start'];
         } else {
             if (is_numeric($this->_params ['pagesize'])) {
             	$searchParams['body']['size'] = $this->_params ['pagesize'];
@@ -973,16 +973,16 @@ class DataSearch extends DataAbstract
         if (!isset($this->_params ['customSort'])) {
         	// order by field value
 	        $searchParams['body']['sort'] = [
-	        	[$this->_params ['orderby'] => ['order' => strtolower($this->_params ['orderbyDirection']), 'ignore_unmapped' => true] ]   	
-	        ];   
+	        	[$this->_params ['orderby'] => ['order' => strtolower($this->_params ['orderbyDirection']), 'ignore_unmapped' => true] ]
+	        ];
         } else {
         	// custom sort object
         	$searchParams['body']['sort'] = $this->_params ['customSort'];
         }
-        
-        // retrieve all stored fields       
+
+        // retrieve all stored fields
         $searchParams['body']['fields'] = ['*'];
-        
+
         // run query
         switch ($option) {
             case 'content' :
@@ -997,7 +997,7 @@ class DataSearch extends DataAbstract
             case 'geo' :
                 if (isset($geoPrecision)) $geoAgreggation['aggs']['hash']['geohash_grid']['precision'] = $geoPrecision;
                 $searchParams['body']['aggs']['agf'] = $geoAgreggation;
-                $searchParams['body']['aggs']['agf']['filter'] = $globalFilter;                               
+                $searchParams['body']['aggs']['agf']['filter'] = $globalFilter;
                 $searchParams['index'] = $this->getIndexNameFromConfig('contentIndex');
                 break;
             case 'all' :
@@ -1005,7 +1005,7 @@ class DataSearch extends DataAbstract
                 break;
         }
 
-        // For geosearch dynamically set searchMode depending on the number of results       
+        // For geosearch dynamically set searchMode depending on the number of results
         if ($option == 'geo' && self::$_isFrontEnd) {
         	$countSearchParams = $searchParams;
             $countSearchParams['body']['size'] = 0;
@@ -1038,7 +1038,7 @@ class DataSearch extends DataAbstract
                 break;
         }
 
-        // For geosearch get aggregation buckets        
+        // For geosearch get aggregation buckets
         if ($option == 'geo') {
             $result ['Aggregations'] = $elasticResultSet['aggregations']['agf']['hash'];
 
@@ -1048,7 +1048,7 @@ class DataSearch extends DataAbstract
             }
         }
 
-        // Update data        
+        // Update data
         $resultsList = $elasticResultSet['hits']['hits'];
 
         $result ['total'] = $elasticResultSet['hits']['total'];
@@ -1098,7 +1098,7 @@ class DataSearch extends DataAbstract
                     }
                     $contentType = $this->_getContentType($data ['contentType'][0] );
                     if (!$userCanWriteContents || $contentType ['readOnly']) {
-                        $resultData ['readOnly'] = true; 
+                        $resultData ['readOnly'] = true;
                         } elseif ( !in_array('global', $userWriteWorkspaces) ) {
                         $resultData ['readOnly'] = true;
                     }
@@ -1130,7 +1130,7 @@ class DataSearch extends DataAbstract
                     $resultData ['type'] = $userType ['type'];
                     break;
             }
-            
+
 
             // ensure that date is formated as timestamp while handled as date
             // type for ES
@@ -1146,7 +1146,7 @@ class DataSearch extends DataAbstract
             $result ['data'] [] = array_merge($resultData, $data);
         }
 
-        // Add label to Facets, hide empty facets,        
+        // Add label to Facets, hide empty facets,
         $elasticFacetsTemp = $elasticResultSet['aggregations'];
 
         $elasticFacets = array();
@@ -1167,14 +1167,14 @@ class DataSearch extends DataAbstract
 
         	if (isset($facet['aggregation'])) {
 	            $temp = ( array )$facet['aggregation'];
-	
+
 	            $renderFacet = true;
 	            if (!empty ($temp)) {
 	                $temp ['id'] = $id;
 	                switch ($id) {
-	                	
+
 	                    case 'navigation' :
-	
+
 	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.Navigation', 'Navigation');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                            foreach ($temp ['buckets'] as $key => $value) {
@@ -1187,9 +1187,9 @@ class DataSearch extends DataAbstract
 	                            $renderFacet = false;
 	                        }
 	                        break;
-	
+
 	                    case 'damType' :
-	
+
 	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.MediaType', 'Media type');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                            foreach ($temp ['buckets'] as $key => $value) {
@@ -1204,9 +1204,9 @@ class DataSearch extends DataAbstract
 	                            $renderFacet = false;
 	                        }
 	                        break;
-	
+
 	                    case 'objectType' :
-	
+
 	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.DataType', 'Data type');
 	                        foreach ($temp ['buckets'] as $key => $value) {
 	                        	$temp ['terms'] [$key] ['term'] = $value ['key'];
@@ -1214,9 +1214,9 @@ class DataSearch extends DataAbstract
 	                            $temp['terms'] [$key] ['count'] = $value['doc_count'];
 	                        }
 	                        break;
-	
+
 	                    case 'type' :
-	
+
 	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.ContentType', 'Content type');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                            foreach ($temp ['buckets'] as $key => $value) {
@@ -1229,9 +1229,9 @@ class DataSearch extends DataAbstract
 	                            $renderFacet = false;
 	                        }
 	                        break;
-	
+
 	                    case 'userType' :
-	
+
 	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.UserType', 'User type');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                            foreach ($temp ['buckets'] as $key => $value) {
@@ -1244,9 +1244,9 @@ class DataSearch extends DataAbstract
 	                            $renderFacet = false;
 	                        }
 	                        break;
-	
+
 	                    case 'author' :
-	
+
 	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.Author', 'Author');
 	                        if ($this->_facetDisplayMode == 'checkbox' or (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0)) {
 	                            $collection = $this->_getService('Users');
@@ -1263,23 +1263,23 @@ class DataSearch extends DataAbstract
 	                            $renderFacet = false;
 	                        }
 	                        break;
-	
+
 	                    case 'userName' :
-	
+
 	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.UserName', 'User Name');
 	                        foreach ($temp ['buckets'] as $key => $value) {
 	                        	$temp ['terms'] [$key] ['term'] = $value ['key'];
 	                            $temp ['terms'] [$key] ['label'] = strtoupper($value ['key']);
 	                            $temp['terms'] [$key] ['count'] = $value['doc_count'];
 	                        }
-	
+
 	                        break;
-	
+
 	                    case 'lastupdatetime' :
-	
+
 	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.ModificationDate', 'Modification date');
 	                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
-	                        	
+
 	                        	$temp ['_type'] = 'range';
 	                        	$temp ['ranges'] = array_values($temp ['buckets']);
 
@@ -1301,12 +1301,12 @@ class DataSearch extends DataAbstract
 	                            $renderFacet = false;
 	                        }
 	                        break;
-	                        
+
 	                    case 'price' :
-	                    	
+
 	                    	$temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.Price', 'Price');
 	                    	if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
-	                    		
+
 	                    		$temp ['_type'] = 'range';
 	                    		$temp ['ranges'] = array_values($temp ['buckets']);
 
@@ -1328,17 +1328,17 @@ class DataSearch extends DataAbstract
                                 $temp ['ranges']=array_values($temp ['ranges']);
 	                    	} else {
 	                    		$renderFacet = false;
-	                    	}	  
+	                    	}
 	                    	break;
-						
+
 	                    case 'inStock' :
-	                    	
+
 	                    	$temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.InStock', 'In stock');
 	                    	if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
-	                    		 
+
 	                    		$temp ['_type'] = 'range';
 	                    		$temp ['ranges'] = array_values($temp ['buckets']);
-	                    		 
+
 	                    		foreach ($temp ['buckets'] as $key => $value) {
 	                    			$rangeCount = $value ['doc_count'];
 	                    			// unset facet when count = 0 or total results
@@ -1359,7 +1359,7 @@ class DataSearch extends DataAbstract
 	                    		$renderFacet = false;
 	                    	}
 	                    	break;
-	                    		                    	
+
 	                    default :
 	                        $regex = '/^[0-9a-z]{24}$/';
 	                        if (preg_match($regex, $id)) { // Taxonomy facet use
@@ -1382,9 +1382,9 @@ class DataSearch extends DataAbstract
 	                            }
 	                        } else {
 	                            // faceted field
-	                            $intermediaryVal = $this->searchLabel($facetedFields, 'name', $id);	
+	                            $intermediaryVal = $this->searchLabel($facetedFields, 'name', $id);
 	                            $temp ['label'] = $intermediaryVal [0] ['label'];
-	
+
 	                            if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                                foreach ($temp ['buckets'] as $key => $value) {
 	                                	$temp ['terms'] [$key] ['term'] = $value ['key'];
@@ -1402,7 +1402,7 @@ class DataSearch extends DataAbstract
 	                    $result ['facets'] [] = $temp;
 	                }
 	            }
-            }				
+            }
         }
 
         // Add label to filters
@@ -1680,9 +1680,9 @@ class DataSearch extends DataAbstract
     {
         DataSearch::$_isFrontEnd = $_isFrontEnd;
     }
-    
+
     protected function getRangeLabel($from, $to, $currency = "€") {
-    	
+
     	$from = (int) $from;
     	$to = (int) $to;
     	if (isset($from) && $from!='*') {

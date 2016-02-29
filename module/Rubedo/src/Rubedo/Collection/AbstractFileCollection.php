@@ -40,7 +40,7 @@ abstract class AbstractFileCollection implements IAbstractFileCollection
     {
         // init the data access service
         $this->_dataService = Manager::getService('MongoFileAccess');
-        $this->_dataService->init();
+        // $this->_dataService->init();
     }
 
     public function __construct()

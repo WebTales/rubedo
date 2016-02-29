@@ -748,4 +748,3 @@ class IndexController extends AbstractActionController
         return $success;
     }
 }
-

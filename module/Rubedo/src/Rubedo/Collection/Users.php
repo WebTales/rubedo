@@ -186,7 +186,7 @@ class Users extends AbstractCollection implements IUsers
     public function create(array $obj, $options = array())
     {
         if(isset($obj["login"]) && is_string($obj["login"])) {
-            $loginFilter = Filter::factory()->addFilter(Filter::factory('Value')->setName('login')->setValue(new \MongoRegex("/^".$this->escapeRegexChars($obj["login"])."$/i")));
+            $loginFilter = Filter::factory()->addFilter(Filter::factory('Value')->setName('login')->setValue(new \MongoDB\BSON\Regex("^".$this->escapeRegexChars($obj["login"])."$", "i")));
             $rawUser = Manager::getService("Users")->getList($loginFilter);
 
             if(count($rawUser["data"]) === 0) {

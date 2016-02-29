@@ -385,6 +385,8 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
      * If correct context, initialize user session
      *
      * @param MvcEvent $e
+     *
+     * @todo Find compatible session system with php7 mongoDB driver
      */
     protected function initializeSession(MvcEvent $e)
     {
@@ -397,22 +399,22 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
         $this->sessionName = $config['session']['name'];
 
         try {
-            $adapter = Manager::getService('MongoDataAccess')->getAdapter();
+            // $adapter = Manager::getService('MongoDataAccess')->getAdapter();
 
-            $options = new MongoDBOptions(array(
-                'database' => Mongo\DataAccess::getDefaultDb(),
-                'collection' => 'sessions'
-            ));
+            // $options = new MongoDBOptions(array(
+                // 'database' => Mongo\DataAccess::getDefaultDb(),
+                // 'collection' => 'sessions'
+            // ));
 
-            $saveHandler = new MongoDB($adapter, $options);
+            // $saveHandler = new MongoDB($adapter, $options);
 
-            $this->sessionManager = new SessionManager($sessionConfig);
-            $connections = $adapter->getConnections();
-            if (!empty($connections)) {
-                $this->sessionManager->setSaveHandler($saveHandler);
-            }
+            // $this->sessionManager = new SessionManager($sessionConfig);
+            // $connections = $adapter->getConnections();
+            // if (!empty($connections)) {
+                // $this->sessionManager->setSaveHandler($saveHandler);
+            // }
 
-            Container::setDefaultManager($this->sessionManager);
+            // Container::setDefaultManager($this->sessionManager);
         } catch (\MongoConnectionException $e) {
             static::$cachePageIsActive = false;
         }
@@ -425,12 +427,12 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
      */
     protected function startSession($duration)
     {
-        if (isset($_POST['remember-me']) && filter_var($_POST['remember-me'], FILTER_VALIDATE_BOOLEAN)) {
-            $this->sessionManager->rememberMe($duration);
-        }
-        if (isset($_COOKIE[$this->sessionName])) {
-            $this->sessionManager->start();
-        }
+        // if (isset($_POST['remember-me']) && filter_var($_POST['remember-me'], FILTER_VALIDATE_BOOLEAN)) {
+        //     $this->sessionManager->rememberMe($duration);
+        // }
+        // if (isset($_COOKIE[$this->sessionName])) {
+        //     $this->sessionManager->start();
+        // }
     }
 
     /**

@@ -119,7 +119,7 @@ abstract class AbstractCollection implements IAbstractCollection
     	if (isset($start)) {
     		$this->_dataService->setFirstResult($start);
     	}
-    	
+
     	// Add limit
     	if (isset($limit)) {
     		$this->_dataService->setNumberOfResults($limit);
@@ -136,9 +136,9 @@ abstract class AbstractCollection implements IAbstractCollection
 	    		$this->_dataService->addSort(array(
 					"orderByUserGroup.".$fingerprintData["userGroup"] => 'desc'
 	    		));
-    		}   		
+    		}
     	}
-    	
+
     	// Add standard sort
     	if (isset($sort)) {
     		foreach ($sort as $value) {
@@ -147,7 +147,7 @@ abstract class AbstractCollection implements IAbstractCollection
     			));
     		}
     	}
-    	
+
     	$dataValues = $this->_dataService->read($filters);
 
         if ($dataValues && is_array($dataValues)) {
@@ -159,7 +159,7 @@ abstract class AbstractCollection implements IAbstractCollection
         }
 
         return $dataValues;
-        
+
     }
 
     /**
@@ -302,7 +302,7 @@ abstract class AbstractCollection implements IAbstractCollection
     }
 
     public function findAndModify(\WebTales\MongoFilters\IFilter $query = null, array $update, $fields = array(), $options = array()) {
-    	
+
     	$result = $this->_dataService->findAndModify($query, $update, $fields, $options);
 
     	if (count($result)>0) {
@@ -311,7 +311,7 @@ abstract class AbstractCollection implements IAbstractCollection
     		return false;
     	}
     }
-    
+
     /**
      * Create an objet in the current collection
      *
@@ -625,7 +625,7 @@ abstract class AbstractCollection implements IAbstractCollection
     public function drop()
     {
         $result = $this->_dataService->drop();
-        if ($result['ok']) {
+        if ($result->ok) {
             return true;
         } else {
             return false;

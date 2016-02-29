@@ -52,7 +52,7 @@ class Url extends \Rubedo\Router\Url
             $pageValid = true;
         }
 
-        if (isset($content['taxonomy.navigation']) && $content['taxonomy.navigation'] !== "" && !$pageValid) {
+        if (isset($content['taxonomy_navigation']) && $content['taxonomy_navigation'] !== "" && !$pageValid) {
             $dbContent = Manager::getService("Contents")->findById($content["id"], true, false);
 
             if (isset($dbContent["taxonomy"]["navigation"])) {

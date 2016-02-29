@@ -25,7 +25,7 @@ namespace Rubedo\Elastic;
  */
 class UserTypes extends DataAbstract
 {
-		
+
 	/**
 	 * Mapping
 	 */
@@ -117,11 +117,11 @@ class UserTypes extends DataAbstract
 		parent::__construct();
 		$this->_indexName = $this->getIndexNameFromConfig('userIndex');
 		parent::init();
-		
+
 		parent::getAnalyzers();
 		parent::getLanguages();
 	}
-	
+
 	/**
 	 * Build mapping for object
 	 *
@@ -130,7 +130,7 @@ class UserTypes extends DataAbstract
 	 */
 	public function getMapping(array $data)
 	{
-	
+
 	    $mapping = [];
 
         if (isset($data['fields']) && is_array($data['fields'])) {
@@ -140,7 +140,7 @@ class UserTypes extends DataAbstract
 
             // Add Taxonomies
             foreach ($vocabularies as $vocabularyName) {
-                $mapping["taxonomy." . $vocabularyName] = [
+                $mapping["taxonomy_" . $vocabularyName] = [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => 'yes'
@@ -179,12 +179,12 @@ class UserTypes extends DataAbstract
             foreach ($fields as $field) {
             	$this->addFieldMapping($field,$mapping);
             }
-            
+
         }
-	
+
 		return array_merge(self::$_mapping, $mapping);
 	}
-	
+
 	/**
 	 * Set mapping for new or updated user type
 	 *
@@ -196,12 +196,12 @@ class UserTypes extends DataAbstract
 	public function setMapping($typeId, $data)
 	{
 			// Delete existing content type
-		$this->deleteMapping($this->_indexName, $typeId);
-	
+		// $this->deleteMapping($this->_indexName, $typeId);
+
 		// Create mapping
 		return $this->putMapping($this->_indexName, $typeId, $this->getMapping($data));
 	}
-	
+
 	/**
 	 * Delete user type mapping
 	 *
@@ -213,7 +213,7 @@ class UserTypes extends DataAbstract
 	{
 		return $this->deleteMapping($this->_indexName, $typeId);
 	}
-	
+
 	/**
 	 * Index all existing users from given type
 	 *
@@ -225,5 +225,5 @@ class UserTypes extends DataAbstract
 	public function index($typeId)
 	{
 		return $this->indexByType('user', $typeId);
-	}	
+	}
 }

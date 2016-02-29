@@ -46,7 +46,7 @@ class DamTypes extends DataAbstract
 		],
 		'createUser' => [
 			'type' => 'object',
-			'store' => 'yes',
+			// 'store' => 'yes',
 			'properties' => [
 				'id' => [
 					'type' => 'string',
@@ -81,7 +81,7 @@ class DamTypes extends DataAbstract
 		],
 		'autocomplete_nonlocalized' => [
 			'type' => 'completion',
-			'index_analyzer' => 'simple',
+			'analyzer' => 'simple',
 			'search_analyzer' => 'simple',
 			'payloads' => true,
 			'preserve_position_increments' => false
@@ -127,7 +127,7 @@ class DamTypes extends DataAbstract
 		],
 		'file' => [
 			'type' => 'attachment'
-		]					
+		]
 	];
 
 	/**
@@ -138,11 +138,11 @@ class DamTypes extends DataAbstract
 		parent::__construct();
 		$this->_indexName = $this->getIndexNameFromConfig('damIndex');
 		parent::init();
-		
+
 		parent::getAnalyzers();
 		parent::getLanguages();
 	}
-	
+
 	/**
 	 * Build mapping for object
 	 *
@@ -151,35 +151,35 @@ class DamTypes extends DataAbstract
 	 */
 	public function getMapping(array $data)
 	{
-	
+
 		$mapping = [];
-		
+
 		if (isset ($data ['fields']) && is_array($data ['fields'])) {
-	
+
 			// get vocabularies
 			$vocabularies = $this->getVocabularies($data);
-	
+
 			// add mapping for autocomplete in every active language
 			foreach ($this->_activeLanguages as $lang) {
 				$locale = !in_array($lang ['locale'], $this->_activeAnalysers) ? 'default' : $lang ['locale'];
 				$mapping ['autocomplete_' . $lang ['locale']] = [
 					'type' => 'completion',
-					'index_analyzer' => $locale . '_analyzer',
+					'analyzer' => $locale . '_analyzer',
 					'search_analyzer' => $locale . '_analyzer',
 					'payloads' => true,
 					'preserve_position_increments' => false
 				];
 			}
-	
+
 			// Add Taxonomies
 			foreach ($vocabularies as $vocabularyName) {
-				$mapping ["taxonomy." . $vocabularyName] = [
+				$mapping ["taxonomy_" . $vocabularyName] = [
 					'type' => 'string',
 					'index' => 'not_analyzed',
 					'store' => 'yes'
 				];
 			}
-	
+
 			// Add system fields : title
 			$fields = $data['fields'];
 
@@ -198,23 +198,23 @@ class DamTypes extends DataAbstract
 				'dynamic' => false,
 				'type' => 'object'
 			];
-	
+
 			foreach ($this->_activeLanguages as $lang) {
 				$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] = [
 					'dynamic' => false,
 					'type' => 'object'
 				];
 			}
-	
+
 			// add fields mappings
 			foreach ($fields as $field) {
 				$this->addFieldMapping($field,$mapping);
 			}
 		}
-	
+
 		return array_merge(self::$_mapping, $mapping);
 	}
-	
+
 	/**
 	 * Set mapping for new or updated dam type
 	 *
@@ -226,12 +226,12 @@ class DamTypes extends DataAbstract
 	public function setMapping($typeId, $data)
 	{
 		// Delete existing content type
-		$this->deleteMapping($this->_indexName, $typeId);
-	
+		// $this->deleteMapping($this->_indexName, $typeId);
+
 		// Create mapping
 		return $this->putMapping($this->_indexName, $typeId, $this->getMapping($data));
 	}
-	
+
 	/**
 	 * Delete dam type mapping
 	 *
@@ -243,7 +243,7 @@ class DamTypes extends DataAbstract
 	{
 		return $this->deleteMapping($this->_indexName, $typeId);
 	}
-	
+
 	/**
 	 * Index all existing assets from given type
 	 *
@@ -255,5 +255,5 @@ class DamTypes extends DataAbstract
 	public function index($typeId)
 	{
 		return $this->indexByType('dam', $typeId);
-	}	
+	}
 }

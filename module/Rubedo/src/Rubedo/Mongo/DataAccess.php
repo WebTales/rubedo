@@ -202,7 +202,7 @@ class DataAccess implements IDataAccess
      */
     public static function lazyLoadConfig()
     {
-    	
+
         $config = Manager::getService('config');
         $options = $config['datastream'];
         if (isset($options)) {
@@ -219,15 +219,15 @@ class DataAccess implements IDataAccess
             	}
             }
             $connectionString = substr($connectionString,0,-1);
-			
-            if (isset($options['mongo']['replicaSetName'])) { 
+
+            if (isset($options['mongo']['replicaSetName'])) {
             	self::$_replicaSetName = $options['mongo']['replicaSetName'];
             }
 
             if (isset($options['mongo']['readPreference'])) {
                 self::$_readPreference = $options['mongo']['readPreference'];
             }
-        	
+
             self::setDefaultMongo(str_replace(' ','',$connectionString));
 
             self::setDefaultDb($options['mongo']['db']);
@@ -400,8 +400,9 @@ class DataAccess implements IDataAccess
      */
     public function getMongoServerVersion()
     {
+        $database = new \MongoDB\Database($this->_dbName, static::$_defaultDb);
         $this->init('version');
-        $dbInfo = $this->_dbName->command(array(
+        $dbInfo = $database->command(array(
             'buildinfo' => true
         ));
         if (isset($dbInfo['version'])) {
@@ -451,15 +452,17 @@ class DataAccess implements IDataAccess
      * @param string $dbName
      * @param string $mongo
      * @return \MongoCollection
+     *
+     * @todo Check if proxyCollection was usefull
      */
     protected function _getCollection($collection, $dbName, $mongo)
     {
-        if (isset(self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection]) && self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection] instanceof \MongoCollection) {
+        if (isset(self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection]) && self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection] instanceof \MongoDB\Collection) {
             return self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection];
         } else {
             $this->_dbName = $this->_getDB($dbName, $mongo);
-            $collectionObj = new ProxyCollection($this->_dbName->$collection);
-            self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection] = $collection;
+            $collectionObj = new \MongoDB\Collection($this->_dbName, $dbName, $collection);
+            self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection] = $collectionObj;
             return $collectionObj;
         }
     }
@@ -473,13 +476,13 @@ class DataAccess implements IDataAccess
      */
     protected function _getDB($dbName, $mongo)
     {
-        if (isset(self::$_dbArray[$mongo . '_' . $dbName]) && self::$_dbArray[$mongo . '_' . $dbName] instanceof \MongoDB) {
+        if (isset(self::$_dbArray[$mongo . '_' . $dbName]) && self::$_dbArray[$mongo . '_' . $dbName] instanceof \MongoDB\Driver\Manager) {
             return self::$_dbArray[$mongo . '_' . $dbName];
         } else {
             $this->_adapter = $this->getAdapter($mongo, $dbName);
-            $db = $this->_adapter->$dbName;
-            self::$_dbArray[$mongo . '_' . $dbName] = $db;
-            return $db;
+            // $db = $this->_adapter->$dbName;
+            self::$_dbArray[$mongo . '_' . $dbName] = $this->_adapter;
+            return $this->_adapter;
         }
     }
 
@@ -504,21 +507,21 @@ class DataAccess implements IDataAccess
         } else if ($mongo == self::getDefaultMongo() || preg_match('#^mongodb://.+:\d+$#', $mongo)) {
             $mongo .= '/' . ($db ?: DataAccess::getDefaultDb());
         }
-        if (isset(self::$_adapterArray[$mongo]) && self::$_adapterArray[$mongo] instanceof \MongoClient) {
+        if (isset(self::$_adapterArray[$mongo]) && self::$_adapterArray[$mongo] instanceof \MongoDB\Driver\Manager) {
             return self::$_adapterArray[$mongo];
         } else {
             try {
             	if (!self::$_replicaSetName) {
-            		$adapter = new \MongoClient($mongo);
+            		$adapter = new \MongoDB\Driver\Manager($mongo);
             	} else {
                     if (!self::$_readPreference) {
                     	self::$_readPreference = "nearest";
                     }
 					$mongo .= "?readPreference=".self::$_readPreference;
-            		$adapter = new \MongoClient($mongo,array('replicaSet' => self::$_replicaSetName));
+            		$adapter = new \MongoDB\Driver\Manager($mongo,array('replicaSet' => self::$_replicaSetName));
             	}
             } catch (\Exception $e) {
-                $adapter = new \MongoClient($mongo, array("connect" => FALSE));
+                $adapter = new \MongoDB\Driver\Manager($mongo, array("connect" => FALSE));
             }
             self::$_adapterArray[$mongo] = $adapter;
             return $adapter;
@@ -532,7 +535,8 @@ class DataAccess implements IDataAccess
      */
     public function getMongoDBStats()
     {
-        $dbInfo = $this->_dbName->command(array(
+        $database = new \MongoDB\Database($this->_dbName, self::_defaultDb);
+        $dbInfo = $database->command(array(
             'dbStats' => true
         ));
 
@@ -613,57 +617,26 @@ class DataAccess implements IDataAccess
             $fieldRule = array_merge($includedFields, $excludedFields);
         }
         // get the cursor
-        $cursor = $this->_collection->find($localFilter->toArray(), $fieldRule);
+        $options = ["sort" => $sort, "skip" => $firstResult, "limit" => $numberOfResults, "projection" => $fieldRule];
+        $results = iterator_to_array($this->_collection->find($localFilter->toArray(), $options), false);
 
-        // apply sort, paging, filter
-        $cursor->sort($sort);
-        $cursor->skip($firstResult);
-        $cursor->limit($numberOfResults);
-
-        try {
-            $nbItems = $cursor->count();
-        } catch (\Exception $e) {
-            $nbItems = 0;
-        }
-
-        if ($nbItems > 0) {
-            try {
-                $cursor->rewind();
-                $currentResult = $cursor->current();
-                $currentResult['id'] = (string)$currentResult['_id'];
-                unset($currentResult['_id']);
-                if (!isset($currentResult['version'])) {
-                    $currentResult['version'] = 1;
+        if (count($results) > 0) {
+            foreach ($results as $key => $dbObject) {
+                $dbObject['id'] = (string)$dbObject['_id'];
+                unset($dbObject['_id']);
+                if (!isset($dbObject['version'])) {
+                    $dbObject['version'] = 1;
                 }
-                $data[] = $currentResult;
-                $incrementor = 1;
-                while (($incrementor < $nbItems) && (($numberOfResults == 0) || ($incrementor < $numberOfResults)) && ($cursor->hasNext())) {
-                    $cursor->next();
-                    $currentResult = $cursor->current();
-                    $currentResult['id'] = (string)$currentResult['_id'];
-                    unset($currentResult['_id']);
-                    if (!isset($currentResult['version'])) {
-                        $currentResult['version'] = 1;
-                    }
-                    $data[] = $currentResult;
-                    $incrementor++;
-                }
-            } catch (\MongoCursorException $e) {
-                if (strpos($e->getMessage(), 'unauthorized db')) {
-                    throw new Server('Unauthorized DB Access', 'Exception102');
-                } else {
-                    throw $e;
-                }
-            } catch (\Exception $e) {
-
+                $dbObject = json_decode(json_encode($dbObject), true);
+                $datas[] = $dbObject;
             }
         } else {
-            $data = array();
+            $datas = array();
         }
-        $datas = array_values($data);
+        // $datas = array_values($data);
         $returnArray = array(
             "data" => $datas,
-            'count' => $nbItems
+            'count' => count($results)
         );
         return $returnArray;
     }
@@ -803,7 +776,7 @@ class DataAccess implements IDataAccess
      */
     public function findOne(IFilter $localFilter = null)
     {
-    	
+
         // get the UI parameters
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
@@ -820,14 +793,14 @@ class DataAccess implements IDataAccess
             $filters->addFilter($localFilter);
         }
 
-        $data = $this->_collection->findOne($filters->toArray(), $fieldRule);
-        if ($data == null) {
+        $data = $this->_collection->findOne($filters->toArray(), ["projection" => $fieldRule]);
+        if ($data === null) {
             return null;
         }
         $data['id'] = (string)$data['_id'];
         unset($data['_id']);
 
-        return $data;
+        return json_decode(json_encode($data), true);
     }
 
     /**
@@ -864,9 +837,10 @@ class DataAccess implements IDataAccess
             if (isset($options['upsert']) && $options['upsert'] instanceof IFilter) {
                 $filter = $options['upsert'];
                 $options['upsert'] = true;
-                $resultArray = $this->_collection->update($filter->toArray(), $obj, $options);
+
+                $resultArray = $this->_collection->replaceOne($filter->toArray(), $obj, $options);
             } else {
-                $resultArray = $this->_collection->insert($obj, $options);
+                $resultArray = $this->_collection->insertOne($obj, $options);
             }
         } catch (\MongoCursorException $exception) {
             if (strpos($exception->getMessage(), 'duplicate key error')) {
@@ -876,14 +850,14 @@ class DataAccess implements IDataAccess
             }
         }
 
-        if ($resultArray['ok'] == 1) {
-            if (isset($resultArray['updatedExisting'])) {
+        if ($resultArray->isAcknowledged()) {
+            if (!empty($options['upsert']) && $resultArray->getUpsertedCount() == 1) {
                 $obj = $this->findOne($filter);
             } else {
-                $obj['id'] = (string)$obj['_id'];
+                $obj['id'] = (string)$resultArray->getInsertedId();
             }
 
-            unset($obj['_id']);
+            // unset($obj['_id']);
             $returnArray = array(
                 'success' => true,
                 "data" => $obj
@@ -957,10 +931,12 @@ class DataAccess implements IDataAccess
         $updateCondition->addFilter($updateConditionVersion);
 
         try {
-            $resultArray = $this->_collection->update($updateCondition->toArray(), array(
-                '$set' => $obj
-            ), $options);
-        } catch (\MongoCursorException $exception) {
+            //Use driver update because the library doesn't work as expected (update/replace instead of update only)
+            $bulk = new \MongoDB\Driver\BulkWrite;
+            $bulk->update($updateCondition->toArray(), $obj, $options);
+
+            $resultArray = $this->getAdapter()->executeBulkWrite($this->_collection->__toString(), $bulk);
+        } catch (\MongoDB\Driver\BulkWriteException $exception) {
             if (strpos($exception->getMessage(), 'duplicate key error')) {
                 throw new User('Duplicate key error', "Exception76");
             } else {
@@ -968,24 +944,12 @@ class DataAccess implements IDataAccess
             }
         }
 
-        $obj = $this->findById($mongoID);
+        if($resultArray->getModifiedCount() == 1) {
+            $obj = $this->findById($mongoID);
 
-        if ($resultArray['ok'] == 1) {
-            if ($resultArray['updatedExisting'] == true) {
-                $obj['id'] = $id;
-                unset($obj['_id']);
+            $obj['id'] = $id;
+            unset($obj['_id']);
 
-                $returnArray = array(
-                    'success' => true,
-                    "data" => $obj
-                );
-            } else {
-                $returnArray = array(
-                    'success' => false,
-                    "msg" => 'Le contenu a été modifié, veuiller recharger celui-ci avant de faire cette mise à jour.'
-                );
-            }
-        } elseif ($resultArray) {
             $returnArray = array(
                 'success' => true,
                 "data" => $obj
@@ -993,7 +957,7 @@ class DataAccess implements IDataAccess
         } else {
             $returnArray = array(
                 'success' => false,
-                "msg" => $resultArray["err"]
+                "msg" => 'Le contenu a été modifié, veuiller recharger celui-ci avant de faire cette mise à jour.'
             );
         }
 
@@ -1003,12 +967,13 @@ class DataAccess implements IDataAccess
     public function getId($idString = null)
     {
         try {
-            $idString = new \MongoId($idString);
-        } catch(\Exception $e) {
+            $idString = new \MongoDB\BSON\ObjectId($idString);
+        } catch(\MongoDB\Driver\Exception\InvalidArgumentException $e) {
             if(!is_string($idString)) {
                 throw new Exception('Invalid MongoId :' . $idString);
             }
         }
+
         return $idString;
     }
 
@@ -1098,54 +1063,23 @@ class DataAccess implements IDataAccess
         $localFilter->addFilter($parentFilter);
 
         // get the cursor
-        $cursor = $this->_collection->find($localFilter->toArray(), $fieldRule);
+        $cursor = $this->_collection->find($localFilter->toArray(), ["sort" => $sort, "projection" => $fieldRule])->toArray();
 
-        // apply sort, paging, filter
-        $cursor->sort($sort);
+        $nbItems = count($cursor);
 
-        try {
-            $nbItems = $cursor->count();
-        } catch (\Exception $e) {
-            $nbItems = 0;
-        }
         // switch from cursor to actual array
         if ($nbItems > 0) {
-            try {
-                $cursor->rewind();
-                $currentResult = $cursor->current();
-                $currentResult['id'] = (string)$currentResult['_id'];
-                unset($currentResult['_id']);
-                if (!isset($currentResult['version'])) {
-                    $currentResult['version'] = 1;
+            foreach($cursor as $key => $dbObject) {
+                $dbObject['id'] = (string)$dbObject['_id'];
+                unset($dbObject['_id']);
+                if (!isset($dbObject['version'])) {
+                    $dbObject['version'] = 1;
                 }
-                $data[] = $currentResult;
-                $incrementor = 1;
-                while (($incrementor < $nbItems) && ($cursor->hasNext())) {
-                    $cursor->next();
-                    $currentResult = $cursor->current();
-                    $currentResult['id'] = (string)$currentResult['_id'];
-                    unset($currentResult['_id']);
-                    if (!isset($currentResult['version'])) {
-                        $currentResult['version'] = 1;
-                    }
-                    $data[] = $currentResult;
-                    $incrementor++;
-                }
-            } catch (\MongoCursorException $e) {
-                if (strpos($e->getMessage(), 'unauthorized db')) {
-                    throw new Server('Unauthorized DB Access', 'Exception102');
-                } else {
-                    throw $e;
-                }
-            } catch (\Exception $e) {
-
+                $response[] = $dbObject;
             }
         } else {
-            $data = array();
+            $response = array();
         }
-
-        // return data as simple array with no keys
-        $response = array_values($data);
 
         return $response;
     }
@@ -1212,9 +1146,10 @@ class DataAccess implements IDataAccess
         $updateCondition->addFilter($updateConditionId);
         $updateCondition->addFilter($updateConditionVersion);
 
-        $resultArray = $this->_collection->remove($updateCondition->toArray(), $options);
-        if ($resultArray['ok'] == 1) {
-            if ($resultArray['n'] == 1) {
+        $resultArray = $this->_collection->deleteOne($updateCondition->toArray(), $options);
+
+        if ($resultArray->isAcknowledged()) {
+            if ($resultArray->getDeletedCount() == 1) {
                 $returnArray = array(
                     'success' => true
                 );
@@ -1224,14 +1159,10 @@ class DataAccess implements IDataAccess
                     "msg" => 'Impossible de supprimer le contenu'
                 );
             }
-        } elseif ($resultArray) {
-            $returnArray = array(
-                'success' => true
-            );
         } else {
             $returnArray = array(
                 'success' => false,
-                "msg" => $resultArray["err"]
+                "msg" => "Error during deletion"
             );
         }
 
@@ -1486,15 +1417,15 @@ class DataAccess implements IDataAccess
     public function customUpdate(array $data, IFilter $updateCond, $options = array())
     {
         try {
-            $resultArray = $this->_collection->update($updateCond->toArray(), $data, $options);
-            if ($resultArray['ok'] == 1) {
+            $resultArray = $this->_collection->updateMany($updateCond->toArray(), $data, $options);
+            if ($resultArray->isAcknowledged()) {
                 $returnArray = array(
                     'success' => true
                 );
             } else {
                 $returnArray = array(
                     'success' => false,
-                    "msg" => $resultArray["err"]
+                    "msg" => "Error during custom update"
                 );
             }
 
@@ -1508,23 +1439,26 @@ class DataAccess implements IDataAccess
         }
     }
 
-    public function findAndModify(IFilter $query = null, array $update, $fields = array(), $options = array()) {
-    	
-    	return $this->_collection->findAndModify($query->toArray(), $update, $fields, $options);
-    	
+    public function findAndModify(IFilter $query = null, array $update, $fields = null, $options = array()) {
+        if($fields) {
+            array_merge($options, ["projection" => $fields]);
+        }
+
+    	return $this->_collection->findOneAndUpdate($query->toArray(), $update, $fields, $options);
+
     }
-    
+
     public function customFind(IFilter $filter = null, $fieldRule = array())
     {
         $filterArray = is_null($filter) ? array() : $filter->toArray();
         // get the cursor
-        $cursor = $this->_collection->find($filterArray, $fieldRule);
+        $cursor = $this->_collection->find($filterArray, ["projection" => $fieldRule])->toArray();
         return $cursor;
     }
 
     public function customDelete(IFilter $deleteCond, $options = array())
     {
-        return $this->_collection->remove($deleteCond->toArray(), $options);
+        return $this->_collection->deleteMany($deleteCond->toArray(), $options);
     }
 
     /**
@@ -1536,13 +1470,18 @@ class DataAccess implements IDataAccess
     public function ensureIndex($keys, $options = array())
     {
         $options['w'] = true;
-        $result = $this->_collection->ensureIndex($keys, $options);
+        $result = $this->_collection->createIndex($keys, $options);
         return $result;
     }
 
     public function dropIndexes()
     {
-        $result = $this->_collection->deleteIndexes();
+        $result = false;
+        $currentIndexes = $this->_collection->listIndexes();
+        if($currentIndexes->next()) {
+            $result = $this->_collection->dropIndexes();
+        }
+
         return $result;
     }
 
@@ -1579,7 +1518,7 @@ class DataAccess implements IDataAccess
         if ($adapter === null) {
             return null;
         }
-        return $adapter->getConnections() != [];
+        return $adapter->getServers() != [];
     }
 
     /**
@@ -1601,7 +1540,7 @@ class DataAccess implements IDataAccess
      */
     public function emptyCollection()
     {
-        $return = $this->_collection->remove();
+        $return = $this->_collection->deleteMany([]);
         return $return;
     }
 
@@ -1612,7 +1551,7 @@ class DataAccess implements IDataAccess
      */
     public function batchInsert($array, $options = array())
     {
-        $return = $this->_collection->batchInsert($array, $options);
+        $return = $this->_collection->insertMany($array, $options);
         return $return;
     }
 
@@ -1623,7 +1562,7 @@ class DataAccess implements IDataAccess
      */
     public function insert($obj, $options = array())
     {
-        $return = $this->_collection->insert($obj, $options);
+        $return = $this->_collection->insertOne($obj, $options);
         return $return;
     }
 
@@ -1635,7 +1574,8 @@ class DataAccess implements IDataAccess
      */
     public function command($params)
     {
-        $return = $this->_dbName->command($params);
+        $commands = new \MongoDB\Driver\Command($params);
+        $return = $this->_dbName->executeCommand($commands);
         Events::getEventManager()->trigger(self::POST_COMMAND, $this, array('data' => array('return' => $return, 'params' => $params)));
         return $return;
     }
@@ -1649,7 +1589,8 @@ class DataAccess implements IDataAccess
      */
     public function execute($code, $args = array())
     {
-        $return = $this->_dbName->command(array('$eval' => $code, 'args' => $args));
+        $commands = new \MongoDB\Driver\Command(array('$eval' => $code, 'args' => $args));
+        $return = $this->_dbName->executeCommand($commands);
         Events::getEventManager()->trigger(self::POST_EXECUTE, $this, array('data' => array('return' => $return, 'code' => $code, 'args' => $args)));
         return $return;
     }
@@ -1659,7 +1600,7 @@ class DataAccess implements IDataAccess
      */
     public function directCreate($obj)
     {
-        $this->_collection->insert($obj, array("w" => 0));
+        $this->_collection->insertOne($obj, array("w" => 0));
     }
 
     /**
@@ -1667,7 +1608,7 @@ class DataAccess implements IDataAccess
      */
     public function directUpdate(array $data, IFilter $updateCond)
     {
-        $this->_collection->update($updateCond->toArray(), $data, array("w" => 0));
+        $this->_collection->updateOne($updateCond->toArray(), $data, array("w" => 0));
     }
 
 }

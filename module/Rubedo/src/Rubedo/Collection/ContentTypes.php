@@ -221,6 +221,8 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
 
+        Manager::getService('ElasticContentTypes')->deleteTypeIndex($obj['id']);
+
         Manager::getService('ElasticContentTypes')->setMapping($obj['id'], $obj);
 
         Manager::getService('ElasticContentTypes')->index($obj['id']);

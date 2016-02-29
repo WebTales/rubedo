@@ -25,7 +25,7 @@ namespace Rubedo\Elastic;
  */
 class Users extends DataAbstract
 {
-	
+
 	/**
 	 * Constructor
 	 */
@@ -35,7 +35,7 @@ class Users extends DataAbstract
 		$this->_indexName = $this->getIndexNameFromConfig('userIndex');
 		parent::init();
 	}
-	
+
     /**
      * Create or update index for existing user
      *
@@ -48,15 +48,15 @@ class Users extends DataAbstract
 	    if (!isset($data['fields'])) {
             return;
         }
-        
+
         $typeId = $data['typeId'];
-        
+
         // Initialize data array to push into index
-        
+
         $data['fields']['name'] = $data['name'];
-        
+
         $photo = isset($data['photo']) ? $data['photo'] : null;
-        
+
         $indexData = [
         	'objectType' => 'user',
         	'userType' => $typeId,
@@ -71,63 +71,63 @@ class Users extends DataAbstract
         if(isset($data["status"])) {
             $indexData["status"] = $data["status"];
         }
-        
+
         // Add taxonomy
         if (isset($data["taxonomy"])) {
-        
+
         	$taxonomyService = $this->_getService('Taxonomy');
         	$taxonomyTermsService = $this->_getService('TaxonomyTerms');
-        
+
         	foreach ($data["taxonomy"] as $vocabulary => $terms) {
         		if (!is_array($terms)) {
 					$terms = [$terms];
         		}
-        
+
         		$taxonomy = $taxonomyService->findById($vocabulary);
         		$termsArray = [];
-        
+
         		foreach ($terms as $term) {
         			if ($term == 'all') {
         				$terms = [$terms];
         			}
         			$term = $taxonomyTermsService->findById($term);
-        
+
         			if (!$term) {
         				continue;
         			}
-        
+
         			if (!isset($termsArray[$term["id"]])) {
         				$termsArray[$term["id"]] = $taxonomyTermsService->getAncestors(
         						$term);
         				$termsArray[$term["id"]][] = $term;
         			}
-        
+
         			foreach ($termsArray[$term["id"]] as $tempTerm) {
-        				$indexData['taxonomy.' . $taxonomy['id']][] = $tempTerm['id'];
+        				$indexData['taxonomy_' . $taxonomy['id']][] = $tempTerm['id'];
         			}
         		}
         	}
         }
-        
+
         // Add autocompletion fields and title
         $userThumbnail = (!empty($photo)) ? $this->_getService('Url')->userAvatar($data['id'], 40, 40, "boxed") : null;
-        
+
         $indexData['autocomplete_nonlocalized'] = [
         'input' => $data['name'],
         'output' => $data['name'],
         'payload' => "{ \"type\" : \"user\",  \"id\" : \"" . $data['id'] . "\", \"thumbnail\" : \"" . $userThumbnail . "\"}"
         		];
-        
+
         // Add document
         if (isset($indexData['attachment']) && $indexData['attachment'] != '') {
         	$indexData['file'] = base64_encode($indexData['attachment']);
-        }        
+        }
 
         // Add user to user type index
         $body = [
         	['index' => ['_id' => $data['id']]],
         	$indexData
-        ];        
+        ];
         if (!$bulk) {
         	$params = [
         		'index' => $this->_indexName,
@@ -135,14 +135,14 @@ class Users extends DataAbstract
         		'body' => $body
         	];
         	$this->_client->bulk($params);
-        	 
+
         	$this->_client->indices()->refresh(['index' => $this->_indexName]);
-        	
+
         } else {
 			return $body;
         }
-	}	
-	
+	}
+
 	/**
 	 * Delete existing user from index
 	 *
@@ -160,6 +160,6 @@ class Users extends DataAbstract
 		];
 		$this->_client->delete($params);
 	}
-	
-	
+
+
 }

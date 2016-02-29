@@ -53,7 +53,7 @@ class CoreAdapter extends AbstractAdapter
 
         $loginCond = Filter::factory('Or');
 
-        $loginFilter = Filter::factory('Value')->setName('login')->setValue(new \MongoRegex("/^".$this->_login."$/i"));
+        $loginFilter = Filter::factory('Value')->setName('login')->setValue(new \MongoDB\BSON\Regex("^".$this->_login."$", "i"));
         $loginCond->addFilter($loginFilter);
 
         $emailFilter = Filter::factory('Value')->setName('email')->setValue($this->_login);
@@ -71,7 +71,7 @@ class CoreAdapter extends AbstractAdapter
             $this->_authenticateResultInfo['messages'][] = 'More than one record matches the supplied identity.';
             return $this->_authenticateCreateAuthResult();
         }
-
+        error_log("ok");
         $user = array_shift($resultIdentities);
         $salt = $user['salt'];
         $targetHash = $user['password'];

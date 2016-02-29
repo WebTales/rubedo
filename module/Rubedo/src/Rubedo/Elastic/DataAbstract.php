@@ -506,7 +506,7 @@ class DataAbstract
     {
 
         // Delete existing content type
-        $this->deleteMapping($indexName, $typeId);
+        // $this->deleteMapping($indexName, $typeId);
 
         // Create new ES type if not empty
         if (!empty($mapping)) {
@@ -546,10 +546,16 @@ class DataAbstract
             'type' => $typeId
         ];
 
-        if ($this->_client->indices()->existsType($params)) {
+        if ($this->_client->indices()->getMapping($params)) {
             return $this->_client->indices()->deleteMapping($params);
         } else {
             return true;
+        }
+    }
+
+    public function deleteTypeIndex($index) {
+        if ($this->_client->indices()->exists(['index' => $index])) {
+            $this->_client->indices()->delete(['index' => $index]);
         }
     }
 
@@ -614,11 +620,11 @@ class DataAbstract
 
         // Get total items to be indexed
         $dataService = $this->_getService($serviceData);
-        
+
         $filter = Filter::factory('Value')->setName('typeId')->SetValue($id);
-        
+
         $totalToBeIndexed = $dataService->count($filter);
-        
+
         if (!$useQueue) {
             do {
 

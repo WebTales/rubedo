@@ -25,7 +25,7 @@ namespace Rubedo\Elastic;
  */
 class ContentTypes extends DataAbstract
 {
-	
+
 	/**
 	 * Mapping
 	 */
@@ -47,7 +47,7 @@ class ContentTypes extends DataAbstract
 		],
 		'createUser' => [
 			'type' => 'object',
-			'store' => 'yes',
+			// 'store' => 'yes',
 			'properties' => [
 				'id' => [
 					'type' => 'string',
@@ -82,7 +82,7 @@ class ContentTypes extends DataAbstract
 		],
 		'autocomplete_nonlocalized' => [
 			'type' => 'completion',
-			'index_analyzer' => 'simple',
+			'analyzer' => 'simple',
 			'search_analyzer' => 'simple',
 			'payloads' => true,
 			'preserve_position_increments' => false
@@ -124,7 +124,7 @@ class ContentTypes extends DataAbstract
 		'online' => [
 			'type' => 'boolean',
 			'store' => 'yes'
-		]						
+		]
 	];
 
 	/**
@@ -135,11 +135,11 @@ class ContentTypes extends DataAbstract
 		parent::__construct();
 		$this->_indexName = $this->getIndexNameFromConfig('contentIndex');
 		parent::init();
-		
+
 		parent::getAnalyzers();
 		parent::getLanguages();
 	}
-	
+
 	/**
 	 * Build mapping for object
 	 *
@@ -148,35 +148,35 @@ class ContentTypes extends DataAbstract
 	 */
 	public function getMapping(array $data)
 	{
-	
+
 		$mapping = [];
-		
+
 		if (isset ($data ['fields']) && is_array($data ['fields'])) {
-	
+
 			// get vocabularies
 			$vocabularies = $this->getVocabularies($data);
-	
+
 			// add mapping for autocomplete in every active language
 			foreach ($this->_activeLanguages as $lang) {
 				$locale = !in_array($lang ['locale'], $this->_activeAnalysers) ? 'default' : $lang ['locale'];
 				$mapping ['autocomplete_' . $lang ['locale']] = [
 					'type' => 'completion',
-					'index_analyzer' => $locale . '_analyzer',
+					'analyzer' => $locale . '_analyzer',
 					'search_analyzer' => $locale . '_analyzer',
 					'payloads' => true,
 					'preserve_position_increments' => false
 				];
 			}
-	
+
 			// Add Taxonomies
 			foreach ($vocabularies as $vocabularyName) {
-				$mapping ["taxonomy." . $vocabularyName] = [
+				$mapping ["taxonomy_" . $vocabularyName] = [
 					'type' => 'string',
 					'index' => 'not_analyzed',
 					'store' => 'yes'
 				];
 			}
-	
+
 			// Add system fields : text and summary
 			$fields = $data['fields'];
 
@@ -204,14 +204,14 @@ class ContentTypes extends DataAbstract
 				'dynamic' => false,
 				'type' => 'object'
 			];
-	
+
 			foreach ($this->_activeLanguages as $lang) {
 				$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] = [
 					'dynamic' => false,
 					'type' => 'object'
 				];
 			}
-	
+
 			// Add properties for product only
 			if (isset($data['productType']) && $data['productType'] != 'none') {
 				$mapping ['productProperties'] = [
@@ -238,22 +238,22 @@ class ContentTypes extends DataAbstract
 					'type'=>'string',
 					'index'=>'no'
 				];
-	
+
 				$mapping['isProduct'] = [
 					'type' => 'boolean',
                     'store' => 'yes'
 	            ];
 			}
-	
+
 			// add fields mappings
 			foreach ($fields as $field) {
 				$this->addFieldMapping($field,$mapping);
 			}
 		}
-	
+
 		return array_merge(self::$_mapping, $mapping);
 	}
-	
+
 	/**
 	 * Set mapping for new or updated content type
 	 *
@@ -266,13 +266,13 @@ class ContentTypes extends DataAbstract
 	{
 
 		// Delete existing content type
-		$this->deleteMapping($this->_indexName, $typeId);
+		// $this->deleteMapping($this->_indexName, $typeId);
 
 		// Create mapping
 		$this->putMapping($this->_indexName, $typeId, $this->getMapping($data));
-	
+
 	}
-	
+
 	/**
 	 * Delete content type mapping
 	 *
@@ -283,7 +283,7 @@ class ContentTypes extends DataAbstract
 	public function delete($typeId)
 	{
 		$this->deleteMapping($this->_indexName, $typeId);
-	}	
+	}
 
 	/**
 	 * Index all existing contents from given type
@@ -296,6 +296,6 @@ class ContentTypes extends DataAbstract
 	public function index($typeId)
 	{
 		return $this->indexByType('content', $typeId);
-	}	
-	
+	}
+
 }

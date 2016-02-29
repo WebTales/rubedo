@@ -27,7 +27,7 @@ use Zend\Json\Json;
  */
 class Contents extends DataAbstract
 {
-	
+
 	/**
 	 * Constructor
 	 */
@@ -37,12 +37,12 @@ class Contents extends DataAbstract
 		$this->_indexName = $this->getIndexNameFromConfig('contentIndex');
 		parent::init();
 	}
-	
+
     /**
      * Create or update index for existing content
      *
      * @param obj $data content data
-     * @param boolean $bulk     
+     * @param boolean $bulk
      * @return array
      */
 	public function index($data, $bulk = false)
@@ -50,12 +50,12 @@ class Contents extends DataAbstract
 		if (!isset($data['fields']) || !isset($data['i18n'])) {
 			return;
 		}
-	
+
 		$typeId = $data['typeId'];
-	
+
 		// get available languages
 		$availableLanguages = array_keys($data['i18n']);
-	
+
 		// Initialize data array to push into index
 		$indexData = [
 			'objectType' => 'content',
@@ -73,7 +73,7 @@ class Contents extends DataAbstract
 			'version' => $data['version'],
 			'online' => $data['online']
 		];
-	
+
 		// Index product properties if exists
 		if (isset($data['productProperties'])) {
 			$indexData['productProperties'] = $data['productProperties'];
@@ -82,41 +82,41 @@ class Contents extends DataAbstract
 				$indexData['isProduct'] = $data['isProduct'];
 			}
 		}
-	
+
 		// Add taxonomy
 		if (isset($data["taxonomy"])) {
-	
+
 			foreach ($data["taxonomy"] as $vocabulary => $terms) {
 				if (!is_array($terms)) {
 					$terms = [$terms];
 				}
-	
+
 				$taxonomy = $this->_getService('Taxonomy')->findById($vocabulary);
 				$termsArray = [];
-	
+
 				foreach ($terms as $term) {
 					if ($term == 'all' or $term=="") {
 						continue;
 					}
 					$term = $this->_getService('TaxonomyTerms')->findById($term);
-	
+
 					if (!$term) {
 						continue;
 					}
-	
+
 					if (!isset($termsArray[$term["id"]])) {
 						$termsArray[$term["id"]] = $this->_getService('TaxonomyTerms')->getAncestors(
 								$term);
 						$termsArray[$term["id"]][] = $term;
 					}
-	
+
 					foreach ($termsArray[$term["id"]] as $tempTerm) {
-						$indexData['taxonomy.' . $taxonomy['id']][] = $tempTerm['id'];
+						$indexData['taxonomy_' . $taxonomy['id']][] = $tempTerm['id'];
 					}
 				}
 			}
 		}
-	
+
 		// Add read workspace
 		$indexData['target'] = [];
 		if (isset($data['target'])) {
@@ -132,7 +132,7 @@ class Contents extends DataAbstract
 		if (empty($indexData['target'])) {
 			$indexData['target'][] = 'global';
 		}
-	
+
 		// Add autocompletion fields and title
 		foreach ($availableLanguages as $lang) {
 			$title = isset($data['i18n'][$lang]['fields']['text']) ? $data['i18n'][$lang]['fields']['text'] : $data['text'];
@@ -142,11 +142,11 @@ class Contents extends DataAbstract
 			'payload' => "{ \"type\" : \"content\",  \"id\" : \"" . $data['id'] . "\"}"
 					];
 		}
-	
+
 		if (isset($indexData['attachment']) && $indexData['attachment'] != '') {
 			$indexData['file'] = base64_encode($indexData['attachment']);
 		}
-	
+
 		// Add content to content type index
 		$body = [
 			['index' => ['_id' => $data['id']]],
@@ -159,14 +159,14 @@ class Contents extends DataAbstract
 				'body' => $body
 			];
 			$this->_client->bulk($params);
-	
+
 			$this->_client->indices()->refresh(['index' => $this->_indexName]);
-			 
+
 		} else {
 			return $body;
 		}
-	}	
-	
+	}
+
 	/**
 	 * Delete existing content from index
 	 *
@@ -184,5 +184,5 @@ class Contents extends DataAbstract
 		];
 		$this->_client->delete($params);
 	}
-	
+
 }

@@ -167,11 +167,11 @@ class Install
                         ) {
                             if (isset($item['defaultId'])){
                             	try {
-                            	    $item["_id"] = new \MongoId($item['defaultId']);
-                            	} catch(\Exception $e) {
+                            	    $item["_id"] = new \MongoDB\BSON\ObjectId($item['defaultId']);
+                            	} catch(\MongoDB\Driver\Exception\InvalidArgumentException $e) {
                             	    throw new \Rubedo\Exceptions\Server('You tried to insert a bad MongoId in database: ' . $item['defaultId']);
                             	}
-                                $item["_id"]=new \MongoId($item['defaultId']);
+                                $item["_id"]=new \MongoDB\BSON\ObjectId($item['defaultId']);
                             }
                             $result = $collectionService->create($item);
                         } else {

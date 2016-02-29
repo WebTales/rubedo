@@ -164,10 +164,12 @@ class DamTypes extends AbstractLocalizableCollection implements IDamTypes
     {
         $wasFiltered = AbstractCollection::disableUserFilter();
 
+        Manager::getService('ElasticDamTypes')->deleteTypeIndex($obj['id']);
+
         Manager::getService('ElasticDamTypes')->setMapping($obj['id'], $obj);
-        
+
         Manager::getService('ElasticDamTypes')->index($obj['id']);
-        
+
         AbstractCollection::disableUserFilter($wasFiltered);
     }
 

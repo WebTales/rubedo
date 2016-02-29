@@ -190,16 +190,16 @@ class ImageController extends AbstractActionController
         if (isset($fileId)) {
             $fileService = Manager::getService('Images');
             $obj = $fileService->findById($fileId);
-            if (!$obj instanceof \MongoGridFSFile) {
+            if (!$obj) {
                 throw new NotFound("No Image Found", "Exception8");
             }
 
             $filePath = $this->getTempImagesPaths() . '/' . $fileId . '_' . $version;
             if (!is_file($filePath) || $now - filemtime($filePath) > 7 * 24 * 3600) {
-                $obj->write($filePath);
+                file_put_contents($filePath, $obj["content"]->getData());
             }
-            $meta = $obj->file;
-            $filename = $meta['filename'];
+            // $meta = $obj->file;
+            $filename = $obj['filename'];
         }
 
         if ($filePath) {

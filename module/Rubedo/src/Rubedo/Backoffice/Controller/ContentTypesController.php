@@ -58,9 +58,9 @@ class ContentTypesController extends DataAccessController
         $filters = array_merge($tFilterArray, $filterArray);
         $mongoFilters = $this->_buildFilter($filters);
 
-        $sort = Json::decode($this->params()->fromQuery('sort', null), Json::TYPE_ARRAY);
-        $start = Json::decode($this->params()->fromQuery('start', null), Json::TYPE_ARRAY);
-        $limit = Json::decode($this->params()->fromQuery('limit', null), Json::TYPE_ARRAY);
+        $sort = $this->params()->fromQuery('sort', null) ? Json::decode($this->params()->fromQuery('sort', null), Json::TYPE_ARRAY) : null;
+        $start = $this->params()->fromQuery('start', null) ? Json::decode($this->params()->fromQuery('start', null), Json::TYPE_ARRAY) : null;
+        $limit = $this->params()->fromQuery('limit', null) ? Json::decode($this->params()->fromQuery('limit', null), Json::TYPE_ARRAY) : null;
 
         $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit, false);
         $response = array();

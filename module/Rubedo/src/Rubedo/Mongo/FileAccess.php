@@ -33,7 +33,7 @@ class FileAccess extends DataAccess implements IFileAccess
      *
      * @var \MongoGridFS
      */
-    protected $_collection;
+    // protected $_collection;
 
     /**
      * Initialize a data service handler to read or write in a MongoDb
@@ -46,17 +46,24 @@ class FileAccess extends DataAccess implements IFileAccess
      * @param string $mongo
      *            connection string to the DB server
      */
-    public function init($collection = null, $dbName = null, $mongo = null)
+    // public function init($collection = null, $dbName = null, $mongo = null)
+    // {
+    //     unset($collection);
+    //
+    //     $mongo = self::$_defaultMongo;
+    //     $dbName = self::$_defaultDb;
+    //
+	// 	$this->_adapter = $this->getAdapter($mongo,$dbName);
+    //
+    //     $this->_dbName = $this->_adapter->$dbName;
+    //     $this->_collection = new ProxyGridFs($this->_dbName->getGridFS());
+    // }
+
+    //Always work on Files collection
+    public function __construct()
     {
-        unset($collection);
-
-        $mongo = self::$_defaultMongo;
-        $dbName = self::$_defaultDb;
-
-		$this->_adapter = $this->getAdapter($mongo,$dbName);
-		
-        $this->_dbName = $this->_adapter->$dbName;
-        $this->_collection = new ProxyGridFs($this->_dbName->getGridFS());
+        parent::__construct();
+        parent::init('Files');
     }
 
     /**
@@ -90,24 +97,20 @@ class FileAccess extends DataAccess implements IFileAccess
         }
 
         // get the cursor
-        $cursor = $this->_collection->find($LocalFilter->toArray(), $fieldRule);
-        $nbItems = $cursor->count();
+        $options = ["sort" => $sort, "skip" => $firstResult, "limit" => $numberOfResults, "projection" => $fieldRule];
+        $cursor = iterator_to_array($this->_collection->find($LocalFilter->toArray(), $options), false);
+        $nbItems = count($cursor);
 
-        // apply sort, paging, filter
-        $cursor->sort($sort);
-        $cursor->skip($firstResult);
-        $cursor->limit($numberOfResults);
-
-        $data = array();
-        // switch from cursor to actual array
-        foreach ($cursor as $value) {
-            $data[] = $value;
-        }
+        // $data = array();
+        // // switch from cursor to actual array
+        // foreach ($cursor as $value) {
+        //     $data[] = $value;
+        // }
 
         // return data as simple array with no keys
-        $datas = array_values($data);
+        // $datas = array_values($data);
         $returnArray = array(
-            "data" => $datas,
+            "data" => $cursor,
             'count' => $nbItems
         );
         return $returnArray;
@@ -140,9 +143,9 @@ class FileAccess extends DataAccess implements IFileAccess
             $filters->addFilter($localFilter);
         }
 
-        $mongoFile = $this->_collection->findOne($filters->toArray(), $fieldRule);
+        $mongoFile = $this->_collection->findOne($filters->toArray(), ["projection" => $fieldRule]);
 
-        return $mongoFile;
+        return iterator_to_array($mongoFile);
     }
 
     /**
@@ -157,8 +160,8 @@ class FileAccess extends DataAccess implements IFileAccess
      */
     public function create(array $obj, $options = array())
     {
-        $filename = $obj['serverFilename'];
-        $partList = explode('.', $filename);
+        // $filename = $obj['serverFilename'];
+        $partList = explode('.', $obj['serverFilename']);
         $extension = array_pop($partList);
 
         if (!$this->_isValidExtension($extension)) {
@@ -177,8 +180,17 @@ class FileAccess extends DataAccess implements IFileAccess
         }
 
         $obj['version'] = 1;
-
+        $binaryContent = new \MongoDB\BSON\Binary(file_get_contents($obj['serverFilename']), 5);
+        $obj['content'] = $binaryContent;
+        $obj['filesize'] = filesize($obj['serverFilename']);
         unset($obj['serverFilename']);
+
+        if(!$obj['content']) {
+            return array(
+                'success' => false,
+                'msg' => 'File content seems to be corrupted'
+            );
+        }
 
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
@@ -191,10 +203,10 @@ class FileAccess extends DataAccess implements IFileAccess
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
 
-        $fileId = $this->_collection->put($filename, $obj);
+        $resultArray = $this->_collection->insertOne($obj);
 
-        if ($fileId) {
-            $obj['id'] = (string)$fileId;
+        if ($resultArray->isAcknowledged()) {
+            $obj['id'] = (string)$resultArray->getInsertedId();
             $returnArray = array(
                 'success' => true,
                 "data" => $obj
@@ -234,6 +246,9 @@ class FileAccess extends DataAccess implements IFileAccess
 
         $obj['version'] = 1;
 
+        $binaryContent = new \MongoDB\BSON\Binary(file_get_contents($bites), 5);
+        $obj['content'] = $binaryContent;
+        $obj['filesize'] = strlen($bites);
         unset($obj['bytes']);
 
         $currentUserService = \Rubedo\Services\Manager::getService('CurrentUser');

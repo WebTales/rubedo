@@ -57,6 +57,7 @@ class MongoConf extends AbstractCollection
     public function setRubedoConf(array $config){
         $filter=Filter::factory()->addFilter(Filter::factory("Value")->setName("type")->setValue("rubedoConfig"));
         $confRecord=$this->_dataService->findOne($filter);
+        
         if ($confRecord&&isset($confRecord["config"])&&is_array($confRecord["config"])){
             $confRecord["config"]=$config;
             return $this->_dataService->update($confRecord);
