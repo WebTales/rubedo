@@ -8,7 +8,8 @@
         "write.ui.pages",
         "execute.controller.pages.create.backoffice",
         "execute.controller.pages.delete.backoffice",
-        "execute.controller.pages.update.backoffice"
+        "execute.controller.pages.update.backoffice",
+        "execute.controller.pages.holds-site-default.backoffice"
     ],
     "includes": [
         "pageReader"
