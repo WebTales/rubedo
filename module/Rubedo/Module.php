@@ -91,6 +91,7 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             'config setfinished'=>"Set install status to finished",
             'config setadmin --name=  --email= --login= --password='=>"Create admin user",
             'config setdefault'=>"Set default php settings",
+            'config setdb --server= --port= --db= [--replicaSetName=] [--timeout=] [--adminLogin=] [--adminPassword=] [--login=] [--password=] [--readPreference=]'=>"Set mongodb config",
             'config createsite --domain= --lang= [--theme=]'=>"Create website",
             'config getfull'=>"Get full config as JSON",
             'config setfull --conf='=>"Set full config from JSON",

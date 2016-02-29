@@ -107,6 +107,12 @@ class DataAccess implements IDataAccess
      */
     protected static $_readPreference;
     /**
+     * Driver timeout
+     *
+     * @var string
+     */
+    protected static $_timeout;
+    /**
      * Filter condition to be used when reading
      *
      * @var \WebTales\MongoFilters\CompositeFilter
@@ -231,6 +237,10 @@ class DataAccess implements IDataAccess
                 } else {
                     self::$_readPreference = $options['mongo']['readPreference'];
                 }
+            }
+
+            if (!empty($options['mongo']['timeout'])){
+                self::$_timeout = $options['mongo']['timeout'];
             }
 
             self::setDefaultMongo(str_replace(' ', '', $connectionString));
@@ -514,13 +524,20 @@ class DataAccess implements IDataAccess
         } else {
             try {
                 if (!self::$_replicaSetName) {
-                    $adapter = new \MongoClient($mongo);
-                } else {
-                    if (!self::$_readPreference){
-                        $adapter = new \MongoClient($mongo, array('replicaSet' => self::$_replicaSetName));
+                    if(self::$_timeout){
+                        $adapter = new \MongoClient($mongo, array('timeout' => self::$_timeout));
                     } else {
-                        $adapter = new \MongoClient($mongo, array('replicaSet' => self::$_replicaSetName, 'readPreference' => self::$_readPreference));
+                        $adapter = new \MongoClient($mongo);
                     }
+                } else {
+                    $options = array('replicaSet' => self::$_replicaSetName);
+                    if (self::$_readPreference){
+                        $options['readPreference'] = self::$_readPreference;
+                    }
+                    if (self::$_timeout){
+                        $options['timeout'] = self::$_timeout;
+                    }
+                    $adapter = new \MongoClient($mongo, $options);
                 }
             } catch (\Exception $e) {
                 $adapter = new \MongoClient($mongo, array("connect" => FALSE));
