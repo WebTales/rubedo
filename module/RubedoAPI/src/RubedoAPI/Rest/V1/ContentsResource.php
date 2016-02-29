@@ -202,23 +202,22 @@ class ContentsResource extends AbstractResource
 
         if ($queryType === 'manual' && $query != false && isset($query['query']) && is_array($query['query'])) {
             $contentOrder = $query['query'];
-            $keyOrder = array();
             $contentArray = array();
 
             // getList
-            $unorderedContentArray = $this->getContentList($filters, $this->setPaginationValues($params));
+            $unorderedContentArray = $this->getContentList($filters, ["start" => 0, "limit" => null]);
 
             foreach ($contentOrder as $value) {
                 foreach ($unorderedContentArray['data'] as $subKey => $subValue) {
                     if ($value === $subValue['id']) {
-                        $keyOrder[] = $subKey;
+                        $contentArray['data'][] = $subValue;
                     }
                 }
             }
 
-            foreach ($keyOrder as $value) {
-                $contentArray['data'][] = $unorderedContentArray['data'][$value];
-            }
+            $paging = $this->setPaginationValues($params);
+
+            $contentArray['data'] = array_slice($contentArray['data'], $paging["start"], $paging["limit"]);
 
             $nbItems = $unorderedContentArray['count'];
         } else {
