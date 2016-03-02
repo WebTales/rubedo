@@ -33,7 +33,8 @@
     },
     "minimum-stability": "stable",
     "config": {
-        "process-timeout": 600
+        "process-timeout": 600,
+        "secure-http":false
     },
     "repositories": [
         {

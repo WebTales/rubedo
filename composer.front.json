@@ -288,6 +288,7 @@
     "config": {
         "process-timeout": 600,
         "vendor-dir": "public/components",
-        "component-dir": "public/components/components"
+        "component-dir": "public/components/components",
+        "secure-http":false
     }
 }
