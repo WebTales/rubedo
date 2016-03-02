@@ -252,6 +252,10 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             '_id' => $this->getId($objectId)
         ));
 
+        $rawObjectId = $obj['_id'];
+        $obj = json_decode(json_encode($obj), true);
+        $obj['_id'] = $rawObjectId;
+
         if (isset($obj['workspace'])) {
             // define the publish values for the version handling
             $version = $obj;
@@ -266,10 +270,15 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
 
             // if the update is ok, the previous version of the live is stored in Versioning collection
             if ($returnArray['success']) {
+                $obj['_id'] = (string)$obj['_id'];
                 $result = $versioningService->addVersion($version);
                 if (!$result) {
                     $returnArray['success'] = false;
                     unset($returnArray['data']);
+                } else {
+                    $obj["id"] = $obj["_id"];
+                    unset($obj["_id"]);
+                    $returnArray['data'] = $obj;
                 }
             } else {
                 $returnArray = array(
@@ -360,7 +369,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $obj['workspace'] = array();
         }
         $result = parent::create($obj, $options);
-		
+
         if (isset($options["w"]) && $options["w"]==0) { // fire and forget option
         	return null;
         } else {

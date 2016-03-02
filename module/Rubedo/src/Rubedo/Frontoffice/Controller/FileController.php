@@ -41,11 +41,11 @@ class FileController extends AbstractActionController
 	private $size   = 0;
 	private $chunkSize;
 	private $contentType;
-	
+
     function indexAction()
     {
        	$this->fileId = $this->params()->fromQuery('file-id');
-       	
+
         if (isset($this->fileId)) {
 
             $fileService = Manager::getService('Files');
@@ -95,7 +95,7 @@ class FileController extends AbstractActionController
             if ($subtype == 'video') {
             	$action = "stream";
             }
-			
+
             switch ($action) {
             	case "download":
             		$response = new \Zend\Http\Response\Stream();
@@ -144,10 +144,10 @@ class FileController extends AbstractActionController
     	$this->end   = $this->size - 1;
     	header("Accept-Ranges: 0-".$this->end);
     	if (isset($_SERVER['HTTP_RANGE'])) {
-    
+
     		$c_start = $this->start;
     		$c_end = $this->end;
-    
+
     		list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
     		if (strpos($range, ',') !== false) {
     			header('HTTP/1.1 416 Requested Range Not Satisfiable');
@@ -159,7 +159,7 @@ class FileController extends AbstractActionController
     		}else{
     			$range = explode('-', $range);
     			$c_start = $range[0];
-    			 
+
     			$c_end = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $c_end;
     		}
     		$c_end = ($c_end > $this->end) ? $this->end : $c_end;
@@ -179,9 +179,9 @@ class FileController extends AbstractActionController
     	{
     		header("Content-Length: ".$this->size);
     	}
-    	 
+
     }
-    
+
     /**
      * perform the streaming of calculated range
      */
@@ -190,14 +190,14 @@ class FileController extends AbstractActionController
     	$firstChunk = intval($this->start/$this->chunkSize);
     	$lastChunk = intval($this->end/$this->chunkSize);
     	$filter = [
-	    	'files_id' => new \MongoId($this->fileId),
+	    	'files_id' => new \MongoDB\BSON\ObjectId($this->fileId),
 	    	'n' => [
 	    		'$gte' => $firstChunk,
 	    		'$lte' => $lastChunk
 	    	]
     	];
     	$mongoFilter=Filter::factory();
-    	$mongoFilter->addFilter(Filter::factory("Value")->setName("files_id")->setValue(new \MongoId($this->fileId)));
+    	$mongoFilter->addFilter(Filter::factory("Value")->setName("files_id")->setValue(new \MongoDB\BSON\ObjectId($this->fileId)));
     	$mongoFilter->addFilter(Filter::factory("OperatorToValue")->setName("n")->setOperator('$gte')->setValue($firstChunk));
     	$mongoFilter->addFilter(Filter::factory("OperatorToValue")->setName("n")->setOperator('$lte')->setValue($lastChunk));
     	$dataAccess = Manager::getService('MongoDataAccess');
@@ -213,8 +213,8 @@ class FileController extends AbstractActionController
     		flush();
     		$i += $bytesToRead;
     	}
-    }    
-    
+    }
+
     public function getThumbnailAction()
     {
         $iconPath = realpath(APPLICATION_PATH . '/public/components/webtales/rubedo-backoffice-ui/www/resources/icones/' . Manager::getService('Session')->get('iconSet', 'red') . '/128x128/attach_document.png');

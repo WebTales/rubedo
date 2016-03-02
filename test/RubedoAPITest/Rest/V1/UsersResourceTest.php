@@ -61,7 +61,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
     public function testPostTypeNotExist()
     {
         $this->resource->postAction(array(
-            'usertype' => new \MongoId()
+            'usertype' => new \MongoDB\BSON\ObjectId()
         ));
     }
 
@@ -76,8 +76,8 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
             ->will(
                 $this->returnValue(
                     array(
-                        'id' => new \MongoId(),
-                        'defaultGroup' => new \MongoId(),
+                        'id' => new \MongoDB\BSON\ObjectId(),
+                        'defaultGroup' => new \MongoDB\BSON\ObjectId(),
                         'fields' => array(),
                         'signUpType' => 'open',
                     )
@@ -92,7 +92,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                         'success' => true,
                         'data' => array(
                             'version' => 1,
-                            'id' => new \MongoId(),
+                            'id' => new \MongoDB\BSON\ObjectId(),
                         ),
                     )
                 )
@@ -104,7 +104,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                 $this->returnValue(false)
             );
         $this->resource->postAction(array(
-            'usertype' => new \MongoId(),
+            'usertype' => new \MongoDB\BSON\ObjectId(),
             'fields' => array(
                 'password' => 'foo',
                 'login' => 'bar',
@@ -122,8 +122,8 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
             ->will(
                 $this->returnValue(
                     array(
-                        'id' => new \MongoId(),
-                        'defaultGroup' => new \MongoId(),
+                        'id' => new \MongoDB\BSON\ObjectId(),
+                        'defaultGroup' => new \MongoDB\BSON\ObjectId(),
                         'fields' => array(),
                         'signUpType' => 'open',
                     )
@@ -138,7 +138,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                         'success' => true,
                         'data' => array(
                             'version' => 1,
-                            'id' => new \MongoId(),
+                            'id' => new \MongoDB\BSON\ObjectId(),
                         ),
                         'msg' => 'Foobar',
                     )
@@ -152,7 +152,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
             );
 
         $result = $this->resource->postAction(array(
-            'usertype' => new \MongoId(),
+            'usertype' => new \MongoDB\BSON\ObjectId(),
             'fields' => array(
                 'password' => 'foo',
                 'login' => 'bar',
@@ -174,7 +174,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
             ->will(
                 $this->returnValue(array())
             );
-        $result = $this->resource->getEntityAction(new \MongoId(), array());
+        $result = $this->resource->getEntityAction(new \MongoDB\BSON\ObjectId(), array());
         $this->assertArrayHasKey('success', $result);
     }
 
@@ -192,7 +192,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                         'fields' => array(),
                         'name' => 'foo',
                         'email' => 'foo@bar.com',
-                        'typeId' => new \MongoId(),
+                        'typeId' => new \MongoDB\BSON\ObjectId(),
                     )
                 )
             );
@@ -204,7 +204,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                     array()
                 )
             );
-        $this->resource->getEntityAction(new \MongoId(), array());
+        $this->resource->getEntityAction(new \MongoDB\BSON\ObjectId(), array());
     }
 
     public function testGetEntity()
@@ -218,7 +218,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                         'fields' => array(),
                         'name' => 'foo',
                         'email' => 'foo@bar.com',
-                        'typeId' => new \MongoId(),
+                        'typeId' => new \MongoDB\BSON\ObjectId(),
                     )
                 )
             );
@@ -228,11 +228,11 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
             ->will(
                 $this->returnValue(
                     array(
-                        'id' => new \MongoId(),
+                        'id' => new \MongoDB\BSON\ObjectId(),
                     )
                 )
             );
-        $result = $this->resource->getEntityAction(new \MongoId(), array());
+        $result = $this->resource->getEntityAction(new \MongoDB\BSON\ObjectId(), array());
         $this->assertArrayHasKey('success', $result);
         $this->assertArrayHasKey('user', $result);
     }
@@ -250,7 +250,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                     array()
                 )
             );
-        $this->resource->patchEntityAction(new \MongoId(), array());
+        $this->resource->patchEntityAction(new \MongoDB\BSON\ObjectId(), array());
     }
 
     /**
@@ -267,7 +267,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                         'fields' => array(),
                         'name' => 'foo',
                         'email' => 'foo@bar.com',
-                        'typeId' => new \MongoId(),
+                        'typeId' => new \MongoDB\BSON\ObjectId(),
                     )
                 )
             );
@@ -279,7 +279,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                     array()
                 )
             );
-        $this->resource->patchEntityAction(new \MongoId(), array());
+        $this->resource->patchEntityAction(new \MongoDB\BSON\ObjectId(), array());
     }
 
     /**
@@ -296,7 +296,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                         'fields' => array(),
                         'name' => 'foo',
                         'email' => 'foo@bar.com',
-                        'typeId' => new \MongoId(),
+                        'typeId' => new \MongoDB\BSON\ObjectId(),
                         'id' => 'IdUser',
                     )
                 )
@@ -307,7 +307,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
             ->will(
                 $this->returnValue(
                     array(
-                        'id' => new \MongoId(),
+                        'id' => new \MongoDB\BSON\ObjectId(),
                     )
                 )
             );
@@ -321,7 +321,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                     )
                 )
             );
-        $this->resource->patchEntityAction(new \MongoId(), array());
+        $this->resource->patchEntityAction(new \MongoDB\BSON\ObjectId(), array());
     }
 
     public function testPatchEntity()
@@ -335,7 +335,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                         'fields' => array(),
                         'name' => 'foo',
                         'email' => 'foo@bar.com',
-                        'typeId' => new \MongoId(),
+                        'typeId' => new \MongoDB\BSON\ObjectId(),
                         'id' => 'IdCurrentUser',
                     )
                 )
@@ -347,7 +347,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
             ->will(
                 $this->returnValue(
                     array(
-                        'id' => new \MongoId(),
+                        'id' => new \MongoDB\BSON\ObjectId(),
                         'fields' => array(),
                     )
                 )
@@ -373,7 +373,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                         'success' => true,
                         'data' => array(
                             'version' => 1,
-                            'id' => new \MongoId(),
+                            'id' => new \MongoDB\BSON\ObjectId(),
                         ),
                         'msg' => 'Foobar',
                     )
@@ -387,7 +387,7 @@ class UsersResourceTest extends \PHPUnit_Framework_TestCase
                 $this->returnValue(true)
             );
 
-        $result = $this->resource->patchEntityAction(new \MongoId(), array(
+        $result = $this->resource->patchEntityAction(new \MongoDB\BSON\ObjectId(), array(
             'user' => array(
                 'fields' => array(
                     'foo' => 'bar',

@@ -1391,9 +1391,9 @@ class DataAccess implements IDataAccess
         $this->_excludeFieldList = array();
     }
 
-    public function getRegex($expr)
+    public function getRegex($expr, $flags)
     {
-        return new \MongoRegex($expr);
+        return new \MongoDB\BSON\Regex($expr, $flags);
     }
 
     public function getMongoDate()
@@ -1417,8 +1417,13 @@ class DataAccess implements IDataAccess
     public function customUpdate(array $data, IFilter $updateCond, $options = array())
     {
         try {
-            $resultArray = $this->_collection->updateMany($updateCond->toArray(), $data, $options);
-            if ($resultArray->isAcknowledged()) {
+            //Use driver update because the library doesn't work as expected (update/replace instead of update only)
+            $bulk = new \MongoDB\Driver\BulkWrite;
+            $bulk->update($updateCond->toArray(), $data, $options);
+
+            $resultArray = $this->getAdapter()->executeBulkWrite($this->_collection->__toString(), $bulk);
+
+            if ($resultArray instanceof \MongoDB\Driver\WriteResult) {
                 $returnArray = array(
                     'success' => true
                 );

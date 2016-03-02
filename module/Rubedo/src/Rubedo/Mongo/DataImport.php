@@ -265,7 +265,7 @@ class DataImport extends DataAccess
 			   				$create = false;
 			   			} else {
 			   		   
-			   				$newId = new \MongoId();
+			   				$newId = new \MongoDB\BSON\ObjectId();
 			   				$create = true;
 			   			}
 			   			 

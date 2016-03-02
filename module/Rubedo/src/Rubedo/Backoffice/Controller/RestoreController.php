@@ -73,7 +73,7 @@ class RestoreController extends DataAccessController
                                         $restoredElements[$collectionName] = 0;
                                         foreach ($obj[$collectionName]['data'] as $data) {
                                             if (\MongoId::isValid($data['id'])) {
-                                                $data['_id'] = new \MongoId($data['id']);
+                                                $data['_id'] = new \MongoDB\BSON\ObjectId($data['id']);
                                                 unset($data['id']);
                                                 switch ($restoreMode) {
                                                     case 'INSERT':
@@ -111,7 +111,7 @@ class RestoreController extends DataAccessController
                                     		'filename' => $originalFileName,
                                     		'Content-Type' => $fileExtension,
                                     		'mainFileType' => $mainFileType,
-                                    		'_id' => new \MongoId($originalFileId)
+                                    		'_id' => new \MongoDB\BSON\ObjectId($originalFileId)
                                     );
    
                                     switch ($restoreMode) {

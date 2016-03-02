@@ -112,6 +112,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         }
 
         $returnArray = parent::create($obj, $options);
+
         if ($returnArray['success']) {
             if (array_key_exists('status', $returnArray['data']) && $returnArray['data']['status'] === 'published') {
                 $result = $this->publish($returnArray['data']['id'], $ignoreIndex);
@@ -167,18 +168,18 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
      * @return array
      */
     public function findOne(\WebTales\MongoFilters\IFilter $filters = null, $live = true, $raw = true) {
-    	
+
     	if ($live === true) {
     		$this->_dataService->setLive();
     	} else {
     		$this->_dataService->setWorkspace();
     	}
-    	
+
     	$obj = $this->_dataService->findOne($filters, $raw);
 
     	return $obj;
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */

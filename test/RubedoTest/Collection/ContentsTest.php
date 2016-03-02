@@ -751,8 +751,8 @@ class ContentsTest extends \PHPUnit_Framework_TestCase
             )));
 
         $obj = array(
-            "id" => new \MongoId(),
-            "typeId" => new \MongoId(),
+            "id" => new \MongoDB\BSON\ObjectId(),
+            "typeId" => new \MongoDB\BSON\ObjectId(),
             "fields" => array(
                 'text' => 'test',
                 'summary' => 'test',

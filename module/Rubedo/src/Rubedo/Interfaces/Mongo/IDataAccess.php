@@ -375,5 +375,5 @@ interface IDataAccess
      * @param string $expr
      * @return \MongoRegex
      */
-    public function getRegex($expr);
+    public function getRegex($expr, $flags);
 }

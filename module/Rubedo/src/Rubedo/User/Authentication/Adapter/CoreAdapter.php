@@ -71,7 +71,7 @@ class CoreAdapter extends AbstractAdapter
             $this->_authenticateResultInfo['messages'][] = 'More than one record matches the supplied identity.';
             return $this->_authenticateCreateAuthResult();
         }
-        error_log("ok");
+
         $user = array_shift($resultIdentities);
         $salt = $user['salt'];
         $targetHash = $user['password'];

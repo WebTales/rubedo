@@ -54,7 +54,7 @@ class UsertypesResourceTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('findById')
             ->will($this->returnValue(array()));
-        $result = $this->resource->getEntityAction(new \MongoId(), array());
+        $result = $this->resource->getEntityAction(new \MongoDB\BSON\ObjectId(), array());
         $this->assertArrayHasKey('success', $result);
         $this->assertArrayHasKey('userType', $result);
     }

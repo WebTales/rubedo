@@ -39,7 +39,7 @@ class XhrGetMongoIdController extends AbstractActionController
      */
     public function indexAction()
     {
-        $MongoId = new \MongoId();
+        $MongoId = new \MongoDB\BSON\ObjectId();
         $MongoId = (string)$MongoId;
         return new JsonModel(array(
             'mongoID' => $MongoId

@@ -51,7 +51,7 @@ class TokenResource extends AbstractResource
         $user['recoverToken'] = md5(serialize($user) . time());
         $this->getUsersCollection()->update($user);
         $emailVars = array(
-            'link' => '?recoverEmail=' . $user['email'] . '&token=' . $user['recoverToken'],
+            'link' => 'recoverEmail=' . $user['email'] . '&token=' . $user['recoverToken'],
         );
 
         if (!$this->sendMail('Blocks.Auth.Email.sendToken.subject', 'email_send_token', $emailVars, $user, $site)) {
@@ -113,6 +113,10 @@ class TokenResource extends AbstractResource
         $vars['lang'] = $user['language'];
         $vars['name'] = (!empty($user['name'])) ? $user['name'] : $user['login'];
         $vars['URI'] = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : ($vars['siteUrl'] . $_SERVER['REDIRECT_URL']);
+
+        if(strpos($vars['URI'], "?") === false) {
+            $vars['URI'] = $vars['URI'] . "?";
+        }
 
         $templateHtml = $this->getFrontOfficeTemplatesService()->getFileThemePath("blocks/authentication/" . $template . ".html.twig");
         $templateTxt = $this->getFrontOfficeTemplatesService()->getFileThemePath("blocks/authentication/" . $template . ".txt.twig");
@@ -207,4 +211,4 @@ class TokenResource extends AbstractResource
                     ->setRequired()
             );
     }
-} 
+}

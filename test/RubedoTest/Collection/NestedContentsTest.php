@@ -101,8 +101,8 @@ class NestedContentsTest extends \PHPUnit_Framework_TestCase
     {
         $collection = new NestedContents();
 
-        $content1 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoId(), 'label' => 'test1'));
-        $content2 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoId(), 'label' => 'test2'));
+        $content1 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoDB\BSON\ObjectId(), 'label' => 'test1'));
+        $content2 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoDB\BSON\ObjectId(), 'label' => 'test2'));
         $contents = static::$phactory->build('nestedContents', array($content1, $content2));
         $item = static::$phactory->createWithAssociations('Contents', array('nestedContents' => $contents));
         $item['id'] = (string)$item['_id'];
@@ -126,8 +126,8 @@ class NestedContentsTest extends \PHPUnit_Framework_TestCase
     /*public function testFindById() {
         $collection = new NestedContents();
 
-        $content1 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoId(), 'label' => 'test1'));
-        $content2 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoId(), 'label' => 'test2'));
+        $content1 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoDB\BSON\ObjectId(), 'label' => 'test1'));
+        $content2 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoDB\BSON\ObjectId(), 'label' => 'test2'));
         $contents = static::$phactory->build('nestedContents', array($content1, $content2));
         $item = static::$phactory->createWithAssociations('Contents', array('nestedContents' => $contents));
         $item['id'] = (string)$item['_id'];
@@ -146,8 +146,8 @@ class NestedContentsTest extends \PHPUnit_Framework_TestCase
     {
         $collection = new NestedContents();
 
-        $content1 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoId(), 'label' => 'test1'));
-        $content2 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoId(), 'label' => 'test2'));
+        $content1 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoDB\BSON\ObjectId(), 'label' => 'test1'));
+        $content2 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoDB\BSON\ObjectId(), 'label' => 'test2'));
         $contents = static::$phactory->build('nestedContents', array($content1, $content2));
         $item = static::$phactory->createWithAssociations('Contents', array('nestedContents' => $contents));
         $item['id'] = (string)$item['_id'];
@@ -171,8 +171,8 @@ class NestedContentsTest extends \PHPUnit_Framework_TestCase
 //    {
 //        $collection = new NestedContents();
 //
-//        $content1 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoId(), 'label' => 'test1'));
-//        $content2 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoId(), 'label' => 'test2'));
+//        $content1 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoDB\BSON\ObjectId(), 'label' => 'test1'));
+//        $content2 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoDB\BSON\ObjectId(), 'label' => 'test2'));
 //        $contents = static::$phactory->build('nestedContents', array($content1, $content2));
 //        $item = static::$phactory->createWithAssociations('Contents', array('nestedContents' => $contents));
 //        $item['id'] = (string)$item['_id'];
@@ -196,8 +196,8 @@ class NestedContentsTest extends \PHPUnit_Framework_TestCase
     {
         $collection = new NestedContents();
 
-        $content1 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoId(), 'label' => 'test1'));
-        $content2 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoId(), 'label' => 'test2'));
+        $content1 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoDB\BSON\ObjectId(), 'label' => 'test1'));
+        $content2 = static::$phactory->build('nestedContent', array('id' => (string)new \MongoDB\BSON\ObjectId(), 'label' => 'test2'));
         $contents = static::$phactory->build('nestedContents', array($content1, $content2));
         $item = static::$phactory->createWithAssociations('Contents', array('nestedContents' => $contents));
         $item['id'] = (string)$item['_id'];

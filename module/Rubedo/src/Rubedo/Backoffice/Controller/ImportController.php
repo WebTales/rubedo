@@ -336,7 +336,7 @@ class ImportController extends DataAccessController
         $options['separator'] = $this->params()->fromPost('separator', ";");
         $options['userEncoding'] = $this->params()->fromPost('encoding');
         $options['workingLanguage'] = $this->params()->fromPost('workingLanguage', 'en');
-        $options['importKey'] = (string)new \MongoId();
+        $options['importKey'] = (string)new \MongoDB\BSON\ObjectId();
         
         if (!isset($options['userEncoding'])) {
             throw new \Rubedo\Exceptions\Server("Missing parameter encoding", "Exception96", "encoding");

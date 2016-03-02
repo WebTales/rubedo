@@ -322,7 +322,7 @@ class ContentsResource extends AbstractResource
                     }
                     foreach($terms as $key =>&$value){
                         try{
-                            new \MongoId($value);
+                            new \MongoDB\BSON\ObjectId($value);
                         } catch(\Exception $e){
                             if (!$isVocabExtendable){
                                 unset($terms[$key]);
@@ -567,7 +567,7 @@ class ContentsResource extends AbstractResource
                     }
                     foreach($terms as $key =>&$value){
                         try{
-                            new \MongoId($value);
+                            new \MongoDB\BSON\ObjectId($value);
                         } catch(\Exception $e){
                             if (!$isVocabExtendable){
                                 unset($terms[$key]);

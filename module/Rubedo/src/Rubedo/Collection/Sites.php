@@ -228,9 +228,9 @@ class Sites extends AbstractLocalizableCollection implements ISites
         if ($this->_isReadable($obj)) {
             $id = $obj['id'];
             $pages = \Rubedo\Services\Manager::getService('Pages')->deleteBySiteId($id);
-            if ($pages['ok'] == 1) {
+            if ($pages->isAcknowledged()) {
                 $masks = \Rubedo\Services\Manager::getService('Masks')->deleteBySiteId($id);
-                if ($masks['ok'] == 1) {
+                if ($masks->isAcknowledged()) {
                     $returnArray = parent::destroy($obj, $options);
                 } else {
                     $returnArray = array(
@@ -341,7 +341,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
                 foreach ($value['blocks'] as $subkey => $someBlock) {
                     unset($oldMasksArray['data'][$key]['blocks'][$subkey]['id']);
                     unset($oldMasksArray['data'][$key]['blocks'][$subkey]['_id']);
-                    $oldMasksArray['data'][$key]['blocks'][$subkey]['id'] = (string)new \MongoId();
+                    $oldMasksArray['data'][$key]['blocks'][$subkey]['id'] = (string)new \MongoDB\BSON\ObjectId();
                 }
             }
             $oldIdArray[] = $value['id'];
@@ -355,7 +355,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
                 foreach ($value['blocks'] as $subkey => $someBlock) {
                     unset($oldPagesArray['data'][$key]['blocks'][$subkey]['id']);
                     unset($oldPagesArray['data'][$key]['blocks'][$subkey]['_id']);
-                    $oldPagesArray['data'][$key]['blocks'][$subkey]['id'] = (string)new \MongoId();
+                    $oldPagesArray['data'][$key]['blocks'][$subkey]['id'] = (string)new \MongoDB\BSON\ObjectId();
                 }
             }
             $oldIdArray[] = $value['id'];
@@ -381,7 +381,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
         $queriesList = $queriesService->getList($queriesFilter);
         foreach ($queriesList['data'] as $someQuery) {
             if (strpos($theBigString, $someQuery['id'])) {
-                $MongoId = new \MongoId();
+                $MongoId = new \MongoDB\BSON\ObjectId();
                 $MongoIdString = (string)$MongoId;
                 $theBigString = str_replace($someQuery['id'], $MongoIdString, $theBigString);
                 $someQuery['_id'] = $MongoId;
@@ -392,7 +392,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
         }
         foreach ($systemContentList['data'] as $systemContent) {
             if (strpos($theBigString, $systemContent['id'])) {
-                $MongoId = new \MongoId();
+                $MongoId = new \MongoDB\BSON\ObjectId();
                 $MongoIdString = (string)$MongoId;
                 $theBigString = str_replace($systemContent['id'], $MongoIdString, $theBigString);
                 $systemContent['_id'] = $MongoId;
@@ -404,7 +404,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
 
 
         foreach ($oldIdArray as $value) {
-            $MongoId = new \MongoId();
+            $MongoId = new \MongoDB\BSON\ObjectId();
             $MongoId = (string)$MongoId;
             $newIdArray[] = $MongoId;
             $theBigString = str_replace($value, $MongoId, $theBigString);
@@ -420,14 +420,14 @@ class Sites extends AbstractLocalizableCollection implements ISites
                 $newSite[$key] = $value;
             }
         }
-        $newSite['_id'] = new \MongoId($newSite['id']);
+        $newSite['_id'] = new \MongoDB\BSON\ObjectId($newSite['id']);
         unset($newSite['id']);
         unset($newSite['version']);
         $returnArray = $this->_dataService->create($newSite);
         foreach ($newMasksJsonArray as $key => $value) {
             $newMask = Json::decode($newMasksJsonArray[$key], Json::TYPE_ARRAY);
             if (is_array($newMask)) {
-                $newMask['_id'] = new \MongoId($newMask['id']);
+                $newMask['_id'] = new \MongoDB\BSON\ObjectId($newMask['id']);
                 unset($newMask['id']);
                 unset($newMask['version']);
                 $masksService->create($newMask);
@@ -436,7 +436,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
         foreach ($newPagesJsonArray as $key => $value) {
             $newPage = Json::decode($newPagesJsonArray[$key], Json::TYPE_ARRAY);
             if (is_array($newPage)) {
-                $newPage['_id'] = new \MongoId($newPage['id']);
+                $newPage['_id'] = new \MongoDB\BSON\ObjectId($newPage['id']);
                 unset($newPage['id']);
                 unset($newPage['version']);
                 $pagesService->create($newPage);
@@ -470,11 +470,11 @@ class Sites extends AbstractLocalizableCollection implements ISites
 
 
             // Detail mask
-            $detailSecondColumnId = (string)new \MongoId();
+            $detailSecondColumnId = (string)new \MongoDB\BSON\ObjectId();
             $detailMaskCreation = $this->_createMask($maskObj, 'NewSite.single.title', 1, $detailSecondColumnId);
 
             // Search mask
-            $searchColumnId = (string)new \MongoId();
+            $searchColumnId = (string)new \MongoDB\BSON\ObjectId();
             $searchMaskCreation = $this->_createMask($maskObj, 'NewSite.search.title', 1, $searchColumnId);
 
 
@@ -518,7 +518,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
 
                 ));
                 if(!empty($singlePageObj['blocks'])){
-                    $singlePageObj['blocks'][0]['id'] = (string)new \MongoId();
+                    $singlePageObj['blocks'][0]['id'] = (string)new \MongoDB\BSON\ObjectId();
                     $singlePageObj['blocks'][0]['parentCol'] = $detailSecondColumnId;
                 }
                 $page = Manager::getService('Pages')->create($singlePageObj);
@@ -541,7 +541,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
                 $searchPageObj['site'] = $site['data']['id'];
                 $searchPageObj['maskId'] = $searchMaskCreation['data']['id'];
                 if(!empty($searchPageObj['blocks'])){
-                    $searchPageObj['blocks'][0]['id'] = (string)new \MongoId();
+                    $searchPageObj['blocks'][0]['id'] = (string)new \MongoDB\BSON\ObjectId();
                     $searchPageObj['blocks'][0]['parentCol'] = $searchColumnId;
                 }
                 $searchPage = Manager::getService('Pages')->create($searchPageObj);
@@ -624,11 +624,11 @@ class Sites extends AbstractLocalizableCollection implements ISites
         // Search mask
         $mask = $maskObj;
 
-        $searchFirstColumnId = (string)new \MongoId();
-        //$searchSecondColumnId = (string)new \MongoId();
+        $searchFirstColumnId = (string)new \MongoDB\BSON\ObjectId();
+        //$searchSecondColumnId = (string)new \MongoDB\BSON\ObjectId();
 
-        $mask['rows'][0]['id'] = (string)new \MongoId();
-        $mask['rows'][1]['id'] = (string)new \MongoId();
+        $mask['rows'][0]['id'] = (string)new \MongoDB\BSON\ObjectId();
+        $mask['rows'][1]['id'] = (string)new \MongoDB\BSON\ObjectId();
         $mask['rows'][0]['columns'][0]['id'] = $searchFirstColumnId;
 
         $tempCol = $mask['rows'][1]['columns'][0];
@@ -636,7 +636,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
         unset($mask['rows'][1]['columns']);
         for ($i = 1; $i <= $numcol; $i++) {
             $mask['rows'][1]['columns'][$i - 1] = $tempCol;
-            $mask['rows'][1]['columns'][$i - 1]['id'] = (string)new \MongoId();
+            $mask['rows'][1]['columns'][$i - 1]['id'] = (string)new \MongoDB\BSON\ObjectId();
             if ($forceCol && $i == 1) {
                 $mask['rows'][1]['columns'][$i - 1]['id'] = $forceCol;
             }
@@ -645,7 +645,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
             }
         }
 
-        $mask['blocks'][0]['id'] = (string)new \MongoId();
+        $mask['blocks'][0]['id'] = (string)new \MongoDB\BSON\ObjectId();
         $mask['blocks'][0]['parentCol'] = $searchFirstColumnId;
 
         $mask['i18n'][$this->locale]['text'] = $mask['text'] = $this->translateService->getTranslation($name, $this->locale);

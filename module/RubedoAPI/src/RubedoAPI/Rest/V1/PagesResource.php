@@ -149,7 +149,7 @@ class PagesResource extends AbstractResource
             $lastMatchedNode = ['id' => 'root'];
             foreach ($urlSegments as $key => $value) {
                 try {
-                    $contentId = new \MongoId($value);
+                    $contentId = new \MongoDB\BSON\ObjectId($value);
                     $content = $this->getContentsCollection()->findById($contentId, false, false);
                     break;
                 } catch (\Exception $e) {

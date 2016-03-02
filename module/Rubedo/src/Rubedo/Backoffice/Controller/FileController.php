@@ -134,7 +134,7 @@ class FileController extends AbstractActionController
             'filename' => $info['basename'],
             'Content-Type' => $mimeType,
             'mainFileType' => 'Image',
-            '_id' => new \MongoId($originalId)
+            '_id' => new \MongoDB\BSON\ObjectId($originalId)
         );
 
         $fileService->createBinary($fileObj);

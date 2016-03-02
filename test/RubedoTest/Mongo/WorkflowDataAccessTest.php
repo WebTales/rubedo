@@ -740,7 +740,7 @@ class WorkflowDataAccessTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, count($readItems));
 
-        $readItem = static::$phactory->getDb()->items->findOne(array('_id' => new \mongoId($itemId)));
+        $readItem = static::$phactory->getDb()->items->findOne(array('_id' => new \MongoDB\BSON\ObjectId($itemId)));
 
         $this->assertNull($readItem);
     }

@@ -217,7 +217,7 @@ class DataAccessTest extends \PHPUnit_Framework_TestCase
         $dataAccessObject->init('items', 'test_db');
 
         $filter = new OperatorToValueFilter();
-        $filter->setName('criteria')->setValue(new \MongoRegex('/mam.*/i'))->setOperator('$regex');
+        $filter->setName('criteria')->setValue(new \MongoDB\BSON\Regex('^mam.*$', 'i'))->setOperator('$regex');
 
         $dataAccessObject->addFilter($filter);
 
@@ -1060,7 +1060,7 @@ class DataAccessTest extends \PHPUnit_Framework_TestCase
         $readItems = array_values(iterator_to_array(static::$phactory->getDb()->items->find()));
         $this->assertEquals(3, count($readItems));
 
-        $readItem = static::$phactory->getDb()->items->findOne(array('_id' => new \mongoId($itemId)));
+        $readItem = static::$phactory->getDb()->items->findOne(array('_id' => new \MongoDB\BSON\ObjectId($itemId)));
 
         $this->assertNull($readItem);
     }
@@ -1414,7 +1414,7 @@ class DataAccessTest extends \PHPUnit_Framework_TestCase
         $expectedResult = array($item2);
 
         $filter = new OperatorToValueFilter();
-        $filter->setName('name')->setValue(new \MongoRegex('/Up.*/i'))->setOperator('$regex');
+        $filter->setName('name')->setValue(new \MongoDB\BSON\Regex('^Up.*$', 'i'))->setOperator('$regex');
         $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->readChild($testId);
@@ -1467,7 +1467,7 @@ class DataAccessTest extends \PHPUnit_Framework_TestCase
 
 
         $filter = new OperatorToValueFilter();
-        $filter->setName('name')->setValue(new \MongoRegex('/Cre.*/i'))->setOperator('$regex');
+        $filter->setName('name')->setValue(new \MongoDB\BSON\Regex('^Cre.*$', 'i'))->setOperator('$regex');
         $dataAccessObject->addFilter($filter);
 
         $readArray = $dataAccessObject->readChild($testId);

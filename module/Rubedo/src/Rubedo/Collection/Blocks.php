@@ -239,7 +239,7 @@ class Blocks extends AbstractCollection implements IBlocks
     {
         if ($this->isModified($data)) {
             if (strpos($data["id"], 'unBloc') === 0 || strpos($data["id"], 'ext-gen') === 0) {
-                $data['id'] = new \MongoId();
+                $data['id'] = new \MongoDB\BSON\ObjectId();
             }
             $block = $this->findById($data['id']);
             if ($block) {
