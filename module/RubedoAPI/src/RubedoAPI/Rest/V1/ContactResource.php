@@ -87,7 +87,7 @@ class ContactResource extends AbstractResource
         $mailingListsService = Manager::getService('MailingList');
         /** @var \Rubedo\Interfaces\Mail\IMailer $mailerService */
         $mailerService = Manager::getService('Mailer');
-        $config = Manager::getService('Config');
+        $config = Manager::getService('config');
 
         $senderOfNotif = $config["rubedo_config"]["fromEmailNotification"];
 

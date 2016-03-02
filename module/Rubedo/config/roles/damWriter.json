@@ -12,7 +12,8 @@
         "execute.controller.damtypes.index.backoffice",
         "execute.controller.dam.@dot*.backoffice",
         "execute.controller.file.put.backoffice",
-        "execute.controller.directories.@dot*.backoffice"
+        "execute.controller.directories.@dot*.backoffice",
+        "execute.controller.file.update.backoffice"
     ],
     "includes": [
         "damReader"

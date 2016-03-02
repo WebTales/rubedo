@@ -48,6 +48,11 @@ class DbConfigForm extends BootstrapForm
             ->setValue(isset($params['readPreference']) ? $params['readPreference'] : '')
             ->setLabel('Read preference')
             ->setAttribute('class', 'form-control');
+
+        $timeoutField = (new Number('timeout'))
+            ->setValue(isset($params['timeout']) ? $params['port'] : 1000)
+            ->setLabel('Timeout')
+            ->setAttribute('class', 'form-control');
         
         $serverPortField = (new Number('port'))
             ->setValue(isset($params['port']) ? $params['port'] : 27017)
@@ -84,6 +89,7 @@ class DbConfigForm extends BootstrapForm
         $dbForm->add($serverNameField);
         $dbForm->add($replicaSetNameField);
         $dbForm->add($readPreferenceField);
+        $dbForm->add($timeoutField);
         $dbForm->add($serverPortField);
         $dbForm->add($dbNameField);
         $dbForm->add($serverAdminLoginField);

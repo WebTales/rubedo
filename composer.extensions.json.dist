@@ -13,6 +13,7 @@
     "minimum-stability": "dev",
     "config": {
         "process-timeout": 600,
-        "vendor-dir": "extensions"
+        "vendor-dir": "extensions",
+        "secure-http":false
     }
 }

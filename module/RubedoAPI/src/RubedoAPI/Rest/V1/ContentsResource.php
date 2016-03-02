@@ -202,23 +202,22 @@ class ContentsResource extends AbstractResource
 
         if ($queryType === 'manual' && $query != false && isset($query['query']) && is_array($query['query'])) {
             $contentOrder = $query['query'];
-            $keyOrder = array();
             $contentArray = array();
 
             // getList
-            $unorderedContentArray = $this->getContentList($filters, $this->setPaginationValues($params));
+            $unorderedContentArray = $this->getContentList($filters, ["start" => 0, "limit" => null]);
 
             foreach ($contentOrder as $value) {
                 foreach ($unorderedContentArray['data'] as $subKey => $subValue) {
                     if ($value === $subValue['id']) {
-                        $keyOrder[] = $subKey;
+                        $contentArray['data'][] = $subValue;
                     }
                 }
             }
 
-            foreach ($keyOrder as $value) {
-                $contentArray['data'][] = $unorderedContentArray['data'][$value];
-            }
+            $paging = $this->setPaginationValues($params);
+
+            $contentArray['data'] = array_slice($contentArray['data'], $paging["start"], $paging["limit"]);
 
             $nbItems = $unorderedContentArray['count'];
         } else {
@@ -628,6 +627,7 @@ class ContentsResource extends AbstractResource
         return [
             'success' => $update['success'],
             'version' => isset($update['data'],$update['data']['version'])?$update['data']['version'] : false,
+            'inputErrors'=>isset($update["inputErrors"]) ? $update["inputErrors"] : false
         ];
     }
 
@@ -969,6 +969,10 @@ class ContentsResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('Content creation result')
                     ->setKey('data')
+            )->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Input errors')
+                    ->setKey('inputErrors')
             )
             ->identityRequired();
     }
@@ -1059,6 +1063,10 @@ class ContentsResource extends AbstractResource
                     ->setDescription('The content')
                     ->setKey('version')
                     ->setRequired()
+            )->addOutputFilter(
+                (new FilterDefinitionEntity())
+                    ->setDescription('Input errors')
+                    ->setKey('inputErrors')
             );
     }
 

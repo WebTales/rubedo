@@ -254,6 +254,11 @@ class PagesResource extends AbstractResource
         }
         $termColumn = (!empty($mainColumn)) ? $mainColumn : null;
         $lastMatchedNode['rows'] = array_replace_recursive($mask['rows'], $this->getRowsInfos($blocks, $mask['rows'], $termColumn));
+        if (isset($lastMatchedNode['i18n'][$params['lang']->getLocale()])){
+            $lastMatchedNode['locale']=$params['lang']->getLocale();
+        } elseif (isset($lastMatchedNode['i18n'][$params['lang']->getFallback()])){
+            $lastMatchedNode['locale']=$params['lang']->getFallback();
+        }
         if (!isset($lastMatchedNode['title'])) {
             if (isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'])){
                 $lastMatchedNode['title']=$lastMatchedNode['i18n'][$params['lang']->getLocale()]['title'];

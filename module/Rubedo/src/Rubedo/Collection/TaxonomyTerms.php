@@ -151,7 +151,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null)
+    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null,$isSpecialBOMode=false)
     {
         $navigation = false;
 
@@ -165,9 +165,13 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
             foreach ($siteList['data'] as $site) {
                 $contentArray[] = $this->_siteToTerm($site);
             }
-            $pageList = Manager::getService('Pages')->getList($filters);
+            if ($isSpecialBOMode){
+                $pageList = Manager::getService('Pages')->getList($filters,$sort,$start,$limit);
+            } else {
+                $pageList = Manager::getService('Pages')->getList($filters);
+            }
             foreach ($pageList['data'] as $page) {
-                $contentArray[] = $this->_pageToTerm($page);
+                $contentArray[] = $this->_pageToTerm($page,$isSpecialBOMode);
             }
 
             $number = count($contentArray);
@@ -414,7 +418,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
      * @param array $site
      * @return array
      */
-    protected function _pageToTerm($page)
+    protected function _pageToTerm($page,$isSpecialBOMode=false)
     {
         $term = array();
         if (isset($page['i18n'])) {
@@ -424,6 +428,10 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
         $term["parentId"] = ($page['parentId'] == 'root') ? $page['site'] : $page['parentId'];
         $term['text'] = $page['text'];
         $term['id'] = $page['id'];
+        if($isSpecialBOMode) {
+            $pageUrl = Manager::getService('Url')->getPageUrl($term['id'], $term['locale']);
+            $term['text'] = $term['text'] . " - " . Manager::getService('Sites')->getHost($page['site']) . '/' . ltrim($pageUrl, '/');
+        }
         unset($term['leaf']);
         $term['expandable'] = $page['expandable'];
         $term['orderValue'] = $page['orderValue'];

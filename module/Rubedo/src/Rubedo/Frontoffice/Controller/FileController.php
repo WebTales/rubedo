@@ -90,7 +90,7 @@ class FileController extends AbstractActionController
             	default:
             		break;
             }
-            
+
 
             if ($subtype == 'video') {
             	$action = "stream";

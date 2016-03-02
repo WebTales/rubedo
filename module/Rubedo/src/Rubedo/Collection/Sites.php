@@ -55,6 +55,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
         "workspace",
         "readOnly",
         "defaultSingle",
+        "defaultSearch",
         "googleMapsKey",
         "googleAnalyticsKey",
         "disqusKey",

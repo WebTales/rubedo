@@ -107,6 +107,12 @@ class DataAccess implements IDataAccess
      */
     protected static $_readPreference;
     /**
+     * Driver timeout
+     *
+     * @var string
+     */
+    protected static $_timeout;
+    /**
      * Filter condition to be used when reading
      *
      * @var \WebTales\MongoFilters\CompositeFilter
@@ -202,7 +208,7 @@ class DataAccess implements IDataAccess
      */
     public static function lazyLoadConfig()
     {
-    	
+
         $config = Manager::getService('config');
         $options = $config['datastream'];
         if (isset($options)) {
@@ -211,24 +217,33 @@ class DataAccess implements IDataAccess
                 $connectionString .= $options['mongo']['login'];
                 $connectionString .= ':' . $options['mongo']['password'] . '@';
             }
-            $serverList = explode(",",$options['mongo']['server']);
+            $serverList = explode(",", $options['mongo']['server']);
             foreach ($serverList as $server) {
-            	$connectionString .= $server;
-            	if (isset($options['mongo']['port'])) {
-            		$connectionString .= ':' . $options['mongo']['port'].",";
-            	}
+                $serverSplit = explode(":", $server);
+                $connectionString .= $serverSplit[0];
+                if(!empty($serverSplit[1])){
+                    $connectionString .= ':' . $serverSplit[1];
+                } else if(!empty($options['mongo']['port'])) {
+                    $connectionString .= ':' . $options['mongo']['port'];
+                }
+                $connectionString .= ',';
             }
-            $connectionString = substr($connectionString,0,-1);
-			
-            if (isset($options['mongo']['replicaSetName'])) { 
-            	self::$_replicaSetName = $options['mongo']['replicaSetName'];
+            $connectionString = substr($connectionString, 0, -1);
+
+            if (!empty($options['mongo']['replicaSetName'])) {
+                self::$_replicaSetName = $options['mongo']['replicaSetName'];
+                if (empty($options['mongo']['readPreference'])) {
+                    self::$_readPreference = "nearest";
+                } else {
+                    self::$_readPreference = $options['mongo']['readPreference'];
+                }
             }
 
-            if (isset($options['mongo']['readPreference'])) {
-                self::$_readPreference = $options['mongo']['readPreference'];
+            if (!empty($options['mongo']['timeout'])){
+                self::$_timeout = $options['mongo']['timeout'];
             }
-        	
-            self::setDefaultMongo(str_replace(' ','',$connectionString));
+
+            self::setDefaultMongo(str_replace(' ', '', $connectionString));
 
             self::setDefaultDb($options['mongo']['db']);
         }
@@ -459,7 +474,7 @@ class DataAccess implements IDataAccess
         } else {
             $this->_dbName = $this->_getDB($dbName, $mongo);
             $collectionObj = new ProxyCollection($this->_dbName->$collection);
-            self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection] = $collection;
+            self::$_collectionArray[$mongo . '_' . $dbName . '_' . $collection] = $collectionObj;
             return $collectionObj;
         }
     }
@@ -508,15 +523,22 @@ class DataAccess implements IDataAccess
             return self::$_adapterArray[$mongo];
         } else {
             try {
-            	if (!self::$_replicaSetName) {
-            		$adapter = new \MongoClient($mongo);
-            	} else {
-                    if (!self::$_readPreference) {
-                    	self::$_readPreference = "nearest";
+                if (!self::$_replicaSetName) {
+                    if(self::$_timeout){
+                        $adapter = new \MongoClient($mongo, array('timeout' => self::$_timeout));
+                    } else {
+                        $adapter = new \MongoClient($mongo);
                     }
-					$mongo .= "?readPreference=".self::$_readPreference;
-            		$adapter = new \MongoClient($mongo,array('replicaSet' => self::$_replicaSetName));
-            	}
+                } else {
+                    $options = array('replicaSet' => self::$_replicaSetName);
+                    if (self::$_readPreference){
+                        $options['readPreference'] = self::$_readPreference;
+                    }
+                    if (self::$_timeout){
+                        $options['timeout'] = self::$_timeout;
+                    }
+                    $adapter = new \MongoClient($mongo, $options);
+                }
             } catch (\Exception $e) {
                 $adapter = new \MongoClient($mongo, array("connect" => FALSE));
             }
@@ -803,7 +825,7 @@ class DataAccess implements IDataAccess
      */
     public function findOne(IFilter $localFilter = null)
     {
-    	
+
         // get the UI parameters
         $includedFields = $this->getFieldList();
         $excludedFields = $this->getExcludeFieldList();
@@ -842,10 +864,10 @@ class DataAccess implements IDataAccess
      */
     public function create(array $obj, $options = array())
     {
-        if(!isset($options["w"])){
+        if (!isset($options["w"])) {
             $config = Manager::getService('config');
-            if(isset($config['datastream']["mongo"]["server"])&&is_string($config['datastream']["mongo"]["server"])){
-                $options["w"]=count(explode($config['datastream']["mongo"]["server"],","));
+            if (isset($config['datastream']["mongo"]["server"]) && is_string($config['datastream']["mongo"]["server"])) {
+                $options["w"] = count(explode($config['datastream']["mongo"]["server"], ","));
             }
         }
         $obj['version'] = 1;
@@ -910,10 +932,10 @@ class DataAccess implements IDataAccess
      */
     public function update(array $obj, $options = array())
     {
-        if(!isset($options["w"])){
+        if (!isset($options["w"])) {
             $config = Manager::getService('config');
-            if(isset($config['datastream']["mongo"]["server"])&&is_string($config['datastream']["mongo"]["server"])){
-                $options["w"]=count(explode($config['datastream']["mongo"]["server"],","));
+            if (isset($config['datastream']["mongo"]["server"]) && is_string($config['datastream']["mongo"]["server"])) {
+                $options["w"] = count(explode($config['datastream']["mongo"]["server"], ","));
             }
         }
         $id = $obj['id'];
@@ -1004,8 +1026,8 @@ class DataAccess implements IDataAccess
     {
         try {
             $idString = new \MongoId($idString);
-        } catch(\Exception $e) {
-            if(!is_string($idString)) {
+        } catch (\Exception $e) {
+            if (!is_string($idString)) {
                 throw new Exception('Invalid MongoId :' . $idString);
             }
         }
@@ -1508,12 +1530,13 @@ class DataAccess implements IDataAccess
         }
     }
 
-    public function findAndModify(IFilter $query = null, array $update, $fields = array(), $options = array()) {
-    	
-    	return $this->_collection->findAndModify($query->toArray(), $update, $fields, $options);
-    	
+    public function findAndModify(IFilter $query = null, array $update, $fields = array(), $options = array())
+    {
+
+        return $this->_collection->findAndModify($query->toArray(), $update, $fields, $options);
+
     }
-    
+
     public function customFind(IFilter $filter = null, $fieldRule = array())
     {
         $filterArray = is_null($filter) ? array() : $filter->toArray();

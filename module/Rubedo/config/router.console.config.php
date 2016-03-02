@@ -46,7 +46,7 @@ return array(
         ),
         'configdb' => array(
             'options' => array(
-                'route'    => 'config setdb --server= --port= --db= [--replicaSetName=] [--adminLogin=] [--adminPassword=] [--login=] [--password=] [--readPreference=]',
+                'route'    => 'config setdb --server= --port= --db= [--replicaSetName=] [--timeout=] [--adminLogin=] [--adminPassword=] [--login=] [--password=] [--readPreference=]',
                 'defaults' => array(
                     'controller' => 'Rubedo\Console\Controller\Config',
                     'action'     => 'setdb'
@@ -212,6 +212,24 @@ return array(
                 'defaults' => array(
                     'controller' => 'Rubedo\Console\Controller\Config',
                     'action'     => 'setrubedoconfig'
+                )
+            )
+        ),
+        'configsaveconfigtodb' => array(
+            'options' => array(
+                'route'    => 'config saveconfigtodb',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'saveconfigtodb'
+                )
+            )
+        ),
+        'configrestoreconfigfromdb' => array(
+            'options' => array(
+                'route'    => 'config restoreconfigfromdb',
+                'defaults' => array(
+                    'controller' => 'Rubedo\Console\Controller\Config',
+                    'action'     => 'restoreconfigfromdb'
                 )
             )
         ),

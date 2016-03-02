@@ -227,7 +227,7 @@ class MailingListsController extends DataAccessController
                     $success == $success && $resultInter['success'];
                     $lineCounter = $lineCounter + 1;
                 } catch (\Exception $e){
-
+                    
                 }
             }
         }

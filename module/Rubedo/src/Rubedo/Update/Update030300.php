@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Rubedo -- ECM solution
  * Copyright (c) 2014, WebTales (http://www.webtales.fr/).
@@ -14,16 +15,32 @@
  * @copyright  Copyright (c) 2012-2014 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
-namespace Rubedo\Interfaces\Collection;
+namespace Rubedo\Update;
 
 /**
- * Interface of service handling ClickStream
+ * Methods
+ * for
+ * update
+ * tool
  *
  * @author adobre
- * @category Rubedo
- * @package Rubedo
+ *
  */
-interface IClickStream extends IAbstractCollection
+class Update030300 extends Update
 {
-    public function log($fingerprint,$sessionId,$event,$userId,$userAgent,$os);
+
+    protected static $toVersion = '3.3.1';
+
+    /**
+     * do
+     * the
+     * upgrade
+     *
+     * @return boolean
+     */
+    public static function upgrade()
+    {
+        return true;
+    }
+
 }

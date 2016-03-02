@@ -91,6 +91,7 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             'config setfinished'=>"Set install status to finished",
             'config setadmin --name=  --email= --login= --password='=>"Create admin user",
             'config setdefault'=>"Set default php settings",
+            'config setdb --server= --port= --db= [--replicaSetName=] [--timeout=] [--adminLogin=] [--adminPassword=] [--login=] [--password=] [--readPreference=]'=>"Set mongodb config",
             'config createsite --domain= --lang= [--theme=]'=>"Create website",
             'config getfull'=>"Get full config as JSON",
             'config setfull --conf='=>"Set full config from JSON",
@@ -98,6 +99,8 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
             'config getes'=>"get the elasticsearch conf",
             'config getweb'=>"get the web cluster conf",
             'config getmail'=>"get mail conf",
+            'config saveconfigtodb'=>"save local config to db",
+            'config restoreconfigfromdb'=>"restore local config from db",
             'config setmail --server= --port= [--ssl] --username= --password='=>"Configure the mailer",
             'config getrubedoconfig'=>"get rubedo_config",
             'config setrubedoconfig [--minify] [--cachePage] [--apiCache] [--useCdn] [--extDebug] [--addECommerce] [--activateMagic] [--defaultBackofficeHost=] [--isBackofficeSSL] [--enableEmailNotification] [--fromEmailNotification=]'=>"Configure rubedo_config",
@@ -305,12 +308,11 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
         if ($controller == 'Rubedo\\Backoffice\\Controller\\XhrAuthentication' && $action == 'is-session-expiring') {
             return;
         }
-
         $config = $event->getApplication()
             ->getServiceManager()
             ->get('Config');
         $isConsole=$event->getRequest() instanceof ConsoleRequest;
-        if (!$isConsole&&(!isset($config['installed']) || ((!isset($config['installed']['status']) || $config['installed']['status'] !== 'finished') && $controller !== 'Rubedo\Install\Controller\Index'))) {
+        if (!$isConsole&&(!isset($config['installed']) || ((!isset($config['installed']['status']) || $config['installed']['status'] !== 'finished') && ($controller !== 'Rubedo\Install\Controller\Index')))&&!($controller == 'RubedoApi\Frontoffice\Controller\Api'&&strpos($_SERVER['REQUEST_URI'],'reloadconfig')!==false)) {
 
 
             $routeMatches = $event->getRouteMatch();
