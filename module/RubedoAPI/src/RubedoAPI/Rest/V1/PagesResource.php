@@ -323,7 +323,7 @@ class PagesResource extends AbstractResource
             'reset' => true,
         );
         $url = $this->getContext()->url()->fromRoute('rewrite', array(
-            'pageId' => $id,
+            'pageId' => (string)$id,
             'locale' => $params['lang']->getLocale(),
         ), $urlOptions);
         return array(

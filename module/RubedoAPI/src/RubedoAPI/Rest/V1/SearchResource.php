@@ -58,13 +58,13 @@ class SearchResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setKey('siteId')
                             ->setDescription('Id of the site')
-                            ->setFilter('\\MongoId')
+                            ->setFilter('\\MongoDB\\BSON\\ObjectID')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('pageId')
                             ->setDescription('Id of the page')
-                            ->setFilter('\\MongoId')
+                            ->setFilter('\\MongoDB\\BSON\\ObjectID')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
@@ -130,7 +130,7 @@ class SearchResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setKey('detailPageId')
                             ->setDescription('Id of the linked page')
-                            ->setFilter('\\MongoId')
+                            ->setFilter('\\MongoDB\\BSON\\ObjectID')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
@@ -156,7 +156,7 @@ class SearchResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setKey('profilePageId')
                             ->setDescription('Id of the profile page')
-                            ->setFilter('\\MongoId')
+                            ->setFilter('\\MongoDB\\BSON\\ObjectID')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())

@@ -100,7 +100,7 @@ class UrlCache extends AbstractCollection implements IUrlCache
      */
     public function findByPageId($pageId, $locale)
     {
-        if ($pageId instanceof \MongoId) {
+        if ($pageId instanceof \MongoDB\BSON\ObjectID) {
             $pageId = (string)$pageId;
         }
         if ($this->noDbConnection) {
@@ -132,7 +132,6 @@ class UrlCache extends AbstractCollection implements IUrlCache
     public function create(array $obj, $options = array('w' => false))
     {
         $obj['date'] = $this->_dataService->getMongoDate();
-
         parent::create($obj, $options);
     }
 
@@ -192,6 +191,7 @@ class UrlCache extends AbstractCollection implements IUrlCache
     {
         $params = $event->getParams();
         $result = $this->findByPageId($params['pageId'], $params['locale']);
+
         if ($result) {
             $message = 'cache hit for pageUrl ' . $result['url'];
             Manager::getService('Logger')->debug($message);

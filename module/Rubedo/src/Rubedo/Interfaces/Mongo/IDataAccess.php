@@ -357,7 +357,7 @@ interface IDataAccess
     /**
      * Return the mongo date
      *
-     * @return \MongoDate
+     * @return \MongoDB\BSON\UTCDateTime
      */
     public function getMongoDate();
 
@@ -365,7 +365,7 @@ interface IDataAccess
      * Cast string to MongoId
      *
      * @param string $idString
-     * @return \MongoId
+     * @return \MongoDB\BSON\ObjectID
      */
     public function getId($idString = null);
 

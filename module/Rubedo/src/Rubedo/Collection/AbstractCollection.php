@@ -326,6 +326,7 @@ abstract class AbstractCollection implements IAbstractCollection
         $this->_filterInputData($obj);
 
         unset($obj['readOnly']);
+
         $result = $this->_dataService->create($obj, $options);
         if ($result !== null) {
             Events::getEventManager()->trigger(self::POST_CREATE_COLLECTION, $this, $result);

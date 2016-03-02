@@ -131,7 +131,7 @@ class ApiController extends AbstractActionController
                         "cacheId"=>$cacheKey,
                         "cachedResult"=>Json::encode($apiResponse),
                         "endpoint"=>$class,
-                        "expireAt"=>new \MongoDate($time+$resourceObject->cacheLifeTime)
+                        "expireAt"=>new \MongoDB\BSON\UTCDateTime(($time+$resourceObject->cacheLifeTime) * 1000)
                     );
                     if (isset($routes['id'])){
                         $newCachedApiCall['entity']=(string) $routes['id'];

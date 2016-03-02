@@ -177,7 +177,7 @@ class TokenResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('Site id')
                     ->setKey('siteId')
-                    ->setFilter('\MongoId')
+                    ->setFilter('\MongoDB\BSON\ObjectID')
                     ->setRequired()
             );
     }

@@ -170,21 +170,21 @@ class ProtectedResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setDescription('Mailing list ID')
                             ->setKey('mailingListId')
-                            ->setFilter('\MongoId')
+                            ->setFilter('\MongoDB\BSON\ObjectID')
                             ->setRequired()
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('media ID')
                             ->setKey('mediaId')
-                            ->setFilter('\MongoId')
+                            ->setFilter('\MongoDB\BSON\ObjectID')
                             ->setRequired()
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
                             ->setDescription('site ID')
                             ->setKey('siteId')
-                            ->setFilter('\MongoId')
+                            ->setFilter('\MongoDB\BSON\ObjectID')
                             ->setRequired()
                     )
                     ->addInputFilter(
@@ -207,7 +207,7 @@ class ProtectedResource extends AbstractResource
                         (new FilterDefinitionEntity())
                             ->setDescription('media ID')
                             ->setKey('mediaId')
-                            ->setFilter('\MongoId')
+                            ->setFilter('\MongoDB\BSON\ObjectID')
                             ->setRequired()
                     )
                     ->addOutputFilter(

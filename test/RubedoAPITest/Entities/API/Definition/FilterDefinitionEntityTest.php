@@ -98,9 +98,9 @@ class FilterDefinitionEntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('foo'), $this->filterDefinition->filter(array('<b>foo</b>')));
         $this->assertEquals(array('bar' => 'foo'), $this->filterDefinition->filter(array('bar' => '<b>foo</b>')));
 
-        $this->filterDefinition->setFilter('\MongoId');
+        $this->filterDefinition->setFilter('\MongoDB\BSON\ObjectID');
         $this->filterDefinition->setMultivalued(false);
-        $this->assertInstanceOf('\MongoId', $this->filterDefinition->filter('53f60a5dbdc683e053bf7d33'));
+        $this->assertInstanceOf('\MongoDB\BSON\ObjectID', $this->filterDefinition->filter('53f60a5dbdc683e053bf7d33'));
     }
 
     /**

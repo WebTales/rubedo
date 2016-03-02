@@ -75,7 +75,7 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
             $obj = array();
             $obj['url'] = $url;
             if ($expire) {
-                $obj['expire'] = new \MongoDate();
+                $obj['expire'] = new \MongoDB\BSON\UTCDateTime(round(microtime(true) * 1000));
             }
             $result = $this->create($obj);
             $tinyUrlObj = $result['data'];
@@ -143,7 +143,7 @@ class TinyUrl extends AbstractCollection implements ITinyUrl
             $obj['action'] = $action;
             $obj['module'] = $module;
             if ($expire) {
-                $obj['expire'] = new \MongoDate();
+                $obj['expire'] = new \MongoDB\BSON\UTCDateTime(round(microtime(true) * 1000));
             }
             $result = $this->create($obj);
             $tinyUrlObj = $result['data'];

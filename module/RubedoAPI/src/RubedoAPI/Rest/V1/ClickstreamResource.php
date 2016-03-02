@@ -109,7 +109,7 @@ class ClickstreamResource extends AbstractResource
         }
         $currentTime = $this->getCurrentTimeService()->getCurrentTime();
         $newEvent=[
-            "date"=>new \MongoDate($currentTime),
+            "date"=>new \MongoDB\BSON\UTCDateTime($currentTime * 1000),
             "event"=>$params["event"],
             "eventArgs"=>isset ($params["eventArgs"]) ? $params["eventArgs"] : [ ],
             "lang"=>$params['lang']->getLocale()

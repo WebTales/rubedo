@@ -312,7 +312,7 @@ class Dam extends AbstractLocalizableCollection implements IDam
      */
     public function getMediaType($mediaId)
     {
-        if (!$mediaId instanceof \MongoId) {
+        if (!$mediaId instanceof \MongoDB\BSON\ObjectID) {
             if (!is_string($mediaId) || preg_match('/[\dabcdef]{24}/', $mediaId) !== 1) {
                 throw new \Rubedo\Exceptions\User('Invalid MongoId :' . $mediaId);
             }

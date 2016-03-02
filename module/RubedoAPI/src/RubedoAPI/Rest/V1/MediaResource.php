@@ -429,7 +429,7 @@ class MediaResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('Dam type')
                     ->setKey('typeId')
-                    ->setFilter('\MongoId')
+                    ->setFilter('\MongoDB\BSON\ObjectID')
                     ->setRequired()
             )
             ->addInputFilter(

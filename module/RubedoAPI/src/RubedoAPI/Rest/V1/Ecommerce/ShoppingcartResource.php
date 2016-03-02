@@ -268,14 +268,14 @@ class ShoppingcartResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('Product id')
                     ->setKey('productId')
-                    ->setFilter('\MongoId')
+                    ->setFilter('\MongoDB\BSON\ObjectID')
                     ->setRequired()
             )
             ->addInputFilter(
                 (new FilterDefinitionEntity())
                     ->setDescription('Variation id')
                     ->setKey('variationId')
-                    ->setFilter('\MongoId')
+                    ->setFilter('\MongoDB\BSON\ObjectID')
                     ->setRequired()
             )
             ->addInputFilter(

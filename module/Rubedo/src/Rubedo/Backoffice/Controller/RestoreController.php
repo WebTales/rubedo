@@ -31,7 +31,7 @@ use Mongo\DataAccess;
  */
 class RestoreController extends DataAccessController
 {
-     
+
     public function indexAction()
     {
     	$dataAccessService = Manager::getService('MongoDataAccess');
@@ -64,7 +64,7 @@ class RestoreController extends DataAccessController
                             $fileExtension = finfo_file($mimeTypes, $filePath);
 
                             switch (pathinfo($filePath, PATHINFO_EXTENSION)) {
-                                case 'json': // collection 
+                                case 'json': // collection
                                     $fileContent = file_get_contents($filePath);
                                     $obj = json_decode($fileContent,TRUE);
                                     if (is_array($obj)) {
@@ -72,29 +72,31 @@ class RestoreController extends DataAccessController
                                         $dataAccessService->init($collectionName);
                                         $restoredElements[$collectionName] = 0;
                                         foreach ($obj[$collectionName]['data'] as $data) {
-                                            if (\MongoId::isValid($data['id'])) {
+                                            try {
                                                 $data['_id'] = new \MongoDB\BSON\ObjectId($data['id']);
-                                                unset($data['id']);
-                                                switch ($restoreMode) {
-                                                    case 'INSERT':
-                                                        try {
-                                                            $dataAccessService->insert($data);
-                                                            $restoredElements[$collectionName]++;
-                                                        } catch (\Exception $e) {
-                                                            continue;
-                                                        }
-                                                        break;
-                                                    case 'UPSERT':
-                                                        try {
-                                                        	$data['id'] = (string) $data['_id'];
-                                                        	unset($data['_id']);
-                                                            $dataAccessService->update($data, ['upsert'=>TRUE]);
-                                                            $restoredElements[$collectionName]++;
-                                                        } catch (\Exception $e) {
-                                                        	continue;
-                                                        }
-                                                        break;
-                                                }
+                                            } catch(\MongoDB\Driver\Exception\InvalidArgumentException $e) {
+                                                continue;
+                                            }
+                                            unset($data['id']);
+                                            switch ($restoreMode) {
+                                                case 'INSERT':
+                                                    try {
+                                                        $dataAccessService->insert($data);
+                                                        $restoredElements[$collectionName]++;
+                                                    } catch (\Exception $e) {
+                                                        continue;
+                                                    }
+                                                    break;
+                                                case 'UPSERT':
+                                                    try {
+                                                    	$data['id'] = (string) $data['_id'];
+                                                    	unset($data['_id']);
+                                                        $dataAccessService->update($data, ['upsert'=>TRUE]);
+                                                        $restoredElements[$collectionName]++;
+                                                    } catch (\Exception $e) {
+                                                    	continue;
+                                                    }
+                                                    break;
                                             }
                                         }
                                     }
@@ -113,7 +115,7 @@ class RestoreController extends DataAccessController
                                     		'mainFileType' => $mainFileType,
                                     		'_id' => new \MongoDB\BSON\ObjectId($originalFileId)
                                     );
-   
+
                                     switch ($restoreMode) {
                                     	case 'INSERT':
                                     		try {
@@ -142,21 +144,21 @@ class RestoreController extends DataAccessController
 
                 $zipObj->close();
             }
-            
+
             $returnArray['success'] = true;
             $returnArray['message'] = "OK";
             $returnArray['restoredElements'] = $restoredElements;
-            
+
         } else {
-        	
+
         	$returnArray['success'] = FALSE;
         	$returnArray['message'] = "KO";
         	$returnArray['restoredElements'] = $restoredElements;
         }
-        
+
         if (!$returnArray['success']) {
         	$this->getResponse()->setStatusCode(500);
         }
         return new JsonModel($returnArray);
-   	} 
+   	}
 }

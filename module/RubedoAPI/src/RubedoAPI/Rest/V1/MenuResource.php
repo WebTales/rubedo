@@ -63,7 +63,7 @@ class MenuResource extends AbstractResource
                             ->setKey('pageId')
                             ->setRequired()
                             ->setDescription('Id of the root page for the menu')
-                            ->setFilter('\\MongoId')
+                            ->setFilter('\\MongoDB\\BSON\\ObjectID')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
