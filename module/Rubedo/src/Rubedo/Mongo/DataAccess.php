@@ -934,8 +934,9 @@ class DataAccess implements IDataAccess
             $bulk->update($updateCondition->toArray(), $obj, $options);
 
             $resultArray = $this->getAdapter()->executeBulkWrite($this->_collection->__toString(), $bulk);
-        } catch (\MongoDB\Driver\BulkWriteException $exception) {
-            if (strpos($exception->getMessage(), 'duplicate key error')) {
+        } catch (\MongoDB\Driver\Exception\BulkWriteException $exception) {
+            $resultError = $exception->getWriteResult();
+            if ($resultError->getWriteErrors() && count($resultError->getWriteErrors()) == 1  && strpos($resultError->getWriteErrors()[0]->getMessage(), 'duplicate key error')) {
                 throw new User('Duplicate key error', "Exception76");
             } else {
                 throw $exception;
@@ -1435,8 +1436,9 @@ class DataAccess implements IDataAccess
             }
 
             return $returnArray;
-        } catch (\MongoCursorException $exception) {
-            if (strpos($exception->getMessage(), 'duplicate key error')) {
+        } catch (\MongoDB\Driver\Exception\BulkWriteException $exception) {
+            $resultError = $exception->getWriteResult();
+            if ($resultError->getWriteErrors() && count($resultError->getWriteErrors()) == 1  && strpos($resultError->getWriteErrors()[0]->getMessage(), 'duplicate key error')) {
                 throw new User('Duplicate key error', "Exception76");
             } else {
                 throw $exception;
