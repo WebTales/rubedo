@@ -400,13 +400,10 @@ class DataAccess implements IDataAccess
      */
     public function getMongoServerVersion()
     {
-        $database = new \MongoDB\Database($this->_dbName, static::$_defaultDb);
-        $this->init('version');
-        $dbInfo = $database->command(array(
-            'buildinfo' => true
-        ));
-        if (isset($dbInfo['version'])) {
-            return $dbInfo['version'];
+        $cmd = new \MongoDB\Driver\Command(array('buildinfo' => true));
+        $dbInfo = $this->getAdapter()->executeCommand('version', $cmd)->toArray();
+        if (isset($dbInfo[0]->version)) {
+            return $dbInfo[0]->version;
         }
         return null;
     }
@@ -1537,7 +1534,7 @@ class DataAccess implements IDataAccess
      */
     public function aggregate($pipeline)
     {
-        $result = $this->_collection->aggregate($pipeline);
+        $result = $this->_collection->aggregate($pipeline)->toArray();
         return $result;
     }
 

@@ -216,7 +216,7 @@ class ContentTypes extends DataAbstract
 			if (isset($data['productType']) && $data['productType'] != 'none') {
 				$mapping ['productProperties'] = [
 					'dynamic' => true,
-					'store' => 'yes',
+					//'store' => 'yes',
 					'type' => 'object',
 					'properties'=>[
 						'basePrice' => [

@@ -155,7 +155,7 @@ final class Version
     {
         $componentsArray = array();
         $componentsArray['phpComponents'] = array(
-            'MongoDriver' => \MongoClient::VERSION
+            'MongoDriver' => MONGODB_VERSION
         );
 
         if (is_file(APPLICATION_PATH . '/composer.lock')) {

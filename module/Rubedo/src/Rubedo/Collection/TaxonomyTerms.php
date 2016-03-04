@@ -114,10 +114,11 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
             )
         );
         $response = $this->_dataService->aggregate($pipeline);
-        if (empty($response['result'])) {
+
+        if (count($response) === 0) {
             return 100;
         }
-        return ($response['result'][0]['greatestValue'] + 100);
+        return ($response[0]['greatestValue'] + 100);
 
     }
 
