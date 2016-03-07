@@ -17,6 +17,7 @@
 namespace Rubedo\Mongo;
 
 use Monolog\Logger;
+use Zend\Json\Json;
 use Rubedo\Exceptions\Access;
 use Rubedo\Exceptions\Server;
 use Rubedo\Exceptions\User;
@@ -624,7 +625,7 @@ class DataAccess implements IDataAccess
                 if (!isset($dbObject['version'])) {
                     $dbObject['version'] = 1;
                 }
-                $dbObject = json_decode(json_encode($dbObject), true);
+                $dbObject = Json::decode(Json::encode($dbObject), Json::TYPE_ARRAY);
                 $datas[] = $dbObject;
             }
         } else {
@@ -797,7 +798,7 @@ class DataAccess implements IDataAccess
         $data['id'] = (string)$data['_id'];
         unset($data['_id']);
 
-        return json_decode(json_encode($data), true);
+        return Json::decode(Json::encode($data), Json::TYPE_ARRAY);
     }
 
     /**
@@ -931,13 +932,15 @@ class DataAccess implements IDataAccess
         try {
             //Use driver update because the library doesn't work as expected (update/replace instead of update only)
             $bulk = new \MongoDB\Driver\BulkWrite;
-            $bulk->update($updateCondition->toArray(), $obj, $options);
+            $bulk->update($updateCondition->toArray(), ['$set' => $obj], $options);
 
             $resultArray = $this->getAdapter()->executeBulkWrite($this->_collection->__toString(), $bulk);
         } catch (\MongoDB\Driver\Exception\BulkWriteException $exception) {
             $resultError = $exception->getWriteResult();
             if ($resultError->getWriteErrors() && count($resultError->getWriteErrors()) == 1  && strpos($resultError->getWriteErrors()[0]->getMessage(), 'duplicate key error')) {
                 throw new User('Duplicate key error', "Exception76");
+            } elseif($resultError->getWriteErrors() && count($resultError->getWriteErrors()) == 1) {
+                throw new User($resultError->getWriteErrors()[0]->getMessage(), "ExceptionBulkWrite");
             } else {
                 throw $exception;
             }
@@ -1074,7 +1077,7 @@ class DataAccess implements IDataAccess
                 if (!isset($dbObject['version'])) {
                     $dbObject['version'] = 1;
                 }
-                $response[] = $dbObject;
+                $response[] = Json::decode(Json::encode($dbObject), Json::TYPE_ARRAY);
             }
         } else {
             $response = array();
@@ -1485,10 +1488,9 @@ class DataAccess implements IDataAccess
     {
         $result = false;
         $currentIndexes = $this->_collection->listIndexes();
-        if($currentIndexes->next()) {
+        if($currentIndexes instanceof \MongoDB\Model\IndexInfoIterator && count(iterator_to_array($currentIndexes)) > 0) {
             $result = $this->_collection->dropIndexes();
         }
-
         return $result;
     }
 

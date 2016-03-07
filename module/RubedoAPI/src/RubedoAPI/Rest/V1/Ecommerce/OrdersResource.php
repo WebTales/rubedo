@@ -349,7 +349,7 @@ class OrdersResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setKey('orderDetailPage')
                     ->setDescription('Order details page')
-                    ->setFilter('\MongoDB\BSON\ObjectID')
+                    ->setFilter('\\MongoDB\\BSON\\ObjectID')
             )
             ->addOutputFilter(
                 (new FilterDefinitionEntity())

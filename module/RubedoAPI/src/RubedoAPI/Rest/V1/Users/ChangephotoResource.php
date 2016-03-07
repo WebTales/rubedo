@@ -137,7 +137,7 @@ class ChangephotoResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('User ID')
                     ->setKey('userId')
-                    ->setFilter('\MongoDB\BSON\ObjectID')
+                    ->setFilter('\\MongoDB\\BSON\\ObjectID')
                     ->setRequired()
             )
             ->addInputFilter(
@@ -155,4 +155,4 @@ class ChangephotoResource extends AbstractResource
                     ->setDescription('Id of the new user photo')
             );
     }
-} 
+}

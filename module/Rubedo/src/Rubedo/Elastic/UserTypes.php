@@ -47,7 +47,7 @@ class UserTypes extends DataAbstract
 		],
 		'createUser' => [
 			'type' => 'object',
-			'store' => 'yes',
+			//'store' => 'yes',
 			'properties' => [
 				'id' => [
 					'type' => 'string',
@@ -82,7 +82,7 @@ class UserTypes extends DataAbstract
 		],
 		'autocomplete_nonlocalized' => [
 			'type' => 'completion',
-			'index_analyzer' => 'simple',
+			'analyzer' => 'simple',
 			'search_analyzer' => 'simple',
 			'payloads' => true,
 			'preserve_position_increments' => false

@@ -90,7 +90,7 @@ class ConfirmemailResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('User ID')
                     ->setKey('userId')
-                    ->setFilter('\MongoDB\BSON\ObjectID')
+                    ->setFilter('\\MongoDB\\BSON\\ObjectID')
                     ->setRequired()
             )
             ->addInputFilter(
@@ -100,4 +100,4 @@ class ConfirmemailResource extends AbstractResource
                     ->setRequired()
             );
     }
-} 
+}

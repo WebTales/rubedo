@@ -362,7 +362,7 @@ class UsersResource extends AbstractResource
                 (new FilterDefinitionEntity())
                     ->setDescription('UserType id')
                     ->setKey('usertype')
-                    ->setFilter('\MongoDB\BSON\ObjectID')
+                    ->setFilter('\\MongoDB\\BSON\\ObjectID')
                     ->setRequired()
             )
             ->addInputFilter(

@@ -494,6 +494,7 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
             ->setOperator('$exists')
             ->setValue(false)
         );
+
         if ($items['count'] > 0) {
             foreach ($items['data'] as $item) {
                 if (preg_match('/[\dabcdef]{24}/', $item['id']) == 1) {
@@ -509,6 +510,8 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 
     /**
      * Ensure that every localizable collection is fully localized
+     *
+     * @todo Reactivate localization on Dam documents
      */
     public static function localizeAllCollection()
     {
@@ -516,6 +519,10 @@ abstract class AbstractLocalizableCollection extends AbstractCollection
 
         $services = \Rubedo\Interfaces\config::getCollectionServices();
         foreach ($services as $serviceName) {
+            if($serviceName == "Dam") {
+                continue;
+            }
+
             $service = Manager::getService($serviceName);
             if ($service instanceof AbstractLocalizableCollection) {
                 $service->addLocalizationForCollection();

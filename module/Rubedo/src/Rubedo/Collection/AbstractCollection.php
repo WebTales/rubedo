@@ -111,6 +111,8 @@ abstract class AbstractCollection implements IAbstractCollection
      * @param array $sort
      *            sort the list with mongo syntax
      * @return array
+     *
+     * @todo Enable magic queries when sessions will be working
      */
     public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = 0, $limit = null, $ismagic = null)
     {
@@ -126,18 +128,18 @@ abstract class AbstractCollection implements IAbstractCollection
     	}
 
         // Add magic sort
-    	if ($ismagic) {
-    		// Try to set order on user group
-    		$fingerprint = Manager::getService("Session")->get("fingerprint");
-    		$filter=Filter::factory();
-    		$filter->addFilter(Filter::factory("Value")->setName("fingerprint")->setValue($fingerprint));
-    		$fingerprintData = Manager::getService("FingerprintData")->findOne($filter);
-    		if (isset($fingerprintData["userGroup"])) {
-	    		$this->_dataService->addSort(array(
-					"orderByUserGroup.".$fingerprintData["userGroup"] => 'desc'
-	    		));
-    		}
-    	}
+    	// if ($ismagic) {
+    	// 	// Try to set order on user group
+    	// 	$fingerprint = Manager::getService("Session")->get("fingerprint");
+    	// 	$filter=Filter::factory();
+    	// 	$filter->addFilter(Filter::factory("Value")->setName("fingerprint")->setValue($fingerprint));
+    	// 	$fingerprintData = Manager::getService("FingerprintData")->findOne($filter);
+    	// 	if (isset($fingerprintData["userGroup"])) {
+	    // 		$this->_dataService->addSort(array(
+		// 			"orderByUserGroup.".$fingerprintData["userGroup"] => 'desc'
+	    // 		));
+    	// 	}
+    	// }
 
     	// Add standard sort
     	if (isset($sort)) {

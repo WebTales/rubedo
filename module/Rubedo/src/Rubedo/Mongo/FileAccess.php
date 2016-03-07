@@ -145,7 +145,11 @@ class FileAccess extends DataAccess implements IFileAccess
 
         $mongoFile = $this->_collection->findOne($filters->toArray(), ["projection" => $fieldRule]);
 
-        return iterator_to_array($mongoFile);
+        if($mongoFile instanceof \MongoDB\Model\IndexInfoIterator) {
+            return iterator_to_array($mongoFile);
+        } else {
+            return null;
+        }
     }
 
     /**

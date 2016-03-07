@@ -336,7 +336,7 @@ class DataAbstract
                     case 'Rubedo.view.urlField' :
                         $config = [
                             'type' => 'object',
-                            'store' => $store,
+                            //'store' => $store,
                             'properties'=>[
                                 "url" => ["type" => "string",'store' => $store],
                                 "title" => ["type" => "string",'store' => $store],
@@ -358,7 +358,7 @@ class DataAbstract
                     case 'Rubedo.view.externalMediaField' :
                         $config = [
                             'type' => 'object',
-                            'store' => $store,
+                            //'store' => $store,
                             'properties'=>[
                                 "url" => ["type" => "string",'store' => $store],
                                 "maxHeight" => ["type" => "integer",'store' => $store,"index"=>"no"],

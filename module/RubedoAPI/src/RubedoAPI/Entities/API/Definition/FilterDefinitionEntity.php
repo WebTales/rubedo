@@ -249,10 +249,11 @@ class FilterDefinitionEntity implements JsonSerializable
                 $var = new $objToTest($value);
                 return $var;
             } catch (\Exception $e) {
-                if (!(method_exists($e, 'isTransparent') && $e->isTransparent()))
+                if (!(method_exists($e, 'isTransparent') && $e->isTransparent())) {
                     throw new APIFilterException('Can\'t try "' . $this->getFilter() . '" var', 500);
-                else
+                } else {
                     throw $e;
+                }
             }
         }
     }

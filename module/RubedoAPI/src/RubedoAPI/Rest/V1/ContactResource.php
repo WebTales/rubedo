@@ -55,7 +55,7 @@ class ContactResource extends AbstractResource
                             ->setKey('mailingListId')
                             ->setRequired()
                             ->setDescription('ID of the mailing list to target')
-                            ->setFilter('\MongoDB\BSON\ObjectID')
+                            ->setFilter('\\MongoDB\\BSON\\ObjectID')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
