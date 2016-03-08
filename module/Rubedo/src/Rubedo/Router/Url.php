@@ -663,17 +663,17 @@ class Url implements IUrl
         if (!$obj) {
             return '';
         }
-        $meta = $obj->file;
+        // $meta = $obj->file;
 
         $router = Manager::getService('Router');
         $options = array(
             'name' => 'mediaFromDam'
         );
         $params = array(
-            'version' => !empty($meta['version']) ? $meta['version'] : 1,
+            'version' => !empty($obj['version']) ? $obj['version'] : 1,
             'download' => $forceDownload ? 'download' : 'inline',
             'mediaId' => $mediaId,
-            'filename' => $meta['filename']
+            'filename' => $obj['filename']
         );
         $url = $router->assemble($params, $options);
         if ($isPublic) {
@@ -706,19 +706,19 @@ class Url implements IUrl
         if (!$obj) {
             return '';
         }
-        $meta = $obj->file;
+        // $meta = $obj->file;
 
         $router = Manager::getService('Router');
         $options = array(
             'name' => 'imageFromDam'
         );
         $params = array(
-            'version' => $meta['version'],
+            'version' => $obj['version'],
             'width' => $width ? $width : 'x',
             'height' => $height ? $height : 'x',
             'mode' => $mode ? $mode : 'crop',
             'mediaId' => $mediaId,
-            'filename' => $meta['filename']
+            'filename' => $obj['filename']
         );
         $url = $router->assemble($params, $options);
         if ($isPublic) {
@@ -789,10 +789,10 @@ class Url implements IUrl
             if (!$obj instanceof \MongoGridFSFile) {
                 return " ";
             }
-            $meta = $obj->file;
+            // $meta = $obj->file;
             $params = array(
-                'filename' => $meta['filename'],
-                'version' => $meta['version'],
+                'filename' => $obj['filename'],
+                'version' => $obj['version'],
                 'userId' => $userId,
                 'width' => $width,
                 'height' => $height,
@@ -827,10 +827,10 @@ class Url implements IUrl
             if (!$obj instanceof \MongoGridFSFile) {
                 return " ";
             }
-            $meta = $obj->file;
+            // $meta = $obj->file;
             $params = array(
-                'filename' => $meta['filename'],
-                'version' => $meta['version'],
+                'filename' => $obj['filename'],
+                'version' => $obj['version'],
                 'userId' => $userId,
                 'width' => $width,
                 'height' => $height,

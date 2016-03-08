@@ -145,11 +145,13 @@ class FileAccess extends DataAccess implements IFileAccess
 
         $mongoFile = $this->_collection->findOne($filters->toArray(), ["projection" => $fieldRule]);
 
-        if($mongoFile instanceof \MongoDB\Model\IndexInfoIterator) {
-            return iterator_to_array($mongoFile);
-        } else {
-            return null;
+        try {
+            $return = iterator_to_array($mongoFile);
+        } catch(\Exception $e) {
+            $return = null;
         }
+
+        return $return;
     }
 
     /**
@@ -250,7 +252,7 @@ class FileAccess extends DataAccess implements IFileAccess
 
         $obj['version'] = 1;
 
-        $binaryContent = new \MongoDB\BSON\Binary(file_get_contents($bites), 5);
+        $binaryContent = new \MongoDB\BSON\Binary($bites, 5);
         $obj['content'] = $binaryContent;
         $obj['filesize'] = strlen($bites);
         unset($obj['bytes']);
@@ -266,10 +268,10 @@ class FileAccess extends DataAccess implements IFileAccess
         $obj['createTime'] = $currentTime;
         $obj['lastUpdateTime'] = $currentTime;
 
-        $fileId = $this->_collection->storeBytes($bites, $obj);
+        $resultArray = $this->_collection->insertOne($obj);
 
-        if ($fileId) {
-            $obj['id'] = (string)$fileId;
+        if ($resultArray->isAcknowledged()) {
+            $obj['id'] = (string)$resultArray->getInsertedId();
             $returnArray = array(
                 'success' => true,
                 "data" => $obj
@@ -304,9 +306,9 @@ class FileAccess extends DataAccess implements IFileAccess
             $updateCondition = array_merge($this->_filters, $updateCondition);
         }
 
-        $resultArray = $this->_collection->remove($updateCondition, $options);
-        if ($resultArray['ok'] == 1) {
-            if ($resultArray['n'] == 1) {
+        $resultArray = $this->_collection->deleteOne($updateCondition, $options);
+        if ($resultArray->isAcknowledged()) {
+            if ($resultArray->getDeletedCount() == 1) {
                 $returnArray = array(
                     'success' => true
                 );

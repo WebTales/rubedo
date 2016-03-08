@@ -47,7 +47,7 @@ class UserTypes extends DataAbstract
 		],
 		'createUser' => [
 			'type' => 'object',
-			//'store' => 'yes',
+			'store' => 'yes',
 			'properties' => [
 				'id' => [
 					'type' => 'string',
