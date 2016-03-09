@@ -893,9 +893,15 @@ class DataAccess implements IDataAccess
         if(!isset($options["w"])){
             $config = Manager::getService('config');
             if(isset($config['datastream']["mongo"]["server"])&&is_string($config['datastream']["mongo"]["server"])){
-                $options["w"]=count(explode($config['datastream']["mongo"]["server"],","));
+                $options["writeConcern"]= new \MongoDB\Driver\WriteConcern(count(explode($config['datastream']["mongo"]["server"],",")));
             }
+        } else {
+            if(!is_int($options["w"]) && !is_string($options["w"])) {
+                $options["w"] = 0;
+            }
+            $options["writeConcern"] = new \MongoDB\Driver\WriteConcern($options["w"]);
         }
+
         $id = $obj['id'];
         unset($obj['id']);
         if (!isset($obj['version'])) {
@@ -953,7 +959,7 @@ class DataAccess implements IDataAccess
             }
         }
 
-        if($resultArray->getModifiedCount() == 1) {
+        if($resultArray->getModifiedCount() == 1 || $options["w"] === 0) {
             $obj = $this->findById($mongoID);
 
             $obj['id'] = $id;
