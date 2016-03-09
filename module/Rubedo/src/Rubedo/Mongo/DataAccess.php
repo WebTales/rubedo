@@ -810,14 +810,21 @@ class DataAccess implements IDataAccess
      * @param bool $options
      *            should we wait for a server response
      * @return array
+     *
+     * @todo Return error message from mongodb
      */
     public function create(array $obj, $options = array())
     {
         if(!isset($options["w"])){
             $config = Manager::getService('config');
             if(isset($config['datastream']["mongo"]["server"])&&is_string($config['datastream']["mongo"]["server"])){
-                $options["w"]=count(explode($config['datastream']["mongo"]["server"],","));
+                $options["writeConcern"]= new \MongoDB\Driver\WriteConcern(count(explode($config['datastream']["mongo"]["server"],",")));
             }
+        } else {
+            if(!is_int($options["w"]) && !is_string($options["w"])) {
+                $options["w"] = 0;
+            }
+            $options["writeConcern"] = new \MongoDB\Driver\WriteConcern($options["w"]);
         }
         $obj['version'] = 1;
         $currentUserService = Manager::getService('CurrentUser');
@@ -849,7 +856,7 @@ class DataAccess implements IDataAccess
             }
         }
 
-        if ($resultArray->isAcknowledged()) {
+        if ($resultArray->isAcknowledged() || (!$resultArray->isAcknowledged() && $options["w"] === 0)) {
             if (!empty($options['upsert']) && $resultArray->getUpsertedCount() == 1) {
                 $obj = $this->findOne($filter);
             } else {
@@ -864,7 +871,7 @@ class DataAccess implements IDataAccess
         } else {
             $returnArray = array(
                 'success' => false,
-                "msg" => $resultArray["err"]
+                "msg" => "Error during creation"
             );
         }
 
