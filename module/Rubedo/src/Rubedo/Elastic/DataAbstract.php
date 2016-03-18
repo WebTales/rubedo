@@ -332,6 +332,24 @@ class DataAbstract
                             }
                         }
                         break;
+                    case 'RStructuredObjectField' :
+                    case 'Rubedo.view.RStructuredObjectField' :
+                        $config = [
+                            'type' => 'object',
+                            'store' => $store,
+                            'properties'=>[
+                                "values"=> [
+                                    'type' => 'object',
+                                    'store' => $store,
+                                ]
+                            ]
+                        ];
+                        if ($notAnalyzed) {
+                            $config ['index'] = 'not_analyzed';
+                        }
+                        $mapping ['fields'] ['properties'] [$name] = $config;
+
+                        break;
                     case 'urlField' :
                     case 'Rubedo.view.urlField' :
                         $config = [
