@@ -59,6 +59,13 @@ class ClickstreamResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setKey('eventId')
+                            ->setRequired()
+                            ->setDescription('Event ID')
+                            ->setFilter('string')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
                             ->setKey('sessionId')
                             ->setRequired()
                             ->setDescription('Session id')
@@ -111,6 +118,7 @@ class ClickstreamResource extends AbstractResource
         $newEvent=[
             "date"=>new \MongoDate($currentTime),
             "event"=>$params["event"],
+            "eventId"=>$params["eventId"],
             "eventArgs"=>isset ($params["eventArgs"]) ? $params["eventArgs"] : [ ],
             "lang"=>$params['lang']->getLocale()
         ];
