@@ -188,10 +188,10 @@ class Dam extends AbstractLocalizableCollection implements IDam
         return $returnArray;
     }
 
-    public function getByType($typeId)
+    public function getByType($typeId, $start = null, $limit = null)
     {
         $filter = Filter::factory('Value')->setName('typeId')->SetValue($typeId);
-        return $this->getList($filter);
+        return $this->getList($filter, null, $start, $limit);
     }
 
     public function getListByDamTypeId($typeId)
