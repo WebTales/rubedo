@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use WebTales\MongoFilters\Filter;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 use Mongo\DataAccess;
@@ -86,9 +87,10 @@ class RestoreController extends DataAccessController
                                                         break;
                                                     case 'UPSERT':
                                                         try {
-                                                        	$data['id'] = (string) $data['_id'];
+                                                        	$existingId = (string) $data['_id'];
                                                         	unset($data['_id']);
-                                                            $dataAccessService->update($data, ['upsert'=>TRUE]);
+                                                            $customFilter=Filter::factory()->addFilter(Filter::factory('Uid')->setValue($existingId));
+                                                            $dataAccessService->customUpdate(['$set'=>$data],$customFilter ,['upsert'=>TRUE]);
                                                             $restoredElements[$collectionName]++;
                                                         } catch (\Exception $e) {
                                                         	continue;
