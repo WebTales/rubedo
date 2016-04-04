@@ -54,7 +54,12 @@ class Dam extends AbstractLocalizableCollection implements IDam
             'options' => array(
                 'unique' => true
             )
-        )
+        ),
+        array(
+            'keys' => array(
+                'lastUpdateTime' => -1
+            )
+        ),
     );
 
     /**

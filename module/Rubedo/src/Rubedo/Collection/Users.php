@@ -46,7 +46,12 @@ class Users extends AbstractCollection implements IUsers
             'options' => array(
                 'unique' => true
             )
-        )
+        ),
+        array(
+            'keys' => array(
+                'lastUpdateTime' => -1
+            )
+        ),
     );
 
     /**

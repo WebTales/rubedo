@@ -109,7 +109,12 @@ class Contents extends WorkflowAbstractCollection implements IContents
     		'keys' => array(
     			'orderbyUserGroup' => 1
     		)
-    	)
+    	),
+        array(
+            'keys' => array(
+                'lastUpdateTime' => -1
+            )
+        ),
     );
 
     /**
