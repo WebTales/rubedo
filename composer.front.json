@@ -120,7 +120,7 @@
                 "name": "jquery/fullCalendar",
                 "version": "2.0.3",
                 "dist": {
-                    "url": "https://github.com/WebTales/fullcalendar/archive/v2.0.3.zip",
+                    "url": "https://github.com/arshaw/fullcalendar/releases/download/v2.0.3/fullcalendar-2.0.3.zip",
                     "type": "zip"
                 }
             }
@@ -218,7 +218,7 @@
                 "name": "mbostock/d3",
                 "version": "3.4.11",
                 "dist": {
-                    "url": "https://github.com/WebTales/d3/releases/tag/v3.4.11",
+                    "url": "https://github.com/mbostock/d3/releases/download/v3.4.11/d3.zip",
                     "type": "zip"
                 }
             }
