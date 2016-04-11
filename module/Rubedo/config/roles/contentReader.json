@@ -11,6 +11,7 @@
         "execute.controller.versioning.index.backoffice",
         "execute.controller.taxonomyterms.index.backoffice",
         "execute.controller.taxonomyterms.tree.backoffice",
+        "execute.controller.taxonomy.index.backoffice",
         "execute.controller.dam.get-thumbnail.backoffice",
         "execute.controller.damtypes.index.backoffice",
         "execute.controller.elasticsearchcontent.index.backoffice",
