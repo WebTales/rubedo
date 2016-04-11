@@ -70,7 +70,8 @@ class Sites extends AbstractLocalizableCollection implements ISites
         "resources",
         "sitemapContentTypes",
         "defaultNotFound",
-        "iframelyKey"
+        "iframelyKey",
+        "optimizedRender"
     );
 
     protected $_indexes = array(
