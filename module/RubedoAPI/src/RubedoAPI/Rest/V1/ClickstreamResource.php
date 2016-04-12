@@ -115,24 +115,22 @@ class ClickstreamResource extends AbstractResource
             ];
         }
         $currentTime = $this->getCurrentTimeService()->getCurrentTime();
+        $currentUser=$this->getCurrentUserAPIService()->getCurrentUser();
         $newEvent=[
+            "fingerprint"=>$params["fingerprint"],
             "date"=>new \MongoDate($currentTime),
+            "sessionId"=>$params["sessionId"],
             "event"=>$params["event"],
             "eventId"=>$params["eventId"],
             "eventArgs"=>isset ($params["eventArgs"]) ? $params["eventArgs"] : [ ],
-            "lang"=>$params['lang']->getLocale()
+            "lang"=>$params['lang']->getLocale(),
+            "userAgent"=>isset($params["userAgent"]) ? $params["userAgent"] : null,
+            "referer"=>isset($params["referer"]) ? $params["referer"] : null,
+            "url"=>isset($params["url"]) ? $params["url"] : null,
+            "os"=>isset($params["os"]) ? $params["os"] : null,
+            "userId"=>$currentUser ? $currentUser["id"] : null
         ];
-        if (isset($params["referrer"])){
-            $newEvent["referrer"]=$params["referrer"];
-        }
-        if (isset($params["url"])){
-            $newEvent["url"]=$params["url"];
-        }
-        $currentUser=$this->getCurrentUserAPIService()->getCurrentUser();
-        $userId=$currentUser ? $currentUser["id"] : null;
-        $userAgent=isset($params["userAgent"]) ? $params["userAgent"] : null;
-        $os=isset($params["os"]) ? $params["os"] : null;
-        $logCreationResult=Manager::getService("ClickStream")->log($params["fingerprint"],$params["sessionId"],$newEvent,$userId,$userAgent,$os);
+        $logCreationResult=Manager::getService("ClickStream")->log($newEvent);
         return [
             "success"=>$logCreationResult
         ];
