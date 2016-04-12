@@ -126,7 +126,8 @@ class ClickstreamResource extends AbstractResource
             "referer"=>isset($params["referer"]) ? $params["referer"] : null,
             "url"=>isset($params["url"]) ? $params["url"] : null,
             "os"=>isset($params["os"]) ? $params["os"] : null,
-            "userId"=>$currentUser ? $currentUser["id"] : null
+            "userId"=>$currentUser ? $currentUser["id"] : null,
+            "clientIP"=>isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']
         ];
         $logCreationResult=Manager::getService("ClickStream")->log($newEvent);
         return [
