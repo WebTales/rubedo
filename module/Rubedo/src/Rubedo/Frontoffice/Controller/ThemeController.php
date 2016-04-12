@@ -309,6 +309,7 @@ class ThemeController extends AbstractActionController
             "libraryOverrides/lrInfiniteScroll.js",
             "libraryOverrides/angular-google-map.js",
             "libraryOverrides/chosen.jquery.js",
+            "libraryOverrides/angular-inview.js",
             "lib/toaster/jquery.toaster.js",
             "lib/angularStrap/ngStrap.js",
         ];
