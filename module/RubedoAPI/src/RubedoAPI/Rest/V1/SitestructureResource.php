@@ -84,7 +84,8 @@ class SitestructureResource extends AbstractResource
         $filter=Filter::factory();
         $filter->addFilter(Filter::factory("Value")->setName("site")->setValue($site["id"]));
         $pages=Manager::getService("Pages")->getList($filter);
-        foreach ($pages["data"] as &$page){
+        $pageArray=[];
+        foreach ($pages["data"] as $page){
             $page["url"]=$this->getContext()->url()->fromRoute('rewrite', array(
                 'pageId' => $page['id'],
                 'locale' => $params['lang']->getLocale()
@@ -96,11 +97,12 @@ class SitestructureResource extends AbstractResource
                 }
             }
             $page=array_intersect_key($page, array_flip(array('title','parentId','hasMainColumn','description','excludeFromMenu', 'id', 'text','pages','url','eCTitle','eCDescription','eCImage','richTextId','includedRichText','taxonomy','orderValue')));
+            $pageArray[$page["id"]]=$page;
         }
 
         return [
             'success' => true,
-            'pages' => $pages["data"],
+            'pages' => $pageArray,
         ];
     }
 
