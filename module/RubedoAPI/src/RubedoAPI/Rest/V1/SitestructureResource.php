@@ -96,6 +96,9 @@ class SitestructureResource extends AbstractResource
                     $page["hasMainColumn"]=true;
                 }
             }
+            if(isset($page["richTextId"])&&$page["richTextId"]&&$page["richTextId"]!=""){
+                $page["includedRichText"]=$this->getContentsCollection()->findById($page["richTextId"], true, false);
+            }
             $page=array_intersect_key($page, array_flip(array('title','parentId','hasMainColumn','description','excludeFromMenu', 'id', 'text','pages','url','eCTitle','eCDescription','eCImage','richTextId','includedRichText','taxonomy','orderValue')));
             $pageArray[$page["id"]]=$page;
         }
