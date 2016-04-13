@@ -117,7 +117,7 @@ class ClickstreamResource extends AbstractResource
         $currentUser=$this->getCurrentUserAPIService()->getCurrentUser();
         $currentTime = $this->getCurrentTimeService()->getCurrentTime();
         $newEvent=[
-            "date"=>new \MongoDate($currentTime),
+            "date"=>$currentTime,
             "fingerprint"=>$params["fingerprint"],
             "sessionId"=>$params["sessionId"],
             "event"=>$params["event"],
