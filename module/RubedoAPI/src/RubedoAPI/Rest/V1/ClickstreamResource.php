@@ -115,7 +115,9 @@ class ClickstreamResource extends AbstractResource
             ];
         }
         $currentUser=$this->getCurrentUserAPIService()->getCurrentUser();
+        $currentTime = $this->getCurrentTimeService()->getCurrentTime();
         $newEvent=[
+            "date"=>$currentTime*1000,
             "fingerprint"=>$params["fingerprint"],
             "sessionId"=>$params["sessionId"],
             "event"=>$params["event"],
@@ -126,7 +128,8 @@ class ClickstreamResource extends AbstractResource
             "referer"=>isset($params["referer"]) ? $params["referer"] : null,
             "url"=>isset($params["url"]) ? $params["url"] : null,
             "os"=>isset($params["os"]) ? $params["os"] : null,
-            "userId"=>$currentUser ? $currentUser["id"] : null
+            "userId"=>$currentUser ? $currentUser["id"] : null,
+            "clientIP"=>isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']
         ];
         $logCreationResult=Manager::getService("ClickStream")->log($newEvent);
         return [
