@@ -514,17 +514,16 @@ class DataAbstract
     /**
      * Set mapping for new or updated object type
      *
-     * @param string $indexName
      * @param string $typeId
      * @param array $mapping
      *
      * @return array
      */
-    public function putMapping($indexName, $typeId, $mapping)
+    public function putMapping($typeId, $mapping)
     {
 
         // Delete existing content type
-        $this->deleteMapping($indexName, $typeId);
+        // $this->deleteMapping($this->_indexName, $typeId);
 
         // Create new ES type if not empty
         if (!empty($mapping)) {
@@ -532,7 +531,7 @@ class DataAbstract
             // Create new type
 
             $indexParams = [
-                'index' => $indexName,
+                'index' => $this->_indexName,
                 'type' => $typeId,
                 'body' => [
                     $typeId => ['properties' => $mapping]
@@ -552,15 +551,14 @@ class DataAbstract
     /**
      * Delete object type mapping
      *
-     * @param string $indexName
      * @param string $typeId
      *
      * @return array
      */
-    public function deleteMapping($indexName, $typeId)
+    public function deleteMapping($typeId)
     {
         $params = [
-            'index' => $indexName,
+            'index' => $this->_indexName,
             'type' => $typeId
         ];
 
@@ -632,11 +630,11 @@ class DataAbstract
 
         // Get total items to be indexed
         $dataService = $this->_getService($serviceData);
-        
+
         $filter = Filter::factory('Value')->setName('typeId')->SetValue($id);
-        
+
         $totalToBeIndexed = $dataService->count($filter);
-        
+
         if (!$useQueue) {
             do {
 
@@ -681,15 +679,15 @@ class DataAbstract
         switch ($option) {
             case 'content':
                 $serviceData = 'Contents';
-                $indexName = $this->getIndexNameFromConfig('contentIndex');
+                // $indexName = $this->getIndexNameFromConfig('contentIndex');
                 break;
             case 'dam':
                 $serviceData = 'Dam';
-                $indexName = $this->getIndexNameFromConfig('damIndex');
+                // $indexName = $this->getIndexNameFromConfig('damIndex');
                 break;
             case 'user':
                 $serviceData = 'Users';
-                $indexName = $this->getIndexNameFromConfig('userIndex');
+                // $indexName = $this->getIndexNameFromConfig('userIndex');
                 break;
             default:
                 throw new \Rubedo\Exceptions\Server(
@@ -731,7 +729,7 @@ class DataAbstract
         if (!empty($this->_documents)) {
 
             $params = [
-                'index' => $indexName,
+                'index' => $this->_indexName,
                 'type' => $typeId,
             ];
 
@@ -739,7 +737,7 @@ class DataAbstract
 
             $this->_client->bulk($params);
 
-            $this->_client->indices()->refresh(['index' => $indexName]);
+            $this->_client->indices()->refresh(['index' => $this->_indexName]);
 
             empty($this->_documents);
 

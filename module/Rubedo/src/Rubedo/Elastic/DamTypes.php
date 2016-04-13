@@ -127,22 +127,25 @@ class DamTypes extends DataAbstract
 		],
 		'file' => [
 			'type' => 'attachment'
-		]					
+		]
 	];
 
 	/**
 	 * Constructor
 	 */
-	public function __construct()
-	{
-		parent::__construct();
-		$this->_indexName = $this->getIndexNameFromConfig('damIndex');
+	public function init($indexName = null)
+ 	{
+ 		if($indexName) {
+ 			$this->_indexName = $indexName;
+ 		} else {
+ 			$this->_indexName = $this->getIndexNameFromConfig("damIndex");
+ 		}
 		parent::init();
-		
+
 		parent::getAnalyzers();
 		parent::getLanguages();
 	}
-	
+
 	/**
 	 * Build mapping for object
 	 *
@@ -151,14 +154,14 @@ class DamTypes extends DataAbstract
 	 */
 	public function getMapping(array $data)
 	{
-	
+
 		$mapping = [];
-		
+
 		if (isset ($data ['fields']) && is_array($data ['fields'])) {
-	
+
 			// get vocabularies
 			$vocabularies = $this->getVocabularies($data);
-	
+
 			// add mapping for autocomplete in every active language
 			foreach ($this->_activeLanguages as $lang) {
 				$locale = !in_array($lang ['locale'], $this->_activeAnalysers) ? 'default' : $lang ['locale'];
@@ -170,7 +173,7 @@ class DamTypes extends DataAbstract
 					'preserve_position_increments' => false
 				];
 			}
-	
+
 			// Add Taxonomies
 			foreach ($vocabularies as $vocabularyName) {
 				$mapping ["taxonomy." . $vocabularyName] = [
@@ -179,7 +182,7 @@ class DamTypes extends DataAbstract
 					'store' => 'yes'
 				];
 			}
-	
+
 			// Add system fields : title
 			$fields = $data['fields'];
 
@@ -198,23 +201,23 @@ class DamTypes extends DataAbstract
 				'dynamic' => false,
 				'type' => 'object'
 			];
-	
+
 			foreach ($this->_activeLanguages as $lang) {
 				$mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] = [
 					'dynamic' => false,
 					'type' => 'object'
 				];
 			}
-	
+
 			// add fields mappings
 			foreach ($fields as $field) {
 				$this->addFieldMapping($field,$mapping);
 			}
 		}
-	
+
 		return array_merge(self::$_mapping, $mapping);
 	}
-	
+
 	/**
 	 * Set mapping for new or updated dam type
 	 *
@@ -227,11 +230,11 @@ class DamTypes extends DataAbstract
 	{
 		// Delete existing content type
 		$this->deleteMapping($this->_indexName, $typeId);
-	
+
 		// Create mapping
-		return $this->putMapping($this->_indexName, $typeId, $this->getMapping($data));
+		return $this->putMapping($typeId, $this->getMapping($data));
 	}
-	
+
 	/**
 	 * Delete dam type mapping
 	 *
@@ -241,9 +244,9 @@ class DamTypes extends DataAbstract
 	 */
 	public function delete($typeId)
 	{
-		return $this->deleteMapping($this->_indexName, $typeId);
+		return $this->deleteMapping($typeId);
 	}
-	
+
 	/**
 	 * Index all existing assets from given type
 	 *
@@ -255,5 +258,5 @@ class DamTypes extends DataAbstract
 	public function index($typeId)
 	{
 		return $this->indexByType('dam', $typeId);
-	}	
+	}
 }

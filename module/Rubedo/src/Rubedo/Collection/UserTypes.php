@@ -50,7 +50,14 @@ class UserTypes extends AbstractCollection implements IUserTypes
                 $utField["config"]["localizable"]=false;
             }
         }
-        return parent::update($obj,$options);
+
+        $returnArray = parent::update($obj,$options);
+
+        if ($returnArray["success"]) {
+            $this->indexUserType($returnArray['data']);
+        }
+
+        return $returnArray;
     }
 
     public function create(array $obj, $options = array())
@@ -135,5 +142,38 @@ class UserTypes extends AbstractCollection implements IUserTypes
         }
 
         return $userTypeObj;
+    }
+
+    /**
+     * Push the user type to Elastic Search
+     *
+     * @param array $obj
+     */
+    public function indexUserType($obj)
+    {
+        $wasFiltered = AbstractCollection::disableUserFilter();
+
+        $esUserTypesService = Manager::getService('ElasticUserTypes');
+        $esUserTypesService->init();
+        $esUserTypesService->setMapping($obj['id'], $obj);
+        $esUserTypesService->index($obj['id']);
+
+        AbstractCollection::disableUserFilter($wasFiltered);
+    }
+
+    /**
+     * Remove the user type from Indexed Search
+     *
+     * @param array $obj
+     */
+    public function unIndexUserType($obj)
+    {
+        $wasFiltered = AbstractCollection::disableUserFilter();
+
+        $esUserTypesService = Manager::getService('ElasticUserTypes');
+        $esUserTypesService->init();
+        $esUserTypesService->delete($obj['id']);
+
+        AbstractCollection::disableUserFilter($wasFiltered);
     }
 }
