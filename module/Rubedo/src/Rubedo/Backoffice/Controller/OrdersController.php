@@ -109,8 +109,9 @@ class OrdersController extends DataAccessController
             foreach ($order['detailedCart']['cart'] as $product) {
                 $line = array(
                     $order['orderNumber'], '', '', '', '',
-                    '', '', '', '', '', '',
-                    '', '', '', '', '', '',
+                    '', '', '', '', '',
+                    '', '', '', '', '',
+                    '', '', '', '',
                     $product['title'], $product['subtitle'], $product['amount'], $product['unitTaxedPrice'], $product['unitPrice'], $product['taxedPrice'], $product['price'],
                 );
                 fputcsv($csvResource, $line, ';');
