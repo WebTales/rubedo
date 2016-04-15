@@ -241,6 +241,8 @@ class PagesResource extends AbstractResource
             if (!in_array($block['bType'], $blockTypes)) {
                 $blockTypes[] = $block['bType'];
             }
+            //Translate block titles
+            $block = $this->localizeTitle($block);
             $blocks[$block['parentCol']][] = $block;
         }
         if (!empty($content)) {

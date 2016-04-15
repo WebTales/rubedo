@@ -675,7 +675,7 @@ class ContentsResource extends AbstractResource
                     curl_setopt($curly, CURLOPT_RETURNTRANSFER, true);  // Return from curl_exec rather than echoing
                     curl_setopt($curly, CURLOPT_FRESH_CONNECT, true);   // Always ensure the connection is fresh
                     // Timeout super fast once connected, so it goes into async.
-                    curl_setopt($curly, CURLOPT_TIMEOUT, 1);
+                    curl_setopt($curly, CURLOPT_TIMEOUT_MS, 1);
                     curl_exec($curly);
                 }
             }
