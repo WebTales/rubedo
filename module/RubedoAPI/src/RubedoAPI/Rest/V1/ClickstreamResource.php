@@ -78,6 +78,12 @@ class ClickstreamResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
+                            ->setKey('eventLabel')
+                            ->setDescription('Event label')
+                            ->setFilter('string')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
                             ->setKey('userAgent')
                             ->setDescription('User agent')
                     )
@@ -123,6 +129,7 @@ class ClickstreamResource extends AbstractResource
             "event"=>$params["event"],
             "eventId"=>$params["eventId"],
             "eventArgs"=>isset ($params["eventArgs"]) ? $params["eventArgs"] : [ ],
+            "eventLabel"=>isset ($params["eventLabel"]) ? $params["eventLabel"] : null,
             "lang"=>$params['lang']->getLocale(),
             "userAgent"=>isset($params["userAgent"]) ? $params["userAgent"] : null,
             "referer"=>isset($params["referer"]) ? $params["referer"] : null,
