@@ -132,7 +132,7 @@ class ClickstreamResource extends AbstractResource
             "eventLabel"=>isset ($params["eventLabel"]) ? $params["eventLabel"] : null,
             "lang"=>$params['lang']->getLocale(),
             "userAgent"=>isset($params["userAgent"]) ? $params["userAgent"] : null,
-            "referer"=>isset($params["referer"]) ? $params["referer"] : null,
+            "referrer"=>isset($params["referrer"])&&$params["referrer"]!="" ? $params["referrer"] : null,
             "url"=>isset($params["url"]) ? $params["url"] : null,
             "os"=>isset($params["os"]) ? $params["os"] : null,
             "userId"=>$currentUser ? $currentUser["id"] : null,
