@@ -42,6 +42,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
             'keys' => array(
                 'live.status' => 1,
                 'online' => 1,
+                'typeId' => 1
             )
         ),
         array(
