@@ -986,14 +986,16 @@ class DataSearch extends DataAbstract
         // run query
         switch ($option) {
             case 'content' :
-            	$searchParams['index'] = $this->getIndexNameFromConfig('contentIndex');
-              $searchParams['_source'] = true;
+                $searchParams['index'] = $this->getIndexNameFromConfig('contentIndex');
+                $searchParams['_source'] = true;
                 break;
             case 'dam' :
                 $searchParams['index'] = $this->getIndexNameFromConfig('damIndex');
+                $searchParams['_source'] = true;
                 break;
             case 'user' :
                 $searchParams['index'] = $this->getIndexNameFromConfig('userIndex');
+                $searchParams['_source'] = true;
                 break;
             case 'geo' :
                 if (isset($geoPrecision)) $geoAgreggation['aggs']['hash']['geohash_grid']['precision'] = $geoPrecision;
