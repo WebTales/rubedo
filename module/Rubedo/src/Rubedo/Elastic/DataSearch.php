@@ -1004,8 +1004,9 @@ class DataSearch extends DataAbstract
                 $searchParams['index'] = $this->getIndexNameFromConfig('contentIndex');
                 break;
             case 'all' :
-            	$searchParams['index'] = $this->getIndexNameFromConfig('contentIndex') . ','. $this->getIndexNameFromConfig('damIndex') . ',' . $this->getIndexNameFromConfig('userIndex');
-                break;
+              $searchParams['index'] = $this->getIndexNameFromConfig('contentIndex') . ','. $this->getIndexNameFromConfig('damIndex') . ',' . $this->getIndexNameFromConfig('userIndex');
+              $searchParams['_source'] = true;
+              break;
         }
 
         // For geosearch dynamically set searchMode depending on the number of results
