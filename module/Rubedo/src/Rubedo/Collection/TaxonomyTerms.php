@@ -151,7 +151,7 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
-    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null,$isSpecialBOMode=false)
+    public function getList(\WebTales\MongoFilters\IFilter $filters = null, $sort = null, $start = null, $limit = null,$isSpecialBOMode=false,$withCurrentPage=false)
     {
         $navigation = false;
 
@@ -170,9 +170,15 @@ class TaxonomyTerms extends AbstractLocalizableCollection implements ITaxonomyTe
             } else {
                 $pageList = Manager::getService('Pages')->getList($filters);
             }
+            if($isSpecialBOMode&&$withCurrentPage){
+                $currentPageTerm=$this->_virtualCurrentPageTerm;
+                $currentPageTerm["text"]=Manager::getService('Translate')->translate("TaxonomyTerms.PagePicker.CurrentPage", 'Current page');
+                $contentArray[]=$currentPageTerm;
+            }
             foreach ($pageList['data'] as $page) {
                 $contentArray[] = $this->_pageToTerm($page,$isSpecialBOMode);
             }
+
 
             $number = count($contentArray);
             return array(

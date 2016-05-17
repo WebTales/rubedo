@@ -45,6 +45,7 @@ class TaxonomyTermsController extends DataAccessController
     public function indexAction()
     {
         $receivedID = $this->params()->fromQuery('id', null);
+        $withCurrentPage = $this->params()->fromQuery('add-current-page', false);
         $postFilter = false;
         $response = array();
         $response['total'] = 0;
@@ -89,7 +90,7 @@ class TaxonomyTermsController extends DataAccessController
         if ($postFilter) {
             $mongoFilters->addFilter($postFilter);
         }
-        $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit,true);
+        $dataValues = $this->_dataService->getList($mongoFilters, $sort, $start, $limit,true,$withCurrentPage);
 
 
         $response['total'] = $response['total'] + $dataValues['count'];
