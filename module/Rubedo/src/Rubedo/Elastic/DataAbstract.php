@@ -372,6 +372,28 @@ class DataAbstract
                             }
                         }
                         break;
+                    case 'embeddedImageField' :
+                    case 'Rubedo.view.embeddedImageField' :
+                        $config = [
+                            'type' => 'object',
+                            'store' => $store,
+                            'properties'=>[
+                                "imageCode" => ["type" => "string",'store' => $store],
+                                "alt" => ["type" => "string",'store' => $store],
+                                "url" => ["type" => "string",'store' => $store],
+                            ]
+                        ];
+                        if ($notAnalyzed) {
+                            $config ['index'] = 'not_analyzed';
+                        }
+                        if (!$field ['config'] ['localizable']) {
+                            $mapping ['fields'] ['properties'] [$name] = $config;
+                        } else {
+                            foreach ($this->_activeLanguages as $lang) {
+                                $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+                            }
+                        }
+                        break;
                     case 'externalMediaField' :
                     case 'Rubedo.view.externalMediaField' :
                         $config = [
