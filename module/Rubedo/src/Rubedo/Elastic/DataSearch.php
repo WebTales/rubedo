@@ -1002,6 +1002,7 @@ class DataSearch extends DataAbstract
                 $searchParams['body']['aggs']['agf'] = $geoAgreggation;
                 $searchParams['body']['aggs']['agf']['filter'] = $globalFilter;
                 $searchParams['index'] = $this->getIndexNameFromConfig('contentIndex');
+                $searchParams['_source'] = true;
                 break;
             case 'all' :
               $searchParams['index'] = $this->getIndexNameFromConfig('contentIndex') . ','. $this->getIndexNameFromConfig('damIndex') . ',' . $this->getIndexNameFromConfig('userIndex');
