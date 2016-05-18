@@ -16,6 +16,7 @@
  */
 namespace Rubedo\Collection;
 use WebTales\MongoFilters\Filter;
+use Zend\Json\Json;
 
 
 /**
@@ -47,17 +48,24 @@ class MongoConf extends AbstractCollection
     public function getRubedoConf(){
         $filter=Filter::factory()->addFilter(Filter::factory("Value")->setName("type")->setValue("rubedoConfig"));
         $confRecord=$this->_dataService->findOne($filter);
-        if ($confRecord&&isset($confRecord["config"])&&is_array($confRecord["config"])){
-            return $confRecord["config"];
+        if ($confRecord&&isset($confRecord["config"])){
+            if (is_array($confRecord["config"])){
+                return $confRecord["config"];
+            } elseif (is_string($confRecord["config"])){
+                return Json::decode($confRecord["config"],Json::TYPE_ARRAY);
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
     }
 
     public function setRubedoConf(array $config){
+        $config=Json::encode($config);
         $filter=Filter::factory()->addFilter(Filter::factory("Value")->setName("type")->setValue("rubedoConfig"));
         $confRecord=$this->_dataService->findOne($filter);
-        if ($confRecord&&isset($confRecord["config"])&&is_array($confRecord["config"])){
+        if ($confRecord&&isset($confRecord["config"])){
             $confRecord["config"]=$config;
             return $this->_dataService->update($confRecord);
         } else {
