@@ -1,5 +1,6 @@
 {
     "name": "webtales/rubedo",
+    "type": "rubedo-core",
     "description":"An open source PHP CMS",
     "license":"GPL-3.0",
     "require": {
