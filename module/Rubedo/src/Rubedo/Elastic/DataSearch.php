@@ -764,18 +764,37 @@ class DataSearch extends DataAbstract
         // filter on fields
         foreach ($facetedFields as $field) {
 
+            // get field name
             if ($field ['useAsVariation']) {
                 $fieldName = 'productProperties.variations.' . $field ['name'];
             } else {
             	if ($field['localizable']) {
-					$fieldName = 'i18n.'.$currentLocale.'.fields.'.$field ['name'];
+      					$fieldName = 'i18n.'.$currentLocale.'.fields.'.$field ['name'];
             	} else {
-            		$fieldName = 'fields.'.$field ['name'];
+                $fieldName = 'fields.'.$field ['name'];
             	}
             }
 
+            // set filter
             if (array_key_exists(urlencode($field ['name']), $this->_params)) {
-                $this->_addTermFilter($field ['name'], $fieldName);
+
+                if ($field ['cType']!='datefield') {
+                  // Default to term filter
+                  $this->_addTermFilter($field ['name'], $fieldName);
+                } else {
+                  // Set datehistogram filter
+                  $dateFilter = [
+                    'range' => [
+              				$fieldName => [
+              					'gte' => $this->_params [$field ['name']],
+                        'lte' => (int) $this->_params [$field ['name']]+86400000
+                  		]
+              			]
+                  ];
+                  $this->_globalFilterList [$field ['name']] = $dateFilter;
+                  $this->_filters [$field ['name']] = $this->_params [$field ['name']];
+                  $this->_setFilter = true;
+               }
             }
 
         }
@@ -1640,6 +1659,7 @@ class DataSearch extends DataAbstract
                                 'id' => $id,
                                 'label' => $id
                             );
+                            if (!is_array($termId)) $termId = [$termId];
                             foreach ($termId as $term) {
                                 $temp ['terms'] [] = array(
                                     'term' => $term,
