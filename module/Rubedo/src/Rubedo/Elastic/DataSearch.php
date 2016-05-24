@@ -1430,8 +1430,12 @@ class DataSearch extends DataAbstract
 	                            }
 	                        } else {
 	                            // faceted field
+
 	                            $intermediaryVal = $this->searchLabel($facetedFields, 'name', $id);
 	                            $temp ['label'] = $intermediaryVal [0] ['label'];
+                              if ($intermediaryVal [0] ['cType'] == 'datefield') {
+                                $temp ['_type'] = 'datehistogram';
+                              }
 
 	                            if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                                foreach ($temp ['buckets'] as $key => $value) {

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Graphql request helper</title>
+    <script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="https://rawgit.com/josdejong/jsoneditor/master/dist/jsoneditor.min.js"></script>
+    <link href="https://rawgit.com/josdejong/jsoneditor/master/dist/jsoneditor.min.css" rel="stylesheet" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js" type="text/javascript" charset="utf-8"></script>
+    <style type="text/css" media="screen">
+        #editor {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+        #jsoneditor {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            bottom: 0;
+        }
+        #form-url {
+            /*position: absolute;*/
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+<form id="form-url" class="form-inline text-center">
+    <div class="form-group">
+        <label class="sr-only" for="url">Url</label>
+        <input type="text" class="form-control" id="url" placeholder="url">
+    </div>
+    <button type="submit" class="btn btn-default">Send</button>
+</form>
+<div style="width: 50%; display: inline-block;" id="editor">query toto {__schema {types {name}}}</div>
+<div style="width: 50%; display: inline-block;" id="jsoneditor"></div>
+
+<script>
+    var aceeditor = ace.edit("editor");
+    aceeditor.setTheme("ace/theme/monokai");
+    aceeditor.getSession().setMode("ace/mode/javascript");
+
+    var container = document.getElementById('jsoneditor');
+    var options = {
+        mode: 'view'
+    };
+//    var json = {
+//        'array': [1, 2, 3],
+//        'boolean': true,
+//        'null': null,
+//        'number': 123,
+//        'object': {'a': 'b', 'c': 'd'},
+//        'string': 'Hello World'
+//    };
+    var resulteditor = new JSONEditor(container, options);
+    $("#form-url").submit(function (event) {
+        event.preventDefault();
+        var url = $("#url").val();
+        var query = aceeditor.getValue();
+        $.get(url, {query: query}, function (data) {
+            resulteditor.set(data);
+        });
+    });
+</script>
+</body>
+</html>
