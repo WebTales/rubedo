@@ -291,7 +291,7 @@ class DataAbstract
                 switch ($field ['cType']) {
                     case 'datefield' :
                         $config = [
-                            'type' => 'string',
+                            'type' => 'date',
                             'store' => $store
                         ];
                         if ($notAnalyzed) {

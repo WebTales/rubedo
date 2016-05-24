@@ -42,6 +42,7 @@ class DataSearch extends DataAbstract
     protected $_facetOperators;
     protected $_displayedFacets = array();
     protected $_facetDisplayMode;
+    protected $contentTypesArray = array();
     private $table = '0123456789bcdefghjkmnpqrstuvwxyz';
 
     /**
@@ -197,6 +198,30 @@ class DataSearch extends DataAbstract
     				'date_range' => [
     					'field' => 	$fieldName,
     					'ranges' => $ranges
+				    ]
+    			]
+    		]
+    	];
+
+    	return $result;
+    }
+
+    protected function _addDateHistogramFacet($facetName, $fieldName = null, $interval = 'day') {
+
+    	// Set default value for fieldName
+    	If (is_null($fieldName)) $fieldName = $facetName;
+
+    	// Apply filters from other facets
+    	$facetFilter = self::_getFacetFilter($facetName);
+
+    	// Build facet
+    	$result = [
+    		'filter' => $facetFilter,
+    		'aggs' => [
+    			'aggregation' => [
+    				'date_histogram' => [
+    					'field' => 	$fieldName,
+    					'interval' => $interval
 				    ]
     			]
     		]
@@ -927,10 +952,13 @@ class DataSearch extends DataAbstract
             }
 
             if ($this->_isFacetDisplayed($field ['name'])) {
-
-            	$searchParams['body']['aggs'][$field ['name']] = $this->_addTermsFacet($field ['name'],$fieldName,'_count','desc');
-
-             }
+              if ($field ['cType']!='datefield') {
+            	  $searchParams['body']['aggs'][$field ['name']] = $this->_addTermsFacet($field ['name'],$fieldName,'_count','desc');
+              } else {
+                $interval = 'day'; // default value
+                $searchParams['body']['aggs'][$field ['name']] = $this->_addDateHistogramFacet($field ['name'],$fieldName,$interval);
+              }
+            }
         }
 
         // Define the price facet for products
@@ -955,7 +983,7 @@ class DataSearch extends DataAbstract
         		['from' => 1],
         	];
 
-        	$searchParams['body']['aggs']['inStock'] = $this->_addDateRangeFacet('inStock','productProperties.variations.stock',$ranges);
+        	$searchParams['body']['aggs']['inStock'] = $this->_addRangeFacet('inStock','productProperties.variations.stock',$ranges);
         }
 
         // Add size and from to paginate results
