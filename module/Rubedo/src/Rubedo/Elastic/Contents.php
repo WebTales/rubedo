@@ -28,7 +28,8 @@ use Zend\Json\Json;
 class Contents extends DataAbstract
 {
 
-	protected $contentTypesArray = array();
+	protected $typesArray = array();
+	protected $service = 'ContentTypes';
 
 	/**
 	 * Constructor
@@ -38,21 +39,6 @@ class Contents extends DataAbstract
 		parent::__construct();
 		$this->_indexName = $this->getIndexNameFromConfig('contentIndex');
 		parent::init();
-	}
-
-	/**
-	 * Cached getter for content type
-	 *
-	 * @param string $contentTypeId
-	 *            content type id
-	 * @return array
-	 */
-	protected function _getContentType($contentTypeId)
-	{
-			if (!isset ($this->contentTypesArray [$contentTypeId])) {
-					$this->contentTypesArray [$contentTypeId] = $this->_getService('ContentTypes')->findById($contentTypeId);
-			}
-			return $this->contentTypesArray [$contentTypeId];
 	}
 
     /**
@@ -92,11 +78,14 @@ class Contents extends DataAbstract
 		];
 
 		// Normalize date fields
-		$contentType = $this->_getContentType($typeId);
+		$contentType = $this->_getType($typeId);
 		foreach ($contentType['fields'] as $field) {
-			if ($field['cType'] == 'datefield') {
+			if ($field['cType'] == 'datefield' or $field['cType'] == 'Ext.form.field.Date') {
 				$fieldName = $field['config']['name'];
-				$indexData['fields'][$fieldName] = (string) $indexData['fields'][$fieldName] * 1000;
+				if (isset($indexData['fields'][$fieldName])) {
+					$ts = intval($indexData['fields'][$fieldName]);
+					$indexData['fields'][$fieldName] = mktime(0, 0, 0, date('m', $ts), date('d', $ts), date('Y', $ts))*1000;
+				}
 			}
 		}
 

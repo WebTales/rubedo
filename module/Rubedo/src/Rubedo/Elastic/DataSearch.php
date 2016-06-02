@@ -226,7 +226,6 @@ class DataSearch extends DataAbstract
     			]
     		]
     	];
-
     	return $result;
     }
 
@@ -426,9 +425,11 @@ class DataSearch extends DataAbstract
         $taxonomyList = $this->_getService('Taxonomy')->getList();
         $taxonomies = $taxonomyList ['data'];
 
-        // Get faceted fields
-        $collection = $this->_getService('ContentTypes');
-        $facetedFields = $collection->getFacetedFields();
+        // Get faceted fields from contents, users and dam
+        $contentFacetedFields = $this->_getService('ContentTypes')->getFacetedFields();
+        $userFacetedFields = $this->_getService('DamTypes')->getFacetedFields();
+        $damFacetedFields = $this->_getService('UserTypes')->getFacetedFields();
+        $facetedFields = array_merge($contentFacetedFields, $userFacetedFields, $damFacetedFields);
         foreach ($facetedFields as $facetedField) {
             // get default facet operator from faceted field if not present in block configuration
             if (!isset ($this->_facetOperators [$facetedField ['name']])) {
@@ -777,24 +778,7 @@ class DataSearch extends DataAbstract
 
             // set filter
             if (array_key_exists(urlencode($field ['name']), $this->_params)) {
-
-                if ($field ['cType']!='datefield') {
-                  // Default to term filter
-                  $this->_addTermFilter($field ['name'], $fieldName);
-                } else {
-                  // Set datehistogram filter
-                  $dateFilter = [
-                    'range' => [
-              				$fieldName => [
-              					'gte' => $this->_params [$field ['name']],
-                        'lte' => (int) $this->_params [$field ['name']]+86400000
-                  		]
-              			]
-                  ];
-                  $this->_globalFilterList [$field ['name']] = $dateFilter;
-                  $this->_filters [$field ['name']] = $this->_params [$field ['name']];
-                  $this->_setFilter = true;
-               }
+                $this->_addTermFilter($field ['name'], $fieldName);
             }
 
         }
@@ -971,11 +955,12 @@ class DataSearch extends DataAbstract
             }
 
             if ($this->_isFacetDisplayed($field ['name'])) {
-              if ($field ['cType']!='datefield') {
+              if ($field['cType']!='datefield' && $field['cType']!='Ext.form.field.Date') {
             	  $searchParams['body']['aggs'][$field ['name']] = $this->_addTermsFacet($field ['name'],$fieldName,'_count','desc');
               } else {
                 $interval = 'day'; // default value
-                $searchParams['body']['aggs'][$field ['name']] = $this->_addDateHistogramFacet($field ['name'],$fieldName,$interval);
+                $searchParams['body']['aggs'][$field ['name']] = $this->_addTermsFacet($field ['name'],$fieldName,'_count','desc');
+                //$searchParams['body']['aggs'][$field ['name']] = $this->_addDateHistogramFacet($field ['name'],$fieldName,$interval);
               }
             }
         }
@@ -1072,6 +1057,7 @@ class DataSearch extends DataAbstract
             }
         }
 
+
         // Get resultset
         switch ($this->_params['searchMode']) {
             case 'default': // default mode with results
@@ -1113,7 +1099,7 @@ class DataSearch extends DataAbstract
 
         foreach ($resultsList as $resultItem) {
 
-            $data = array_merge($resultItem['_source']['fields'], $resultItem['fields']);
+            $data = isset($resultItem['_source']['fields']) ? array_merge($resultItem['_source']['fields'], $resultItem['fields']) : $resultItem['fields'];
             $resultData=[ ];
             $resultData ['id'] = $resultItem['_id'];
             $resultData ['typeId'] = $resultItem['_type'];
@@ -1313,17 +1299,17 @@ class DataSearch extends DataAbstract
 	                        break;
 
 	                    case 'author' :
-
 	                        $temp ['label'] = $this->_getService('Translate')->translate('Search.Facets.Label.Author', 'Author');
 	                        if ($this->_facetDisplayMode == 'checkbox' or (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0)) {
 	                            $collection = $this->_getService('Users');
 	                            foreach ($temp ['buckets'] as $key => $value) {
 	                            	if ($value ['key'] != 'rubedo') {
-		                            	$temp ['terms'] [$key] ['term'] = $value ['key'];
-		                              	$termItem = $collection->findById($value ['key']);
-		                              	$temp ['terms'] [$key] ['label'] = $termItem ['name'];
-		                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
-		                                $temp['terms'] [$key] ['position'] = isset($termItem['fields']['position']['location']['coordinates']) ? $termItem['fields']['position']['location']['coordinates'] : null;
+                                  $termItem = $collection->findById($value ['key']);
+                                  $temp ['terms'][] = [
+                                    'term' => $value ['key'],
+                                    'label' => $termItem ['name'],
+                                    'count' => $value['doc_count']
+                                  ];
 	                            	}
 	                            }
 	                        } else {
@@ -1450,17 +1436,21 @@ class DataSearch extends DataAbstract
 	                        } else {
 	                            // faceted field
 
-	                            $intermediaryVal = $this->searchLabel($facetedFields, 'name', $id);
+                              $intermediaryVal = $this->searchLabel($facetedFields, 'name', $id);
 	                            $temp ['label'] = $intermediaryVal [0] ['label'];
-                              if ($intermediaryVal [0] ['cType'] == 'datefield') {
+
+                              if ($intermediaryVal [0] ['cType'] == 'datefield' or  $intermediaryVal [0] ['cType'] =='Ext.form.field.Date') {
                                 $temp ['_type'] = 'datehistogram';
+                                $isDateField = true;
+                              } else {
+                                $isDateField = false;
                               }
 
 	                            if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
 	                                foreach ($temp ['buckets'] as $key => $value) {
 	                                	$temp ['terms'] [$key] ['term'] = $value ['key'];
 	                                	$temp['terms'] [$key] ['count'] = $value['doc_count'];
-	                                    $temp ['terms'] [$key] ['label'] = $value ['key'];
+	                                  $temp ['terms'] [$key] ['label'] = $isDateField ? $value ['key_as_string'] : $value ['key'];
 	                                }
 	                            }
 	                        }

@@ -250,6 +250,20 @@ class DataAbstract
     }
 
     /**
+  	 * Cached getter for type
+  	 *
+  	 * @param string $ typeId
+  	 * @return array
+  	 */
+  	protected function _getType($typeId)
+  	{
+  			if (!isset ($this->typesArray [$typeId])) {
+  					$this->typesArray [$typeId] = $this->_getService($this->service)->findById($typeId);
+  			}
+  			return $this->typesArray [$typeId];
+  	}
+
+    /**
      * Return all the vocabularies contained in the id list
      *
      * @param array $data
@@ -289,6 +303,7 @@ class DataAbstract
             if (!isset($field ['config'] ['useAsVariation']) or ($field ['config'] ['useAsVariation'] == false)) {
 
                 switch ($field ['cType']) {
+                    case 'Ext.form.field.Date':
                     case 'datefield' :
                         $config = [
                             'type' => 'date',

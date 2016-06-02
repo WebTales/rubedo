@@ -326,32 +326,6 @@ class ContentTypes extends AbstractLocalizableCollection implements IContentType
         return $geolocatedContentTypes;
     }
 
-    public function getFacetedFields()
-    {
-
-        $contentTypesList = $this->getList();
-        $facetedFieldsList = array();
-
-        foreach ($contentTypesList['data'] as $contentType) {
-
-            $fields = $contentType["fields"];
-            foreach ($fields as $field) {
-                if (isset($field['config']['useAsFacet']) && $field['config']['useAsFacet']) {
-                    $facetedFieldsList[] = array(
-                        "contentTypeId" => $contentType['id'],
-                        "name" => $field['config']['name'],
-                        "label" => $field['config']['fieldLabel'],
-                        "localizable" => $field['config']['localizable'],
-                        "facetOperator" => isset($field['config']['facetOperator']) ? strtolower($field['config']['facetOperator']) : "and",
-                        "useAsVariation" => isset($field['config']['useAsVariation']) ? $field['config']['useAsVariation'] : false,
-                        "cType" => $field['cType']
-                    );
-                }
-            }
-        }
-        return $facetedFieldsList;
-    }
-
     public function isChangeableContentType($originalType, $newType)
     {
         $result = true;

@@ -25,7 +25,10 @@ namespace Rubedo\Elastic;
  */
 class Dam extends DataAbstract
 {
-	
+
+	protected $typesArray = array();
+	protected $service = 'DamTypes';
+
 	/**
 	 * Constructor
 	 */
@@ -35,7 +38,7 @@ class Dam extends DataAbstract
 		$this->_indexName = $this->getIndexNameFromConfig('damIndex');
 		parent::init();
 	}
-	
+
     /**
      * Create or update index for existing dam
      *
@@ -48,13 +51,13 @@ class Dam extends DataAbstract
 	    if (!isset($data['typeId']) || isset($data['mainFileType']) && $data['mainFileType'] === 'Resource') {
             return;
         }
-        
+
         $typeId = $data['typeId'];
-        
+
         // get available languages
         $availableLanguages = array_keys($data['i18n']);
-        
-        // Initialize data array to push into index     
+
+        // Initialize data array to push into index
         $indexData = [
             'objectType' => 'dam',
             'damType' => $typeId,
@@ -70,7 +73,19 @@ class Dam extends DataAbstract
             'fileSize' => isset($data['fileSize']) ? (integer)$data['fileSize'] : 0,
             'version' => $data['version']
         ];
-               	
+
+				// Normalize date fields
+				$damType = $this->_getType($typeId);
+				foreach ($damType['fields'] as $field) {
+					if ($field['cType'] == 'datefield' or $field['cType'] == 'Ext.form.field.Date') {
+						$fieldName = $field['config']['name'];
+						if (isset($indexData['fields'][$fieldName])) {
+							$ts = intval($indexData['fields'][$fieldName]);
+							$indexData['fields'][$fieldName] = mktime(0, 0, 0, date('m', $ts), date('d', $ts), date('Y', $ts))*1000;
+						}
+					}
+				}
+
         // Add taxonomy
         if (isset($data["taxonomy"])) {
 
@@ -166,14 +181,14 @@ class Dam extends DataAbstract
         		'body' => $body
         	];
         	$this->_client->bulk($params);
-        	 
+
         	$this->_client->indices()->refresh(['index' => $this->_indexName]);
-        	
+
         } else {
 			return $body;
         }
-	}	
-	
+	}
+
 	/**
 	 * Delete existing dam from index
 	 *
@@ -191,6 +206,6 @@ class Dam extends DataAbstract
 		];
 		$this->_client->delete($params);
 	}
-	
-	
+
+
 }
