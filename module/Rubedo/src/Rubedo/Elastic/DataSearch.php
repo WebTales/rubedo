@@ -955,13 +955,7 @@ class DataSearch extends DataAbstract
             }
 
             if ($this->_isFacetDisplayed($field ['name'])) {
-              if ($field['cType']!='datefield' && $field['cType']!='Ext.form.field.Date') {
             	  $searchParams['body']['aggs'][$field ['name']] = $this->_addTermsFacet($field ['name'],$fieldName,'_count','desc');
-              } else {
-                $interval = 'day'; // default value
-                $searchParams['body']['aggs'][$field ['name']] = $this->_addTermsFacet($field ['name'],$fieldName,'_count','desc');
-                //$searchParams['body']['aggs'][$field ['name']] = $this->_addDateHistogramFacet($field ['name'],$fieldName,$interval);
-              }
             }
         }
 
