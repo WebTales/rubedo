@@ -1434,7 +1434,7 @@ class DataSearch extends DataAbstract
 	                            $temp ['label'] = $intermediaryVal [0] ['label'];
 
                               if ($intermediaryVal [0] ['cType'] == 'datefield' or  $intermediaryVal [0] ['cType'] =='Ext.form.field.Date') {
-                                $temp ['_type'] = 'datehistogram';
+                                $temp ['_type'] = 'date';
                                 $isDateField = true;
                               } else {
                                 $isDateField = false;
@@ -1639,16 +1639,28 @@ class DataSearch extends DataAbstract
                             }
                         } else {
                             // faceted field
+
                             $temp = array(
                                 'id' => $id,
                                 'label' => $id
                             );
+
+                            $intermediaryVal = $this->searchLabel($facetedFields, 'name', $id);
+
+                            if ($intermediaryVal [0] ['cType'] == 'datefield' or  $intermediaryVal [0] ['cType'] =='Ext.form.field.Date') {
+                              $isDateField = true;
+                            }
+
                             if (!is_array($termId)) $termId = [$termId];
                             foreach ($termId as $term) {
-                                $temp ['terms'] [] = array(
-                                    'term' => $term,
-                                    'label' => $term
-                                );
+                                $newTerm = [
+                                  'term'  => $term,
+                                  'label' => $term
+                                ];
+                                if ($isDateField) {
+                                    $newTerm['_type'] = 'date';
+                                }
+                                $temp ['terms'] [] = $newTerm;
                             }
                         }
 
