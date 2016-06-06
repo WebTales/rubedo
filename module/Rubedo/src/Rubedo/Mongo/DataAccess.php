@@ -230,12 +230,11 @@ class DataAccess implements IDataAccess
                 $connectionString .= ',';
             }
             $connectionString = substr($connectionString, 0, -1);
-
             if (!empty($options['mongo']['replicaSetName'])) {
                 self::$_replicaSetName = $options['mongo']['replicaSetName'];
                 if (empty($options['mongo']['readPreference'])) {
-                    $currentUserService = Manager::getService('CurrentUser');
-                    $isAuth = $currentUserService->isAuthenticated();
+                    $serviceAuth = Manager::getService('AuthenticationService');
+                    $isAuth= $serviceAuth->hasIdentity();
                     self::$_readPreference = $isAuth ? "primaryPreferred" : "secondaryPreferred";
                 } else {
                     self::$_readPreference = $options['mongo']['readPreference'];
