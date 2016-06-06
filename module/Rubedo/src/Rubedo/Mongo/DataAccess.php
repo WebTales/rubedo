@@ -209,6 +209,7 @@ class DataAccess implements IDataAccess
     public static function lazyLoadConfig()
     {
 
+
         $config = Manager::getService('config');
         $options = $config['datastream'];
         if (isset($options)) {
@@ -233,7 +234,9 @@ class DataAccess implements IDataAccess
             if (!empty($options['mongo']['replicaSetName'])) {
                 self::$_replicaSetName = $options['mongo']['replicaSetName'];
                 if (empty($options['mongo']['readPreference'])) {
-                    self::$_readPreference = "nearest";
+                    $currentUserService = Manager::getService('CurrentUser');
+                    $isAuth = $currentUserService->isAuthenticated();
+                    self::$_readPreference = $isAuth ? "primaryPreferred" : "secondaryPreferred";
                 } else {
                     self::$_readPreference = $options['mongo']['readPreference'];
                 }
@@ -864,12 +867,12 @@ class DataAccess implements IDataAccess
      */
     public function create(array $obj, $options = array())
     {
-        if (!isset($options["w"])) {
-            $config = Manager::getService('config');
-            if (isset($config['datastream']["mongo"]["server"]) && is_string($config['datastream']["mongo"]["server"])) {
-                $options["w"] = count(explode($config['datastream']["mongo"]["server"], ","));
-            }
-        }
+//        if (!isset($options["w"])) {
+//            $config = Manager::getService('config');
+//            if (isset($config['datastream']["mongo"]["server"]) && is_string($config['datastream']["mongo"]["server"])) {
+//                $options["w"] = count(explode($config['datastream']["mongo"]["server"], ","));
+//            }
+//        }
         $obj['version'] = 1;
         $currentUserService = Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
@@ -932,12 +935,12 @@ class DataAccess implements IDataAccess
      */
     public function update(array $obj, $options = array())
     {
-        if (!isset($options["w"])) {
-            $config = Manager::getService('config');
-            if (isset($config['datastream']["mongo"]["server"]) && is_string($config['datastream']["mongo"]["server"])) {
-                $options["w"] = count(explode($config['datastream']["mongo"]["server"], ","));
-            }
-        }
+//        if (!isset($options["w"])) {
+//            $config = Manager::getService('config');
+//            if (isset($config['datastream']["mongo"]["server"]) && is_string($config['datastream']["mongo"]["server"])) {
+//                $options["w"] = count(explode($config['datastream']["mongo"]["server"], ","));
+//            }
+//        }
         $id = $obj['id'];
         unset($obj['id']);
         if (!isset($obj['version'])) {
