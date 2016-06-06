@@ -236,7 +236,7 @@ class DataAccess implements IDataAccess
                 if (empty($options['mongo']['readPreference'])) {
                     $currentUserService = Manager::getService('CurrentUser');
                     $isAuth = $currentUserService->isAuthenticated();
-                    self::$_readPreference = $isAuth ? "primary" : "secondaryPreferred";
+                    self::$_readPreference = $isAuth ? "primaryPreferred" : "secondaryPreferred";
                 } else {
                     self::$_readPreference = $options['mongo']['readPreference'];
                 }
