@@ -266,6 +266,12 @@ class UsersResource extends AbstractResource
             }
             $emailVars = array();
             $emailVars["name"] = $user["name"];
+            if (strpos($params['currentUrl'],'?')){
+                $exploded=explode('?',$params['currentUrl']);
+                if(!empty($exploded[0])){
+                    $params['currentUrl']=$exploded[0];
+                }
+            }
             $emailVars["confirmUrl"] = $params['currentUrl']
                 . '?confirmingEmail=1&userId=' . $createdUser['data']['id']
                 . '&signupTime=' . $user["signupTime"];
