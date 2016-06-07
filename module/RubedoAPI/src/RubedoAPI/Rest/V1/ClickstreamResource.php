@@ -59,13 +59,6 @@ class ClickstreamResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('eventId')
-                            ->setRequired()
-                            ->setDescription('Event ID')
-                            ->setFilter('string')
-                    )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
                             ->setKey('sessionId')
                             ->setRequired()
                             ->setDescription('Session id')
@@ -78,30 +71,30 @@ class ClickstreamResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('eventLabel')
-                            ->setDescription('Event label')
-                            ->setFilter('string')
-                    )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setKey('userAgent')
-                            ->setDescription('User agent')
-                    )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
                             ->setKey('referrer')
                             ->setDescription('Referrer')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('os')
-                            ->setDescription('OS')
+                            ->setKey('referringDomain')
+                            ->setDescription('Referring domain')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('url')
-                            ->setDescription('URL')
-                    );
+                            ->setKey('screenHeight')
+                            ->setDescription('Screen height')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('screenWidth')
+                            ->setDescription('Screen width')
+                    )
+                    ->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('date')
+                            ->setDescription('Event date')
+                    )
+                    ;
             });
     }
 
@@ -115,30 +108,32 @@ class ClickstreamResource extends AbstractResource
     public function postAction($params)
     {
         //avoid crawler logs
-        if (isset($params["userAgent"])&&(strpos($params["userAgent"],"PhantomJS")!==false||strpos($params["userAgent"],"Prerender")!==false)){
+        if (isset($_SERVER["HTTP_USER_AGENT"])&&(strpos($_SERVER["HTTP_USER_AGENT"],"PhantomJS")!==false||strpos($_SERVER["HTTP_USER_AGENT"],"Prerender")!==false)){
             return [
                 "success"=>false
             ];
         }
-        $currentUser=$this->getCurrentUserAPIService()->getCurrentUser();
-        $currentTime = $this->getCurrentTimeService()->getCurrentTime();
+        if (empty($params["date"])){
+            $dateTime = new \DateTime();
+            $params["date"]=$dateTime->format('Y-m-d\TH:i:s');
+        }
+
         $newEvent=[
-            "date"=>$currentTime*1000,
+            "date"=>$params["date"],
             "fingerprint"=>$params["fingerprint"],
             "sessionId"=>$params["sessionId"],
             "event"=>$params["event"],
-            "eventId"=>$params["eventId"],
-            "eventArgs"=>isset ($params["eventArgs"]) ? $params["eventArgs"] : [ ],
-            "eventLabel"=>isset ($params["eventLabel"]) ? $params["eventLabel"] : null,
-            "lang"=>$params['lang']->getLocale(),
-            "userAgent"=>isset($params["userAgent"]) ? $params["userAgent"] : null,
-            "referrer"=>isset($params["referrer"])&&$params["referrer"]!="" ? $params["referrer"] : null,
-            "url"=>isset($params["url"]) ? $params["url"] : null,
-            "os"=>isset($params["os"]) ? $params["os"] : null,
-            "userId"=>$currentUser ? $currentUser["id"] : null,
-            "clientIP"=>isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']
+            "referrer"=>!empty($params["referrer"])? $params["referrer"] : null,
+            "referringDomain"=>!empty($params["referringDomain"])? $params["referringDomain"] : null,
+            "screenHeight"=>!empty($params["screenHeight"])? $params["screenHeight"] : null,
+            "screenWidth"=>!empty($params["screenWidth"])? $params["screenWidth"] : null,
         ];
-        $logCreationResult=Manager::getService("ClickStream")->log($newEvent);
+        if(!empty($params["args"])&&is_array($params["args"])){
+            $newEvent=array_merge($params["args"],$newEvent);
+        }
+        $ua_info = \parse_user_agent();
+        Debug::dump($ua_info);
+        die("test");
         return [
             "success"=>$logCreationResult
         ];

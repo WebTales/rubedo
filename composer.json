@@ -19,7 +19,8 @@
         "mrclay/minify": "~2.2",
         "zendframework/zendservice-recaptcha": "2.0.1",
         "zendframework/zend-developer-tools": "dev-master",
-        "elasticsearch/elasticsearch": "~2.0"
+        "elasticsearch/elasticsearch": "~2.0",
+        "donatj/phpuseragentparser": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
