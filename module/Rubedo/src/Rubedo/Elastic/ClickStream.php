@@ -31,6 +31,9 @@ class ClickStream extends DataAbstract
 	/**
 	 * Mapping
 	 */
+
+  protected static $_type = 'clickstream';
+
 	protected static $_mapping = [
 		'@timestamp' => [
 			'type' => 'date',
@@ -115,16 +118,16 @@ class ClickStream extends DataAbstract
 	public function __construct()
 	{
 		parent::__construct();
-		$today = date("Y.m.d")
+		$today = date("Y.m.d");
 		$this->_indexName = $this->getIndexNameFromConfig('clickSteamIndex')."-".$today;
 		parent::init();
 		// Create type and mapping if necessary
 		$params = [
 				'index' => $this->_indexName,
-				'type' => 'clickstream'
+				'type' => $this->_type;
 		];
 		if (!$this->_client->indices()->existsType($params)) {
-				$this->putMapping($typeId, self::$_mapping);
+				$this->putMapping($this->_type, self::$_mapping);
 		}
 	}
 
