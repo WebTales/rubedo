@@ -146,7 +146,7 @@ class ClickStream extends DataAbstract
 	public function index($data, $bulk = false)
 	{
 		// Add timestamp if needed
-		if (!isset($data['timestamp'])) $data['timestamp'] = time();
+		if (!isset($data['timestamp'])) $data['timestamp'] = time()*1000;
 
 		// Add content to clickstream index
 		if (!$bulk) {
