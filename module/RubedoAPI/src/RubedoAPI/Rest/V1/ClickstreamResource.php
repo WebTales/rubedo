@@ -113,7 +113,7 @@ class ClickstreamResource extends AbstractResource
             ];
         }
         if (empty($params["date"])){
-            $params["date"]=time();
+            $params["date"]=time()*1000;
         }
 
         $newEvent=[
