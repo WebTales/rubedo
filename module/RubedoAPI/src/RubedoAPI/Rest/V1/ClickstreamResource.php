@@ -157,7 +157,6 @@ class ClickstreamResource extends AbstractResource
 
         try {
             $reader = new Reader(APPLICATION_PATH . '/data/GeoLite2-City.mmdb');
-//            $record = $reader->city("193.248.47.139");
             $record = $reader->city($ip);
             $newEvent["country"]=$record->country->name;
             $newEvent["city"]=$record->city->name;
@@ -165,8 +164,8 @@ class ClickstreamResource extends AbstractResource
                 $newEvent["region"]=$record->subdivisions[0]->name;
             }
             $newEvent["geoip"]=[
-                "latitude"=>$record->location->latitude,
-                "longitude"=>$record->location->longitude
+                "lat"=>$record->location->latitude,
+                "lon"=>$record->location->longitude
             ];
         }
         catch(\Exception $e) {
