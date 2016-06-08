@@ -21,9 +21,7 @@ namespace RubedoAPI\Rest\V1;
 use Rubedo\Services\Manager;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
-use RubedoAPI\Exceptions\APIControllerException;
 use GeoIp2\Database\Reader;
-use Zend\Debug\Debug;
 
 /**
  * Class ClickstreamResource
@@ -159,7 +157,8 @@ class ClickstreamResource extends AbstractResource
 
         try {
             $reader = new Reader(APPLICATION_PATH . '/data/GeoLite2-City.mmdb');
-            $record = $reader->city("193.248.47.139");
+//            $record = $reader->city("193.248.47.139");
+            $record = $reader->city($ip);
             $newEvent["country"]=$record->country->name;
             $newEvent["city"]=$record->city->name;
             if(isset($record->subdivisions[0])){
@@ -171,16 +170,13 @@ class ClickstreamResource extends AbstractResource
             ];
         }
         catch(\Exception $e) {
-
         }
         if(!empty($params["args"])&&is_array($params["args"])){
             $newEvent=array_merge($params["args"],$newEvent);
         }
-        Debug::dump($newEvent);
-        die("test");
-
+        $logCreationResult=Manager::getService("ElasticClickStream")->index($newEvent);
         return [
-            "success"=>$logCreationResult
+            "success"=>true
         ];
     }
 
