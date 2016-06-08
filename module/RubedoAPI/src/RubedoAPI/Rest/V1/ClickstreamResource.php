@@ -113,8 +113,7 @@ class ClickstreamResource extends AbstractResource
             ];
         }
         if (empty($params["date"])){
-            $dateTime = new \DateTime("now", new \DateTimeZone(date_default_timezone_get()));
-            $params["date"]=$dateTime->format('Y-m-d\TH:i:s');
+            $params["date"]=time();
         }
 
         $newEvent=[
