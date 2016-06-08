@@ -127,12 +127,21 @@ class ClickstreamResource extends AbstractResource
             "referringDomain"=>!empty($params["referringDomain"])? $params["referringDomain"] : null,
             "screenHeight"=>!empty($params["screenHeight"])? $params["screenHeight"] : null,
             "screenWidth"=>!empty($params["screenWidth"])? $params["screenWidth"] : null,
+            "browser"=>null,
+            "browserVersion"=>null,
+            "os"=>null,
         ];
+
         if(!empty($params["args"])&&is_array($params["args"])){
             $newEvent=array_merge($params["args"],$newEvent);
         }
         $ua_info = \parse_user_agent();
-        Debug::dump($ua_info);
+        if(!empty($ua_info)&&is_array($ua_info) ){
+            $newEvent["browser"]=!empty($ua_info["browser"])? $ua_info["browser"] : null;
+            $newEvent["browserVersion"]=!empty($ua_info["version"])? $ua_info["version"] : null;
+            $newEvent["os"]=!empty($ua_info["platform"])? $ua_info["platform"] : null;
+        }
+        Debug::dump($newEvent);
         die("test");
         return [
             "success"=>$logCreationResult
