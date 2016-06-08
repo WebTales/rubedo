@@ -173,7 +173,7 @@ class Contents extends DataAbstract
 				'type' => $typeId,
 				'body' => $body
 			];
-			$this->_client->bulk($params);
+			$this->_client->index($params);
 
 			$this->_client->indices()->refresh(['index' => $this->_indexName]);
 

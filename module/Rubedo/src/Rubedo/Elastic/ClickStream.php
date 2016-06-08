@@ -32,6 +32,7 @@ class ClickStream extends DataAbstract
 	 * Mapping
 	 */
 
+	protected static $_index = 'insights';
   protected static $_type = 'clickstream';
 
 	protected static $_mapping = [
@@ -118,8 +119,12 @@ class ClickStream extends DataAbstract
 	public function __construct()
 	{
 		parent::__construct();
+		// Get index name
 		$today = date("Y.m.d");
-		$this->_indexName = $this->getIndexNameFromConfig('clickSteamIndex')."-".$today;
+		$dataAccess = $this->_getService('MongoDataAccess');
+		$defaultDB = $dataAccess::getDefaultDb();
+		$defaultDB = mb_convert_case($defaultDB, MB_CASE_LOWER, "UTF-8");
+		$this->_indexName = $defaultDB . "-" . self::$_index ."-" .$today;
 		parent::init();
 		// Create type and mapping if necessary
 		$params = [
@@ -140,35 +145,17 @@ class ClickStream extends DataAbstract
      */
 	public function index($data, $bulk = false)
 	{
-
-		// Initialize data array to push into index
-		$body = [
-			'@timestamp' => (isset($data['timestamp'])) ? $data['timestamp'] : time(),
-			'date' => $data['date'],
-			'fingerprint' => $data['fingerprint'],
-			'sessionId' => $data['sessionId'],
-			'event' => $data['event'],
-			'browser' => $data['browser'],
-			'browserVersion' => $data['browserVersion'],
-			'city' => $data['city'],
-			'country' => $data['country'],
-			'os' => $data['os'],
-			'referer' => $data['referer'],
-			'refereringDomain' => $data['refereringDomain'],
-			'region' => $data['region'],
-			'screenHeight' => $data['screenHeight'],
-			'screenWidth' => $data['screenWidth'],
-			'geoip' => $data['geoip']
-		];
+		// Add timestamp if needed
+		if (!isset($data['timestamp'])) $data['timestamp'] = time();
 
 		// Add content to clickstream index
 		if (!$bulk) {
 			$params = [
 				'index' => $this->_indexName,
-				'type' => $typeId,
-				'body' => $body
+				'type' => self::$_type,
+				'body' => $data
 			];
-			$this->_client->bulk($params);
+			$this->_client->index($params);
 
 			$this->_client->indices()->refresh(['index' => $this->_indexName]);
 
