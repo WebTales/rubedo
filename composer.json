@@ -20,6 +20,7 @@
         "zendframework/zendservice-recaptcha": "2.0.1",
         "zendframework/zend-developer-tools": "dev-master",
         "elasticsearch/elasticsearch": "~2.0",
+        "geoip2/geoip2": "~2.0",
         "donatj/phpuseragentparser": "*"
     },
     "require-dev": {

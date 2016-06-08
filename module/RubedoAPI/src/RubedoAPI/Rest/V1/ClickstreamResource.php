@@ -22,6 +22,7 @@ use Rubedo\Services\Manager;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Exceptions\APIControllerException;
+use GeoIp2\Database\Reader;
 use Zend\Debug\Debug;
 
 /**
@@ -123,26 +124,61 @@ class ClickstreamResource extends AbstractResource
             "fingerprint"=>$params["fingerprint"],
             "sessionId"=>$params["sessionId"],
             "event"=>$params["event"],
-            "referrer"=>!empty($params["referrer"])? $params["referrer"] : null,
-            "referringDomain"=>!empty($params["referringDomain"])? $params["referringDomain"] : null,
-            "screenHeight"=>!empty($params["screenHeight"])? $params["screenHeight"] : null,
-            "screenWidth"=>!empty($params["screenWidth"])? $params["screenWidth"] : null,
-            "browser"=>null,
-            "browserVersion"=>null,
-            "os"=>null,
         ];
-
-        if(!empty($params["args"])&&is_array($params["args"])){
-            $newEvent=array_merge($params["args"],$newEvent);
+        if(!empty($params["referrer"])){
+            $newEvent["referrer"]=$params["referrer"];
+        }
+        if(!empty($params["referringDomain"])){
+            $newEvent["referringDomain"]=$params["referringDomain"];
+        }
+        if(!empty($params["screenHeight"])){
+            $newEvent["screenHeight"]=$params["screenHeight"];
+        }
+        if(!empty($params["screenWidth"])){
+            $newEvent["screenWidth"]=$params["screenWidth"];
         }
         $ua_info = \parse_user_agent();
         if(!empty($ua_info)&&is_array($ua_info) ){
-            $newEvent["browser"]=!empty($ua_info["browser"])? $ua_info["browser"] : null;
-            $newEvent["browserVersion"]=!empty($ua_info["version"])? $ua_info["version"] : null;
-            $newEvent["os"]=!empty($ua_info["platform"])? $ua_info["platform"] : null;
+            if(!empty($ua_info["screenWidth"])){
+                $newEvent["browser"]=$ua_info["browser"];
+            }
+            if(!empty($ua_info["version"])){
+                $newEvent["browserVersion"]=$ua_info["version"];
+            }
+            if(!empty($ua_info["platform"])){
+                $newEvent["os"]=$ua_info["platform"];
+            }
+        }
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+
+        try {
+            $reader = new Reader(APPLICATION_PATH . '/data/GeoLite2-City.mmdb');
+            $record = $reader->city("193.248.47.139");
+            $newEvent["country"]=$record->country->name;
+            $newEvent["city"]=$record->city->name;
+            if(isset($record->subdivisions[0])){
+                $newEvent["region"]=$record->subdivisions[0]->name;
+            }
+            $newEvent["geoip"]=[
+                "latitude"=>$record->location->latitude,
+                "longitude"=>$record->location->longitude
+            ];
+        }
+        catch(\Exception $e) {
+
+        }
+        if(!empty($params["args"])&&is_array($params["args"])){
+            $newEvent=array_merge($params["args"],$newEvent);
         }
         Debug::dump($newEvent);
         die("test");
+
         return [
             "success"=>$logCreationResult
         ];
