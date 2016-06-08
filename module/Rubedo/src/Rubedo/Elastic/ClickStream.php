@@ -124,10 +124,10 @@ class ClickStream extends DataAbstract
 		// Create type and mapping if necessary
 		$params = [
 				'index' => $this->_indexName,
-				'type' => $this->_type;
+				'type' => self::$_type
 		];
 		if (!$this->_client->indices()->existsType($params)) {
-				$this->putMapping($this->_type, self::$_mapping);
+				$this->putMapping(self::$_type, self::$_mapping);
 		}
 	}
 
