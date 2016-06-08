@@ -133,7 +133,10 @@
                       }
                     ]
                 }
-            ]
+            ],
+          "csEvents":{
+            "useSearch":null
+          }
         },
         "configBloc": {
             "style": "Horizontal",
