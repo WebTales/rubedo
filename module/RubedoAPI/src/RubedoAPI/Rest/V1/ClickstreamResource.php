@@ -137,7 +137,7 @@ class ClickstreamResource extends AbstractResource
         }
         $ua_info = \parse_user_agent();
         if(!empty($ua_info)&&is_array($ua_info) ){
-            if(!empty($ua_info["screenWidth"])){
+            if(!empty($ua_info["browser"])){
                 $newEvent["browser"]=$ua_info["browser"];
             }
             if(!empty($ua_info["version"])){
