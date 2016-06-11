@@ -63,7 +63,10 @@
                       }
                     ]
                 }
-            ]
+            ],
+          "csEvents":{
+            "submit":null
+          }
         },
         "configBloc": []
     },
