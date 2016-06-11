@@ -87,7 +87,11 @@
                       }
                     ]
                 }
-            ]
+            ],
+          "csEvents":{
+            "submit":null,
+            "mailingListSubscribe":null
+          }
         },
         "configBloc": {
             "collectPassword": false
