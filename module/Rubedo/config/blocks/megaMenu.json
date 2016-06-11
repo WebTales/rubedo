@@ -191,7 +191,10 @@
                       }
                     ]
                 }
-            ]
+            ],
+          "csEvents":{
+            "useSearch":null
+          }
         },
         "configBloc": []
     },
