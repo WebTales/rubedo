@@ -82,7 +82,12 @@
                       }
                     ]
                 }
-            ]
+            ],
+          "csEvents":{
+            "submit":null,
+            "signUp":null,
+            "forgotPassword":null
+          }
         },
         "configBloc": {
             "displayMode": "pop-in",
