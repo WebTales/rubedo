@@ -113,8 +113,7 @@ class ClickstreamResource extends AbstractResource
             ];
         }
         if (empty($params["date"])){
-            $dateTime = new \DateTime();
-            $params["date"]=$dateTime->format('Y-m-d\TH:i:s');
+            $params["date"]=time()*1000;
         }
 
         $newEvent=[
