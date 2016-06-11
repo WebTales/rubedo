@@ -7,22 +7,20 @@
         "flex": 1,
         "champsConfig": {
             "simple": [],
-            "avance": []
-        },
-        "configBloc": [
-            {
+            "avance": [
+              {
                 "categorie": "Template",
                 "champs": [
-                    {
-                        "type": "Rubedo.view.ACEField",
-                        "config": {
-                            "fieldLabel": "Custom template",
-                            "name": "customTemplate",
-                            "defaultTemplateUrl": "blocks/mailingListUnsuscribe.html",
-                            "twigMode": false
+                  {
+                    "type": "Rubedo.view.ACEField",
+                    "config": {
+                      "fieldLabel": "Custom template",
+                      "name": "customTemplate",
+                      "defaultTemplateUrl": "blocks/mailingListUnsuscribe.html",
+                      "twigMode": false
 
-                        }
-                    },
+                    }
+                  },
                   {
                     "type": "Ext.form.field.Number",
                     "config": {
@@ -34,7 +32,15 @@
                     }
                   }
                 ]
-            }
+              }
+            ],
+          "csEvents":{
+            "submit":null
+          }
+
+        },
+        "configBloc": [
+
         ]
     },
     "category": "#ext-gen1150#",
