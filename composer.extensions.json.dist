@@ -1,7 +1,7 @@
 {
     "name": "rubedo/extensions",
     "require": {
-        "WebTales/MyExtension": "dev-master"
+        "WebTales/MyExtension": "dev-v3-dev"
     },
     "require-dev": { },
     "repositories": [
