@@ -84,7 +84,7 @@
                 }
             ],
           "csEvents":{
-            "submit":null,
+            "submitAuth":null,
             "signUp":null,
             "forgotPassword":null
           }
