@@ -46,7 +46,10 @@
                     }
                   }
                 ]
-            }]
+            }],
+          "csEvents":{
+            "orderClick":null
+          }
         },
         "configBloc": {}
 
