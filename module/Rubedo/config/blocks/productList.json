@@ -229,7 +229,8 @@
                 }
             ],
           "csEvents":{
-            "changePage":null
+            "changePage":null,
+            "addToCart":null
           }
         },
         "configBloc": {
