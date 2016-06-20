@@ -53,7 +53,10 @@
                       }
                     ]
                 }
-            ]
+            ],
+          "csEvents":{
+            "useSearch":null
+          }
         },
         "configBloc": []
     },
