@@ -101,7 +101,10 @@
                       }
                     ]
                 }
-            ]
+            ],
+          "csEvents":{
+            "changePage":null
+          }
         },
         "configBloc": {
             "constrainToSite": false,
