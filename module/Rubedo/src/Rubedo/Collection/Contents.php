@@ -146,6 +146,7 @@ class Contents extends WorkflowAbstractCollection implements IContents
         'status',
         'startPublicationDate',
         'endPublicationDate',
+        'clickStreamEvent',
         'target',
         'writeWorkspace',
         'pageId',
