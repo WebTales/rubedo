@@ -58,8 +58,10 @@ class HtmlPurifier extends HtmlCleaner
             $config->set('HTML.Attr.Name.UseCDATA', true);
             $def = $config->getHTMLDefinition(true);
             $def->addAttribute('a', 'rubedo-page-link', 'CDATA');
+            $def->addAttribute('a', 'rubedo-event', 'CDATA');
             $def->addAttribute('a', 'onclick', 'CDATA');
             $def->addAttribute('button', 'onclick', 'CDATA');
+            $def->addAttribute('button', 'rubedo-event', 'CDATA');
             self::$_purifier = new \HTMLPurifier($config);
         }
         $html = self::$_purifier->purify($html);
