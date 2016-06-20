@@ -87,7 +87,10 @@
                       }
                     ]
                 }
-            ]
+            ],
+          "csEvents":{
+            "changePage":null
+          }
         },
         "configBloc": {
             "sort": "asc",

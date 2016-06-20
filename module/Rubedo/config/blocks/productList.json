@@ -227,7 +227,10 @@
                       }
                     ]
                 }
-            ]
+            ],
+          "csEvents":{
+            "changePage":null
+          }
         },
         "configBloc": {
             "columns": 1,
