@@ -54,7 +54,12 @@
                       }
                     ]
                 }
-            ]
+            ],
+          "csEvents":{
+            "saveDraft":null,
+            "submit":null,
+            "publish":null
+          }
         },
         "configBloc": {}
     },
