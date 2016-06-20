@@ -73,7 +73,13 @@
                     }
                   }
                 ]
-            }]
+            }],
+          "csEvents":{
+            "addProduct":null,
+            "removeProduct":null,
+            "clickCheckout":null,
+            "clickViewCart":null
+          }
         },
         "configBloc": {
             "displayMode": "button"
