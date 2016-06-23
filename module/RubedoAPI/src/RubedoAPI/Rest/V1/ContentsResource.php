@@ -168,7 +168,9 @@ class ContentsResource extends AbstractResource
             }
             $filters['filter']->addFilter($eventsInMonth);
         }
-
+        if ($query["type"]!="manual"&&isset($params["contextContentId"],$params["contextualTaxonomyRule"],$params["contextualTaxonomy"])){
+            $filters['filter']->addFilter(Filter::factory('NotUid')->setValue($params["contextContentId"]));
+        }
 
         if ($filters === false) {
             throw new APIEntityException('Query not found', 404);
