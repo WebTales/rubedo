@@ -77,7 +77,17 @@
                     }
                   }
                 ]
-            }]
+            }],
+          "csEvents":{
+            "submitAuth":null,
+            "signUp":null,
+            "mailingListSubscribe":null,
+            "validateContactInformation":null,
+            "validateBillingDetails":null,
+            "validateShippingDetails":null,
+            "validateShippingMethod":null,
+            "submit":null
+          }
         },
         "configBloc": {}
 
