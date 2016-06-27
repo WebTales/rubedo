@@ -130,6 +130,7 @@ class Url implements IUrl
         if (false !== strpos($url, '?')) {
             list ($url) = explode('?', $url);
         }
+        $isCrawler=isset($_SERVER["HTTP_USER_AGENT"])&&(strpos($_SERVER["HTTP_USER_AGENT"],"PhantomJS")!==false||strpos($_SERVER["HTTP_USER_AGENT"],"Prerender")!==false);
         $wasFiltered = AbstractCollection::disableUserFilter();
         $site = Manager::getService('Sites')->findByHost($host);
         AbstractCollection::disableUserFilter($wasFiltered);
@@ -187,7 +188,7 @@ class Url implements IUrl
         }
 
         if ($this->nbMatched == 0) {
-            if (isset($site['defaultNotFound'])&&$site['defaultNotFound']!="") {
+            if (!$isCrawler&&isset($site['defaultNotFound'])&&$site['defaultNotFound']!="") {
                 return array(
                     'pageId' => $site['defaultNotFound'],
                     'locale' => $locale
@@ -218,7 +219,7 @@ class Url implements IUrl
         }
 
         if ($nbSegments > $this->nbMatched) {
-            if (isset($site['defaultNotFound'])&&$site['defaultNotFound']!="") {
+            if (!$isCrawler&&isset($site['defaultNotFound'])&&$site['defaultNotFound']!="") {
                 return array(
                     'pageId' => $site['defaultNotFound'],
                     'locale' => $locale
