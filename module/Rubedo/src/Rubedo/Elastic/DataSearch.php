@@ -1424,6 +1424,7 @@ class DataSearch extends DataAbstract
                                                 );
 	                                    }
 	                                }
+                                    $temp ['terms']=array_values($temp ['terms']);
 	                            } else {
 	                                $renderFacet = false;
 	                            }
@@ -1446,6 +1447,7 @@ class DataSearch extends DataAbstract
 	                                	$temp['terms'] [$key] ['count'] = $value['doc_count'];
 	                                  $temp ['terms'] [$key] ['label'] = $isDateField ? $value ['key_as_string'] : $value ['key'];
 	                                }
+                                    $temp ['terms']=array_values($temp ['terms']);
 	                            }
 	                        }
 	                        break;
