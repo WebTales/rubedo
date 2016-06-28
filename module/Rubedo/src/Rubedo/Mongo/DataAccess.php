@@ -866,12 +866,6 @@ class DataAccess implements IDataAccess
      */
     public function create(array $obj, $options = array())
     {
-//        if (!isset($options["w"])) {
-//            $config = Manager::getService('config');
-//            if (isset($config['datastream']["mongo"]["server"]) && is_string($config['datastream']["mongo"]["server"])) {
-//                $options["w"] = count(explode($config['datastream']["mongo"]["server"], ","));
-//            }
-//        }
         $obj['version'] = 1;
         $currentUserService = Manager::getService('CurrentUser');
         $currentUser = $currentUserService->getCurrentUserSummary();
@@ -934,12 +928,6 @@ class DataAccess implements IDataAccess
      */
     public function update(array $obj, $options = array())
     {
-//        if (!isset($options["w"])) {
-//            $config = Manager::getService('config');
-//            if (isset($config['datastream']["mongo"]["server"]) && is_string($config['datastream']["mongo"]["server"])) {
-//                $options["w"] = count(explode($config['datastream']["mongo"]["server"], ","));
-//            }
-//        }
         $id = $obj['id'];
         unset($obj['id']);
         if (!isset($obj['version'])) {
@@ -980,44 +968,32 @@ class DataAccess implements IDataAccess
         $updateCondition->addFilter($updateConditionId);
         $updateCondition->addFilter($updateConditionVersion);
 
+        $options["new"]=true;
         try {
-            $resultArray = $this->_collection->update($updateCondition->toArray(), array(
+            $resultArray = $this->_collection->findAndModify($updateCondition->toArray(), array(
                 '$set' => $obj
-            ), $options);
+            ),null, $options);
         } catch (\MongoCursorException $exception) {
             if (strpos($exception->getMessage(), 'duplicate key error')) {
                 throw new User('Duplicate key error', "Exception76");
             } else {
                 throw $exception;
+
             }
         }
 
-        $obj = $this->findById($mongoID);
-
-        if ($resultArray['ok'] == 1) {
-            if ($resultArray['updatedExisting'] == true) {
-                $obj['id'] = $id;
-                unset($obj['_id']);
+        if ($resultArray&&isset($resultArray['_id'])) {
+            $resultArray['id'] = $id;
+            unset($resultArray['_id']);
 
                 $returnArray = array(
                     'success' => true,
-                    "data" => $obj
+                    "data" => $resultArray
                 );
-            } else {
-                $returnArray = array(
-                    'success' => false,
-                    "msg" => 'Le contenu a été modifié, veuiller recharger celui-ci avant de faire cette mise à jour.'
-                );
-            }
-        } elseif ($resultArray) {
-            $returnArray = array(
-                'success' => true,
-                "data" => $obj
-            );
-        } else {
+        }  else {
             $returnArray = array(
                 'success' => false,
-                "msg" => $resultArray["err"]
+                "msg" => 'Le contenu a été modifié, veuiller recharger celui-ci avant de faire cette mise à jour.'
             );
         }
 

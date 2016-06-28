@@ -79,7 +79,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         } else {
             $returnArray = array(
                 'success' => false,
-                'msg' => 'failed to update'
+                'msg' => $returnArray['msg']
             );
         }
 
@@ -127,7 +127,7 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         } else {
             $returnArray = array(
                 'success' => false,
-                'msg' => 'failed to update'
+                'msg' => $returnArray['msg']
             );
         }
 

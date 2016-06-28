@@ -338,9 +338,6 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $result['data'] = $this->_outputObjectFilter($result['data']);
             return $result;
         } else {
-            $result = array(
-                'success' => false
-            );
             return $result;
         }
     }
