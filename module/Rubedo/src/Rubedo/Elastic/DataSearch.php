@@ -1377,6 +1377,7 @@ class DataSearch extends DataAbstract
                                             );
                                         }
                                     }
+                                    $temp ['terms']=array_values($temp ['terms']);
                                 } else {
                                     $renderFacet = false;
                                 }
@@ -1391,6 +1392,7 @@ class DataSearch extends DataAbstract
 	                                	$temp['terms'] [$key] ['count'] = $value['doc_count'];
 	                                    $temp ['terms'] [$key] ['label'] = $value ['key'];
 	                                }
+                                    $temp ['terms']=array_values($temp ['terms']);
 	                            }
 	                        }
 	                        break;
