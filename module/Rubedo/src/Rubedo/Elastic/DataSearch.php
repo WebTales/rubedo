@@ -1362,25 +1362,25 @@ class DataSearch extends DataAbstract
 	                    		                    	
 	                    default :
 	                        $regex = '/^[0-9a-z]{24}$/';
-	                        if (preg_match($regex, $id)) { // Taxonomy facet use
-	                            // mongoID
-	                            $vocabularyItem = $this->_getService('Taxonomy')->findById($id);
-	                            $temp ['label'] = $vocabularyItem ['name'];
-	                            if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
-	                                foreach ($temp ['buckets'] as $key => $value) {
-	                                	$temp ['terms'] [$key] ['term'] = $value ['key'];
-	                                	$temp['terms'] [$key] ['count'] = $value['doc_count'];
-	                                    $termItem = $this->_getService('TaxonomyTerms')->findById($value ['key']);
-	                                    if ($termItem) {
-	                                        $temp ['terms'] [$key] ['label'] = $termItem ['text'];
-	                                    } else {
-	                                        unset($temp ['terms'] [$key]);
-	                                    }
-	                                }
-	                            } else {
-	                                $renderFacet = false;
-	                            }
-	                        } else {
+                            if (preg_match($regex, $id)) { // Taxonomy facet use
+                                // mongoID
+                                $vocabularyItem = $this->_getService('Taxonomy')->findById($id);
+                                $temp ['label'] = $vocabularyItem ['name'];
+                                if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                                    foreach ($temp ['buckets'] as $key => $value) {
+                                        $termItem = $this->_getService('TaxonomyTerms')->findById($value ['key']);
+                                        if ($termItem) {
+                                            $temp ['terms'] [] = array(
+                                                'label' => $termItem ['text'],
+                                                'term' => $value ['key'],
+                                                'count' => $value['doc_count']
+                                            );
+                                        }
+                                    }
+                                } else {
+                                    $renderFacet = false;
+                                }
+                            } else {
 	                            // faceted field
 	                            $intermediaryVal = $this->searchLabel($facetedFields, 'name', $id);	
 	                            $temp ['label'] = $intermediaryVal [0] ['label'];
