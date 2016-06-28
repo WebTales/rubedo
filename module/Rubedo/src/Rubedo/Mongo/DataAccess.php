@@ -652,37 +652,23 @@ class DataAccess implements IDataAccess
 
         if ($nbItems > 0) {
             try {
-                $cursor->rewind();
-                $currentResult = $cursor->current();
-                $currentResult['id'] = (string)$currentResult['_id'];
-                unset($currentResult['_id']);
-                if (!isset($currentResult['version'])) {
-                    $currentResult['version'] = 1;
-                }
-                $data[] = $currentResult;
-                $incrementor = 1;
-                while (($incrementor < $nbItems) && (($numberOfResults == 0) || ($incrementor < $numberOfResults)) && ($cursor->hasNext())) {
-                    $cursor->next();
-                    $currentResult = $cursor->current();
-                    $currentResult['id'] = (string)$currentResult['_id'];
-                    unset($currentResult['_id']);
-                    if (!isset($currentResult['version'])) {
-                        $currentResult['version'] = 1;
-                    }
-                    $data[] = $currentResult;
-                    $incrementor++;
-                }
+                $data = iterator_to_array($cursor);
             } catch (\MongoCursorException $e) {
                 if (strpos($e->getMessage(), 'unauthorized db')) {
                     throw new Server('Unauthorized DB Access', 'Exception102');
                 } else {
                     throw $e;
                 }
-            } catch (\Exception $e) {
-
             }
         } else {
             $data = array();
+        }
+        foreach ($data as &$value) {
+            $value['id'] = (string)$value['_id'];
+            unset($value['_id']);
+            if (!isset($value['version'])) {
+                $value['version'] = 1;
+            }
         }
         $datas = array_values($data);
         $returnArray = array(
@@ -1111,39 +1097,24 @@ class DataAccess implements IDataAccess
         // switch from cursor to actual array
         if ($nbItems > 0) {
             try {
-                $cursor->rewind();
-                $currentResult = $cursor->current();
-                $currentResult['id'] = (string)$currentResult['_id'];
-                unset($currentResult['_id']);
-                if (!isset($currentResult['version'])) {
-                    $currentResult['version'] = 1;
-                }
-                $data[] = $currentResult;
-                $incrementor = 1;
-                while (($incrementor < $nbItems) && ($cursor->hasNext())) {
-                    $cursor->next();
-                    $currentResult = $cursor->current();
-                    $currentResult['id'] = (string)$currentResult['_id'];
-                    unset($currentResult['_id']);
-                    if (!isset($currentResult['version'])) {
-                        $currentResult['version'] = 1;
-                    }
-                    $data[] = $currentResult;
-                    $incrementor++;
-                }
+                $data = iterator_to_array($cursor);
             } catch (\MongoCursorException $e) {
                 if (strpos($e->getMessage(), 'unauthorized db')) {
                     throw new Server('Unauthorized DB Access', 'Exception102');
                 } else {
                     throw $e;
                 }
-            } catch (\Exception $e) {
-
             }
         } else {
             $data = array();
         }
-
+        foreach ($data as &$value) {
+            $value['id'] = (string)$value['_id'];
+            unset($value['_id']);
+            if (!isset($value['version'])) {
+                $value['version'] = 1;
+            }
+        }
         // return data as simple array with no keys
         $response = array_values($data);
 
