@@ -40,6 +40,7 @@ return array(
     'ElasticContents' => 'Rubedo\\Elastic\\Contents',
     'ElasticContentTypes' => 'Rubedo\\Elastic\\ContentTypes',
     'ElasticClickStream' => 'Rubedo\\Elastic\\ClickStream',
+    'ElasticViewStream' => 'Rubedo\\Elastic\\ViewStream',
     'ElasticDam' => 'Rubedo\\Elastic\\Dam',
     'ElasticDamTypes' => 'Rubedo\\Elastic\\DamTypes',
     'ElasticUsers' => 'Rubedo\\Elastic\\Users',

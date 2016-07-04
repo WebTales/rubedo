@@ -661,27 +661,14 @@ class ContentsResource extends AbstractResource
 
         if (isset($params['fingerprint'])) {
             $currentTime = $this->getCurrentTimeService()->getCurrentTime();
-            //get user fingerprint
+            // Log view in viewstream
             $this->getContentViewLogCollection()->log($content['id'], $content['locale'], $params['fingerprint'], $currentTime);
-            //rebuild user recommendations if necessary
-            $emptyFilter = Filter::factory();
-            $oldestView = $this->getContentViewLogCollection()->findOne($emptyFilter);
-            if ($oldestView) {
-                $timeSinceLastRun = $currentTime - $oldestView['timestamp'];
-                if ($timeSinceLastRun > 60) {
-                    $curlUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/queue?service=UserRecommendations&class=build';
-                    $curly = curl_init();
-                    curl_setopt($curly, CURLOPT_URL, $curlUrl);
-                    curl_setopt($curly, CURLOPT_FOLLOWLOCATION, true);  // Follow the redirects (needed for mod_rewrite)
-                    curl_setopt($curly, CURLOPT_HEADER, false);         // Don't retrieve headers
-                    curl_setopt($curly, CURLOPT_NOBODY, true);          // Don't retrieve the body
-                    curl_setopt($curly, CURLOPT_RETURNTRANSFER, true);  // Return from curl_exec rather than echoing
-                    curl_setopt($curly, CURLOPT_FRESH_CONNECT, true);   // Always ensure the connection is fresh
-                    // Timeout super fast once connected, so it goes into async.
-                    curl_setopt($curly, CURLOPT_TIMEOUT_MS, 1);
-                    curl_exec($curly);
-                }
-            }
+            $view = [
+                "date" => $currentTime,
+                "fingerprint" => $params['fingerprint'],
+                "contentId" => $content['id']
+            ];
+            Manager::getService("ElasticViewStream")->index($view);
         }
         if (isset($content['isProduct'])&&$content['isProduct']&&isset($content["productProperties"]["variations"])&&is_array($content["productProperties"]["variations"])){
             $userTypeId = "*";
