@@ -331,7 +331,9 @@ class DamController extends DataAccessController
         $newPathId=(string) new \MongoId();
         $newPath=$newPathId.$fileInfos['name'];
         $stream = fopen($fileInfos['tmp_name'], 'r+');
-        $result=$fs->writeStream($newPath,$stream);
+        $result=$fs->writeStream($newPath,$stream,[
+            'mimetype'=>$mimeType
+        ]);
         if(!$result){
             throw new \Rubedo\Exceptions\Server('Unable to upload file');
         }

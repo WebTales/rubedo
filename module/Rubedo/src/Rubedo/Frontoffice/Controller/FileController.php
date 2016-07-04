@@ -45,20 +45,18 @@ class FileController extends AbstractActionController
     function indexAction()
     {
        	$this->fileId = $this->params()->fromQuery('file-id');
-       	
         if (isset($this->fileId)) {
 
-            $fileService = Manager::getService('Files');
-            $obj = $fileService->findById($this->fileId);
-            if (!$obj instanceof \MongoGridFSFile) {
-                throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
-            }
+            $fs=Manager::getService("FSManager")->getFS();
+            $obj = $fs->readStream($this->fileId);
+//            if (!$obj instanceof \MongoGridFSFile) {
+//                throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+//            }
 
-	        $this->size = $obj->getSize();
-	        $this->chunkSize = $obj->file["chunkSize"];
-            $meta = $obj->file;
-            $filename = $meta['filename'];
-            $this->contentType = $meta['Content-Type'];
+	        $this->size = $fs->getSize($this->fileId);
+//	        $this->chunkSize = $obj->file["chunkSize"];
+            $filename = $this->fileId;
+            $this->contentType = $fs->getMimetype($this->fileId);
             $action = "inline";
 
             list ($subtype) = explode('/', $this->contentType);
@@ -103,10 +101,10 @@ class FileController extends AbstractActionController
             				'Content-Disposition' => 'attachment; filename="' . $filename
             		));
             		$response->getHeaders()->addHeaders(array(
-            				'Content-Type' => $meta['Content-Type']
+            				'Content-Type' => $this->contentType
             		));
-            		$stream = $obj->getResource();
-            		$response->setStream($stream);
+//            		$stream = $obj->getResource();
+            		$response->setStream($obj);
             		return $response;
             		break;
             	case "inline":
@@ -115,10 +113,10 @@ class FileController extends AbstractActionController
             				'Content-Disposition' => 'inline; filename="' . $filename
             		));
             		$response->getHeaders()->addHeaders(array(
-            				'Content-Type' => $meta['Content-Type']
+            				'Content-Type' => $this->contentType
             		));
-            		$stream = $obj->getResource();
-            		$response->setStream($stream);
+//            		$stream = $obj->getResource();
+            		$response->setStream($obj);
             		return $response;
             		break;
             	case "stream":
