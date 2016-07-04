@@ -314,6 +314,7 @@ class DamController extends DataAccessController
 
         $mimeType = mime_content_type($fileInfos['tmp_name']);
 
+
         if (($name == 'originalFileId') || ($setMimeType)) {
             $this->_mimeType = $mimeType;
         }
@@ -327,7 +328,13 @@ class DamController extends DataAccessController
 //            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfos['type'],
 //            'mainFileType' => $fileType
 //        );
-        $fs=Manager::getService("FSManager")->getFS();
+        $fService=Manager::getService("FSManager");
+        $complianceResult=$fService->testTypeCompliance($fileType,$mimeType);
+        if(!$complianceResult["success"]){
+            return $complianceResult;
+        }
+        $fs=$fService->getFS();
+
         $newPathId=(string) new \MongoId();
         $newPath=$newPathId.$fileInfos['name'];
         $stream = fopen($fileInfos['tmp_name'], 'r+');
