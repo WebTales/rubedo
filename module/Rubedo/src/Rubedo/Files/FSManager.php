@@ -4,6 +4,8 @@ namespace Rubedo\Files;
 
 use League\Flysystem\GridFS\GridFSAdapter;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Cached\CachedAdapter;
+use League\Flysystem\Cached\Storage\Memory as CacheStore;
 use Rubedo\Services\Manager;
 
 class FSManager
@@ -129,7 +131,9 @@ class FSManager
     
     public function getFS($adapterConfig = null){
         $adapter= $this->getGridFSAdapter($adapterConfig);
-        return (new Filesystem($adapter));
+        $cacheStore = new CacheStore();
+        $cachedAdpater= new CachedAdapter($adapter,$cacheStore);
+        return (new Filesystem($cachedAdpater));
     }
 
     protected function getGridFSAdapter($adapterConfig = null){
