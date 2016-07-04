@@ -178,12 +178,11 @@ class Dam extends AbstractLocalizableCollection implements IDam
         $obj = $this->_setDefaultWorkspace($obj);
 
         $this->_filterInputData($obj);
-
-        $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
-        if (!$originalFilePointer instanceof \MongoGridFSFile) {
+        $fs=Manager::getService("FSManager")->getFS();
+        if (!$fs->has($obj['originalFileId'])) {
             throw new \Rubedo\Exceptions\Server('no file found', "Exception8");
         }
-        $obj['fileSize'] = $originalFilePointer->getSize();
+        $obj['fileSize'] = $fs->getSize($obj['originalFileId']);
         $returnArray = parent::create($obj, $options);
 
         if ($returnArray["success"] and $index) {

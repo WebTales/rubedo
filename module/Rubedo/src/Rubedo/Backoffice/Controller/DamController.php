@@ -243,6 +243,7 @@ class DamController extends DataAccessController
             $obj['fields']['target'] = $targets;
         }
         $uploadResult = $this->_uploadFile('file', $damType['mainFileType'], true, true);
+
         if ($uploadResult['success']) {
             $properName = explode(".", $uploadResult['data']['text']);
             $obj['title'] = $properName[0];
@@ -317,20 +318,39 @@ class DamController extends DataAccessController
             $this->_mimeType = $mimeType;
         }
 
-        $fileService = Manager::getService('Files');
-
-        $fileObj = array(
-            'serverFilename' => $fileInfos['tmp_name'],
-            'text' => $fileInfos['name'],
-            'filename' => $fileInfos['name'],
-            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfos['type'],
-            'mainFileType' => $fileType
-        );
-        $result = $fileService->create($fileObj);
-        if ((!$result['success']) || ($returnFullResult)) {
-            return $result;
+//        $fileService = Manager::getService('Files');
+//
+//        $fileObj = array(
+//            'serverFilename' => $fileInfos['tmp_name'],
+//            'text' => $fileInfos['name'],
+//            'filename' => $fileInfos['name'],
+//            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfos['type'],
+//            'mainFileType' => $fileType
+//        );
+        $fs=Manager::getService("FSManager")->getFS();
+        $newPathId=(string) new \MongoId();
+        $newPath=$newPathId.$fileInfos['name'];
+        $stream = fopen($fileInfos['tmp_name'], 'r+');
+        $result=$fs->writeStream($newPath,$stream);
+        if(!$result){
+            throw new \Rubedo\Exceptions\Server('Unable to upload file');
         }
-        return $result['data']['id'];
+        if($returnFullResult){
+            return[
+                "success"=>true,
+                "data"=>[
+                    "text"=>$fileInfos['name'],
+                    "id"=>$newPath
+                ]
+            ];
+        }
+        return $newPath;
+//        $result = $fileService->create($fileObj);
+//        if ((!$result['success']) || ($returnFullResult)) {
+//            return $result;
+//        }
+//        return $result['data']['id'];
+
     }
 
     public function deleteByDamTypeIdAction()
