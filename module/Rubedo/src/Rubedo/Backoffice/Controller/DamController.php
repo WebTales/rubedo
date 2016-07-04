@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 use Rubedo\Exceptions\User;
@@ -376,5 +377,12 @@ class DamController extends DataAccessController
         }
 
         return $this->_returnJson($returnArray);
+    }
+
+    public function testAction()
+    {
+        $fs=Manager::getService("FSManager")->getFS();
+        Debug::dump($fs->listContents());
+        die("toto");
     }
 }
