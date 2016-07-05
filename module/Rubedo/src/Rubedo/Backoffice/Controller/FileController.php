@@ -82,20 +82,42 @@ class FileController extends AbstractActionController
     {
         Context::setExpectJson();
         $fileInfo = $this->params()->fromFiles('file');
-
         $finfo = new \finfo(FILEINFO_MIME);
         $mimeType = $finfo->file($fileInfo['tmp_name']);
 
-        $fileService = Manager::getService('Files');
+            $fService=Manager::getService("FSManager");
+            $complianceResult=$fService->testTypeCompliance($this->params()->fromPost('mainFileType', null),$mimeType);
+            if(!$complianceResult["success"]){
+                return $complianceResult;
+            }
+            $fs=$fService->getFS();
+            $newPathId=(string) new \MongoId();
+            $newPath=$newPathId.$fileInfo['name'];
+            $stream = fopen($fileInfo['tmp_name'], 'r+');
+            $result=$fs->writeStream($newPath,$stream,[
+                'mimetype'=>$mimeType
+            ]);
+            if(!$result){
+                throw new \Rubedo\Exceptions\Server('Unable to upload file');
+            }
+            $result=[
+                "success"=>true,
+                "data"=>[
+                    "text"=>$fileInfo['name'],
+                    "id"=>$newPath
+                ]
+            ];
 
-        $obj = array(
-            'serverFilename' => $fileInfo['tmp_name'],
-            'text' => $fileInfo['name'],
-            'filename' => $fileInfo['name'],
-            'Content-Type' => $mimeType,
-            'mainFileType' => $this->params()->fromPost('mainFileType', null)
-        );
-        $result = $fileService->create($obj);
+//            $fileService = Manager::getService('Files');
+//
+//            $obj = array(
+//                'serverFilename' => $fileInfo['tmp_name'],
+//                'text' => $fileInfo['name'],
+//                'filename' => $fileInfo['name'],
+//                'Content-Type' => $mimeType,
+//                'mainFileType' => $this->params()->fromPost('mainFileType', null)
+//            );
+//            $result = $fileService->create($obj);
 
         return new JsonModel($result);
     }
