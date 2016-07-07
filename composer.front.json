@@ -7,7 +7,7 @@
         "eternicode/bootstrap-datepicker": "~1.3",
         "sencha/extjs": "4.2.1",
         "webtales/ckeditor": "3.3.0",
-        "webtales/rubedo-backoffice-ui": "3.3.1",
+        "webtales/rubedo-backoffice-ui": "3.3.x-dev",
         "longtailvideo/jwplayer": "6.*",
         "webtales/rubedo-localization": "dev-master",
         "jschr/bootstrap-modal": "2.1",
