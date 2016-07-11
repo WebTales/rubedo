@@ -14,7 +14,7 @@
         "WebTales/bsie": "1.4.0",
         "stowball/jQuery-rwdImageMaps": "1.0",
         "angular/angular.js":"1.2.23",
-        "webtales/rubedo-frontoffice":"3.3.1",
+        "webtales/rubedo-frontoffice":"3.3.x-dev",
         "twbs/bootstrap":"v3.2.0",
         "jquery/htmlClean":"1.4.0",
         "jquery/fullCalendar":"*",
