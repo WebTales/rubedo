@@ -102,7 +102,7 @@ class ViewStream extends DataAbstract
 
         $this->_client->indices()->refresh(['index' => $this->_indexName]);
 
-        var_dump($this->getSignificantItems($data["fingerprint"]));
+        //var_dump($this->getSignificantItems($data["fingerprint"]));
     }
 
     /**
@@ -137,7 +137,6 @@ class ViewStream extends DataAbstract
             ]
         ];
         $results = $this->_client->search($params);
-        var_dump($results);
         $significantItems = [];
         foreach($results['hits']['hits'] as $key => $result) {
             $significantItems[] = $result['_source']['contentId'];
