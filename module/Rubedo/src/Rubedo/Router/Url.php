@@ -148,6 +148,9 @@ class Url implements IUrl
             return $eventResult->last();
         }
 
+        if(strpos($url,"tiny/index")!==false){
+            return null;
+        }
         $urlSegments = explode(self::URI_DELIMITER, trim($url, self::URI_DELIMITER));
 
         // check for locale in URL
