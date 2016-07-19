@@ -79,12 +79,12 @@ class ThemeController extends AbstractActionController
                         )
                 );
                 if (!empty($media)) {
-                    $fileService = Manager::getService('Files');
+                    $fileService = Manager::getService("FSManager")->getFS();
                     $mimeType = $media['Content-Type'];
-                    $gridFSFile = $fileService->findById($media['originalFileId']);
-                    if ($gridFSFile instanceof \MongoGridFSFile) {
+                    if($fileService->has($media['originalFileId'])){
                         $hasFileInDatabase = true;
                     }
+
                 }
             }
         }
@@ -187,8 +187,8 @@ class ThemeController extends AbstractActionController
         if (isset($targetPath)&&(((isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == "1"))||$filePath=="css/rubedo-all.css"||$filePath=="js/rubedo-all.js"||$filePath=="js/rubedo-all-blocks.js") && file_put_contents($targetPath, $content)) {
             $stream = fopen($targetPath, 'r');
         } elseif ($hasFileInDatabase) {
-            $stream = $gridFSFile->getResource();
-            $filelength = $gridFSFile->getSize();
+            $stream = $fileService->readStream($media['originalFileId']);
+            $filelength = $fileService->getSize($media['originalFileId']);
 
             $headers = array_replace($headers, array(
                 'Content-Length' => $filelength,
