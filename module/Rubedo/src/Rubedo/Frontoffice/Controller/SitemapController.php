@@ -50,6 +50,20 @@ class SitemapController extends AbstractActionController
     }
     function indexAction()
     {
+        $rubedoConfig=Manager::getService("Config");
+        if (isset($rubedoConfig['rubedo_config']['apiCache'])&&$rubedoConfig['rubedo_config']['apiCache']=="1") {
+            $urlKey = "$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+            $apiCacheService=Manager::getService("ApiCache");
+            $foundCachedApiCall=$apiCacheService->findByCacheId($urlKey);
+            if($foundCachedApiCall){
+                $content=$foundCachedApiCall["cachedResult"];
+                $response = $this->getResponse();
+                $headers = $response->getHeaders();
+                $headers->addHeaderLine('Content-Type', 'text/xml');
+                $response->setContent(utf8_decode($content));
+                return $response;
+            }
+        }
         $siteName = $_SERVER["HTTP_HOST"];
         $currentSite=$this->sitesService->findByHost($siteName);
         if (!$currentSite){
@@ -108,8 +122,18 @@ class SitemapController extends AbstractActionController
                 $body=$body.'</url>';
             }
         }
-        
+
         $content = "<?xml version='1.0' encoding='UTF-8'?><urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xhtml='http://www.w3.org/1999/xhtml'>".$body."</urlset>";
+        if (isset($rubedoConfig['rubedo_config']['apiCache'])&&$rubedoConfig['rubedo_config']['apiCache']=="1") {
+            $time = Manager::getService('CurrentTime')->getCurrentTime();
+            $newCachedApiCall=array(
+                "cacheId"=>$urlKey,
+                "cachedResult"=>$content,
+                "endpoint"=>"sitemap",
+                "expireAt"=>new \MongoDate($time+3600)
+            );
+            $apiCacheService->upsertByCacheId($newCachedApiCall,$urlKey);
+        }
         $response = $this->getResponse();
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Content-Type', 'text/xml');
