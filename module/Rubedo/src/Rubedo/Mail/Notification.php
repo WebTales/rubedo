@@ -171,14 +171,22 @@ class Notification implements INotification
         $filter = Filter::factory('InUid')->setValue($userIdArray);
         $userArray = $userService->getList($filter);
         $userArray = $this->sortByLang($userArray);
-
+        $contentTypeLabel=null;
+        if(isset($obj["typeId"])){
+            $foundCT=Manager::getService("ContentTypes")->findById($obj["typeId"]);
+            if(isset($foundCT["type"])){
+                $contentTypeLabel=$foundCT["type"];
+            }
+        }
         $result = true;
         foreach ($userArray as $lang => $users) {
             $publishAuthor = Manager::getService('CurrentUser')->getCurrentUserSummary();
-            $mailBody = $this->prepareBodyNotification($template, $publishAuthor, $obj, $lang);
+            $mailBody = $this->prepareBodyNotification($template, $publishAuthor, $obj, $lang,$contentTypeLabel);
             $toArray = $this->prepareToNotification($users);
             $subjectTranslated = $this->prepareSubjectNotification($subject, $lang);
-
+            if($contentTypeLabel){
+                $subjectTranslated=$subjectTranslated." (".$contentTypeLabel.") ";
+            }
             $message = $this->getNewMessage();
             $message->setSubject($subjectTranslated);
             $message->setBody($mailBody, 'text/html');
@@ -231,13 +239,15 @@ class Notification implements INotification
      *
      * @return string HTML frow twig render
      */
-    protected function prepareBodyNotification($template, $currentUser, $obj, $lang)
+    protected function prepareBodyNotification($template, $currentUser, $obj, $lang,$suffix=null)
     {
         $twigVar = array();
         $twigVar['publishingAuthor'] = (!empty($currentUser['name'])) ? $currentUser['name'] : $currentUser['login'];
         $twigVar['title'] = $obj['text'];
-        $twigVar['directUrl'] = $this->directUrl($obj['id']);
-        $twigVar['lang'] = $lang;
+        if($suffix){
+            $twigVar['title']=$twigVar['title']." (".$suffix.")";
+        }
+        $twigVar['directUrl'] = null;
         $template = Manager::getService('FrontOfficeTemplates')->getFileThemePath("notification/" . $template);
         return Manager::getService('FrontOfficeTemplates')->render($template, $twigVar);
     }
