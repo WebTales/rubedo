@@ -39,6 +39,7 @@ class SitemapController extends AbstractActionController
     protected $urlService;
     protected $contentTypeService;
     protected $contentService;
+    protected $contentsLimit=3000;
     function __construct()
     {
         $this->pageService = Manager::getService('Pages');
@@ -46,12 +47,10 @@ class SitemapController extends AbstractActionController
         $this->config = Manager::getService('config');
         $this->urlService = Manager::getService('Url');
         $this->contentService = Manager::getService('Contents');
-        $this->contentTypeService = Manager::getService('ContentTypes');
     }
     function indexAction()
     {
-        $rubedoConfig=Manager::getService("Config");
-        if (isset($rubedoConfig['rubedo_config']['apiCache'])&&$rubedoConfig['rubedo_config']['apiCache']=="1") {
+        if (isset($this->config['rubedo_config']['apiCache'])&&$this->config['rubedo_config']['apiCache']=="1") {
             $urlKey = "$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             $apiCacheService=Manager::getService("ApiCache");
             $foundCachedApiCall=$apiCacheService->findByCacheId($urlKey);
@@ -64,6 +63,68 @@ class SitemapController extends AbstractActionController
                 return $response;
             }
         }
+        $part=$this->params()->fromQuery("part", null);
+        if($part=="pages"){
+            $content=$this->getPagesMap();
+        } elseif ($part=="contents"){
+            $start=$this->params()->fromQuery("start", 0);
+            $limit=$this->params()->fromQuery("limit", $this->contentsLimit);
+            $content=$this->getContentsMap($start,$limit);
+        } else {
+            $content=$this->getIndexMap();
+        }
+        if (isset($this->config['rubedo_config']['apiCache'])&&$this->config['rubedo_config']['apiCache']=="1") {
+            $time = Manager::getService('CurrentTime')->getCurrentTime();
+            $newCachedApiCall=array(
+                "cacheId"=>$urlKey,
+                "cachedResult"=>$content,
+                "endpoint"=>"sitemap",
+                "expireAt"=>new \MongoDate($time+3600)
+            );
+            $apiCacheService->upsertByCacheId($newCachedApiCall,$urlKey);
+        }
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-Type', 'text/xml');
+        $response->setContent(utf8_decode($content));
+        return $response;
+    }
+    protected function getIndexMap(){
+        $siteName = $_SERVER["HTTP_HOST"];
+        $currentSite=$this->sitesService->findByHost($siteName);
+        if (!$currentSite){
+            throw new \Rubedo\Exceptions\NotFound('Site not found');
+        }
+        $protocol=isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? "https" : "http";
+        $contentMaps="";
+        if (isset($currentSite["sitemapContentTypes"])&&is_array($currentSite["sitemapContentTypes"])&&count($currentSite["sitemapContentTypes"])>0) {
+            $contentsFilter = Filter::factory();
+            $contentsFilter->addFilter(Filter::factory('In')->setName('typeId')->setValue($currentSite["sitemapContentTypes"]));
+            $contents = $this->contentService->getOnlineList($contentsFilter, null, 0, 1);
+            $totalContents=$contents["count"];
+            if($totalContents>0){
+                $start=0;
+                $limit=$this->contentsLimit;
+                while ($start<$totalContents){
+                    $contentMaps=$contentMaps.'<sitemap>
+                      <loc>'.$protocol.'://'.$siteName.'/sitemap.xml?part=contents&amp;start='.$start.'&amp;limit='.$limit.'</loc>
+                   </sitemap>';
+                    $start=$start+$this->contentsLimit;
+                    $limit=$limit+$this->contentsLimit;
+                }
+            }
+        }
+        $indexMap='<?xml version="1.0" encoding="UTF-8"?>
+                   <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+                   <sitemap>
+                      <loc>'.$protocol.'://'.$siteName.'/sitemap.xml?part=pages</loc>
+                   </sitemap>
+                   '.$contentMaps.'
+                   </sitemapindex>';
+        return $indexMap;
+    }
+
+    protected function getPagesMap(){
         $siteName = $_SERVER["HTTP_HOST"];
         $currentSite=$this->sitesService->findByHost($siteName);
         if (!$currentSite){
@@ -85,10 +146,21 @@ class SitemapController extends AbstractActionController
             }
             $body=$body.'</url>';
         }
+        $pagesMap = "<?xml version='1.0' encoding='UTF-8'?><urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xhtml='http://www.w3.org/1999/xhtml'>".$body."</urlset>";
+        return $pagesMap;
+    }
+
+    protected function getContentsMap($start, $limit){
+        $siteName = $_SERVER["HTTP_HOST"];
+        $currentSite=$this->sitesService->findByHost($siteName);
+        if (!$currentSite){
+            throw new \Rubedo\Exceptions\NotFound('Site not found');
+        }
+        $body = '';
         if (isset($currentSite["sitemapContentTypes"])&&is_array($currentSite["sitemapContentTypes"])&&count($currentSite["sitemapContentTypes"])>0){
             $contentsFilter=Filter::factory();
             $contentsFilter->addFilter(Filter::factory('In')->setName('typeId')->setValue($currentSite["sitemapContentTypes"]));
-            $contents=$this->contentService->getOnlineList($contentsFilter);
+            $contents=$this->contentService->getOnlineList($contentsFilter,null,(int) $start, (int) $limit);
             $urlAPIService=Manager::getService("RubedoAPI\\Services\\Router\\Url");
             $contentUrlsArray=[ ];
             foreach($contents["data"] as $content){
@@ -123,23 +195,10 @@ class SitemapController extends AbstractActionController
             }
         }
 
-        $content = "<?xml version='1.0' encoding='UTF-8'?><urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xhtml='http://www.w3.org/1999/xhtml'>".$body."</urlset>";
-        if (isset($rubedoConfig['rubedo_config']['apiCache'])&&$rubedoConfig['rubedo_config']['apiCache']=="1") {
-            $time = Manager::getService('CurrentTime')->getCurrentTime();
-            $newCachedApiCall=array(
-                "cacheId"=>$urlKey,
-                "cachedResult"=>$content,
-                "endpoint"=>"sitemap",
-                "expireAt"=>new \MongoDate($time+3600)
-            );
-            $apiCacheService->upsertByCacheId($newCachedApiCall,$urlKey);
-        }
-        $response = $this->getResponse();
-        $headers = $response->getHeaders();
-        $headers->addHeaderLine('Content-Type', 'text/xml');
-        $response->setContent(utf8_decode($content));
-        return $response;
+        $contentsMap = "<?xml version='1.0' encoding='UTF-8'?><urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xhtml='http://www.w3.org/1999/xhtml'>".$body."</urlset>";
+        return $contentsMap;
     }
+
     protected function getPages($pagesTree, $siteName, $pages = array(), $parentUrl = array(),$defaultLanguage, $languages)
     {
         foreach($pagesTree as $page){
