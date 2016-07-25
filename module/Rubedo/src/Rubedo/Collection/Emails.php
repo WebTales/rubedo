@@ -183,7 +183,7 @@ class Emails extends AbstractCollection implements IEmails
         } else {
             $config = Manager::getService('config');
             $rubedoMail = $config['rubedo_config']['fromEmailNotification'];
-            $from[$rubedoMail] = 'Rubedo';
+            $from[$rubedoMail] = !empty($config['rubedo_config']['fromEmailNotificationName']) ? $config['rubedo_config']['fromEmailNotificationName'] : 'Rubedo';
         }
         $this->swiftMessage->setFrom($from);
         return $this;

@@ -290,7 +290,7 @@ class UsersResource extends AbstractResource
                 ->setTo(array(
                     $user["email"] => (!empty($user['name'])) ? $user['name'] : $user['login'],
                 ))
-                ->setFrom(array($options['fromEmailNotification'] => "Rubedo"))
+                ->setFrom(array($options['fromEmailNotification'] => !empty($options['fromEmailNotificationName']) ? $options['fromEmailNotificationName'] : "Rubedo"))
                 ->setSubject($subject)
                 ->setBody($mailBody, 'text/html');
             $result = $this->getMailerService()->sendMessage($message);

@@ -82,10 +82,10 @@ class Notification implements INotification
     public function getNewMessage()
     {
         $this->mailService = Manager::getService('Mailer');
-
+        $config = Manager::getService('config');
         $message = $this->mailService->getNewMessage();
         $message->setFrom(array(
-            $this->getOptions('fromEmailNotification') => 'Rubedo'
+            $this->getOptions('fromEmailNotification') =>  !empty($config['rubedo_config']['fromEmailNotificationName']) ? $config['rubedo_config']['fromEmailNotificationName'] : 'Rubedo'
         ));
 
         return $message;

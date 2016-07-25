@@ -126,7 +126,7 @@ class TokenResource extends AbstractResource
             ->setTo(array(
                 $user["email"] => (!empty($user['name'])) ? $user['name'] : $user['login'],
             ))
-            ->setFrom(array($options['fromEmailNotification'] => "Rubedo"))
+            ->setFrom(array($options['fromEmailNotification'] => !empty($options['fromEmailNotificationName']) ? $options['fromEmailNotificationName'] : "Rubedo"))
             ->setSubject('[' . $vars['siteName'] . ']' . $this->getTranslationAPIService()->getTranslation(
                     $title,
                     $vars['lang'],

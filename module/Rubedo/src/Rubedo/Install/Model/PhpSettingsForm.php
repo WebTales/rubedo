@@ -151,7 +151,11 @@ class PhpSettingsForm extends BootstrapForm
 
         $fromEmailNotification = (new Text('fromEmailNotification'))
             ->setValue(isset($params['rubedo_config']['fromEmailNotification']) ? $params['rubedo_config']['fromEmailNotification'] : null)
-            ->setLabel('Sender of notifications')
+            ->setLabel('Sender address')
+            ->setAttribute('class', 'form-control');
+        $fromEmailNotificationName = (new Text('fromEmailNotificationName'))
+            ->setValue(isset($params['rubedo_config']['fromEmailNotificationName']) ? $params['rubedo_config']['fromEmailNotificationName'] : null)
+            ->setLabel('Sender name')
             ->setAttribute('class', 'form-control');
 
         $recaptchaPublicKey = (new Text('public_key'))
@@ -182,6 +186,7 @@ class PhpSettingsForm extends BootstrapForm
             ->add($isBackofficeSSL)
             ->add($enableEmailNotification)
             ->add($fromEmailNotification)
+            ->add($fromEmailNotificationName)
             ->add($recaptchaFieldSet);
 
         $dbForm = (new Form())
