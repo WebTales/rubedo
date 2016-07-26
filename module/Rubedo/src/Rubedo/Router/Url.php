@@ -699,24 +699,21 @@ class Url implements IUrl
         if (!$media) {
             return '';
         }
-        $fileService = Manager::getService('Files');
-        $obj = $fileService->findById($media['originalFileId']);
-        if (!$obj) {
+        $fs=Manager::getService("FSManager")->getFS();
+        if (!$fs->has($media['originalFileId'])) {
             return '';
         }
-        $meta = $obj->file;
-
         $router = Manager::getService('Router');
         $options = array(
             'name' => 'imageFromDam'
         );
         $params = array(
-            'version' => $meta['version'],
+            'version' => $media['version'],
             'width' => $width ? $width : 'x',
             'height' => $height ? $height : 'x',
             'mode' => $mode ? $mode : 'crop',
             'mediaId' => $mediaId,
-            'filename' => $meta['filename']
+            'filename' => $media['originalFileId']
         );
         $url = $router->assemble($params, $options);
         if ($isPublic) {
@@ -782,15 +779,13 @@ class Url implements IUrl
                 return " ";
             }
             $fileId = $user['photo'];
-            $fileService = Manager::getService('Images');
-            $obj = $fileService->findById($fileId);
-            if (!$obj instanceof \MongoGridFSFile) {
-                return " ";
+            $fs=Manager::getService("FSManager")->getFS();
+            if (!$fs->has($fileId)) {
+                return '';
             }
-            $meta = $obj->file;
             $params = array(
-                'filename' => $meta['filename'],
-                'version' => $meta['version'],
+                'filename' => $fileId,
+                'version' => $user['version'],
                 'userId' => $userId,
                 'width' => $width,
                 'height' => $height,
@@ -820,15 +815,13 @@ class Url implements IUrl
                 return " ";
             }
             $fileId = $user['photo'];
-            $fileService = Manager::getService('Images');
-            $obj = $fileService->findById($fileId);
-            if (!$obj instanceof \MongoGridFSFile) {
-                return " ";
+            $fs=Manager::getService("FSManager")->getFS();
+            if (!$fs->has($fileId)) {
+                return '';
             }
-            $meta = $obj->file;
             $params = array(
-                'filename' => $meta['filename'],
-                'version' => $meta['version'],
+                'filename' => $fileId,
+                'version' => $user['version'],
                 'userId' => $userId,
                 'width' => $width,
                 'height' => $height,
