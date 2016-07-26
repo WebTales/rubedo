@@ -68,7 +68,7 @@ class Update030301 extends Update
         $usersList=$userService->getList()["data"];
         foreach($usersList as $user){
             if(!empty($user["photo"])){
-                $user["photo"]=evolveById($user["photo"],$oldFileService,$newFileService);
+                $user["photo"]=static::evolveById($user["photo"],$oldFileService,$newFileService);
                 $userService->update($user);
             }
         }
@@ -82,6 +82,8 @@ class Update030301 extends Update
     protected static function evolveById($id,$oldFS,$newFS){
         if (isset(static::$evolutionArray[$id])){
             return(static::$evolutionArray[$id]);
+        } elseif ($newFS->has($id)){
+            return($id);
         }
         $file=$oldFS->findById($id);
         if ($file){
