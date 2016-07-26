@@ -659,22 +659,19 @@ class Url implements IUrl
         if (!$media) {
             return '';
         }
-        $fileService = Manager::getService('Files');
-        $obj = $fileService->findById($media['originalFileId']);
-        if (!$obj) {
+        $fs=Manager::getService("FSManager")->getFS();
+        if (!$fs->has($media['originalFileId'])) {
             return '';
         }
-        $meta = $obj->file;
-
         $router = Manager::getService('Router');
         $options = array(
             'name' => 'mediaFromDam'
         );
         $params = array(
-            'version' => !empty($meta['version']) ? $meta['version'] : 1,
+            'version' => !empty($media['version']) ? $media['version'] : 1,
             'download' => $forceDownload ? 'download' : 'inline',
-            'mediaId' => $mediaId,
-            'filename' => $meta['filename']
+            'mediaId' => $media['id'],
+            'filename' => $media['originalFileId']
         );
         $url = $router->assemble($params, $options);
         if ($isPublic) {
