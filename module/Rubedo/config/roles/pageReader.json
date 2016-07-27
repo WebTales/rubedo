@@ -13,6 +13,7 @@
         "execute.controller.xhrgetpageurl.index.backoffice",
         "execute.controller.xhrauthentication.is-logged-in.default",
         "execute.controller.xhrjavascript.get-script.default",
-        "execute.controller.pages.get-content-list.backoffice"
+        "execute.controller.pages.get-content-list.backoffice",
+        "execute.controller.linkfinder.index.backoffice"
     ]
 }
