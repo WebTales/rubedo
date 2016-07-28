@@ -271,7 +271,11 @@ class ThemeController extends AbstractActionController
                 );
             $themeFilesToLoad = $DAMService->getList($filters)['data'];
             foreach ($themeFilesToLoad as &$fileToLoad) {
-                $themeFile =implode('/', $this->discoverDirNames(array(), $fileToLoad['directory'],$theme)). '/' . $fileToLoad['title'];
+                $pathImploder=implode('/', $this->discoverDirNames(array(), $fileToLoad['directory'],$theme));
+                $themeFile = $fileToLoad['title'];
+                if(!empty($pathImploder)){
+                    $themeFile=$pathImploder. '/' .$themeFile;
+                }
                 $extension = substr(strrchr($themeFile, '.'), 1);
                 if ($extension == 'css') {
                     $cssDependencyArray[] = $themeFile;
@@ -349,7 +353,11 @@ class ThemeController extends AbstractActionController
                 );
             $themeFilesToLoad = $DAMService->getList($filters)['data'];
             foreach ($themeFilesToLoad as &$fileToLoad) {
-                $themeFile =implode('/', $this->discoverDirNames(array(), $fileToLoad['directory'],$theme)). '/' . $fileToLoad['title'];
+                $pathImploder=implode('/', $this->discoverDirNames(array(), $fileToLoad['directory'],$theme));
+                $themeFile = $fileToLoad['title'];
+                if(!empty($pathImploder)){
+                    $themeFile=$pathImploder. '/' .$themeFile;
+                }
                 $extension = substr(strrchr($themeFile, '.'), 1);
                 if ($extension == 'js') {
                     $jsDependencyArray[] = $themeFile;
