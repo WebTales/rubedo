@@ -391,6 +391,9 @@ class ThemeController extends AbstractActionController
             $jsDependencyArray=Json::decode($params["blockconfig"],Json::TYPE_ARRAY);
         }
         foreach($jsDependencyArray as $jsDependency){
+            if(isset($jsDependency[0])&&$jsDependency[0]=="/"){
+                $jsDependency=substr($jsDependency,1);
+            }
             $redirectedResult=$this->forward()->dispatch("Rubedo\\Frontoffice\\Controller\\Theme", array(
                 'action' => 'index',
                 'theme' => $theme,
