@@ -97,7 +97,7 @@ class ThemeController extends AbstractActionController
                 $consolidatedFilePath = Manager::getService('FrontOfficeTemplates')->getFilePath("default", $filePath);
             }
 
-            if ($consolidatedFilePath||$filePath=="css/rubedo-all.css"||$filePath=="js/rubedo-all.js"||$filePath="js/rubedo-all-blocks.js") {
+            if ($consolidatedFilePath||$filePath=="css/rubedo-all.css"||$filePath=="js/rubedo-all.js"||$filePath=="js/rubedo-all-blocks.js") {
                 if ($filePath=="css/rubedo-all.css"&&!$consolidatedFilePath){
                     $extension="css";
                     $mimeType = 'text/css';
