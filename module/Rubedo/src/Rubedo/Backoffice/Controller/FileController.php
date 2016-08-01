@@ -82,20 +82,42 @@ class FileController extends AbstractActionController
     {
         Context::setExpectJson();
         $fileInfo = $this->params()->fromFiles('file');
-
         $finfo = new \finfo(FILEINFO_MIME);
         $mimeType = $finfo->file($fileInfo['tmp_name']);
 
-        $fileService = Manager::getService('Files');
+            $fService=Manager::getService("FSManager");
+            $complianceResult=$fService->testTypeCompliance($this->params()->fromPost('mainFileType', null),$mimeType);
+            if(!$complianceResult["success"]){
+                return $complianceResult;
+            }
+            $fs=$fService->getFS();
+            $newPathId=(string) new \MongoId();
+            $newPath=$newPathId.$fileInfo['name'];
+            $stream = fopen($fileInfo['tmp_name'], 'r+');
+            $result=$fs->writeStream($newPath,$stream,[
+                'mimetype'=>$mimeType
+            ]);
+            if(!$result){
+                throw new \Rubedo\Exceptions\Server('Unable to upload file');
+            }
+            $result=[
+                "success"=>true,
+                "data"=>[
+                    "text"=>$fileInfo['name'],
+                    "id"=>$newPath
+                ]
+            ];
 
-        $obj = array(
-            'serverFilename' => $fileInfo['tmp_name'],
-            'text' => $fileInfo['name'],
-            'filename' => $fileInfo['name'],
-            'Content-Type' => $mimeType,
-            'mainFileType' => $this->params()->fromPost('mainFileType', null)
-        );
-        $result = $fileService->create($obj);
+//            $fileService = Manager::getService('Files');
+//
+//            $obj = array(
+//                'serverFilename' => $fileInfo['tmp_name'],
+//                'text' => $fileInfo['name'],
+//                'filename' => $fileInfo['name'],
+//                'Content-Type' => $mimeType,
+//                'mainFileType' => $this->params()->fromPost('mainFileType', null)
+//            );
+//            $result = $fileService->create($obj);
 
         return new JsonModel($result);
     }
@@ -110,9 +132,11 @@ class FileController extends AbstractActionController
 
         $mimeType = "image/" . strtolower($info['extension']);
 
-        $fileService = Manager::getService('Files');
-        $originalId = $this->params()->fromQuery("originalId");
-        if (!$originalId) {
+//        $fileService = Manager::getService('Files');
+        $fService=Manager::getService("FSManager");
+        $fs=$fService->getFS();
+        $originalId = $this->params()->fromQuery("originalId",null);
+        if (!$originalId||!$fs->has($originalId)) {
             throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
         }
         $c = new Client();
@@ -123,21 +147,23 @@ class FileController extends AbstractActionController
             throw new \Rubedo\Exceptions\Server("Unable to download new image");
         }
         $img = $result->getBody();
-
-        $fileService->destroy(array(
-            'id' => $originalId,
-            'version' => 1
-        ));
-        $fileObj = array(
-            'bytes' => $img,
-            'text' => $info['filename'],
-            'filename' => $info['basename'],
-            'Content-Type' => $mimeType,
-            'mainFileType' => 'Image',
-            '_id' => new \MongoId($originalId)
-        );
-
-        $fileService->createBinary($fileObj);
+        $fs->update($originalId,$img,[
+            'mimetype'=>$mimeType
+        ]);
+//        $fileService->destroy(array(
+//            'id' => $originalId,
+//            'version' => 1
+//        ));
+//        $fileObj = array(
+//            'bytes' => $img,
+//            'text' => $info['filename'],
+//            'filename' => $info['basename'],
+//            'Content-Type' => $mimeType,
+//            'mainFileType' => 'Image',
+//            '_id' => new \MongoId($originalId)
+//        );
+//
+//        $fileService->createBinary($fileObj);
 
         // trigger deletion of cache : sys_get_temp_dir() . '/' . $fileId . '_'
         $paths = array(

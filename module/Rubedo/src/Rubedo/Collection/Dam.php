@@ -92,10 +92,8 @@ class Dam extends AbstractLocalizableCollection implements IDam
     public function destroy(array $obj, $options = array())
     {
         $obj = $this->_dataService->findById($obj['id']);
-        Manager::getService('Files')->destroy(array(
-            'id' => $obj['originalFileId']
-        ));
-
+        $fs=Manager::getService("FSManager")->getFS();
+        $fs->delete($obj['originalFileId']);
         $returnArray = parent::destroy($obj, $options);
         if ($returnArray["success"]) {
             $this->_unIndexDam($obj);
@@ -132,11 +130,11 @@ class Dam extends AbstractLocalizableCollection implements IDam
     {
         $this->_filterInputData($obj);
 
-        $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
-        if (!$originalFilePointer instanceof \MongoGridFSFile) {
+        $fs=Manager::getService("FSManager")->getFS();
+        if (!$fs->has($obj['originalFileId'])) {
             throw new \Rubedo\Exceptions\Server('no file found', "Exception8");
         }
-        $obj['fileSize'] = $originalFilePointer->getSize();
+        $obj['fileSize'] = $fs->getSize($obj['originalFileId']);
 
         if (count(array_intersect(array(
                 $obj['writeWorkspace']
@@ -178,12 +176,11 @@ class Dam extends AbstractLocalizableCollection implements IDam
         $obj = $this->_setDefaultWorkspace($obj);
 
         $this->_filterInputData($obj);
-
-        $originalFilePointer = Manager::getService('Files')->findById($obj['originalFileId']);
-        if (!$originalFilePointer instanceof \MongoGridFSFile) {
+        $fs=Manager::getService("FSManager")->getFS();
+        if (!$fs->has($obj['originalFileId'])) {
             throw new \Rubedo\Exceptions\Server('no file found', "Exception8");
         }
-        $obj['fileSize'] = $originalFilePointer->getSize();
+        $obj['fileSize'] = $fs->getSize($obj['originalFileId']);
         $returnArray = parent::create($obj, $options);
 
         if ($returnArray["success"] and $index) {

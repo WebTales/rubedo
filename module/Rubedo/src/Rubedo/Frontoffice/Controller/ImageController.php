@@ -69,18 +69,17 @@ class ImageController extends AbstractActionController
         $isPublic = $damService->isPublic($mediaId);
 
         // get Image from GridFs
-        $fileService = Manager::getService('Images');
-        $obj = $fileService->findById($fileId);
-        if (!$obj instanceof \MongoGridFSFile) {
-            throw new NotFound("No Image Found", "Exception8");
-        }
+        $fs=Manager::getService("FSManager")->getFS();
+        $obj = $fs->read($fileId);
+//        if (!$obj instanceof \MongoGridFSFile) {
+//            throw new NotFound("No Image Found", "Exception8");
+//        }
 
         $filePath = $this->getTempImagesPaths() . '/' . $fileId . '_' . $version;
         if (!is_file($filePath)) {
-            $obj->write($filePath);
+            file_put_contents($filePath,$obj);
         }
-        $meta = $obj->file;
-        $filename = $meta['filename'];
+        $filename = $fileId;
         if ($filename != $this->params('filename')) {
             throw new NotFound("No Image Found", "Exception8");
         }
@@ -188,18 +187,16 @@ class ImageController extends AbstractActionController
         Manager::getService("Logger")->debug($size);
         Manager::getService("Logger")->debug($height);
         if (isset($fileId)) {
-            $fileService = Manager::getService('Images');
-            $obj = $fileService->findById($fileId);
-            if (!$obj instanceof \MongoGridFSFile) {
-                throw new NotFound("No Image Found", "Exception8");
-            }
-
+            $fs=Manager::getService("FSManager")->getFS();
+            $obj = $fs->read($fileId);
+//            if (!$obj instanceof \MongoGridFSFile) {
+//                throw new NotFound("No Image Found", "Exception8");
+//            }
             $filePath = $this->getTempImagesPaths() . '/' . $fileId . '_' . $version;
             if (!is_file($filePath) || $now - filemtime($filePath) > 7 * 24 * 3600) {
-                $obj->write($filePath);
+                file_put_contents($filePath,$obj);
             }
-            $meta = $obj->file;
-            $filename = $meta['filename'];
+            $filename = $fileId;
         }
 
         if ($filePath) {

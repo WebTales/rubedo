@@ -45,20 +45,18 @@ class FileController extends AbstractActionController
     function indexAction()
     {
        	$this->fileId = $this->params()->fromQuery('file-id');
-       	
         if (isset($this->fileId)) {
 
-            $fileService = Manager::getService('Files');
-            $obj = $fileService->findById($this->fileId);
-            if (!$obj instanceof \MongoGridFSFile) {
-                throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
-            }
+            $fs=Manager::getService("FSManager")->getFS();
+            $obj = $fs->readStream($this->fileId);
+//            if (!$obj instanceof \MongoGridFSFile) {
+//                throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
+//            }
 
-	        $this->size = $obj->getSize();
-	        $this->chunkSize = $obj->file["chunkSize"];
-            $meta = $obj->file;
-            $filename = $meta['filename'];
-            $this->contentType = $meta['Content-Type'];
+	        $this->size = $fs->getSize($this->fileId);
+//	        $this->chunkSize = $obj->file["chunkSize"];
+            $filename = $this->fileId;
+            $this->contentType = $fs->getMimetype($this->fileId);
             $action = "inline";
 
             list ($subtype) = explode('/', $this->contentType);
@@ -95,6 +93,9 @@ class FileController extends AbstractActionController
             if ($subtype == 'video') {
             	$action = "stream";
             }
+            if($this->params()->fromQuery('attachment', null)=="download"){
+                $action = "download";
+            }
 			
             switch ($action) {
             	case "download":
@@ -103,10 +104,10 @@ class FileController extends AbstractActionController
             				'Content-Disposition' => 'attachment; filename="' . $filename
             		));
             		$response->getHeaders()->addHeaders(array(
-            				'Content-Type' => $meta['Content-Type']
+            				'Content-Type' => $this->contentType
             		));
-            		$stream = $obj->getResource();
-            		$response->setStream($stream);
+//            		$stream = $obj->getResource();
+            		$response->setStream($obj);
             		return $response;
             		break;
             	case "inline":
@@ -115,15 +116,15 @@ class FileController extends AbstractActionController
             				'Content-Disposition' => 'inline; filename="' . $filename
             		));
             		$response->getHeaders()->addHeaders(array(
-            				'Content-Type' => $meta['Content-Type']
+            				'Content-Type' => $this->contentType
             		));
-            		$stream = $obj->getResource();
-            		$response->setStream($stream);
+//            		$stream = $obj->getResource();
+            		$response->setStream($obj);
             		return $response;
             		break;
             	case "stream":
             		$this->setHeader();
-            		$this->stream();
+            		echo(stream_get_contents($obj,$this->end - $this->start + 1,$this->start));
             		exit;
             }
 
@@ -185,35 +186,35 @@ class FileController extends AbstractActionController
     /**
      * perform the streaming of calculated range
      */
-    private function stream() {
-    	set_time_limit(0);
-    	$firstChunk = intval($this->start/$this->chunkSize);
-    	$lastChunk = intval($this->end/$this->chunkSize);
-    	$filter = [
-	    	'files_id' => new \MongoId($this->fileId),
-	    	'n' => [
-	    		'$gte' => $firstChunk,
-	    		'$lte' => $lastChunk
-	    	]
-    	];
-    	$mongoFilter=Filter::factory();
-    	$mongoFilter->addFilter(Filter::factory("Value")->setName("files_id")->setValue(new \MongoId($this->fileId)));
-    	$mongoFilter->addFilter(Filter::factory("OperatorToValue")->setName("n")->setOperator('$gte')->setValue($firstChunk));
-    	$mongoFilter->addFilter(Filter::factory("OperatorToValue")->setName("n")->setOperator('$lte')->setValue($lastChunk));
-    	$dataAccess = Manager::getService('MongoDataAccess');
-    	$dataAccess->init('fs.chunks');
-    	$cursor = $dataAccess->customFind($mongoFilter)->sort(['n' => 1]);
-    	$i = $this->start;
-    	foreach($cursor as $chunk) {
-    		$borneInf = $chunk['n'] * $this->chunkSize;
-    		$borneSup = $borneInf + $this->chunkSize - 1;
-    		$startRead = ($this->start <= $borneInf) ? 0 : $this->start - $borneInf;
-    		$bytesToRead = ($this->end <= $borneSup) ? $this->end - $borneInf + $startRead + 1 : $this->chunkSize - $startRead;
-    		echo substr($chunk['data']->bin, $startRead, $bytesToRead);
-    		flush();
-    		$i += $bytesToRead;
-    	}
-    }    
+//    private function stream() {
+//    	set_time_limit(0);
+//    	$firstChunk = intval($this->start/$this->chunkSize);
+//    	$lastChunk = intval($this->end/$this->chunkSize);
+//    	$filter = [
+//	    	'files_id' => new \MongoId($this->fileId),
+//	    	'n' => [
+//	    		'$gte' => $firstChunk,
+//	    		'$lte' => $lastChunk
+//	    	]
+//    	];
+//    	$mongoFilter=Filter::factory();
+//    	$mongoFilter->addFilter(Filter::factory("Value")->setName("files_id")->setValue(new \MongoId($this->fileId)));
+//    	$mongoFilter->addFilter(Filter::factory("OperatorToValue")->setName("n")->setOperator('$gte')->setValue($firstChunk));
+//    	$mongoFilter->addFilter(Filter::factory("OperatorToValue")->setName("n")->setOperator('$lte')->setValue($lastChunk));
+//    	$dataAccess = Manager::getService('MongoDataAccess');
+//    	$dataAccess->init('fs.chunks');
+//    	$cursor = $dataAccess->customFind($mongoFilter)->sort(['n' => 1]);
+//    	$i = $this->start;
+//    	foreach($cursor as $chunk) {
+//    		$borneInf = $chunk['n'] * $this->chunkSize;
+//    		$borneSup = $borneInf + $this->chunkSize - 1;
+//    		$startRead = ($this->start <= $borneInf) ? 0 : $this->start - $borneInf;
+//    		$bytesToRead = ($this->end <= $borneSup) ? $this->end - $borneInf + $startRead + 1 : $this->chunkSize - $startRead;
+//    		echo substr($chunk['data']->bin, $startRead, $bytesToRead);
+//    		flush();
+//    		$i += $bytesToRead;
+//    	}
+//    }
     
     public function getThumbnailAction()
     {

@@ -17,6 +17,7 @@
 namespace Rubedo\Collection;
 
 use Rubedo\Interfaces\Collection\IThemes;
+use WebTales\MongoFilters\Filter;
 
 /**
  * Service to handle Themes
@@ -32,5 +33,16 @@ class Themes extends AbstractCollection implements IThemes
     {
         $this->_collectionName = 'Themes';
         parent::__construct();
+    }
+
+    public function findByName($name)
+    {
+        $filter = Filter::factory('Value');
+        $filter->setValue(new \MongoRegex("/^".$name."$/i"))->setName('text');
+        $obj = $this->_dataService->findOne($filter);
+        if ($obj) {
+            $obj = $this->_addReadableProperty($obj);
+        }
+        return $obj;
     }
 }

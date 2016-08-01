@@ -114,4 +114,5 @@ return array(
     'CheckPayment'=>'Rubedo\\Payment\\CheckPayment',
     'CreditTransferPayment'=>'Rubedo\\Payment\\CreditTransferPayment',
     'PaypalPayment'=>'Rubedo\\Payment\\PaypalPayment',
+    'FSManager' => 'Rubedo\\Files\\FSManager',
 );

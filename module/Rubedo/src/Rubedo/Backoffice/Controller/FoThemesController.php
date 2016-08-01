@@ -55,7 +55,8 @@ class FoThemesController extends AbstractActionController
     {
         $this->directoriesService = Manager::getService('Directories');
         $this->damService = Manager::getService('Dam');
-        $this->filesService = Manager::getService('Files');
+        $fsManager=Manager::getService("FSManager");
+        $this->filesService = $fsManager->getFS();
         $this->unzipDir = APPLICATION_PATH
             . DIRECTORY_SEPARATOR
             . 'cache'
@@ -187,15 +188,14 @@ class FoThemesController extends AbstractActionController
                 $mimeType = mime_content_type($file->getPathname());
                 break;
         }
-        $fileToCreate = array(
-            'serverFilename' => $file->getPathname(),
-            'text' => $file->getFilename(),
-            'filename' => $file->getFilename(),
-            'Content-Type' => isset($mimeType) ? $mimeType : 'text/plain',
-            'mainFileType' => $this->filesService->getMainType($mimeType)
-        );
-        $mongoFile = $this->filesService->create($fileToCreate)['data'];
 
+
+        $newPathId=(string) new \MongoId();
+        $newPath=$newPathId.$file->getFilename();
+        $stream = fopen($file->getPathname(), 'r+');
+        $mongoFile=$this->filesService->writeStream($newPath,$stream,[
+            'mimetype'=>isset($mimeType) ? $mimeType : 'text/plain'
+        ]);
         $filters = Filter::factory('And');
         $filters
             ->addFilter(
@@ -215,12 +215,12 @@ class FoThemesController extends AbstractActionController
                 'themeId' => $themeId,
                 'directory' => $directory['id'],
                 'Content-Type' => $mimeType,
-                'originalFileId' => $mongoFile['id'],
+                'originalFileId' => $newPath,
                 'mainFileType' => 'Resource',
             );
             $this->damService->create($media, array(), false);
         } else {
-            $media['originalFileId'] = $mongoFile['id'];
+            $media['originalFileId'] = $newPath;
             $this->damService->update($media);
         }
     }

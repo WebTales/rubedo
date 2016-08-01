@@ -79,12 +79,12 @@ class ThemeController extends AbstractActionController
                         )
                 );
                 if (!empty($media)) {
-                    $fileService = Manager::getService('Files');
+                    $fileService = Manager::getService("FSManager")->getFS();
                     $mimeType = $media['Content-Type'];
-                    $gridFSFile = $fileService->findById($media['originalFileId']);
-                    if ($gridFSFile instanceof \MongoGridFSFile) {
+                    if($fileService->has($media['originalFileId'])){
                         $hasFileInDatabase = true;
                     }
+
                 }
             }
         }
@@ -97,7 +97,7 @@ class ThemeController extends AbstractActionController
                 $consolidatedFilePath = Manager::getService('FrontOfficeTemplates')->getFilePath("default", $filePath);
             }
 
-            if ($consolidatedFilePath||$filePath=="css/rubedo-all.css"||$filePath=="js/rubedo-all.js"||$filePath="js/rubedo-all-blocks.js") {
+            if ($consolidatedFilePath||$filePath=="css/rubedo-all.css"||$filePath=="js/rubedo-all.js"||$filePath=="js/rubedo-all-blocks.js") {
                 if ($filePath=="css/rubedo-all.css"&&!$consolidatedFilePath){
                     $extension="css";
                     $mimeType = 'text/css';
@@ -187,8 +187,8 @@ class ThemeController extends AbstractActionController
         if (isset($targetPath)&&(((isset($config['rubedo_config']['cachePage']) && $config['rubedo_config']['cachePage'] == "1"))||$filePath=="css/rubedo-all.css"||$filePath=="js/rubedo-all.js"||$filePath=="js/rubedo-all-blocks.js") && file_put_contents($targetPath, $content)) {
             $stream = fopen($targetPath, 'r');
         } elseif ($hasFileInDatabase) {
-            $stream = $gridFSFile->getResource();
-            $filelength = $gridFSFile->getSize();
+            $stream = $fileService->readStream($media['originalFileId']);
+            $filelength = $fileService->getSize($media['originalFileId']);
 
             $headers = array_replace($headers, array(
                 'Content-Length' => $filelength,
@@ -271,7 +271,11 @@ class ThemeController extends AbstractActionController
                 );
             $themeFilesToLoad = $DAMService->getList($filters)['data'];
             foreach ($themeFilesToLoad as &$fileToLoad) {
-                $themeFile =implode('/', $this->discoverDirNames(array(), $fileToLoad['directory'],$theme)). '/' . $fileToLoad['title'];
+                $pathImploder=implode('/', $this->discoverDirNames(array(), $fileToLoad['directory'],$theme));
+                $themeFile = $fileToLoad['title'];
+                if(!empty($pathImploder)){
+                    $themeFile=$pathImploder. '/' .$themeFile;
+                }
                 $extension = substr(strrchr($themeFile, '.'), 1);
                 if ($extension == 'css') {
                     $cssDependencyArray[] = $themeFile;
@@ -349,7 +353,11 @@ class ThemeController extends AbstractActionController
                 );
             $themeFilesToLoad = $DAMService->getList($filters)['data'];
             foreach ($themeFilesToLoad as &$fileToLoad) {
-                $themeFile =implode('/', $this->discoverDirNames(array(), $fileToLoad['directory'],$theme)). '/' . $fileToLoad['title'];
+                $pathImploder=implode('/', $this->discoverDirNames(array(), $fileToLoad['directory'],$theme));
+                $themeFile = $fileToLoad['title'];
+                if(!empty($pathImploder)){
+                    $themeFile=$pathImploder. '/' .$themeFile;
+                }
                 $extension = substr(strrchr($themeFile, '.'), 1);
                 if ($extension == 'js') {
                     $jsDependencyArray[] = $themeFile;
@@ -383,6 +391,9 @@ class ThemeController extends AbstractActionController
             $jsDependencyArray=Json::decode($params["blockconfig"],Json::TYPE_ARRAY);
         }
         foreach($jsDependencyArray as $jsDependency){
+            if(isset($jsDependency[0])&&$jsDependency[0]=="/"){
+                $jsDependency=substr($jsDependency,1);
+            }
             $redirectedResult=$this->forward()->dispatch("Rubedo\\Frontoffice\\Controller\\Theme", array(
                 'action' => 'index',
                 'theme' => $theme,

@@ -17,6 +17,7 @@
 namespace Rubedo\Backoffice\Controller;
 
 use Rubedo\Services\Manager;
+use Zend\Debug\Debug;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 use Rubedo\Exceptions\User;
@@ -242,6 +243,7 @@ class DamController extends DataAccessController
             $obj['fields']['target'] = $targets;
         }
         $uploadResult = $this->_uploadFile('file', $damType['mainFileType'], true, true);
+
         if ($uploadResult['success']) {
             $properName = explode(".", $uploadResult['data']['text']);
             $obj['title'] = $properName[0];
@@ -312,24 +314,52 @@ class DamController extends DataAccessController
 
         $mimeType = mime_content_type($fileInfos['tmp_name']);
 
+
         if (($name == 'originalFileId') || ($setMimeType)) {
             $this->_mimeType = $mimeType;
         }
 
-        $fileService = Manager::getService('Files');
-
-        $fileObj = array(
-            'serverFilename' => $fileInfos['tmp_name'],
-            'text' => $fileInfos['name'],
-            'filename' => $fileInfos['name'],
-            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfos['type'],
-            'mainFileType' => $fileType
-        );
-        $result = $fileService->create($fileObj);
-        if ((!$result['success']) || ($returnFullResult)) {
-            return $result;
+//        $fileService = Manager::getService('Files');
+//
+//        $fileObj = array(
+//            'serverFilename' => $fileInfos['tmp_name'],
+//            'text' => $fileInfos['name'],
+//            'filename' => $fileInfos['name'],
+//            'Content-Type' => isset($mimeType) ? $mimeType : $fileInfos['type'],
+//            'mainFileType' => $fileType
+//        );
+        $fService=Manager::getService("FSManager");
+        $complianceResult=$fService->testTypeCompliance($fileType,$mimeType);
+        if(!$complianceResult["success"]){
+            return $complianceResult;
         }
-        return $result['data']['id'];
+        $fs=$fService->getFS();
+
+        $newPathId=(string) new \MongoId();
+        $newPath=$newPathId.$fileInfos['name'];
+        $stream = fopen($fileInfos['tmp_name'], 'r+');
+        $result=$fs->writeStream($newPath,$stream,[
+            'mimetype'=>$mimeType
+        ]);
+        if(!$result){
+            throw new \Rubedo\Exceptions\Server('Unable to upload file');
+        }
+        if($returnFullResult){
+            return[
+                "success"=>true,
+                "data"=>[
+                    "text"=>$fileInfos['name'],
+                    "id"=>$newPath
+                ]
+            ];
+        }
+        return $newPath;
+//        $result = $fileService->create($fileObj);
+//        if ((!$result['success']) || ($returnFullResult)) {
+//            return $result;
+//        }
+//        return $result['data']['id'];
+
     }
 
     public function deleteByDamTypeIdAction()
@@ -376,5 +406,12 @@ class DamController extends DataAccessController
         }
 
         return $this->_returnJson($returnArray);
+    }
+
+    public function testAction()
+    {
+        $fs=Manager::getService("FSManager")->getFS();
+        Debug::dump($fs->listContents());
+        die("toto");
     }
 }

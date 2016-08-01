@@ -164,8 +164,8 @@ class Dam extends DataAbstract
             $mime = explode(';', $data['Content-Type']);
 
             if (in_array($mime[0], $indexedFiles)) {
-                $mongoFile = $this->_getService('Files')->FindById($data['originalFileId']);
-                $indexData['file'] = base64_encode($mongoFile->getBytes());
+                $fs=$this->_getService("FSManager")->getFS();
+                $indexData['file'] = base64_encode($fs->read($data['originalFileId']));
             }
         }
 
