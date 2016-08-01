@@ -2,80 +2,157 @@
 
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2014, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2016, WebTales (http://www.webtales.fr/).
  * All rights reserved.
- * licensing@webtales.fr
+ * licensing@webtales.fr.
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
  * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
- * @package    Rubedo
- * @copyright  Copyright (c) 2012-2015 WebTales (http://www.webtales.fr)
+ *
+ * @copyright  Copyright (c) 2012-2016 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
 namespace Rubedo\Elastic;
 
-use Zend\Json\Json;
-use Rubedo\Services\Manager;
-
 /**
- * Query filters constructor for Elasticsearch queries
+ * Filter constructor for Elasticsearch queries.
  *
  * @author dfanchon
+ *
  * @category Rubedo
- * @package Rubedo
  */
 class DataFilters
 {
-
-    public $_globalFilterList = [];
-    public $_filters;
-    public $_setFilter = false;
-    public $_params;
-    public $_facetOperators;
-    public $geoAgreggation;
-
     /**
-     * Add term filter to Query
+     * Filter dispatcher.
      *
-     * @param string $name
-     *            filter name
-     *            string $field
-     *            field to apply filter
+     * @param string $facetName
+     * @param string $fieldName
+     * @param string $orderField
+     * @param string $orderDirection
+     * @param int $size
+     *
      * @return array
      */
-    public function _addTermFilter($name, $field)
+    public function addFilter($name, $value = null, $field = null)
     {
-        // transform param to array if single value
-        if (!is_array($this->_params [$name])) {
-            $this->_params [$name] = array(
-                $this->_params [$name]
-            );
+        switch ($name) {
+            case 'query':
+                return self::addQueryFilter($value);
+                break;
+            case 'objectType':
+            case 'type':
+            case 'damType':
+            case 'userType':
+            case 'author':
+            case 'userName':
+            case 'taxonomy':
+                return self::addTermsFilter($name, $field, $value);
+                break;
+            case 'frontEndFilters':
+                return self::addCustomFrontEndFilter($value);
+                break;
+            case 'workspaceFilter':
+                return self::addWorkspaceFilter($value);
+                break;
+            case 'frontEnd':
+                return self::addFrontEndFilter();
+                break;
+            case 'geo':
+                return self::addGeoFilter();
+                break;
+            case 'lastupdatetime':
+                return self::addLastUpdateFilter($value);
+                break;
+            case 'inStock':
+                return self::addInStockFilter($value);
+                break;
+            case 'price':
+                return self::addPriceFilter($value);
+                break;
+            case 'isProduct':
+                return self::addProductFilter();
+                break;
+            case 'geoBoxFilter':
+                return self::addGeoBoxFilter($value);
+                break;
+            case 'locale':
+                return self::addLocaleFilter($value);
+                break;
+            case 'excludeItemsFilter':
+                return self::addSeenItemsFilter($value);
+                break;
+            default:
+                break;
         }
-        // get mode for this facet
-        $operator = isset ($this->_facetOperators [$name]) ? strtolower($this->_facetOperators [$name]) : 'and';
+    }
 
+    /**
+     * Query filter.
+     *
+     * @param string $value query
+     *
+     * @return array
+     */
+    public function addQueryFilter($value)
+    {
+        if ($value != '') {
+            SearchContext::addFilters('query', $value);
+        }
+    }
+
+    /**
+     * Custom front end filter.
+     *
+     * @param array $value
+     *
+     * @return array
+     */
+    public function addCustomFrontEndFilter($value)
+    {
+        if ($value != '') {
+            SearchContext::addGlobalFilterList('frontEndFilters', $value);
+        }
+    }
+
+    /**
+     * Terms filter.
+     *
+     * @param string $field
+     * @param array  $values
+     * @param string $operator
+     *
+     * @return array
+     */
+    public function addTermsFilter($name, $field, $values)
+    {
+        if (!is_array($values)) {
+            $values = [$values];
+        }
+        $operator = $this->getOperator($name);
         $filterEmpty = true;
-        $filter = array();
+        $filter = [];
         switch ($operator) {
             case 'or' :
                 $termFilter = [
-                	'terms' => [
-                		$field => $this->_params [$name]
-        			]
-        		];
-        		$filter['or'][] = $termFilter;
+                    'terms' => [
+                        $field => $values,
+                    ],
+                ];
+                $filter['or'][] = $termFilter;
                 $filterEmpty = false;
                 break;
             case 'and' :
             default :
-                foreach ($this->_params [$name] as $type) {
+                foreach ($values as $type) {
                     $termFilter = [
-        				'term' => [
-        					$field => $type
-                		]
+                        'term' => [
+                            $field => $type,
+                        ],
                     ];
                     $filter['and'][] = $termFilter;
                     $filterEmpty = false;
@@ -83,36 +160,49 @@ class DataFilters
                 break;
         }
         if (!$filterEmpty) {
-            $this->_globalFilterList [$name] = $filter;
-            $this->_filters [$name] = $this->_params [$name];
-            $this->_setFilter = true;
+            SearchContext::addGlobalFilterList($name, $filter);
+            SearchContext::addFilters($name, $values);
+
+            return $filter;
+        } else {
+            return;
         }
     }
 
-    public function setLocaleFilter(array $values)
+    /**
+     * Locale filter.
+     *
+     * @param string $field
+     * @param array  $values
+     * @param string $operator
+     *
+     * @return array
+     */
+    public function addLocaleFilter(array $values)
     {
         $filter = [
-        	'or' => [
-        		['missing' => ['field' => 'availableLanguages']],
-	    		['terms' => ['availableLanguages' => $values]]
-        	]
+            'or' => [
+                ['missing' => ['field' => 'availableLanguages']],
+                ['terms' => ['availableLanguages' => $values]],
+            ],
         ];
-        //$this->_globalFilterList ['availableLanguages'] = $filter;
-        $this->_setFilter = true;
+        SearchContext::addGlobalFilterList('availableLanguages', $filter);
+
+        return $filter;
     }
 
     /**
-     * Build facet filter from name
+     * Build facet filter from name.
      *
      * @param string $name
-     *            filter name
+     *
      * @return array or null
      */
     public function _getFacetFilter($name)
     {
         // get mode for this facet
-        $operator = isset ($this->_facetOperators [$name]) ? $this->_facetOperators [$name] : 'and';
-        if (!empty ($this->_globalFilterList)) {
+        $operator = isset($this->_facetOperators [$name]) ? $this->_facetOperators [$name] : 'and';
+        if (!empty($this->_globalFilterList)) {
             $facetFilter = array();
             $result = false;
             foreach ($this->_globalFilterList as $key => $filter) {
@@ -131,80 +221,102 @@ class DataFilters
         }
     }
 
-    public function _addWorkspaceFilter() {
-        $workspacesFilter = array();
+    /**
+     * Workspace filter.
+     *
+     * @param array $readWorkspaceArray
+     *
+     * @return array
+     */
+    public function addWorkspaceFilter($readWorkspaceArray)
+    {
+        $filter = array();
         foreach ($readWorkspaceArray as $wsTerm) {
-            $workspacesFilter['or'][] = [
-                'term' => ['target' => $wsTerm]
+            $filter['or'][] = [
+                'term' => ['target' => $wsTerm],
             ];
         }
+        SearchContext::addGlobalFilterList('target', $filter);
 
-        $this->_globalFilterList ['target'] = $workspacesFilter;
-        $this->_setFilter = true;
+        return $filter;
     }
 
-    public function _addProductFilter() {
-        $isProductFilter = [
-            'term' => ['isProduct' => true]
+    /**
+     * Is product filter.
+     *
+     * @return array
+     */
+    public function addProductFilter()
+    {
+        $filter = [
+            'term' => ['isProduct' => true],
         ];
-        $this->_globalFilterList ['isProduct']=$isProductFilter;
+        SearchContext::addGlobalFilterList('isProduct', $filter);
+
+        return $filter;
     }
 
-    public function _addFrontEndFilter() {
+    /**
+     * Front end filter.
+     *
+     * @return array
+     */
+    public function addFrontEndFilter()
+    {
         // Only 'online' contents
         $onlineFilter = [
             'or' => [
                 ['term' => [
-                    'online' => true]
+                    'online' => true, ],
                 ],
-                ['missing'=> [
+                ['missing' => [
                     'field' => 'online',
                     'existence' => true,
-                    'null_value' => true
-                    ]
-                ]
-            ]
+                    'null_value' => true,
+                    ],
+                ],
+            ],
         ];
 
         //  Filter on start and end publication date
-        $now = Manager::getService('CurrentTime')->getCurrentTime();
+        $now = SearchContext::getService('CurrentTime')->getCurrentTime();
 
         // filter on start
         $beginFilter = [
             'or' => [
-                ['missing'=> [
+                ['missing' => [
                     'field' => 'startPublicationDate',
                     'existence' => true,
-                    'null_value' => true
+                    'null_value' => true,
                 ]],
                 ['term' => [
-                    'startPublicationDate' => 0
+                    'startPublicationDate' => 0,
                 ]],
                 ['range' => [
                     'startPublicationDate' => [
-                        'lte' => $now
-                    ]
-                ]]
-            ]
+                        'lte' => $now,
+                    ],
+                ]],
+            ],
         ];
 
         // filter on end : not set or not ended
         $endFilter = [
             'or' => [
-                ['missing'=> [
+                ['missing' => [
                     'field' => 'endPublicationDate',
                     'existence' => true,
-                    'null_value' => true
+                    'null_value' => true,
                 ]],
                 ['term' => [
-                    'endPublicationDate' => 0
+                    'endPublicationDate' => 0,
                 ]],
                 ['range' => [
                     'endPublicationDate' => [
-                        'gte' => $now
-                    ]
-                ]]
-            ]
+                        'gte' => $now,
+                    ],
+                ]],
+            ],
         ];
 
         // build complete filter
@@ -212,107 +324,156 @@ class DataFilters
             'and' => [
                 $onlineFilter,
                 $beginFilter,
-                $endFilter
-            ]
+                $endFilter,
+            ],
         ];
+        SearchContext::addGlobalFilterList('frontend', $frontEndFilter);
 
-        // push filter to global
-        $this->_globalFilterList ['frontend'] = $frontEndFilter;
-        $this->_setFilter = true;
+        return $frontEndFilter;
     }
 
-    public function _addGeoFilter() {
-        $contentTypeList = Manager::getService('ContentTypes')->getGeolocatedContentTypes();
-        if (!empty ($contentTypeList)) {
-            $geoFilter = array();
+    /**
+     * geohash_grid filter.
+     *
+     * @return array
+     */
+    public function addGeoFilter()
+    {
+        $contentTypeList = SearchContext::getService('ContentTypes')->getGeolocatedContentTypes();
+        $geoFilter = [];
+        if (!empty($contentTypeList)) {
             foreach ($contentTypeList as $contentTypeId) {
                 $geoFilter['or'][] = [
-                    'term' => ['contentType' => $contentTypeId]
+                    'term' => ['contentType' => $contentTypeId],
                 ];
             }
-            // push filter to global
-            $this->_globalFilterList ['geoTypes'] = $geoFilter;
-            $this->_setFilter = true;
         }
-
-        $this->geoAgreggation = [
+        $geoAgreggation = [
             'aggs' => [
                 'hash' => [
                     'geohash_grid' => [
-                        'field' => 'fields.position.location.coordinates'
-                    ]
-                ]
-            ]
+                        'field' => 'fields.position.location.coordinates',
+                    ],
+                ],
+            ],
         ];
+        if (!empty($geoFilter)) {
+            SearchContext::addGlobalFilterList('geoTypes', $geoFilter);
+        }
+
+        return [$geoFilter, $geoAgreggation];
     }
 
-    public function _addLastUpdateFilter() {
-        $rangeFrom = substr($this->_params ['lastupdatetime'],0,24);
-        $rangeTo = substr($this->_params ['lastupdatetime'],25, strlen($this->_params ['lastupdatetime'])-25);
+    /**
+     * Last update time filter.
+     *
+     * @param string or array $lastUpdateTime
+     *
+     * @return array
+     */
+    public function addLastUpdateFilter($lastUpdateTime)
+    {
+        if (is_array($lastUpdateTime)) {
+            $lastUpdateTime = $lastUpdateTime[0];
+        }
+        $rangeFrom = substr($lastUpdateTime, 0, 24);
+        $rangeTo = substr($lastUpdateTime, 25, strlen($lastUpdateTime) - 25);
         $range = [];
-        if ($rangeFrom && $rangeFrom != '*') $range['gte'] = $rangeFrom;
-        if ($rangeTo && $rangeTo != '*') $range['lte'] = $rangeTo;
+        if ($rangeFrom && $rangeFrom != '*') {
+            $range['gte'] = $rangeFrom;
+        }
+        if ($rangeTo && $rangeTo != '*') {
+            $range['lte'] = $rangeTo;
+        }
         $filter = [
             'range' => [
-                'lastUpdateTime' => $range
-            ]
+                'lastUpdateTime' => $range,
+            ],
         ];
-        $this->_globalFilterList ['lastupdatetime'] = $filter;
-        $this->_filters ['lastupdatetime'] = $this->_params ['lastupdatetime'];
-        $this->_setFilter = true;
+        SearchContext::addGlobalFilterList('lastupdatetime', $filter);
+        SearchContext::addFilters('lastupdatetime', $lastUpdateTime);
+
+        return $filter;
     }
 
-    public function _addPriceFilter() {
-        $splitPriceRange = explode('-',$this->_params ['price']);
-
-        $rangeFrom = ($splitPriceRange[0]!='*') ? $splitPriceRange[0] : false;
-        $rangeTo = ($splitPriceRange[1]!='*') ? $splitPriceRange[1] : false;
+    /**
+     * Price filter.
+     *
+     * @param string $price: price range
+     *
+     * @return array
+     */
+    public function addPriceFilter($price)
+    {
+        $splitPriceRange = explode('-', $price);
+        $rangeFrom = ($splitPriceRange[0] != '*') ? $splitPriceRange[0] : false;
+        $rangeTo = ($splitPriceRange[1] != '*') ? $splitPriceRange[1] : false;
         $range = [];
-        if ($rangeFrom) $range['gte'] = (int) $rangeFrom;
-        if ($rangeTo) $range['lte'] = (int) $rangeTo;
+        if ($rangeFrom) {
+            $range['gte'] = (int) $rangeFrom;
+        }
+        if ($rangeTo) {
+            $range['lte'] = (int) $rangeTo;
+        }
         $filter = [
             'range' => [
-                'productProperties.variations.price' => $range
-            ]
+                'productProperties.variations.price' => $range,
+            ],
         ];
-        $this->_globalFilterList ['price'] = $filter;
-        $this->_filters ['price'] = $this->_params ['price'];
-        $this->_setFilter = true;
+        SearchContext::addGlobalFilterList('price', $filter);
+        SearchContext::addFilters('price', $price);
+
+        return $filter;
     }
 
-    public function _addInStockFilter() {
+    /**
+     * Stock range filter.
+     *
+     * @param string $value: stock range
+     *
+     * @return array
+     */
+    public function addInStockFilter($value)
+    {
         $range = [];
         $range['gte'] = 1;
         $filter = [
             'range' => [
-                'productProperties.variations.stock' => $range
-            ]
+                'productProperties.variations.stock' => $range,
+            ],
         ];
-        $this->_globalFilterList ['inStock'] = $filter;
-        $this->_filters ['inStock'] = $this->_params ['inStock'];
-        $this->_setFilter = true;
+        SearchContext::addGlobalFilterList('inStock', $filter);
+        SearchContext::addFilters('inStock', $value);
+
+        return $filter;
     }
 
-    public function _addGeoBoxFilter() {
+    /**
+     * geo_bounding_box filter.
+     *
+     * @param array $coordinates
+     *
+     * @return array
+     */
+    public function addGeoBoxFilter($coordinates)
+    {
         $geoBoundingBoxFilter = [
             'geo_bounding_box' => [
                 'fields.position.location.coordinates' => [
                     'top_left' => [
-                        $this->_params ['inflon'] + 0,
-                        $this->_params ['suplat'] + 0
+                        $coordinates['inflon'] + 0,
+                        $coordinates['suplat'] + 0,
                     ],
                     'bottom_right' => [
-                        $this->_params ['suplon'] + 0,
-                        $this->_params ['inflat'] + 0
-                    ]
-                ]
-            ]
+                        $coordinates['suplon'] + 0,
+                        $coordinates['inflat'] + 0,
+                    ],
+                ],
+            ],
         ];
 
-        $this->_globalFilterList ['geo'] = $geoBoundingBoxFilter;
-        $this->_setFilter = true;
         // set precision for geohash aggregation
-        $bucketWidth = round($this->get_distance_m($this->_params ['inflat'], $this->_params ['inflon'], $this->_params ['inflat'], $this->_params ['suplon']) / 8);
+        $bucketWidth = round($this->get_distance_m($coordinates['inflat'], $coordinates['inflon'], $coordinates['inflat'], $coordinates['suplon']) / 8);
         switch ($bucketWidth) {
             case 0:
                 $geoPrecision = 1;
@@ -345,8 +506,257 @@ class DataFilters
                 $geoPrecision = 9;
                 break;
         }
+        SearchContext::addGlobalFilterList('geo', $geoBoundingBoxFilter);
+
+        return [$geoBoundingBoxFilter, $geoPrecision];
     }
 
+    /**
+     * Exclude ids filter.
+     *
+     * @param array $items
+     *
+     * @return array
+     */
+    public function excludeItemsFilter($items)
+    {
+        $filter = [];
+        $filter['bool'] = [
+            'must_not' => ['ids' => ['values' => $items]],
+        ];
+        SearchContext::addGlobalFilterList('excludeItems', $filter);
+
+        return $filter;
+    }
+
+    /**
+     * Format filter.
+     *
+     * @param string $id:     Filter id
+     * @param string $termId: Term id
+     *
+     * @return array
+     */
+    public function formatFilter($id, $termId)
+    {
+        switch ($id) {
+            case 'objectType':
+                $temp = [
+                    'id' => $id,
+                    'label' => SearchContext::getService('Translate')->translate('Search.Facets.Label.DataType', 'Data type'),
+                ];
+                foreach ($termId as $term) {
+                    $temp ['terms'] [] = [
+                        'term' => $term,
+                        'label' => SearchContext::getService('Translate')->translate('Search.Facets.Label.'.strtoupper($term), strtoupper($term)),
+                    ];
+                }
+                break;
+            case 'damType' :
+                $temp = [
+                    'id' => $id,
+                    'label' => SearchContext::getService('Translate')->translate('Search.Facets.Label.MediaType', 'Media type'),
+                ];
+                foreach ($termId as $term) {
+                    $termItem = SearchContext::getService('DamTypes')->findById($term);
+                    $temp ['terms'] [] = [
+                        'term' => $term,
+                        'label' => $termItem ['type'],
+                    ];
+                }
+                break;
+            case 'type' :
+                $temp = [
+                    'id' => $id,
+                    'label' => SearchContext::getService('Translate')->translate('Search.Facets.Label.ContentType', 'Content type'),
+                ];
+                foreach ($termId as $term) {
+                    $termItem = SearchContext::getService('ContentTypes')->findById($term);
+                    $temp ['terms'] [] = [
+                        'term' => $term,
+                        'label' => $termItem ['type'],
+                    ];
+                }
+                break;
+            case 'userType' :
+                $temp = [
+                    'id' => $id,
+                    'label' => SearchContext::getService('Translate')->translate('Search.Facets.Label.UserType', 'User type'),
+                ];
+                foreach ($termId as $term) {
+                    $termItem = SearchContext::getService('UserTypes')->findById($term);
+                    $temp ['terms'] [] = [
+                        'term' => $term,
+                        'label' => $termItem ['type'],
+                    ];
+                }
+                break;
+            case 'author' :
+                $temp = [
+                    'id' => $id,
+                    'label' => SearchContext::getService('Translate')->translate('Search.Facets.Label.Author', 'Author'),
+                ];
+                foreach ($termId as $term) {
+                    $termItem = SearchContext::getService('Users')->findById($term);
+                    $temp ['terms'] [] = [
+                        'term' => $term,
+                        'label' => $termItem ['name'],
+                    ];
+                }
+                break;
+            case 'userName' :
+                $temp = [
+                    'id' => $id,
+                    'label' => SearchContext::getService('Translate')->translate('Search.Facets.Label.UserName', 'User Name'),
+                ];
+                foreach ($termId as $term) {
+                    $temp ['terms'] [] = [
+                        'term' => $term,
+                        'label' => strtoupper($term),
+                    ];
+                }
+                break;
+            case 'lastupdatetime' :
+                $timeLabel = SearchContext::getTimeLabel();
+                $temp = [
+                    'id' => 'lastupdatetime',
+                    'label' => 'Date',
+                    'terms' => [
+                        [
+                            'term' => $termId,
+                            'label' => $timeLabel [strtotime(substr($termId, 0, 24)) * 1000],
+                        ],
+                    ],
+                ];
+                break;
+            case 'query' :
+                $temp = [
+                    'id' => $id,
+                    'label' => 'Query',
+                    'terms' => [
+                        [
+                            'term' => $termId,
+                            'label' => $termId,
+                        ],
+                    ],
+                ];
+                break;
+            case 'target' :
+                $temp = [
+                    'id' => $id,
+                    'label' => 'Target',
+                    'terms' => [
+                        [
+                            'term' => $termId,
+                            'label' => $termId,
+                        ],
+                    ],
+                ];
+                break;
+            case 'workspace' :
+                $temp = [
+                    'id' => $id,
+                    'label' => 'Workspace',
+                    'terms' => [
+                        [
+                            'term' => $termId,
+                            'label' => $termId,
+                        ],
+                    ],
+                ];
+                break;
+            case 'price' :
+                $priceRange = explode('-', $termId);
+                $priceLabel = SearchContext::getRangeLabel($priceRange[0], $priceRange[1]);
+                $temp = [
+                    'id' => 'price',
+                    'label' => 'InStock',
+                    'terms' => [
+                        [
+                            'term' => $termId,
+                            'label' => $priceLabel,
+                        ],
+                    ],
+                ];
+                break;
+            case 'inStock' :
+                $temp = [
+                    'id' => 'inStock',
+                    'label' => 'In stock',
+                    'terms' => [
+                        [
+                            'term' => $termId,
+                            'label' => 'Yes',
+                        ],
+                    ],
+                ];
+                break;
+            case 'navigation' :
+            default :
+                $regex = '/^[0-9a-z]{24}$/';
+                if (preg_match($regex, $id) || $id == 'navigation') { // Taxonomy facet use
+                    // mongoID
+                    $vocabularyItem = SearchContext::getService('Taxonomy')->findById($id);
+                    $temp = [
+                        'id' => $id,
+                        'label' => $vocabularyItem ['name'],
+                    ];
+
+                    foreach ($termId as $term) {
+                        $termItem = SearchContext::getService('TaxonomyTerms')->findById($term);
+                        $temp ['terms'] [] = [
+                            'term' => $term,
+                            'label' => $termItem ['text'],
+                        ];
+                    }
+                } else {
+                    // faceted field
+
+                    $temp = [
+                        'id' => $id,
+                        'label' => $id,
+                    ];
+
+                    $facetedFields = SearchContext::getFacetedFields();
+                    $intermediaryVal = SearchContext::searchLabel($facetedFields, 'name', $id);
+
+                    if ($intermediaryVal [0] ['cType'] == 'datefield' or  $intermediaryVal [0] ['cType'] == 'Ext.form.field.Date') {
+                        $isDateField = true;
+                    } else {
+                        $isDateField = false;
+                    }
+
+                    if (!is_array($termId)) {
+                        $termId = [$termId];
+                    }
+                    foreach ($termId as $term) {
+                        $newTerm = [
+                          'term' => $term,
+                          'label' => $term,
+                        ];
+                        if ($isDateField) {
+                            $newTerm['_type'] = 'date';
+                        }
+                        $temp ['terms'] [] = $newTerm;
+                    }
+                }
+
+                break;
+        }
+
+        return $temp;
+    }
+
+    /**
+     * Calculate distance between 2 geo points.
+     *
+     * @param float $lat1: latitude point1
+     * @param float $lng1: longitude point 1
+     * @param float $lat2: latitude point 2
+     * @param float $lng2: longitude point 2
+     *
+     * @return array
+     */
     protected function get_distance_m($lat1, $lng1, $lat2, $lng2)
     {
         $earth_radius = 6378137;
@@ -358,6 +768,21 @@ class DataFilters
         $dla = ($rla2 - $rla1) / 2;
         $a = (sin($dla) * sin($dla)) + cos($rla1) * cos($rla2) * (sin($dlo) * sin($dlo));
         $d = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
         return round($earth_radius * $d);
+    }
+
+    /**
+     * Get facet operator.
+     *
+     * @param string $name: Facet name
+     *
+     * @return string
+     */
+    protected function getOperator($name)
+    {
+        $operators = SearchContext::getFacetOperators();
+
+        return isset($operators [$name]) ? strtolower($operators [$name]) : 'and';
     }
 }

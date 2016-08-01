@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2015, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2016, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2015 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2016 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Elastic;
@@ -28,7 +28,6 @@ use Zend\Json\Json;
 class Contents extends DataAbstract
 {
 
-	protected $typesArray = array();
 	protected $service = 'ContentTypes';
 
 	/**
@@ -78,7 +77,7 @@ class Contents extends DataAbstract
 		];
 
 		// Normalize date fields
-		$contentType = $this->_getType($typeId);
+		$contentType = $this->_getType("ContentTypes", $typeId);
 		foreach ($contentType['fields'] as $field) {
 			if ($field['cType'] == 'datefield' or $field['cType'] == 'Ext.form.field.Date') {
 				$fieldName = $field['config']['name'];

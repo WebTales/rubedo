@@ -666,7 +666,7 @@ class ContentsResource extends AbstractResource
             $view = [
                 "date" => $currentTime,
                 "fingerprint" => $params['fingerprint'],
-                "contentId" => $content['id']
+                "itemId" => $content['typeId']."-".$content['id']
             ];
             Manager::getService("ElasticViewStream")->index($view);
         }

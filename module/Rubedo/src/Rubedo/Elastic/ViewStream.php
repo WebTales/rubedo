@@ -30,12 +30,13 @@ class ViewStream extends DataAbstract
     protected static $_index = 'insights';
     protected static $_type = 'contentview';
     protected static $_defaultHistoryDuration = 30;
+    protected static $_defaultHistorySize = 50;
 
 	/**
      * Mapping.
      */
     protected static $_mapping = [
-        '@timestamp' => [
+        'timestamp' => [
             'type' => 'date',
             'store' => 'yes',
         ],
@@ -48,7 +49,7 @@ class ViewStream extends DataAbstract
             'index' => 'not_analyzed',
             'store' => 'yes',
         ],
-        'contentId' => [
+        'itemId' => [
             'type' => 'string',
             'index' => 'not_analyzed',
             'store' => 'yes',
@@ -88,21 +89,16 @@ class ViewStream extends DataAbstract
      */
     public function index($data, $bulk = false)
     {
-        // Add timestamp if needed
         if (!isset($data['timestamp'])) {
             $data['timestamp'] = time() * 1000;
         }
-
         $params = [
             'index' => $this->_indexName,
             'type' => self::$_type,
             'body' => $data,
         ];
         $this->_client->index($params);
-
         $this->_client->indices()->refresh(['index' => $this->_indexName]);
-
-        //var_dump($this->getSignificantItems($data["fingerprint"]));
     }
 
     /**
@@ -112,25 +108,35 @@ class ViewStream extends DataAbstract
      * @param int $historyDuration
      * @return array
      */
-    public function getSignificantItems($fingerprint, $historyDuration = null)
+    public function getSignificantItems($fingerprint, $historyDuration = null, $size = null)
     {
-        // Set history duration
         $duration = isset($historyDuration) ? $historyDuration : self::$_defaultHistoryDuration;
-
-        // Get significant views
+        $size = isset($size) ? $size : self::$_defaultHistorySize;
+        $durationMask = sprintf("now-%dd/d", $duration);
+        $indexMask =  implode("-",explode("-",$this->_indexName,-1))."-*";
         $params = [
-            'index' => $this->_indexName,
+            'index' => $indexMask,
             'type' => self::$_type,
+            'size' => 0,
             'body' => [
                 "query" => [
-                    "term" => [
-                        "fingerprint" => $fingerprint
+                    "constant_score" => [
+                        "filter" => [
+                            "bool" => [
+                                "must" => [
+                                    ["term" => ["fingerprint" => $fingerprint]],
+                                    ["range" => ["timestamp" => ["gte" => $durationMask]]]
+                                ]
+                            ]
+                        ]
                     ]
                 ],
                 "aggs" => [
                     "significantViews" => [
                         "significant_terms" => [
-                            "field" => "contentId"
+                            "field" => "itemId",
+                            "min_doc_count" => 1,
+                            'size' => $size,
                         ]
                     ]
                 ]
@@ -138,8 +144,12 @@ class ViewStream extends DataAbstract
         ];
         $results = $this->_client->search($params);
         $significantItems = [];
-        foreach($results['hits']['hits'] as $key => $result) {
-            $significantItems[] = $result['_source']['contentId'];
+        foreach($results["aggregations"]["significantViews"]["buckets"] as $item) {
+            list($typeId,$itemId) = explode("-", $item["key"]);
+            $significantItems[] = [
+                "_type" => $typeId,
+                "_id" => $itemId
+            ];
         }
         return $significantItems;
     }
@@ -154,8 +164,6 @@ class ViewStream extends DataAbstract
      */
     public function getRecommendedItems($fingerprint, $viewsHistory)
     {
-
-        // Get recommended views
         $params = [
             'index' => $this->_indexName,
             'type' => self::$_type,

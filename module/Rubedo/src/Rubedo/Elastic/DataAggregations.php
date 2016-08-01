@@ -2,190 +2,275 @@
 
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2014, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2016, WebTales (http://www.webtales.fr/).
  * All rights reserved.
- * licensing@webtales.fr
+ * licensing@webtales.fr.
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
  * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
- * @package    Rubedo
- * @copyright  Copyright (c) 2012-2015 WebTales (http://www.webtales.fr)
+ *
+ * @copyright  Copyright (c) 2012-2016 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
 namespace Rubedo\Elastic;
 
-use Zend\Json\Json;
-use Rubedo\Elastic\DataAggregations;
-
 /**
- * Class implementing the Rubedo API to Elastic Search using elastic API
+ * Aggregation constructor for Elasticsearch queries.
  *
  * @author dfanchon
+ *
  * @category Rubedo
- * @package Rubedo
  */
 class DataAggregations
 {
+    /**
+     * Aggregation dispatcher.
+     *
+     * @param string $facetName
+     * @param string $fieldName
+     * @param string $orderField
+     * @param string $orderDirection
+     * @param int $size
+     *
+     * @return array
+     */
+    public function addAggregation($facetName, $fieldName = null, $orderField = '_count', $orderDirection = 'desc', $size = 100)
+    {
+        if (self::isFacetDisplayed($facetName)) {
+            switch ($facetName) {
+                case 'objectType':
+                case 'type':
+                case 'damType':
+                case 'userType':
+                case 'author':
+                case 'userName':
+                    return self::addTermsFacet($facetName, $fieldName, $orderField, $orderDirection, $size);
+                    break;
+                case 'lastupdatetime':
+                    return self::addDateRangeFacet($facetName, $fieldName);
+                    break;
+                case 'inStock':
+                    $ranges = [
+                        ['to' => 0],
+                        ['from' => 1],
+                    ];
+
+                    return self::addRangeFacet($facetName, $fieldName, $ranges);
+                    break;
+                case 'price':
+                    $ranges = [
+                        ['from' => 0, 'to' => 5],
+                        ['from' => 6, 'to' => 15],
+                        ['from' => 16, 'to' => 25],
+                        ['from' => 26, 'to' => 50],
+                        ['from' => 51],
+                    ];
+
+                    return self::addRangeFacet($facetName, $fieldName, $ranges);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     /**
-     * Is the context a front office rendering ?
+     * Terms aggregation.
      *
-     * @var boolean
+     * @param string $facetName
+     * @param string $fieldName
+     * @param string $orderField
+     * @param string $orderDirection
+     * @param int $size
+     *
+     * @return array
      */
-    protected static $_isFrontEnd;
-    protected $_globalFilterList = array();
-    //protected $_filters;
-    //protected $_setFilter;
-    protected $_params;
-    protected $_facetOperators;
-    protected $_displayedFacets = array();
-    protected $_facetDisplayMode;
-    protected $contentTypesArray = array();
-    private $table = '0123456789bcdefghjkmnpqrstuvwxyz';
+    public function addTermsFacet($facetName, $fieldName = null, $orderField = '_count', $orderDirection = 'desc', $size = 100)
+    {
 
-    protected $filters;
+        // Set default value for fieldName
+        if (is_null($fieldName)) {
+            $fieldName = $facetName;
+        }
 
+        // Exclude active Facets for this vocabulary
+        $exclude = self::_excludeActiveFacets($facetName);
+
+        // Apply filters from other facets
+        $facetFilter = self::_getFacetFilter($facetName);
+
+        // Build facet
+        $agg = [
+            'filter' => $facetFilter,
+            'aggs' => [
+                'aggregation' => [
+                    'terms' => [
+                        'field' => $fieldName,
+                        'size' => $size,
+                        'order' => [$orderField => $orderDirection],
+                    ],
+                ],
+            ],
+        ];
+
+        if ($exclude != ['']) {
+            $agg['aggs']['aggregation']['terms']['exclude'] = $exclude;
+        }
+
+        SearchContext::addAggs($facetName, $agg);
+
+        return $agg;
+    }
 
     /**
-     * Add facet to Query
+     * Date range aggregation (default for lastupdatetime ).
      *
-     * @param 	string $facetName
-     *        	string $fieldName
-     *        	string $orderField
-     *        	string $orderDirection
-     * @return 	array
+     * @param string $facetName
+     * @param string $fieldName
+     * @param array $ranges
+     *
+     * @return array
      */
+    protected function addDateRangeFacet($facetName, $fieldName = null, $ranges = null)
+    {
+        $d = SearchContext::getService('CurrentTime')->getCurrentTime();
 
-    protected function _addTermsFacet($facetName, $fieldName = null, $orderField = '_count', $orderDirection = 'desc', $size = 100) {
+        // Default ranges
+        if (is_null($ranges)) {
+            $lastday = (string) mktime(0, 0, 0, date('m', $d), date('d', $d) - 1, date('Y', $d)) * 1000;
+            $lastweek = (string) mktime(0, 0, 0, date('m', $d), date('d', $d) - 7, date('Y', $d)) * 1000;
+            $lastmonth = (string) mktime(0, 0, 0, date('m', $d) - 1, date('d', $d), date('Y', $d)) * 1000;
+            $lastyear = (string) mktime(0, 0, 0, date('m', $d), date('d', $d), date('Y', $d) - 1) * 1000;
 
-    	// Set default value for fieldName
-    	If (is_null($fieldName)) $fieldName = $facetName;
+            $ranges = [
+                ['from' => $lastday],
+                ['from' => $lastweek],
+                ['from' => $lastmonth],
+                ['from' => $lastyear],
+            ];
+        }
 
-    	// Exclude active Facets for this vocabulary
-    	$exclude = $this->_excludeActiveFacets($facetName);
+        // Set default value for fieldName
+        if (is_null($fieldName)) {
+            $fieldName = $facetName;
+        }
 
-    	// Apply filters from other facets
-    	$facetFilter = $_getFacetFilter($facetName);
+        // Apply filters from other facets
+        $facetFilter = self::_getFacetFilter($facetName);
 
-    	// Build facet
-    	$result = [
-    		'filter' => $facetFilter,
-    		'aggs' => [
-    			'aggregation' => [
-    				'terms' => [
-    					'field' => 	$fieldName,
-    					'size' => $size,
-    					'order' => [$orderField => $orderDirection]
-    				]
-    			]
-    		]
-    	];
+        // Build facet
+        $agg = [
+            'filter' => $facetFilter,
+            'aggs' => [
+                'aggregation' => [
+                    'date_range' => [
+                        'field' => $fieldName,
+                        'ranges' => $ranges,
+                    ],
+                ],
+            ],
+        ];
 
-    	if ($exclude!=['']) $result['aggs']['aggregation']['terms']['exclude'] = $exclude;
+        SearchContext::addAggs($facetName, $agg);
 
-    	return $result;
+        return $agg;
     }
 
-    protected function _addDateRangeFacet($facetName, $fieldName = null, $ranges) {
+    /**
+     * Range aggregation.
+     *
+     * @param string $facetName
+     * @param string $fieldName
+     * @param array $ranges
+     *
+     * @return array
+     */
+    protected function addRangeFacet($facetName, $fieldName = null, $ranges = null)
+    {
 
-    	// Set default value for fieldName
-    	If (is_null($fieldName)) $fieldName = $facetName;
+        // Set default value for fieldName
+        if (is_null($fieldName)) {
+            $fieldName = $facetName;
+        }
 
-    	// Apply filters from other facets
-    	$facetFilter = self::_getFacetFilter($facetName);
+        // Apply filters from other facets
+        $facetFilter = self::_getFacetFilter($facetName);
 
-    	// Build facet
-    	$result = [
-    		'filter' => $facetFilter,
-    		'aggs' => [
-    			'aggregation' => [
-    				'date_range' => [
-    					'field' => 	$fieldName,
-    					'ranges' => $ranges
-				    ]
-    			]
-    		]
-    	];
+        // Build facet
+        $agg = [
+            'filter' => $facetFilter,
+            'aggs' => [
+                'aggregation' => [
+                    'range' => [
+                        'field' => $fieldName,
+                        'ranges' => $ranges,
+                    ],
+                ],
+            ],
+        ];
 
-    	return $result;
+        SearchContext::addAggs($facetName, $agg);
+
+        return $agg;
     }
 
-    protected function _addDateHistogramFacet($facetName, $fieldName = null, $interval = 'day') {
+    /**
+     * geohash_grid aggregation.
+     *
+     * @param int $geoPrecision
 
-    	// Set default value for fieldName
-    	If (is_null($fieldName)) $fieldName = $facetName;
+     * @return array
+     */
+    public function addGeoFacet($geoPrecision)
+    {
 
-    	// Apply filters from other facets
-    	$facetFilter = self::_getFacetFilter($facetName);
+        // Apply filters from other facets
+        $facetFilter = self::_getFacetFilter('agf');
 
-    	// Build facet
-    	$result = [
-    		'filter' => $facetFilter,
-    		'aggs' => [
-    			'aggregation' => [
-    				'date_histogram' => [
-    					'field' => 	$fieldName,
-    					'interval' => $interval
-				    ]
-    			]
-    		]
-    	];
-    	return $result;
-    }
+        // Build facet
+        $agg = [
+            'filter' => $facetFilter,
+            'aggs' => [
+                'hash' => [
+                    'geohash_grid' => [
+                        'field' => 'fields.position.location.coordinates',
+                        'precision' => $geoPrecision,
+                    ],
+                ],
+            ],
+        ];
 
-    protected function _addRangeFacet($facetName, $fieldName = null, $ranges) {
+        SearchContext::addAggs('agf', $agg);
 
-    	// Set default value for fieldName
-    	If (is_null($fieldName)) $fieldName = $facetName;
-
-    	// Apply filters from other facets
-    	$facetFilter = self::_getFacetFilter($facetName);
-
-    	// Build facet
-    	$result = [
-    		'filter' => $facetFilter,
-    		'aggs' => [
-    			'aggregation' => [
-	    			'range' => [
-	    				'field' => 	$fieldName,
-	    				'ranges' => $ranges
-	    			]
-    			]
-    		]
-    	];
-
-    	return $result;
-    }
-
-    protected function _excludeActiveFacets ($facetName) {
-    	$exclude = [''];
-    	if ($this->_facetDisplayMode != 'checkbox' and isset ($filters->_filters [$facetName])) {
-    		$exclude = $filters->_filters [$facetName];
-    	}
-    	return $exclude;
+        return $agg;
     }
 
     /**
      * Is displayed Facet ?
      *
      * @param string $name
-     *            facet name
-     * @return boolean
+     *                     facet name
+     *
+     * @return bool
      */
-    protected function _isFacetDisplayed($name)
+    public function isFacetDisplayed($name)
     {
-        if (!self::$_isFrontEnd or $this->_displayedFacets == array(
-                'all'
-            ) or in_array($name, $this->_displayedFacets) or in_array(array(
+        //var_dump($name);
+        $isFrontEnd = SearchContext::getIsFrontEnd();
+        $displayedFacets = SearchContext::getDisplayedFacets();
+        if (!$isFrontEnd or $displayedFacets == array(
+                'all',
+            ) or in_array($name, $displayedFacets) or in_array(array(
                 'name' => $name,
-                'operator' => 'AND'
-            ), $this->_displayedFacets) or in_array(array(
+                'operator' => 'AND',
+            ), $displayedFacets) or in_array(array(
                 'name' => $name,
-                'operator' => 'OR'
-            ), $this->_displayedFacets)
+                'operator' => 'OR',
+            ), $displayedFacets)
         ) {
             return true;
         } else {
@@ -193,80 +278,317 @@ class DataAggregations
         }
     }
 
-    protected function getRangeLabel($from, $to, $currency = "€") {
-
-    	$from = (int) $from;
-    	$to = (int) $to;
-    	if (isset($from) && $from!='*') {
-    		if (isset($to) && $to!='*') {
-    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeFrom', 'De') .' '.$from. ' '. $currency. ' '. $this->_getService('Translate')->translate('Search.Facets.Label.RangeTo', 'à').' '.$to. ' '.$currency;
-    		} else {
-    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeGreaterThan', 'Plus de') .' '.$from.' '.$currency;
-    		}
-    	} else {
-    		if (isset($to) && $to!='*') {
-    			$label = $this->_getService('Translate')->translate('Search.Facets.Label.RangeLessThan', 'Moins que') .' '.$to.' '.$currency;
-    		}
-    	}
-    	return $label;
-    }
-
-    protected function searchLabel($array, $key, $value)
+    /**
+     * Add filter to exclude active facets from aggregations.
+     *
+     * @param string $facetName
+     *
+     * @return array
+     */
+    protected function _excludeActiveFacets($facetName)
     {
-        $results = array();
-
-        if (is_array($array)) {
-            if (isset ($array [$key]) && $array [$key] == $value)
-                $results [] = $array;
-
-            foreach ($array as $subarray)
-                $results = array_merge($results, $this->searchLabel($subarray, $key, $value));
+        $exclude = [''];
+        $filters = SearchContext::getFilters();
+        $facetDisplayMode = SearchContext::getFacetDisplayMode();
+        if ($facetDisplayMode != 'checkbox' and isset($filters [$facetName])) {
+            $exclude = $filters [$facetName];
         }
 
-        return $results;
+        return $exclude;
     }
 
     /**
-     * @param string $hash a geohash
-     * @author algorithm based on code by Alexander Songe <a@songe.me>
-     * @see https://github.com/asonge/php-geohash/issues/1
+     * Get filter from global filter list.
+     *
+     * @param string $name
+     *
+     * @return array
      */
-    private function geoHashDecode($hash)
+    protected function _getFacetFilter($name)
     {
-        $ll = array();
-        $minlat = -90;
-        $maxlat = 90;
-        $minlon = -180;
-        $maxlon = 180;
-        $latE = 90;
-        $lonE = 180;
-        for ($i = 0, $c = strlen($hash); $i < $c; $i++) {
-            $v = strpos($this->table, $hash[$i]);
-            if (1 & $i) {
-                if (16 & $v) $minlat = ($minlat + $maxlat) / 2; else $maxlat = ($minlat + $maxlat) / 2;
-                if (8 & $v) $minlon = ($minlon + $maxlon) / 2; else $maxlon = ($minlon + $maxlon) / 2;
-                if (4 & $v) $minlat = ($minlat + $maxlat) / 2; else $maxlat = ($minlat + $maxlat) / 2;
-                if (2 & $v) $minlon = ($minlon + $maxlon) / 2; else $maxlon = ($minlon + $maxlon) / 2;
-                if (1 & $v) $minlat = ($minlat + $maxlat) / 2; else $maxlat = ($minlat + $maxlat) / 2;
-                $latE /= 8;
-                $lonE /= 4;
-            } else {
-                if (16 & $v) $minlon = ($minlon + $maxlon) / 2; else $maxlon = ($minlon + $maxlon) / 2;
-                if (8 & $v) $minlat = ($minlat + $maxlat) / 2; else $maxlat = ($minlat + $maxlat) / 2;
-                if (4 & $v) $minlon = ($minlon + $maxlon) / 2; else $maxlon = ($minlon + $maxlon) / 2;
-                if (2 & $v) $minlat = ($minlat + $maxlat) / 2; else $maxlat = ($minlat + $maxlat) / 2;
-                if (1 & $v) $minlon = ($minlon + $maxlon) / 2; else $maxlon = ($minlon + $maxlon) / 2;
-                $latE /= 4;
-                $lonE /= 8;
+        // get mode for this facet
+        $operatorList = SearchContext::getFacetOperators();
+        $operator = isset($operatorList[$name]) ? $operatorList[$name] : 'and';
+        $globalFilterList = SearchContext::getGlobalFilterList();
+        if (!empty($globalFilterList)) {
+            $facetFilter = array();
+            $result = false;
+            foreach ($globalFilterList as $key => $filter) {
+                if ($key != $name or $operator == 'and') {
+                    $facetFilter['and'][] = $filter;
+                    $result = true;
+                }
             }
+            if ($result) {
+                return $facetFilter;
+            } else {
+                return new \stdClass();
+            }
+        } else {
+            return new \stdClass();
         }
-        $ll['minlat'] = $minlat;
-        $ll['minlon'] = $minlon;
-        $ll['maxlat'] = $maxlat;
-        $ll['maxlon'] = $maxlon;
-        $ll['medlat'] = ($minlat + $maxlat) / 2;
-        $ll['medlon'] = ($minlon + $maxlon) / 2;
-        return $ll;
     }
 
+    /**
+     * Add labels to facet.
+     *
+     * @param string $id    Facet Id
+     * @param array  $facet Facet data
+     * @param int    $total
+     *
+     * @return array
+     */
+    public function formatFacet($id, $facet, $total)
+    {
+        $temp = (array) $facet['aggregation'];
+
+        $renderFacet = true;
+        if (!empty($temp)) {
+            $temp ['id'] = $id;
+            switch ($id) {
+
+                case 'navigation' :
+
+                    $temp ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.Navigation', 'Navigation');
+                    if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                        foreach ($temp ['buckets'] as $key => $value) {
+                            $temp ['terms'] [$key] ['term'] = $value ['key'];
+                            $termItem = SearchContext::getService('TaxonomyTerms')->getTerm($value ['key'], 'navigation');
+                            $temp ['terms'] [$key] ['label'] = $termItem ['Navigation'];
+                            $temp['terms'] [$key] ['count'] = $value['doc_count'];
+                        }
+                    } else {
+                        $renderFacet = false;
+                    }
+                    break;
+
+                case 'damType' :
+
+                    $temp ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.MediaType', 'Media type');
+                    if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                        foreach ($temp ['buckets'] as $key => $value) {
+                            $termItem = SearchContext::getService('DamTypes')->findById($value ['key']);
+                            if ($termItem && isset($termItem ['type'])) {
+                                $temp ['terms'] [$key] ['term'] = $value ['key'];
+                                $temp ['terms'] [$key] ['label'] = $termItem ['type'];
+                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
+                            }
+                        }
+                    } else {
+                        $renderFacet = false;
+                    }
+                    break;
+
+                case 'objectType' :
+
+                    $temp ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.DataType', 'Data type');
+                    foreach ($temp ['buckets'] as $key => $value) {
+                        $temp ['terms'] [$key] ['term'] = $value ['key'];
+                        $temp ['terms'] [$key] ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.'.strtoupper($value ['key']), strtoupper($value ['key']));
+                        $temp['terms'] [$key] ['count'] = $value['doc_count'];
+                    }
+                    break;
+
+                case 'type' :
+
+                    $temp ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.ContentType', 'Content type');
+                    if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                        foreach ($temp ['buckets'] as $key => $value) {
+                            $temp ['terms'] [$key] ['term'] = $value ['key'];
+                            $termItem = SearchContext::getService('ContentTypes')->findById($value ['key']);
+                            $temp ['terms'] [$key] ['label'] = $termItem ['type'];
+                            $temp['terms'] [$key] ['count'] = $value['doc_count'];
+                        }
+                    } else {
+                        $renderFacet = false;
+                    }
+                    break;
+
+                case 'userType' :
+
+                    $temp ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.UserType', 'User type');
+                    if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                        foreach ($temp ['buckets'] as $key => $value) {
+                            $temp ['terms'] [$key] ['term'] = $value ['key'];
+                            $termItem = SearchContext::getService('UserTypes')->findById($value ['key']);
+                            $temp ['terms'] [$key] ['label'] = $termItem ['type'];
+                            $temp['terms'] [$key] ['count'] = $value['doc_count'];
+                        }
+                    } else {
+                        $renderFacet = false;
+                    }
+                    break;
+
+                case 'author' :
+                    $temp ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.Author', 'Author');
+                    $facetDisplayMode = SearchContext::getFacetDisplayMode();
+                    if ($facetDisplayMode == 'checkbox' or (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0)) {
+                        $collection = SearchContext::getService('Users');
+                        foreach ($temp ['buckets'] as $key => $value) {
+                            if ($value ['key'] != 'rubedo') {
+                                $termItem = $collection->findById($value ['key']);
+                                $temp ['terms'][] = [
+                                    'term' => $value ['key'],
+                                    'label' => $termItem ['name'],
+                                    'count' => $value['doc_count'],
+                                 ];
+                            }
+                        }
+                    } else {
+                        $renderFacet = false;
+                    }
+                    break;
+
+                case 'userName' :
+
+                    $temp ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.UserName', 'User Name');
+                    foreach ($temp ['buckets'] as $key => $value) {
+                        $temp ['terms'] [$key] ['term'] = $value ['key'];
+                        $temp ['terms'] [$key] ['label'] = strtoupper($value ['key']);
+                        $temp['terms'] [$key] ['count'] = $value['doc_count'];
+                    }
+
+                    break;
+
+                case 'lastupdatetime' :
+
+                    $temp ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.ModificationDate', 'Modification date');
+                    $timeLabel = SearchContext::getTimeLabel();
+                    if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                        $temp ['_type'] = 'range';
+                        $temp ['ranges'] = array_values($temp ['buckets']);
+
+                        foreach ($temp ['buckets'] as $key => $value) {
+                            $rangeCount = $value ['doc_count'];
+                            // unset facet when count = 0 or total results
+                            // count when display mode is not set to
+                            // checkbox
+                            $facetDisplayMode = SearchContext::getFacetDisplayMode();
+                            if ($facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount <= $total)) {
+                                $temp ['ranges'] [$key] ['label'] = isset($timeLabel [$value ['from']]) ? $timeLabel [$value ['from']] : 'Time label';
+                                $temp ['ranges'] [$key] ['count'] = $rangeCount;
+                                unset($temp ['ranges'] [$key] ['doc_count']);
+                            } else {
+                                unset($temp ['ranges'] [$key]);
+                            }
+                        }
+                        $temp ['ranges'] = array_values($temp ['ranges']);
+                    } else {
+                        $renderFacet = false;
+                    }
+                    break;
+
+                case 'price' :
+
+                    $temp ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.Price', 'Price');
+                    if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                        $temp ['_type'] = 'range';
+                        $temp ['ranges'] = array_values($temp ['buckets']);
+
+                        foreach ($temp ['buckets'] as $key => $value) {
+                            $rangeCount = $value ['doc_count'];
+                            // unset facet when count = 0 or total results
+                            // count when display mode is not set to
+                            // checkbox
+                            $facetDisplayMode = SearchContext::getFacetDisplayMode();
+                            if ($facetDisplayMode == 'checkbox' or ($rangeCount > 0 and $rangeCount <= $total)) {
+                                $from = isset($value['from']) ? $value['from'] : null;
+                                $to = isset($value['to']) ? $value['to'] : null;
+                                $temp ['ranges'] [$key] ['label'] = SearchContext::getRangeLabel($from, $to);
+                                $temp ['ranges'] [$key] ['count'] = $rangeCount;
+                                unset($temp ['ranges'] [$key] ['doc_count']);
+                            } else {
+                                unset($temp ['ranges'] [$key]);
+                            }
+                        }
+                        $temp ['ranges'] = array_values($temp ['ranges']);
+                    } else {
+                        $renderFacet = false;
+                    }
+                    break;
+
+                case 'inStock' :
+
+                    $temp ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.InStock', 'In stock');
+                    if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                        $temp ['_type'] = 'range';
+                        $temp ['ranges'] = array_values($temp ['buckets']);
+
+                        foreach ($temp ['buckets'] as $key => $value) {
+                            $rangeCount = $value ['doc_count'];
+                            // unset facet when count = 0 or total results
+                            // count when display mode is not set to
+                            // checkbox
+                            if ($rangeCount > 0) {
+                                $from = isset($value['from']) ? $value['from'] : null;
+                                $to = isset($value['to']) ? $value['to'] : null;
+                                $temp ['ranges'] [$key] ['label'] = 'Yes';
+                                $temp ['ranges'] [$key] ['count'] = $rangeCount;
+                                unset($temp ['ranges'] [$key] ['doc_count']);
+                            } else {
+                                unset($temp ['ranges'] [$key]);
+                            }
+                        }
+                        $temp ['ranges'] = array_values($temp ['ranges']);
+                    } else {
+                        $renderFacet = false;
+                    }
+                    break;
+
+                default :
+                    $regex = '/^[0-9a-z]{24}$/';
+                    if (preg_match($regex, $id)) { // Taxonomy facet use
+                        // mongoID
+                        $vocabularyItem = SearchContext::getService('Taxonomy')->findById($id);
+                        $temp ['label'] = $vocabularyItem ['name'];
+                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                            foreach ($temp ['buckets'] as $key => $value) {
+                                $termItem = SearchContext::getService('TaxonomyTerms')->findById($value ['key']);
+                                if ($termItem) {
+                                    $temp ['terms'] [] = [
+                                            'label' => $termItem ['text'],
+                                            'term' => $value ['key'],
+                                            'count' => $value['doc_count'],
+                                        ];
+                                }
+                            }
+                            $temp ['terms'] = array_values($temp ['terms']);
+                        } else {
+                            $renderFacet = false;
+                        }
+                    } else {
+                        // faceted field
+                        $facetedFields = SearchContext::getFacetedFields();
+                        $intermediaryVal = SearchContext::searchLabel($facetedFields, 'name', $id);
+                        $temp ['label'] = $intermediaryVal [0] ['label'];
+
+                        if ($intermediaryVal [0] ['cType'] == 'datefield' or  $intermediaryVal [0] ['cType'] == 'Ext.form.field.Date') {
+                            $temp ['_type'] = 'date';
+                            $isDateField = true;
+                        } else {
+                            $isDateField = false;
+                        }
+
+                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                            foreach ($temp ['buckets'] as $key => $value) {
+                                $temp ['terms'] [$key] ['term'] = $value ['key'];
+                                $temp['terms'] [$key] ['count'] = $value['doc_count'];
+                                $temp ['terms'] [$key] ['label'] = $isDateField ? $value ['key_as_string'] : $value ['key'];
+                            }
+                            $temp ['terms'] = array_values($temp ['terms']);
+                        }
+                    }
+                    break;
+            }
+            if ($renderFacet) {
+                unset($temp['buckets']);
+                unset($temp['doc_count_error_upper_bound']);
+                unset($temp['sum_other_doc_count']);
+
+                return $temp;
+            } else {
+                return;
+            }
+        }
+    }
 }

@@ -26,11 +26,10 @@ namespace Rubedo\Elastic;
  */
 class ClickStream extends DataAbstract
 {
-
     protected static $_index = 'insights';
     protected static $_type = 'clickstream';
 
-	/**
+    /**
      * Mapping.
      */
     protected static $_mapping = [
@@ -138,7 +137,6 @@ class ClickStream extends DataAbstract
      * Index.
      *
      * @param obj  $data content data
-     * @param bool $bulk
      *
      * @return array
      */
@@ -158,7 +156,6 @@ class ClickStream extends DataAbstract
         $this->_client->index($params);
 
         $this->_client->indices()->refresh(['index' => $this->_indexName]);
-
     }
 
     /**
