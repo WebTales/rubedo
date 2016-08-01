@@ -1,7 +1,7 @@
 <?php
 /**
  * Rubedo -- ECM solution
- * Copyright (c) 2015, WebTales (http://www.webtales.fr/).
+ * Copyright (c) 2016, WebTales (http://www.webtales.fr/).
  * All rights reserved.
  * licensing@webtales.fr
  *
@@ -11,7 +11,7 @@
  *
  * @category   Rubedo
  * @package    Rubedo
- * @copyright  Copyright (c) 2012-2015 WebTales (http://www.webtales.fr)
+ * @copyright  Copyright (c) 2012-2016 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
 namespace Rubedo\Elastic;
@@ -26,7 +26,6 @@ namespace Rubedo\Elastic;
 class Users extends DataAbstract
 {
 
-	protected $typesArray = array();
 	protected $service = 'UserTypes';
 
 	/**
@@ -71,17 +70,17 @@ class Users extends DataAbstract
         	'photo' => $photo
         ];
 
-				// Normalize date fields
-				$userType = $this->_getType($typeId);
-				foreach ($userType['fields'] as $field) {
-					if ($field['cType'] == 'datefield' or $field['cType'] == 'Ext.form.field.Date') {
-						$fieldName = $field['config']['name'];
-						if (isset($indexData['fields'][$fieldName])) {
-							$ts = intval($indexData['fields'][$fieldName]);
-							$indexData['fields'][$fieldName] = mktime(0, 0, 0, date('m', $ts), date('d', $ts), date('Y', $ts)) * 1000;
-						}
-					}
+		// Normalize date fields
+		$userType = $this->_getType('UserTypes',$typeId);
+		foreach ($userType['fields'] as $field) {
+			if ($field['cType'] == 'datefield' or $field['cType'] == 'Ext.form.field.Date') {
+				$fieldName = $field['config']['name'];
+				if (isset($indexData['fields'][$fieldName])) {
+					$ts = intval($indexData['fields'][$fieldName]);
+					$indexData['fields'][$fieldName] = mktime(0, 0, 0, date('m', $ts), date('d', $ts), date('Y', $ts)) * 1000;
 				}
+			}
+		}
 
         if(isset($data["status"])) {
             $indexData["status"] = $data["status"];

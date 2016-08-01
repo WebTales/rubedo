@@ -3,17 +3,18 @@
  * Rubedo -- ECM solution
  * Copyright (c) 2014, WebTales (http://www.webtales.fr/).
  * All rights reserved.
- * licensing@webtales.fr
+ * licensing@webtales.fr.
  *
  * Open Source License
  * ------------------------------------------------------------------------------------------
  * Rubedo is licensed under the terms of the Open Source GPL 3.0 license.
  *
  * @category   Rubedo
- * @package    Rubedo
+ *
  * @copyright  Copyright (c) 2012-2014 WebTales (http://www.webtales.fr)
  * @license    http://www.gnu.org/licenses/gpl.html Open Source GPL 3.0 license
  */
+
 namespace Rubedo\Elastic;
 
 use Rubedo\Services\Manager;
@@ -22,17 +23,16 @@ use WebTales\MongoFilters\Filter;
 use Elasticsearch\ClientBuilder;
 
 /**
- * Class implementing the Rubedo API to Elastic Search indexing services using Elasticsearch API
+ * Class implementing the Rubedo API to Elastic Search indexing services using Elasticsearch API.
  *
  * @author dfanchon
+ *
  * @category Rubedo
- * @package Rubedo
  */
 class DataAbstract
 {
-
     /**
-     * Default value of hostname
+     * Default value of hostname.
      *
      * Used by the constructor if no specific params
      *
@@ -41,7 +41,7 @@ class DataAbstract
     protected static $_defaultHost;
 
     /**
-     * Default transport value
+     * Default transport value.
      *
      * Used by the constructor if no specific params
      *
@@ -50,7 +50,7 @@ class DataAbstract
     protected static $_defaultTransport;
 
     /**
-     * Default port value
+     * Default port value.
      *
      * Used by the constructor if no specific params
      *
@@ -59,56 +59,63 @@ class DataAbstract
     protected static $_defaultPort;
 
     /**
-     * Elastic search client
+     * Elastic search client.
      *
      * @var \Elasticsearch_Client
      */
     protected $_client;
 
     /**
-     * Configuration options
+     * Configuration options.
      *
      * @var array
      */
     protected static $_options;
 
     /**
-     * Index settings
+     * Index settings.
      *
      * @var array
      */
     protected static $_indexSettings;
 
     /**
-     * Index Name
+     * Index Name.
      *
      * @var array
      */
     protected $_indexName;
 
     /**
-     * Active languages
+     * Active languages.
      *
      * @var array
      */
     protected $_activeLanguages;
 
     /**
-     * Active analyzers
+     * Active analyzers.
      *
      * @var array
      */
     protected $_activeAnalysers;
 
     /**
-     * Documents queue for indexing
+     * Documents queue for indexing.
      *
      * @var array
      */
     protected $_documents;
 
     /**
-     * Load ES configuration from file
+     * Cache for types.
+     *
+     * @var array
+     */
+    protected $_types;
+
+    /**
+     * Load ES configuration from file.
      */
     public function __construct()
     {
@@ -118,12 +125,12 @@ class DataAbstract
     }
 
     /**
-     * Initialize a search service handler to index or query Elastic Search
+     * Initialize a search service handler to index or query Elastic Search.
      *
      * @param string $host
-     *            http host name
+     *                     http host name
      * @param string $port
-     *            http port
+     *                     http port
      */
     public function init($host = null)
     {
@@ -131,7 +138,7 @@ class DataAbstract
             $host = self::$_options['host'];
         }
 
-        $hosts = explode(",",$host);
+        $hosts = explode(',', $host);
         $clientBuilder = ClientBuilder::create();
         $clientBuilder->setHosts($hosts);
         $this->_client = $clientBuilder->build();
@@ -140,22 +147,20 @@ class DataAbstract
 
         // Create index if not exists
         if (isset($this->_indexName)) {
-
             if (!$this->_client->indices()->exists(['index' => array($this->_indexName)])) {
                 $params = [
                     'index' => $this->_indexName,
                     'body' => [
-                        'settings' => self::$_indexSettings
-                    ]
+                        'settings' => self::$_indexSettings,
+                    ],
                 ];
                 $this->_client->indices()->create($params);
             }
         }
-
     }
 
     /**
-     * Set the options for ES connection
+     * Set the options for ES connection.
      *
      * @param array $options
      */
@@ -165,7 +170,6 @@ class DataAbstract
     }
 
     /**
-     *
      * @return the $_options
      */
     public static function getOptions()
@@ -173,25 +177,28 @@ class DataAbstract
         if (!isset(self::$_options)) {
             self::lazyLoadConfig();
         }
+
         return self::$_options;
     }
 
     /**
-     * Getter for cached service
+     * Getter for cached service.
      *
      * @param string $serviceName
      *
      * @return object
      */
-    public function _getService($serviceName) {
+    public function _getService($serviceName)
+    {
         if (!isset($this->_services[$serviceName])) {
             $this->_services[$serviceName] = Manager::getService($serviceName);
         }
+
         return $this->_services[$serviceName];
     }
 
     /**
-     * Return the index name from configuration file
+     * Return the index name from configuration file.
      *
      * @return string
      */
@@ -199,14 +206,13 @@ class DataAbstract
     {
         $dataAccess = $this->_getService('MongoDataAccess');
         $defaultDB = $dataAccess::getDefaultDb();
-        $defaultDB = mb_convert_case($defaultDB, MB_CASE_LOWER, "UTF-8");
+        $defaultDB = mb_convert_case($defaultDB, MB_CASE_LOWER, 'UTF-8');
 
-        return $defaultDB . "-" . self::$_options[$optionName];
-
+        return $defaultDB.'-'.self::$_options[$optionName];
     }
 
     /**
-     * Read the active analyzers from config
+     * Read the active analyzers from config.
      */
     public function getAnalyzers()
     {
@@ -214,7 +220,7 @@ class DataAbstract
     }
 
     /**
-     * Read the active languages
+     * Read the active languages.
      */
     public function getLanguages()
     {
@@ -222,7 +228,7 @@ class DataAbstract
     }
 
     /**
-     * Return the ElasticSearch Server Version
+     * Return the ElasticSearch Server Version.
      *
      * @return string
      */
@@ -232,11 +238,12 @@ class DataAbstract
         if (isset($data['version']) && isset($data['version']['number'])) {
             return $data['version']['number'];
         }
-        return null;
+
+        return;
     }
 
     /**
-     * Read configuration from global application config and load it for the current class
+     * Read configuration from global application config and load it for the current class.
      */
     public function lazyLoadConfig()
     {
@@ -250,24 +257,28 @@ class DataAbstract
     }
 
     /**
-  	 * Cached getter for type
-  	 *
-  	 * @param string $ typeId
-  	 * @return array
-  	 */
-  	protected function _getType($typeId)
-  	{
-  			if (!isset ($this->typesArray [$typeId])) {
-  					$this->typesArray [$typeId] = $this->_getService($this->service)->findById($typeId);
-  			}
-  			return $this->typesArray [$typeId];
-  	}
+     * Cached getter for content, dam and user types.
+     *
+     * @param string $typeId
+     * @param string $type
+     *
+     * @return array
+     */
+    protected function _getType($type, $typeId)
+    {
+        if (!isset($this->_types[$typeId])) {
+            $this->_types[$typeId] = $this->_getService($type)->findById($typeId);
+        }
+
+        return $this->_types[$typeId];
+    }
 
     /**
-     * Return all the vocabularies contained in the id list
+     * Return all the vocabularies contained in the id list.
      *
      * @param array $data
-     *            contain vocabularies id of the current object
+     *                    contain vocabularies id of the current object
+     *
      * @return array
      */
     protected function getVocabularies($data)
@@ -283,31 +294,30 @@ class DataAbstract
     }
 
     /**
-     * Add field mapping to global mapping
+     * Add field mapping to global mapping.
      *
      * @param array $field
-     *            contains field configuration
+     *                       contains field configuration
      * @param array $mapping
-     *            contains global mapping to update
+     *                       contains global mapping to update
      */
-    protected function addFieldMapping($field,&$mapping) {
+    protected function addFieldMapping($field, &$mapping)
+    {
 
         // Only searchable fields get indexed
         if ($field ['config'] ['searchable']) {
-
             $name = $field ['config'] ['name'];
-            $store = (isset ($field ['config'] ['returnInSearch']) && $field ['config'] ['returnInSearch'] == FALSE) ? 'no' : 'yes';
-            $notAnalyzed = (isset ($field ['config'] ['notAnalyzed']) && $field ['config'] ['notAnalyzed']) ? TRUE : FALSE;
+            $store = (isset($field ['config'] ['returnInSearch']) && $field ['config'] ['returnInSearch'] == false) ? 'no' : 'yes';
+            $notAnalyzed = (isset($field ['config'] ['notAnalyzed']) && $field ['config'] ['notAnalyzed']) ? true : false;
 
             // For classical fields
             if (!isset($field ['config'] ['useAsVariation']) or ($field ['config'] ['useAsVariation'] == false)) {
-
                 switch ($field ['cType']) {
                     case 'Ext.form.field.Date':
                     case 'datefield' :
                         $config = [
                             'type' => 'date',
-                            'store' => $store
+                            'store' => $store,
                         ];
                         if ($notAnalyzed) {
                             $config ['index'] = 'not_analyzed';
@@ -325,16 +335,15 @@ class DataAbstract
                         $config = [
                             'type' => 'object',
                             'store' => $store,
-                            'properties'=>[ ]
+                            'properties' => [],
                         ];
-                        if (isset($field['config']['usedCT'])&&$field['config']['usedCT']!=""){
-                            $subCT=Manager::getService("ContentTypes")->findById($field['config']['usedCT']);
-                            if($subCT){
-                                foreach ($subCT["fields"] as $subfield) {
-                                    $this->addFieldMapping($subfield,$config['properties']);
+                        if (isset($field['config']['usedCT']) && $field['config']['usedCT'] != '') {
+                            $subCT = Manager::getService('ContentTypes')->findById($field['config']['usedCT']);
+                            if ($subCT) {
+                                foreach ($subCT['fields'] as $subfield) {
+                                    $this->addFieldMapping($subfield, $config['properties']);
                                 }
                             }
-
                         }
                         if ($notAnalyzed) {
                             $config ['index'] = 'not_analyzed';
@@ -352,12 +361,12 @@ class DataAbstract
                         $config = [
                             'type' => 'object',
                             'store' => $store,
-                            'properties'=>[
-                                "values"=> [
+                            'properties' => [
+                                'values' => [
                                     'type' => 'object',
                                     'store' => $store,
-                                ]
-                            ]
+                                ],
+                            ],
                         ];
                         if ($notAnalyzed) {
                             $config ['index'] = 'not_analyzed';
@@ -370,11 +379,11 @@ class DataAbstract
                         $config = [
                             'type' => 'object',
                             'store' => $store,
-                            'properties'=>[
-                                "url" => ["type" => "string",'store' => $store],
-                                "title" => ["type" => "string",'store' => $store],
-                                "openInNewWindow" => ["type" => "boolean",'store' => $store],
-                            ]
+                            'properties' => [
+                                'url' => ['type' => 'string', 'store' => $store],
+                                'title' => ['type' => 'string', 'store' => $store],
+                                'openInNewWindow' => ['type' => 'boolean', 'store' => $store],
+                            ],
                         ];
                         if ($notAnalyzed) {
                             $config ['index'] = 'not_analyzed';
@@ -392,11 +401,11 @@ class DataAbstract
                         $config = [
                             'type' => 'object',
                             'store' => $store,
-                            'properties'=>[
-                                "imageCode" => ["type" => "string",'store' => $store],
-                                "alt" => ["type" => "string",'store' => $store],
-                                "url" => ["type" => "string",'store' => $store],
-                            ]
+                            'properties' => [
+                                'imageCode' => ['type' => 'string', 'store' => $store],
+                                'alt' => ['type' => 'string', 'store' => $store],
+                                'url' => ['type' => 'string', 'store' => $store],
+                            ],
                         ];
                         if ($notAnalyzed) {
                             $config ['index'] = 'not_analyzed';
@@ -414,11 +423,11 @@ class DataAbstract
                         $config = [
                             'type' => 'object',
                             'store' => $store,
-                            'properties'=>[
-                                "url" => ["type" => "string",'store' => $store],
-                                "maxHeight" => ["type" => "integer",'store' => $store,"index"=>"no"],
-                                "minHeight" => ["type" => "integer",'store' => $store,"index"=>"no"],
-                            ]
+                            'properties' => [
+                                'url' => ['type' => 'string', 'store' => $store],
+                                'maxHeight' => ['type' => 'integer', 'store' => $store, 'index' => 'no'],
+                                'minHeight' => ['type' => 'integer', 'store' => $store, 'index' => 'no'],
+                            ],
                         ];
                         if ($notAnalyzed) {
                             $config ['index'] = 'not_analyzed';
@@ -434,7 +443,7 @@ class DataAbstract
                     case 'numberfield' :
                         $config = [
                             'type' => 'float',
-                            'store' => $store
+                            'store' => $store,
                         ];
                         if ($notAnalyzed) {
                             $config ['index'] = 'not_analyzed';
@@ -450,7 +459,7 @@ class DataAbstract
                     case 'document' :
                         $config = [
                             'type' => 'attachment',
-                            'store' => $store
+                            'store' => $store,
                         ];
                         if ($notAnalyzed) {
                             $config ['index'] = 'not_analyzed';
@@ -471,15 +480,15 @@ class DataAbstract
                                     'properties' => [
                                         'coordinates' => [
                                             'type' => 'geo_point',
-                                            'store' => 'yes'
-                                        ]
-                                    ]
+                                            'store' => 'yes',
+                                        ],
+                                    ],
                                 ],
                                 'address' => [
                                     'type' => 'string',
-                                    'store' => 'yes'
-                                ]
-                            ]
+                                    'store' => 'yes',
+                                ],
+                            ],
                         ];
                         if (!$field ['config'] ['localizable']) {
                             $mapping ['fields'] ['properties'] [$name] = $config;
@@ -496,13 +505,13 @@ class DataAbstract
                                 'type' => 'string',
                                 'index' => (!$notAnalyzed) ? 'analyzed' : 'not_analyzed',
                                 'copy_to' => ['all_nonlocalized'],
-                                'store' => $store
+                                'store' => $store,
                             ];
                             // User name particular case
                             if ($name == 'name') {
                                 $config['fields']['first_letter'] = [
                                     'type' => 'string',
-                                    'analyzer' => 'first_letter'
+                                    'analyzer' => 'first_letter',
                                 ];
                             }
                             $mapping ['fields'] ['properties'] [$name] = $config;
@@ -510,11 +519,11 @@ class DataAbstract
                             // Mapping for localizable fields
                             foreach ($this->_activeLanguages as $lang) {
                                 $locale = $lang ['locale'];
-                                $fieldName = $name . '_' . $locale;
-                                $_all = 'all_' . $locale;
-                                $_autocomplete = 'autocomplete_' . $locale;
-                                if (in_array($locale . '_analyzer', $this->_activeAnalysers)) {
-                                    $lg_analyser = $locale . '_analyzer';
+                                $fieldName = $name.'_'.$locale;
+                                $_all = 'all_'.$locale;
+                                $_autocomplete = 'autocomplete_'.$locale;
+                                if (in_array($locale.'_analyzer', $this->_activeAnalysers)) {
+                                    $lg_analyser = $locale.'_analyzer';
                                 } else {
                                     $lg_analyser = 'default';
                                 }
@@ -523,9 +532,9 @@ class DataAbstract
                                     'index' => (!$notAnalyzed) ? 'analyzed' : 'not_analyzed',
                                     'analyzer' => $lg_analyser,
                                     'copy_to' => [
-                                        $_all
+                                        $_all,
                                     ],
-                                    'store' => $store
+                                    'store' => $store,
                                 ];
 
                                 $mapping [$fieldName] = $config;
@@ -539,9 +548,9 @@ class DataAbstract
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'copy_to' => [
-                        $_all
+                        $_all,
                     ],
-                    'store' => $store
+                    'store' => $store,
                 ];
                 $mapping ['productProperties']['properties']['variations']['properties'][$name] = $config;
             }
@@ -549,10 +558,10 @@ class DataAbstract
     }
 
     /**
-     * Set mapping for new or updated object type
+     * Set mapping for new or updated object type.
      *
      * @param string $typeId
-     * @param array $mapping
+     * @param array  $mapping
      *
      * @return array
      */
@@ -571,8 +580,8 @@ class DataAbstract
                 'index' => $this->_indexName,
                 'type' => $typeId,
                 'body' => [
-                    $typeId => ['properties' => $mapping]
-                ]
+                    $typeId => ['properties' => $mapping],
+                ],
             ];
 
             $this->_client->indices()->putMapping($indexParams);
@@ -586,7 +595,7 @@ class DataAbstract
     }
 
     /**
-     * Delete object type mapping
+     * Delete object type mapping.
      *
      * @param string $typeId
      *
@@ -596,7 +605,7 @@ class DataAbstract
     {
         $params = [
             'index' => $this->_indexName,
-            'type' => $typeId
+            'type' => $typeId,
         ];
 
         if ($this->_client->indices()->existsType($params)) {
@@ -607,12 +616,12 @@ class DataAbstract
     }
 
     /**
-     * Reindex all objects for one given type
+     * Reindex all objects for one given type.
      *
      * @param string $option
-     *            : dam or content or user
+     *                       : dam or content or user
      * @param string $id
-     *            : dam type or content type or user type id
+     *                       : dam type or content type or user type id
      *
      * @return array
      */
@@ -645,8 +654,8 @@ class DataAbstract
                 break;
             default:
                 throw new \Rubedo\Exceptions\Server(
-                "Option argument should be set to content, dam or user",
-                "Exception65");
+                'Option argument should be set to content, dam or user',
+                'Exception65');
                 break;
         }
 
@@ -655,7 +664,7 @@ class DataAbstract
         $type = $this->_getService($serviceType)->findById($id);
 
         // Index all dam or contents from given type
-        $useQueue = class_exists("ZendJobQueue");
+        $useQueue = class_exists('ZendJobQueue');
 
         if ($useQueue) {
             try {
@@ -674,19 +683,17 @@ class DataAbstract
 
         if (!$useQueue) {
             do {
-
                 $nbIndexedItems = $this->bulkIndex($option, $id, $itemCount,
                         $bulkSize);
 
                 //prevent infinite loop
-                if($nbIndexedItems == 0) {
+                if ($nbIndexedItems == 0) {
                     break;
                 }
 
                 $itemCount += $nbIndexedItems;
-            } while ($itemCount<$totalToBeIndexed);
+            } while ($itemCount < $totalToBeIndexed);
         } else {
-
             $start = 0;
 
             // Push jobs in queue
@@ -697,7 +704,7 @@ class DataAbstract
                     // "http://";
                     $protocol = 'http://';
                     $queue->createHttpJob(
-                            $protocol . $_SERVER['HTTP_HOST'] .
+                            $protocol.$_SERVER['HTTP_HOST'].
                             "/queue?service=ElasticDataIndex&class=bulkIndex&Option=$option&id=$id&start=$start&bulkSize=$bulkSize");
                     $start += $bulkSize;
                 } while ($start < $totalToBeIndexed);
@@ -708,9 +715,21 @@ class DataAbstract
 
         $result[$type['type']] = $itemCount;
 
-        return ($result);
+        return $result;
     }
 
+    /**
+     * Bulk indexing
+     *
+     * @param string $option
+     *                       : dam or content or user
+     * @param string $typeId
+     *                       : dam type or content type or user type id
+     * @param int $start : start item number
+     * @param int $bulksize : bulk size
+     *
+     * @return array
+     */
     public function bulkIndex($option, $typeId, $start, $bulkSize)
     {
         switch ($option) {
@@ -728,8 +747,8 @@ class DataAbstract
                 break;
             default:
                 throw new \Rubedo\Exceptions\Server(
-                "Option argument should be set to content or dam",
-                "Exception65");
+                'Option argument should be set to content or dam',
+                'Exception65');
                 break;
         }
 
@@ -737,26 +756,26 @@ class DataAbstract
 
         $dataService = $this->_getService($serviceData);
         $wasFiltered = $dataService::disableUserFilter();
-        $itemList = $dataService->getByType($typeId, (int)$start, (int)$bulkSize);
+        $itemList = $dataService->getByType($typeId, (int) $start, (int) $bulkSize);
 
         $dataService::disableUserFilter($wasFiltered);
-        foreach ($itemList["data"] as $item) {
+        foreach ($itemList['data'] as $item) {
             switch ($option) {
                 case 'content':
-                    $indexIntermedResult = $this->_getService('ElasticContents')->index($item, TRUE);
-                    if(is_array($indexIntermedResult)) {
+                    $indexIntermedResult = $this->_getService('ElasticContents')->index($item, true);
+                    if (is_array($indexIntermedResult)) {
                         $this->_documents = array_merge($this->_documents, $indexIntermedResult);
                     }
                     break;
                 case 'dam':
-                    $indexIntermedResult = $this->_getService('ElasticDam')->index($item, TRUE);
-                    if(is_array($indexIntermedResult)) {
+                    $indexIntermedResult = $this->_getService('ElasticDam')->index($item, true);
+                    if (is_array($indexIntermedResult)) {
                         $this->_documents = array_merge($this->_documents, $indexIntermedResult);
                     }
                     break;
                 case 'user':
-                    $indexIntermedResult = $this->_getService('ElasticUsers')->index($item, TRUE);
-                    if(is_array($indexIntermedResult)) {
+                    $indexIntermedResult = $this->_getService('ElasticUsers')->index($item, true);
+                    if (is_array($indexIntermedResult)) {
                         $this->_documents = array_merge($this->_documents, $indexIntermedResult);
                     }
                     break;
@@ -764,7 +783,6 @@ class DataAbstract
         }
 
         if (!empty($this->_documents)) {
-
             $params = [
                 'index' => $this->_indexName,
                 'type' => $typeId,
@@ -779,9 +797,7 @@ class DataAbstract
             empty($this->_documents);
 
             $return = count($itemList['data']);
-
         } else {
-
             $return = 0;
         }
 

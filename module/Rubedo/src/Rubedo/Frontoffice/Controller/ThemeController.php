@@ -138,7 +138,7 @@ class ThemeController extends AbstractActionController
                 $composedPath = $publicThemePath . '/' . $theme;
                 try {
                     if (!file_exists($composedPath)) {
-                        mkdir($composedPath, 0777);
+                        if (!mkdir($composedPath, 0777)) exit("erreur");
                     }
                 } catch(\Exception $e){
                     \Monolog\Handler\error_log($e->getMessage());
