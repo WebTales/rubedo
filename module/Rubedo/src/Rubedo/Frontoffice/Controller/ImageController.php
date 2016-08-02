@@ -254,6 +254,7 @@ class ImageController extends AbstractActionController
             $response->getHeaders()->addHeaders(array(
                 'Content-type' => 'image/' . $type,
                 'Content-Disposition' => 'inline; filename="' . $filename,
+                'Content-Length' => filesize($tmpImagePath),
                 'Pragma' => 'Public',
                 'Cache-Control' => 'public, max-age=' . 7 * 24 * 3600,
                 'Expires' => date(DATE_RFC822, strtotime("7 day"))
