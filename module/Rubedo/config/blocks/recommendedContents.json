@@ -206,8 +206,6 @@
             "showOnlyTitle": false,
             "summaryHeight": 80,
             "showPager": true,
-          "historyDepth":30,
-          "historySize":50,
           "displayImage":true,
           "imageField": "image"
         }
