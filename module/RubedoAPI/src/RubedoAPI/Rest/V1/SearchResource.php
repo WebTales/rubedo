@@ -165,7 +165,7 @@ class SearchResource extends AbstractResource
                             ->setFilter('boolean')
                     )->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('isMagic ')
+                            ->setKey('isMagic')
                             ->setDescription('Magic query mode for recommended contents')
                             ->setFilter('boolean')
                     )->addInputFilter(
@@ -174,12 +174,12 @@ class SearchResource extends AbstractResource
                             ->setDescription('Fingerprint')
                     )->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('historyDepth ')
+                            ->setKey('historyDepth')
                             ->setDescription('History depth')
                             ->setFilter('int')
                     )->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('historyDepth ')
+                            ->setKey('historySize')
                             ->setDescription('History size')
                             ->setFilter('int')
                     )
