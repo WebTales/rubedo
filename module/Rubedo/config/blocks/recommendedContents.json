@@ -118,6 +118,14 @@
                 "categorie": "#ext-gen1479#",
                 "champs": [
                   {
+                    "type": "Ext.form.field.Checkbox",
+                    "config": {
+                      "fieldLabel": "Display image",
+                      "name": "displayImage",
+                      "inputValue": true
+                    }
+                  },
+                  {
                     "type": "Ext.form.field.Text",
                     "config": {
                       "fieldLabel": "#ext-gen1405#",
@@ -200,6 +208,7 @@
             "showPager": true,
           "historyDepth":30,
           "historySize":50,
+          "displayImage":true,
           "imageField": "image"
         }
     },
