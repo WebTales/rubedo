@@ -47,8 +47,8 @@ class DataSearch extends DataAbstract
      */
     public function search(array $params, $option = 'all', $withSummary = true)
     {
-        $fingerprint = '1639648b823b9afb637e98fd8b781559';
-        $magic = false;
+        $fingerprint = isset($params['fingerprint']) ? $params['fingerprint'] : null;
+        $isMagic = isset($params['isMagic']) ? $params['isMagic'] : false;
 
         // reset search context
         SearchContext::resetContext();
@@ -339,7 +339,7 @@ class DataSearch extends DataAbstract
             $elasticQueryString['query'] = '*';
         }
 
-        if (!$magic or $params ['query'] != '') {
+        if (!$isMagic or $params ['query'] != '') {
             $searchParams['body']['query']['filtered']['query']['query_string'] = $elasticQueryString;
         } else {
             $significantItems = SearchContext::getSeenItems($fingerprint);
@@ -447,7 +447,6 @@ class DataSearch extends DataAbstract
             case 'content' :
             case 'geo':
                 $searchParams['index'] = $this->getIndexNameFromConfig('contentIndex');
-                //$searchParams['type'] = '5236d338b58ce9c42300005c';
                 break;
             case 'dam' :
                 $searchParams['index'] = $this->getIndexNameFromConfig('damIndex');
