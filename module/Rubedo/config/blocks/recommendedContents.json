@@ -1,0 +1,209 @@
+{
+    "type": "Recommended contents",
+    "description": "Recommended contents",
+    "configBasique": {
+        "title": "Recommended contents",
+        "bType": "recommendedContents",
+        "flex": 1,
+        "champsConfig": {
+            "simple": [
+                {
+                    "categorie": "#ext-gen1072#",
+                    "champs": [
+                        {
+                            "type": "Ext.ux.TreePicker",
+                            "config": {
+                                "fieldLabel": "#ext-gen1073#",
+                                "name": "singlePage"
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1114#",
+                                "name": "columns",
+                                "allowBlank": false,
+                                "editable": false,
+                                "allowDecimals": false,
+                                "minValue": 1,
+                                "maxValue": 4
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1406#",
+                                "name": "showOnlyTitle",
+                                "inputValue": true
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1407#",
+                                "name": "summaryHeight",
+                                "allowDecimals": false,
+                                "minValue": 0,
+                                "value": 80
+                            }
+                        }
+                    ]
+                },
+                {
+                    "categorie": "#ext-gen1068#",
+                    "champs": [
+                      {
+                        "type": "Rubedo.view.ESQfield",
+                        "config": {
+                          "fieldLabel": "#ext-gen1056#",
+                          "queryMode": false,
+                          "geoQueryMode": false,
+                          "damQueryMode": false,
+                          "productQueryMode":false,
+                          "contentQueryMode":true,
+                          "name": "predefinedFacets"
+                        }
+                      },{
+                        "type": "Ext.form.field.Number",
+                        "config": {
+                          "fieldLabel": "History depth",
+                          "name": "historyDepth",
+                          "allowDecimals": false,
+                          "minValue": 0
+                        }
+                      },{
+                        "type": "Ext.form.field.Number",
+                        "config": {
+                          "fieldLabel": "History size",
+                          "name": "historySize",
+                          "allowDecimals": false,
+                          "minValue": 0
+                        }
+                      }
+
+                    ]
+                },
+                {
+                    "categorie": "#ext-gen1094#",
+                    "champs": [
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1095#",
+                                "name": "pageSize",
+                                "allowDecimals": false,
+                                "minValue": 0
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Number",
+                            "config": {
+                                "fieldLabel": "#ext-gen1096#",
+                                "allowDecimals": false,
+                                "name": "resultsSkip",
+                                "minValue": 1
+                            }
+                        },
+                        {
+                            "type": "Ext.form.field.Checkbox",
+                            "config": {
+                                "fieldLabel": "#ext-gen1097#",
+                                "name": "showPager",
+                                "inputValue": true
+                            }
+                        }
+                    ]
+                },
+              {
+                "categorie": "#ext-gen1479#",
+                "champs": [
+                  {
+                    "type": "Ext.form.field.Text",
+                    "config": {
+                      "fieldLabel": "#ext-gen1405#",
+                      "name": "imageField",
+                      "value": "image"
+                    }
+                  },
+                  {
+                    "type": "Ext.form.field.Number",
+                    "config": {
+                      "fieldLabel": "#ext-gen1090#",
+                      "name": "imageHeight",
+                      "allowDecimals": false,
+                      "minValue": 0
+                    }
+                  },
+                  {
+                    "type": "Ext.form.field.Number",
+                    "config": {
+                      "fieldLabel": "#ext-gen1450#",
+                      "name": "imageWidth",
+                      "allowDecimals": false,
+                      "minValue": 0
+                    }
+                  },
+                  {
+                    "type": "Ext.form.field.ComboBox",
+                    "config": {
+                      "fieldLabel": "#ext-gen1451#",
+                      "name": "imageResizeMode",
+                      "editable": false,
+                      "forceSelection": true,
+                      "queryMode": "local",
+                      "store": [
+                        "boxed",
+                        "crop",
+                        "morph"
+                      ]
+                    }
+                  }
+                ]
+              }
+
+            ],
+            "avance": [
+                {
+                    "categorie": "#ext-gen1472#",
+                    "champs": [
+                        {
+                            "type": "Rubedo.view.ACEField",
+                            "config": {
+                                "fieldLabel": "#ext-gen1452#",
+                                "name": "customTemplate",
+                                "defaultTemplateUrl": "blocks/recommendedContents.html",
+                                "twigMode": false
+
+                            }
+                        },
+                      {
+                        "type": "Ext.form.field.Number",
+                        "config": {
+                          "fieldLabel": "#ext-gen1491#",
+                          "name": "blockMinHeight",
+                          "allowDecimals": false,
+                          "editable": true,
+                          "minValue": 0
+                        }
+                      }
+                    ]
+                }
+            ],
+          "csEvents":{
+            "changePage":null
+          }
+        },
+        "configBloc": {
+            "columns": 1,
+            "showOnlyTitle": false,
+            "summaryHeight": 80,
+            "showPager": true,
+          "historyDepth":30,
+          "historySize":50,
+          "imageField": "image"
+        }
+    },
+    "category": "#ext-gen1068#",
+    "bType": "recommendedContents",
+    "id": "57a0547580dd20a81c0000b8"
+}

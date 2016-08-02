@@ -61,6 +61,10 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/contentList.json'
     ),
+    'recommendedContents' => array(
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/recommendedContents.json'
+    ),
     'damList' => array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/damList.json'
