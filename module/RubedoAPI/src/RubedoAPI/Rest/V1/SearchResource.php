@@ -46,7 +46,7 @@ class SearchResource extends AbstractResource
         parent::__construct();
         $this->searchOption = 'all';
         $this->searchParamsArray = array('orderby', 'orderbyDirection', 'query', 'objectType', 'type', 'damType', 'userType', 'author',
-            'userName', 'lastupdatetime', 'start', 'limit', 'searchMode','price','inStock');
+            'userName', 'lastupdatetime', 'start', 'limit', 'searchMode','price','inStock',"isMagic","fingerprint","historyDepth","historySize");
         $this
             ->definition
             ->setName('Search')
@@ -163,6 +163,25 @@ class SearchResource extends AbstractResource
                             ->setKey('constrainToSite')
                             ->setDescription('Property to constrain to the site given with siteId')
                             ->setFilter('boolean')
+                    )->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('isMagic ')
+                            ->setDescription('Magic query mode for recommended contents')
+                            ->setFilter('boolean')
+                    )->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('fingerprint')
+                            ->setDescription('Fingerprint')
+                    )->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('historyDepth ')
+                            ->setDescription('History depth')
+                            ->setFilter('int')
+                    )->addInputFilter(
+                        (new FilterDefinitionEntity())
+                            ->setKey('historyDepth ')
+                            ->setDescription('History size')
+                            ->setFilter('int')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
