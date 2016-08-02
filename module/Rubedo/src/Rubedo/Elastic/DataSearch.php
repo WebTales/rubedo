@@ -342,7 +342,9 @@ class DataSearch extends DataAbstract
         if (!$isMagic or $params ['query'] != '') {
             $searchParams['body']['query']['filtered']['query']['query_string'] = $elasticQueryString;
         } else {
-            $significantItems = SearchContext::getSeenItems($fingerprint);
+            $historyDepth = isset($params['historyDepth']) ? $params['historyDepth'] : null;
+            $historySize = isset($params['historySize']) ? $params['historySize'] : null;
+            $significantItems = SearchContext::getSeenItems($fingerprint, $historyDepth, $historySize);
             if (!empty($significantItems)) {
                 $searchParams['body']['query']['filtered']['query']['more_like_this'] = [
                     'fields' => ['taxonomy.*'],
