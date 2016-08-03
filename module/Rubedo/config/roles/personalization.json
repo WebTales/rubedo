@@ -1,0 +1,12 @@
+{
+    "id": "personalization",
+    "label": {
+        "fr": "Personalisation",
+        "en": "Personalization"
+    },
+    "rights": [
+        "exe.ui.personalization"
+    ],
+    "includes": [
+    ]
+}
