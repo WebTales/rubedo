@@ -1,9 +1,0 @@
-{
-	"name": "###Themes.blue###",
-	"stylesheet": "resources/css/blue_theme.css",
-	"wallpaper": "resources/wallpapers/blue2.png",
-	"preview": "resources/previews/blue.jpg",
-	"iconSet": "blue",
-	"themeColor": "#0086C9",
-	"defaultId": "51a60cfdc1c3dad506000007"
-}
