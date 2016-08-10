@@ -255,9 +255,9 @@ class DataSearch extends DataAbstract
                         $params [$vocabulary]
                     ];
                 }
-                foreach ($params [$vocabulary] as $term) {
-                    $filterFactory->addTermsFilter($vocabulary, 'taxonomy.'.$vocabulary, $term);
-                }
+
+                $filterFactory->addTermsFilter($vocabulary, 'taxonomy.'.$vocabulary, $params [$vocabulary]);
+
             }
         }
 
@@ -340,7 +340,7 @@ class DataSearch extends DataAbstract
         }
 
         if (!$isMagic or $params ['query'] != '') {
-            $searchParams['body']['query']['filtered']['query']['query_string'] = $elasticQueryString;
+            $searchParams['body']['query']['query_string'] = $elasticQueryString;
         } else {
             $historyDepth = isset($params['historyDepth']) ? $params['historyDepth'] : null;
             $historySize = isset($params['historySize']) ? $params['historySize'] : null;
@@ -363,7 +363,7 @@ class DataSearch extends DataAbstract
             foreach ($globalFilterList as $filter) {
                 $globalFilter['and'][] = $filter;
             }
-            $searchParams['body']['query']['filtered']['filter'] = $globalFilter;
+            $searchParams['body']['post_filter'] = $globalFilter;
         }
 
         // Build facets

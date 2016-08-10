@@ -259,7 +259,6 @@ class DataAggregations
      */
     public function isFacetDisplayed($name)
     {
-        //var_dump($name);
         $isFrontEnd = SearchContext::getIsFrontEnd();
         $displayedFacets = SearchContext::getDisplayedFacets();
         if (!$isFrontEnd or $displayedFacets == array(
