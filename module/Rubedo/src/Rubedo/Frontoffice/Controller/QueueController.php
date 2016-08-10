@@ -40,7 +40,7 @@ class QueueController extends AbstractActionController
         foreach ($params as $key => $value) {
             switch ($key) {
                 case "service":
-                    if (!in_array($value, array('ElasticDataIndex', 'ItemRecommendations', 'UserRecommendations'))) {
+                    if (!in_array($value, array('ElasticDataIndex'))) {
                         throw new \Rubedo\Exceptions\Access('can\'t call this service');
                     }
                     $serviceName = $value;
