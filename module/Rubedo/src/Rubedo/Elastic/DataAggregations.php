@@ -558,11 +558,10 @@ class DataAggregations
                         }
                     } else {
                         // faceted field
-                        $facetedFields = SearchContext::getFacetedFields();
-                        $intermediaryVal = SearchContext::searchLabel($facetedFields, 'name', $id);
-                        $temp ['label'] = $intermediaryVal [0] ['label'];
+                        $facetedField = SearchContext::searchLabel($id);
+                        $temp ['label'] = $facetedField ['label'];
 
-                        if ($intermediaryVal [0] ['cType'] == 'datefield' or  $intermediaryVal [0] ['cType'] == 'Ext.form.field.Date') {
+                        if ($facetedField ['cType'] == 'datefield' or  $facetedField ['cType'] == 'Ext.form.field.Date') {
                             $temp ['_type'] = 'date';
                             $isDateField = true;
                         } else {

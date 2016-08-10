@@ -149,21 +149,14 @@ class SearchContext
         return self::$_seenItems;
     }
 
-    public static function searchLabel($array, $key, $value)
+    public static function searchLabel($id)
     {
-        $results = [];
-
-        if (is_array($array)) {
-            if (isset($array [$key]) && $array [$key] == $value) {
-                $results [] = $array;
-            }
-
-            foreach ($array as $subarray) {
-                $results = array_merge($results, self::searchLabel($subarray, $key, $value));
-            }
+        foreach(self::$_facetedFields as $field) {
+                if ($field['name']==$id) {
+                    return $field;
+                }
         }
-
-        return $results;
+        return [];
     }
 
     public static function getRangeLabel($from, $to, $currency = '€')

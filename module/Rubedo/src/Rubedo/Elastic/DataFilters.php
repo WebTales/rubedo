@@ -717,10 +717,9 @@ class DataFilters
                         'label' => $id,
                     ];
 
-                    $facetedFields = SearchContext::getFacetedFields();
-                    $intermediaryVal = SearchContext::searchLabel($facetedFields, 'name', $id);
+                    $facetedField = SearchContext::searchLabel($id);
 
-                    if ($intermediaryVal [0] ['cType'] == 'datefield' or  $intermediaryVal [0] ['cType'] == 'Ext.form.field.Date') {
+                    if ($facetedField ['cType'] == 'datefield' or  $facetedField ['cType'] == 'Ext.form.field.Date') {
                         $isDateField = true;
                     } else {
                         $isDateField = false;
