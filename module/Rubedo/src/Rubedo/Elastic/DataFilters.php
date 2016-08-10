@@ -59,7 +59,7 @@ class DataFilters
             case 'workspaceFilter':
                 return self::addWorkspaceFilter($value);
                 break;
-            case 'frontEnd':
+            case 'frontend':
                 return self::addFrontEndFilter();
                 break;
             case 'geo':
