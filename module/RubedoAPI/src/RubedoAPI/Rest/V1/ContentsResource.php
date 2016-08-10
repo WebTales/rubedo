@@ -653,7 +653,9 @@ class ContentsResource extends AbstractResource
         if (empty($content)) {
             throw new APIEntityException('Content not found', 404);
         }
-
+        if($getLive&&isset($content["online"])&&$content["online"]==false){
+            throw new APIEntityException('Content not found', 404);
+        }
         $contentType = $this->getContentTypesCollection()->findById($content['typeId'], true, false);
         if (empty($contentType)) {
             throw new APIEntityException('ContentType not found', 404);
