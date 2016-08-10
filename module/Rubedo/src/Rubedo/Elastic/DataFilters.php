@@ -719,23 +719,29 @@ class DataFilters
 
                     $facetedField = SearchContext::searchLabel($id);
 
-                    if ($facetedField ['cType'] == 'datefield' or  $facetedField ['cType'] == 'Ext.form.field.Date') {
-                        $isDateField = true;
-                    } else {
-                        $isDateField = false;
-                    }
-
                     if (!is_array($termId)) {
                         $termId = [$termId];
                     }
+
                     foreach ($termId as $term) {
                         $newTerm = [
-                          'term' => $term,
-                          'label' => $term,
+                          'term' => $term
                         ];
-                        if ($isDateField) {
-                            $newTerm['_type'] = 'date';
+                        switch ($facetedField ['cType']) {
+                            case 'datefield':
+                            case 'Ext.form.field.Date':
+                                $label = $term;
+                                $newTerm['_type'] = 'date';
+                                break;
+                            case 'DCEField':
+                                $linkedContent = SearchContext::getService('Contents')->findById($term, true, false);
+                                $label = $linkedContent['text'];
+                                break;
+                            default:
+                                $label = $term;
+                                break;
                         }
+                        $newTerm['label'] = $label;
                         $temp ['terms'] [] = $newTerm;
                     }
                 }

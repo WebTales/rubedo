@@ -561,18 +561,25 @@ class DataAggregations
                         $facetedField = SearchContext::searchLabel($id);
                         $temp ['label'] = $facetedField ['label'];
 
-                        if ($facetedField ['cType'] == 'datefield' or  $facetedField ['cType'] == 'Ext.form.field.Date') {
-                            $temp ['_type'] = 'date';
-                            $isDateField = true;
-                        } else {
-                            $isDateField = false;
-                        }
-
                         if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
                             foreach ($temp ['buckets'] as $key => $value) {
                                 $temp ['terms'] [$key] ['term'] = $value ['key'];
                                 $temp['terms'] [$key] ['count'] = $value['doc_count'];
-                                $temp ['terms'] [$key] ['label'] = $isDateField ? $value ['key_as_string'] : $value ['key'];
+                                switch ($facetedField ['cType']) {
+                                    case 'datefield':
+                                    case 'Ext.form.field.Date':
+                                        $label = $value ['key_as_string'];
+                                        $temp ['_type'] = 'date';
+                                        break;
+                                    case 'DCEField':
+                                        $linkedContent = SearchContext::getService('Contents')->findById($value ['key'], true, false);
+                                        $label = $linkedContent['text'];
+                                        break;
+                                    default:
+                                        $label = $value ['key'];
+                                        break;
+                                }
+                                $temp ['terms'] [$key] ['label'] = $label;
                             }
                             $temp ['terms'] = array_values($temp ['terms']);
                         }
