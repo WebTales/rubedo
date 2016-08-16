@@ -9,11 +9,7 @@
         "mnsami/composer-custom-directory-installer": "1.1.*",
         "laravel/lumen-framework": "5.2.*",
         "vlucas/phpdotenv": "~2.2",
-        "webtales/alambic": "dev-master",
-        "webtales/alambic-connector-mongodb": "dev-master",
-        "league/flysystem": "*",
-        "league/flysystem-gridfs":"*",
-        "league/flysystem-cached-adapter":"*"
+        "webtales/alambic": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

@@ -26,6 +26,18 @@ $app = new Laravel\Lumen\Application(
 // $app->withFacades();
 
 // $app->withEloquent();
+/*
+|--------------------------------------------------------------------------
+| Default configs WIP
+|--------------------------------------------------------------------------
+*/
+config([
+    "alambicConfigPaths"=>[
+        realpath(__DIR__.'/../systemAlambicConfig/'),
+        realpath(__DIR__.'/../customAlambicConfig/'),
+    ],
+
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -81,6 +93,7 @@ $app->singleton(
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+ $app->register(App\Providers\MainServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
