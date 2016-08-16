@@ -43,6 +43,7 @@ class Update030301 extends Update
      */
     public static function upgrade()
     {
+        set_time_limit(0);
         $damService=Manager::getService("Dam");
         $oldFileService = Manager::getService('Files');
         $fSManager=Manager::getService("FSManager");
@@ -89,13 +90,18 @@ class Update030301 extends Update
         if ($file){
             $newPathId=(string) new \MongoId();
             $newPath=$newPathId.$file->getFileName();
-            $result=$newFS->write($newPath,$file->getBytes(),[
+            $tempPath=APPLICATION_PATH . '/cache/images'.$newPath;
+            $file->write($tempPath);
+            $fileResource=fopen($tempPath, 'r+');
+            $result=$newFS->writeStream($newPath,$fileResource,[
                  'mimetype'=>$file->file["Content-Type"]
             ]);
             if(!$result){
                 throw new \Rubedo\Exceptions\Server('Unable to upload file to new FS');
             }
+            fclose($fileResource);
             static::$evolutionArray[$id]=$newPath;
+            unlink($tempPath);
             return $newPath;
         }
         return null;
