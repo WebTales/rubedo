@@ -2,3 +2,4 @@
 .env
 .idea*
 /app/extensions
+/customAlambicConfig
