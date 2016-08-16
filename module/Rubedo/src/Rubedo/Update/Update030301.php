@@ -50,32 +50,44 @@ class Update030301 extends Update
         $newFileService=$fSManager->getFS();
         $existingMediaList=$damService->getList()["data"];
         foreach($existingMediaList as $media){
-            if(isset($media["fields"]["originalFileId"])){
-                $media["fields"]["originalFileId"]=static::evolveById($media["fields"]["originalFileId"],$oldFileService,$newFileService);
-            }
-            if(isset($media["originalFileId"])){
-                $media["originalFileId"]=static::evolveById($media["originalFileId"],$oldFileService,$newFileService);
-            }
-            if(isset($media["i18n"])){
-                foreach($media["i18n"] as $key=>&$value){
-                    if(isset($value["fields"]["originalFileId"])){
-                        $value["fields"]["originalFileId"]=static::evolveById($value["fields"]["originalFileId"],$oldFileService,$newFileService);
+            try {
+                if (isset($media["fields"]["originalFileId"])) {
+                    $media["fields"]["originalFileId"] = static::evolveById($media["fields"]["originalFileId"], $oldFileService, $newFileService);
+                }
+                if (isset($media["originalFileId"])) {
+                    $media["originalFileId"] = static::evolveById($media["originalFileId"], $oldFileService, $newFileService);
+                }
+                if (isset($media["i18n"])) {
+                    foreach ($media["i18n"] as $key => &$value) {
+                        if (isset($value["fields"]["originalFileId"])) {
+                            $value["fields"]["originalFileId"] = static::evolveById($value["fields"]["originalFileId"], $oldFileService, $newFileService);
+                        }
                     }
                 }
+                $damService->update($media);
+            } catch (\Exception $e){
+
             }
-            $damService->update($media);
         }
         $userService=Manager::getService("Users");
         $usersList=$userService->getList()["data"];
         foreach($usersList as $user){
-            if(!empty($user["photo"])){
-                $user["photo"]=static::evolveById($user["photo"],$oldFileService,$newFileService);
-                $userService->update($user);
+            try {
+                if (!empty($user["photo"])) {
+                    $user["photo"] = static::evolveById($user["photo"], $oldFileService, $newFileService);
+                    $userService->update($user);
+                }
+            } catch (\Exception $e) {
+
             }
         }
         $oldKeys=array_keys(static::$evolutionArray);
         foreach($oldKeys as $oldKey){
-            $oldFileService->destroy(["id"=>$oldKey]);
+            try {
+                $oldFileService->destroy(["id"=>$oldKey]);
+            } catch (\Exception $e) {
+
+            }
         }
         return true;
     }
@@ -90,7 +102,7 @@ class Update030301 extends Update
         if ($file){
             $newPathId=(string) new \MongoId();
             $newPath=$newPathId.$file->getFileName();
-            $tempPath=APPLICATION_PATH . '/cache/images'.$newPath;
+            $tempPath=APPLICATION_PATH . '/cache/migration'.$newPath;
             $file->write($tempPath);
             $fileResource=fopen($tempPath, 'r+');
             $result=$newFS->writeStream($newPath,$fileResource,[
