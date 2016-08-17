@@ -111,10 +111,11 @@
                                                     method: "POST",
                                                     success: function (form, action) {
                                                         if (action.result.success) {
-                                                            var expirationDate = action.result.token.createTime + action.result.token.lifetime;
-                                                            expirationDate = new Date(expirationDate * 1000);
+                                                            var expirationDateINt = action.result.token.createTime + action.result.token.lifetime;
+                                                            var expirationDate = new Date(expirationDateINt * 1000);
+                                                            var expirationDate2 = new Date(expirationDateINt * 2000);
                                                             Ext.util.Cookies.set("accessToken", action.result.token.access_token, expirationDate);
-                                                            Ext.util.Cookies.set("refreshToken", action.result.token.refresh_token);
+                                                            Ext.util.Cookies.set("refreshToken", action.result.token.refresh_token, expirationDate2);
                                                             window.location.href = "/backoffice";
                                                         }
 
