@@ -93,6 +93,16 @@ $app->singleton(
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+
+
+//Load extension providers
+
+$extensionBootstrapFiles = glob(realpath(__DIR__.'/../app/Extensions').'/*/bootstrap.php');
+foreach ($extensionBootstrapFiles as $bootstrapFile){
+    require($bootstrapFile);
+}
+
+
  $app->register(App\Providers\MainServiceProvider::class);
 
 /*
