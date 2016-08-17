@@ -11,18 +11,7 @@
 |
 */
 
-$app->get('/', function () use ($app) {
-    return $app->version();
-});
 
-$app->get('/api/graphql', function () use ($app) {
-    $myHandler = $app->make('GraphQLHandler');
-    $params=$app["request"]->input();
-    $requestString = isset($params['query']) ? $params['query'] : null;
-    $operationName = isset($params['operation']) ? $params['operation'] : null;
-    $variableValues = isset($params['variables']) ? $params['variables'] : null;
-    $result=$myHandler->execute($requestString,$variableValues,$operationName,$params);
-    header('Content-Type: application/json');
-    echo json_encode($result);
-    die();
-});
+
+$app->get('/api/graphql', "GraphQLController@handle");
+$app->post('/api/graphql', "GraphQLController@handle");
