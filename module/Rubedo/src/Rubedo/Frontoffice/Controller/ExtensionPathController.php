@@ -42,7 +42,7 @@ class ExtensionPathController extends AbstractActionController
         if (!file_exists($file)) {
             throw new \Rubedo\Exceptions\NotFound('File does not exist');
         }
-        switch (substr(strchr($file, '.'), 1)) {
+        switch (substr(strrchr($file, '.'), 1)) {
             case 'css':
                 $mimeType = 'text/css';
                 break;
