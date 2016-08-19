@@ -36,11 +36,8 @@ class RestoreController extends DataAccessController
     public function indexAction()
     {
     	$dataAccessService = Manager::getService('MongoDataAccess');
-    	$fileService = Manager::getService('MongoFileAccess');
-    	$fileService->init();
-    	$fileCollectionService = Manager::getService('Files');
     	$restoredElements = array();
-
+        $fs=Manager::getService("FSManager")->getFS();
         $request = $this->getRequest();
 
         if($request->isPost()) {
@@ -50,7 +47,6 @@ class RestoreController extends DataAccessController
             $fileUploadInfo = $request->getFiles("zipFile");
             $tmpFullPath = $fileUploadInfo["tmp_name"];
             $originalZipFileName = $fileUploadInfo["name"];
-            $fileMimeType = $fileUploadInfo["type"];
 
             if($zipObj->open($tmpFullPath)) {
                 $randomTmpFolder = hash("sha1", $tmpFullPath.$originalZipFileName.mt_rand());
@@ -103,39 +99,10 @@ class RestoreController extends DataAccessController
                                     break;
                                 default: // file
                                     $buf = file_get_contents($filePath);
-                                    $originalFileId = substr($file,0,24);
-                                    $originalFileName = substr($file,25,strlen($file)-25);
-                                    $mainFileType = $fileCollectionService->getMainType($fileExtension);
-
-                                    $fileObj = array(
-                                    		'bytes' => $buf,
-                                    		'text' => $originalFileName,
-                                    		'filename' => $originalFileName,
-                                    		'Content-Type' => $fileExtension,
-                                    		'mainFileType' => $mainFileType,
-                                    		'_id' => new \MongoId($originalFileId)
-                                    );
-   
-                                    switch ($restoreMode) {
-                                    	case 'INSERT':
-                                    		try {
-                                    			$fileService->createBinary($fileObj);
-                                    		} catch (\Exception $e) {
-                                    			continue;
-                                    		}
-                                    		break;
-                                    	case 'UPSERT':
-                                    		try {
-                                    			$fileService->destroy(array(
-                                    				'id' => $originalFileId,
-                                    				'version' => 1
-                                    			));
-                                    			$fileService->createBinary($fileObj);
-                                    		} catch (\Exception $e) {
-                                    			continue;
-                                    		}
-                                    		break;
-                                    }
+                                    $originalFileId = (string) $file;
+                                    $fs->put($originalFileId,$buf,[
+                                        'mimetype'=>$fileExtension
+                                    ]);
                                     break;
                             }
                         }
