@@ -78,7 +78,7 @@ class DumpController extends DataAccessController
     {
         set_time_limit(0);
 
-    	$fileService = Manager::getService('Files');
+        $fs=Manager::getService("FSManager")->getFS();
     	
     	$collections = $this->params()->fromQuery('collection',['all']);
 
@@ -102,38 +102,36 @@ class DumpController extends DataAccessController
 	    	
 	    	if ($collection=='Dam') { // Export binary files related to Dam
 	    		foreach ($response[$collection]['data'] as $dam) {
-	    			$obj = $fileService->findById($dam['originalFileId']);
-	    			if ($obj instanceof \MongoGridFSFile) {
-	    				$meta = $obj->file;
-            			$damFileName = $dam['originalFileId'].'_'.$meta['filename'];
-            			$stream = $obj->getResource();
-            			$damPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $damFileName;
-            			$fp = fopen($damPath, 'w+');
-            			while (!feof($stream)) {
-            				fwrite($fp, fread($stream, 8192));
-            			}
-            			$this->_files[] = $damPath;
-            			fclose($fp);
-	    			}
+                    if($fs->has($dam['originalFileId'])){
+                        $damFileName = $dam['originalFileId'];
+                        $stream = $fs->readStream($dam['originalFileId']);
+                        $damPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $damFileName;
+                        $fp = fopen($damPath, 'w+');
+                        while (!feof($stream)) {
+                            fwrite($fp, fread($stream, 8192));
+                        }
+                        $this->_files[] = $damPath;
+                        fclose($fp);
+                    }
+
 	    		}
 	    	}
 	    	
 	    	if ($collection=='Users') { // Export photo files related to Users
 	    		foreach ($response[$collection]['data'] as $user) {
 	    			if (isset($user['photo']) && $user['photo']!='') {
-		    			$obj = $fileService->findById($user['photo']);
-		    			if ($obj instanceof \MongoGridFSFile) {
-		    				$meta = $obj->file;
-		    				$damFileName = $user['photo'].'_'.$meta['filename'];
-		    				$stream = $obj->getResource();
-		    				$damPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $damFileName;
-		    				$fp = fopen($damPath, 'w+');
-		    				while (!feof($stream)) {
-		    					fwrite($fp, fread($stream, 8192));
-		    				}
-		    				$this->_files[] = $damPath;
-		    				fclose($fp);
-		    			}
+                        if($fs->has($user['photo'])){
+                            $damFileName = $user['photo'];
+                            $stream = $fs->readStream($user['photo']);
+                            $damPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $damFileName;
+                            $fp = fopen($damPath, 'w+');
+                            while (!feof($stream)) {
+                                fwrite($fp, fread($stream, 8192));
+                            }
+                            $this->_files[] = $damPath;
+                            fclose($fp);
+                        }
+
 	    			}
 	    		}	    		
 	    	}
