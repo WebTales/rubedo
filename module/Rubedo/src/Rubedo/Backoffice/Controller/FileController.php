@@ -62,19 +62,11 @@ class FileController extends AbstractActionController
 
     public function indexAction()
     {
-        $fileService = Manager::getService('Files');
-        $filesArray = $fileService->getList();
-        $data = $filesArray['data'];
-        $files = array();
-        foreach ($data as $value) {
-            $metaData = $value->file;
-            $metaData['id'] = (string)$metaData['_id'];
-            unset($metaData['_id']);
-            $files[] = $metaData;
-        }
+        $fs=Manager::getService("FSManager")->getFS();
+        $files=$fs->listContents();
         return new JsonModel(array(
             'data' => $files,
-            'total' => $filesArray['count']
+            'total' => count($files)
         ));
     }
 
@@ -211,17 +203,14 @@ class FileController extends AbstractActionController
     public function deleteAction()
     {
         $fileId = $this->params()->fromPost('file-id');
-        $version = $this->params()->fromPost('file-version', 1);
 
         if (isset($fileId)) {
-            $fileService = Manager::getService('Files');
-            $result = $fileService->destroy(array(
-                'id' => $fileId,
-                'version' => $version
-            ));
-
-            if ($result['success'] == true) {
+            $fs=Manager::getService("FSManager")->getFS();
+            if($fs->has($fileId)){
+                $fs->delete($fileId);
                 $this->redirect($this->_helper->url('index'));
+            } else {
+                throw new \Rubedo\Exceptions\User("File not found");
             }
         } else {
             throw new \Rubedo\Exceptions\User("No Id Given", 1);
@@ -240,21 +229,17 @@ class FileController extends AbstractActionController
         $fileId = $this->params()->fromQuery('file-id');
 
         if (isset($fileId)) {
-            $fileService = Manager::getService('Files');
-            $obj = $fileService->findById($fileId);
-            if (!$obj instanceof \MongoGridFSFile) {
+            $fs=Manager::getService("FSManager")->getFS();
+            if (!($fs->has($fileId))) {
                 throw new \Rubedo\Exceptions\NotFound("No Image Found", "Exception8");
             }
-            return new JsonModel($obj->file);
+            return new JsonModel([
+                "mimetype"=>$fs->getMimetype($fileId),
+                "size"=>$fs->getSize($fileId),
+            ]);
         } else {
             throw new \Rubedo\Exceptions\User("No Id Given", "Exception7");
         }
     }
 
-    public function dropAllFilesAction()
-    {
-        $fileService = Manager::getService('MongoFileAccess');
-        $fileService->init();
-        return new JsonModel($fileService->drop());
-    }
 }

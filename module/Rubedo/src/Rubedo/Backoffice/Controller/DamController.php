@@ -408,10 +408,4 @@ class DamController extends DataAccessController
         return $this->_returnJson($returnArray);
     }
 
-    public function testAction()
-    {
-        $fs=Manager::getService("FSManager")->getFS();
-        Debug::dump($fs->listContents());
-        die("toto");
-    }
 }
