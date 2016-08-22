@@ -48,38 +48,51 @@ class Update030301 extends Update
         $oldFileService = Manager::getService('Files');
         $fSManager=Manager::getService("FSManager");
         $newFileService=$fSManager->getFS();
-        $existingMediaList=$damService->getList()["data"];
-        foreach($existingMediaList as $media){
-            try {
-                if (isset($media["fields"]["originalFileId"])) {
-                    $media["fields"]["originalFileId"] = static::evolveById($media["fields"]["originalFileId"], $oldFileService, $newFileService);
-                }
-                if (isset($media["originalFileId"])) {
-                    $media["originalFileId"] = static::evolveById($media["originalFileId"], $oldFileService, $newFileService);
-                }
-                if (isset($media["i18n"])) {
-                    foreach ($media["i18n"] as $key => &$value) {
-                        if (isset($value["fields"]["originalFileId"])) {
-                            $value["fields"]["originalFileId"] = static::evolveById($value["fields"]["originalFileId"], $oldFileService, $newFileService);
+        $mediaCount=$damService->getList(null,null,0,1)["count"];
+
+        $start=0;
+        $limit=100;
+        while($start<$mediaCount){
+            $existingMediaList=$damService->getList(null,null,$start,$limit)["data"];
+            foreach($existingMediaList as $media){
+                try {
+                    if (isset($media["fields"]["originalFileId"])) {
+                        $media["fields"]["originalFileId"] = static::evolveById($media["fields"]["originalFileId"], $oldFileService, $newFileService);
+                    }
+                    if (isset($media["originalFileId"])) {
+                        $media["originalFileId"] = static::evolveById($media["originalFileId"], $oldFileService, $newFileService);
+                    }
+                    if (isset($media["i18n"])&&is_array($media["i18n"])) {
+                        foreach ($media["i18n"] as $key => &$value) {
+                            if (isset($value["fields"]["originalFileId"])) {
+                                $value["fields"]["originalFileId"] = static::evolveById($value["fields"]["originalFileId"], $oldFileService, $newFileService);
+                            }
                         }
                     }
-                }
-                $damService->update($media);
-            } catch (\Exception $e){
+                    $damService->update($media);
+                } catch (\Exception $e){
 
+                }
             }
+            $start=$start+100;
         }
         $userService=Manager::getService("Users");
-        $usersList=$userService->getList()["data"];
-        foreach($usersList as $user){
-            try {
-                if (!empty($user["photo"])) {
-                    $user["photo"] = static::evolveById($user["photo"], $oldFileService, $newFileService);
-                    $userService->update($user);
-                }
-            } catch (\Exception $e) {
+        $userCount=$userService->getList(null,null,0,1)["count"];
+        $startU=0;
+        $limitU=100;
+        while($startU<$userCount){
+            $usersList=$userService->getList(null,null,$startU,$limitU)["data"];
+            foreach($usersList as $user){
+                try {
+                    if (!empty($user["photo"])) {
+                        $user["photo"] = static::evolveById($user["photo"], $oldFileService, $newFileService);
+                        $userService->update($user);
+                    }
+                } catch (\Exception $e) {
 
+                }
             }
+            $startU=$startU+100;
         }
         $oldKeys=array_keys(static::$evolutionArray);
         foreach($oldKeys as $oldKey){
