@@ -664,7 +664,6 @@ class ContentsResource extends AbstractResource
         if (isset($params['fingerprint'])) {
             $currentTime = $this->getCurrentTimeService()->getCurrentTime();
             // Log view in viewstream
-            $this->getContentViewLogCollection()->log($content['id'], $content['locale'], $params['fingerprint'], $currentTime);
             $view = [
                 "date" => $currentTime,
                 "fingerprint" => $params['fingerprint'],
