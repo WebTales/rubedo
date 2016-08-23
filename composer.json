@@ -3,13 +3,15 @@
     "description": "Rubedo application platform core",
     "keywords": ["framework", "webtales", "rubedo"],
     "license": "MIT",
-    "type": "project",
+  "minimum-stability": "dev",
+  "type": "project",
     "require": {
         "php": ">=5.5.9",
         "mnsami/composer-custom-directory-installer": "1.1.*",
         "laravel/lumen-framework": "5.2.*",
         "vlucas/phpdotenv": "~2.2",
-        "webtales/alambic": "dev-master"
+        "webtales/alambic": "dev-master",
+        "webtales/ExtensionTest": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -27,9 +29,20 @@
             "database/"
         ]
     },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git://github.com/WebTales/extension-test.git"
+    }
+    ],
     "scripts": {
         "post-root-package-install": [
             "php -r \"copy('.env.example', '.env');\""
         ]
+    },
+  "extra": {
+    "installer-paths": {
+      "./app/Extensions/{$name}": ["webtales/ExtensionTest"]
     }
+  }
 }
