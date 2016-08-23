@@ -324,6 +324,7 @@ class IndexController extends AbstractActionController
         $siteResources['internalScripts'] = array_merge($scriptFilesArray, $siteResources['internalScripts']);
 
         $googleAnalyticsKey = isset($this->_site['googleAnalyticsKey']) ? $this->_site['googleAnalyticsKey'] : false;
+        $googleMapsKey = isset($this->_site['googleMapsKey']) ? $this->_site['googleMapsKey'] : false;
 
         $this->viewData = array(
             'siteResources' => $siteResources,
@@ -336,6 +337,7 @@ class IndexController extends AbstractActionController
             'minifyResources'=>$minifyResources,
             'defaultSearchUrl'=>$defaultSearchUrl,
             'defaultSiteUrl'=>$defaultSiteUrl,
+            'googleMapsKey'=>$googleMapsKey,
         );
 
         $viewModel = new ViewModel($this->viewData);
