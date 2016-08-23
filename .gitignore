@@ -3,3 +3,4 @@
 .idea*
 /app/extensions
 /customAlambicConfig
+composer.lock
