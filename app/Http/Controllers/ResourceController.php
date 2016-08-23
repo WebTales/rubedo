@@ -2,31 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use League\Flysystem\Filesystem;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Cached\CachedAdapter;
-use League\Flysystem\Cached\Storage\Memory as CacheStore;
 
 class ResourceController extends Controller
 {
 
     public function resolve($namespace,$path)
     {
-        if(empty(config("resourceNamespaces")[$namespace]["path"])){
-            abort(404);
-        }
-        $rootPath=config("resourceNamespaces")[$namespace]["path"];
-        $localAdapter = new Local($rootPath);
-        $cacheStore = new CacheStore();
-        $adapter = new CachedAdapter($localAdapter, $cacheStore);
-        $filesystem = new Filesystem($adapter);
-        if(!$filesystem->has($path)){
+        $result=app()['ResourceResolver']->resolve($namespace,$path);
+        if(!$result){
             abort(404);
         };
-        return response($filesystem->read($path))
+        return response($result["content"])
             ->withHeaders([
-                'Content-Type' => $filesystem->getMimetype($path),
-                'Content-Length' => $filesystem->getSize($path),
+                'Content-Type' => $result["mimeType"],
+                'Content-Length' => $result["size"],
             ]);
     }
 }

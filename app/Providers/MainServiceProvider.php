@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Alambic\Alambic;
+use App\Services\ResourceResolver;
 
 
 class MainServiceProvider extends ServiceProvider
@@ -39,6 +40,10 @@ class MainServiceProvider extends ServiceProvider
                 }
             }
             return new Alambic($alambicConfig);
+        });
+
+        $this->app->singleton('ResourceResolver', function ($app) {
+            return new ResourceResolver(config("resourceNamespaces"));
         });
     }
 }
