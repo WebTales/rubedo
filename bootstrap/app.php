@@ -36,6 +36,9 @@ config([
         realpath(__DIR__.'/../systemAlambicConfig/'),
         realpath(__DIR__.'/../customAlambicConfig/'),
     ],
+    "resourceNamespaces"=>[
+
+    ],
 
 ]);
 

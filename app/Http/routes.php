@@ -15,3 +15,4 @@
 
 $app->get('/api/graphql', "GraphQLController@handle");
 $app->post('/api/graphql', "GraphQLController@handle");
+$app->get('/resource/{namespace}/{path:.*}', "ResourceController@resolve");

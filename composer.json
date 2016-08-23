@@ -11,7 +11,9 @@
         "laravel/lumen-framework": "5.2.*",
         "vlucas/phpdotenv": "~2.2",
         "webtales/alambic": "dev-master",
-        "webtales/ExtensionTest": "dev-master"
+        "webtales/ExtensionTest": "dev-master",
+        "league/flysystem": "*",
+        "league/flysystem-cached-adapter":"*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
