@@ -12,6 +12,9 @@ class ResourceController extends Controller
 
     public function resolve($namespace,$path)
     {
+        if(empty(config("resourceNamespaces")[$namespace]["path"])){
+            abort(404);
+        }
         $rootPath=config("resourceNamespaces")[$namespace]["path"];
         $localAdapter = new Local($rootPath);
         $cacheStore = new CacheStore();
