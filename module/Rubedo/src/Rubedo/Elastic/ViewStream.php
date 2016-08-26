@@ -36,6 +36,11 @@ class ViewStream extends DataAbstract
      * Mapping.
      */
     protected static $_mapping = [
+        'objectType' => [
+            'type' => 'string',
+            'index' => 'not_analyzed',
+            'store' => 'yes',
+        ],
         'timestamp' => [
             'type' => 'date',
             'store' => 'yes',
@@ -92,6 +97,7 @@ class ViewStream extends DataAbstract
         if (!isset($data['timestamp'])) {
             $data['timestamp'] = time() * 1000;
         }
+        $data['objectType'] = 'contentview';
         $params = [
             'index' => $this->_indexName,
             'type' => self::$_type,

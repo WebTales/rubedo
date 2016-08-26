@@ -47,6 +47,7 @@ class DataSearch extends DataAbstract
      */
     public function search(array $params, $option = 'all', $withSummary = true)
     {
+
         $fingerprint = isset($params['fingerprint']) ? $params['fingerprint'] : null;
         $isMagic = isset($params['isMagic']) ? $params['isMagic'] : false;
 
@@ -211,6 +212,22 @@ class DataSearch extends DataAbstract
             'isProduct' => 'isProduct',
         ];
 
+        if ($option == 'event') {
+            // Add event facets
+            $systemFilters += [
+                'csEvent' => 'event',
+                'csBrowser' => 'browser',
+                'csBrowserVersion' => 'browserVersion',
+                'csCity' => 'city',
+                'csCountry' => 'country',
+                'csOs' => 'os',
+                'csRefereringDomain' => 'refereringDomain',
+                'csRegion' => 'region',
+                'csScreenHeight' => 'screenHeight',
+                'csScreenWidth' => 'screenWidth'
+            ];
+        }
+
         foreach ($systemFilters as $name => $field) {
             if (array_key_exists($name, $params)) {
                 $filterFactory->addFilter($name, $params[$name], $field);
@@ -275,6 +292,11 @@ class DataSearch extends DataAbstract
                 }
                 $filterFactory->addTermsFilter($field ['name'], $fieldName, $params[urlencode($field ['name'])]);
             }
+        }
+
+        // Set type for events search
+        if ($option=='event') {
+            $filterFactory->addTermsFilter('type', '_type', 'clickstream');
         }
 
         // Localization
@@ -382,6 +404,22 @@ class DataSearch extends DataAbstract
             'price' => 'productProperties.variations.price',
         ];
 
+        if ($option == 'event') {
+            // Add event facets
+            $systemFacets += [
+                'csEvent' => 'event',
+                'csBrowser' => 'browser',
+                'csBrowserVersion' => 'browserVersion',
+                'csCity' => 'city',
+                'csCountry' => 'country',
+                'csOs' => 'os',
+                'csRefereringDomain' => 'refereringDomain',
+                'csRegion' => 'region',
+                'csScreenHeight' => 'screenHeight',
+                'csScreenWidth' => 'screenWidth'
+            ];
+        }
+
         foreach ($systemFacets as $name => $field) {
             $facetFactory->addAggregation($name, $field);
         }
@@ -456,6 +494,10 @@ class DataSearch extends DataAbstract
             case 'user' :
                 $searchParams['index'] = $this->getIndexNameFromConfig('userIndex');
                 break;
+            case 'event':
+                $cs = New ClickStream();
+                $searchParams['index'] = implode("-",explode("-",$cs->_indexName,-1))."-*";
+                break;
             case 'all' :
                 $searchParams['index'] = $this->getIndexNameFromConfig('contentIndex').','.$this->getIndexNameFromConfig('damIndex').','.$this->getIndexNameFromConfig('userIndex');
                 break;
@@ -520,13 +562,13 @@ class DataSearch extends DataAbstract
             $resultData = [
                 'id' => $resultItem['_id'],
                 'typeId' => $resultItem['_type'],
-                'authorName' => isset($data ['createUser.fullName'][0]) ? $data ['createUser.fullName'][0] : null,
-                'author' => isset($data ['createUser.id'][0]) ? $data ['createUser.id'][0] : null,
-                'version' => isset($data ['version'][0]) ? $data ['version'][0] : null,
-                'photo' => isset($data ['photo'][0]) ? $data ['photo'][0] : null,
-                'objectType' => $data ['objectType'][0],
                 'score' => !is_float($resultItem['_score']) ? 100 : round($resultItem['_score'] * 100),
             ];
+            if (isset($data ['createUser.fullName'][0])) $resultData['authorName'] = $data ['createUser.fullName'][0];
+            if (isset($data ['createUser.id'][0])) $resultData['author'] = $data ['createUser.id'][0];
+            if (isset($data ['version'][0])) $resultData['version'] = $data ['version'][0];
+            if (isset($data ['objectType'][0])) $resultData['objectType'] = $data ['objectType'][0];
+
             unset($data ['objectType']);
             unset($data ['photo']);
 
@@ -581,7 +623,7 @@ class DataSearch extends DataAbstract
 
             // ensure that date is formated as timestamp while handled as date
             // type for ES
-            $data ['lastUpdateTime'] = strtotime($data ['lastUpdateTime'][0]);
+            $data ['lastUpdateTime'] = isset($data ['lastUpdateTime']) ? strtotime($data ['lastUpdateTime'][0]) : null;
 
             // Set read only
             if (!isset($data ['writeWorkspace'][0]) or in_array($data ['writeWorkspace'][0], $userWriteWorkspaces)) {

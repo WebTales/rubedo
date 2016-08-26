@@ -44,15 +44,6 @@ class DataFilters
             case 'query':
                 return self::addQueryFilter($value);
                 break;
-            case 'objectType':
-            case 'type':
-            case 'damType':
-            case 'userType':
-            case 'author':
-            case 'userName':
-            case 'taxonomy':
-                return self::addTermsFilter($name, $field, $value);
-                break;
             case 'frontEndFilters':
                 return self::addCustomFrontEndFilter($value);
                 break;
@@ -87,6 +78,7 @@ class DataFilters
                 return self::addSeenItemsFilter($value);
                 break;
             default:
+                return self::addTermsFilter($name, $field, $value);
                 break;
         }
     }

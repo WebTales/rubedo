@@ -156,7 +156,7 @@ class SearchContext
                     return $field;
                 }
         }
-        return [];
+        return false;
     }
 
     public static function getRangeLabel($from, $to, $currency = '€')

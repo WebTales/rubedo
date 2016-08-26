@@ -42,14 +42,6 @@ class DataAggregations
     {
         if (self::isFacetDisplayed($facetName)) {
             switch ($facetName) {
-                case 'objectType':
-                case 'type':
-                case 'damType':
-                case 'userType':
-                case 'author':
-                case 'userName':
-                    return self::addTermsFacet($facetName, $fieldName, $orderField, $orderDirection, $size);
-                    break;
                 case 'lastupdatetime':
                     return self::addDateRangeFacet($facetName, $fieldName);
                     break;
@@ -73,6 +65,7 @@ class DataAggregations
                     return self::addRangeFacet($facetName, $fieldName, $ranges);
                     break;
                 default:
+                    return self::addTermsFacet($facetName, $fieldName, $orderField, $orderDirection, $size);
                     break;
             }
         }
@@ -340,7 +333,6 @@ class DataAggregations
     public function formatFacet($id, $facet, $total)
     {
         $temp = (array) $facet['aggregation'];
-
         $renderFacet = true;
         if (!empty($temp)) {
             $temp ['id'] = $id;
@@ -533,7 +525,6 @@ class DataAggregations
                         $renderFacet = false;
                     }
                     break;
-
                 default :
                     $regex = '/^[0-9a-z]{24}$/';
                     if (preg_match($regex, $id)) { // Taxonomy facet use
@@ -558,29 +549,40 @@ class DataAggregations
                     } else {
                         // faceted field
                         $facetedField = SearchContext::searchLabel($id);
-                        $temp ['label'] = $facetedField ['label'];
+                        if ($facetedField) {
+                            $temp ['label'] = $facetedField ['label'];
 
-                        if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                            if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
+                                foreach ($temp ['buckets'] as $key => $value) {
+                                    $temp ['terms'] [$key] ['term'] = $value ['key'];
+                                    $temp['terms'] [$key] ['count'] = $value['doc_count'];
+                                    switch ($facetedField ['cType']) {
+                                        case 'datefield':
+                                        case 'Ext.form.field.Date':
+                                            $label = $value ['key_as_string'];
+                                            $temp ['_type'] = 'date';
+                                            break;
+                                        case 'DCEField':
+                                            $linkedContent = SearchContext::getService('Contents')->findById($value ['key'], true, false);
+                                            $label = $linkedContent['text'];
+                                            break;
+                                        default:
+                                            $label = $value ['key'];
+                                            break;
+                                    }
+                                    $temp ['terms'] [$key] ['label'] = $label;
+                                }
+                                $temp ['terms'] = array_values($temp ['terms']);
+                            }
+                        } else {
+                            // Default facet
+                            $temp ['label'] = SearchContext::getService('Translate')->translate('Search.Facets.Label.'.$id, $id);
                             foreach ($temp ['buckets'] as $key => $value) {
                                 $temp ['terms'] [$key] ['term'] = $value ['key'];
+                                $temp ['terms'] [$key] ['label'] = $value ['key'];
                                 $temp['terms'] [$key] ['count'] = $value['doc_count'];
-                                switch ($facetedField ['cType']) {
-                                    case 'datefield':
-                                    case 'Ext.form.field.Date':
-                                        $label = $value ['key_as_string'];
-                                        $temp ['_type'] = 'date';
-                                        break;
-                                    case 'DCEField':
-                                        $linkedContent = SearchContext::getService('Contents')->findById($value ['key'], true, false);
-                                        $label = $linkedContent['text'];
-                                        break;
-                                    default:
-                                        $label = $value ['key'];
-                                        break;
-                                }
-                                $temp ['terms'] [$key] ['label'] = $label;
                             }
-                            $temp ['terms'] = array_values($temp ['terms']);
+                            break;
                         }
                     }
                     break;

@@ -33,6 +33,11 @@ class ClickStream extends DataAbstract
      * Mapping.
      */
     protected static $_mapping = [
+        'objectType' => [
+            'type' => 'string',
+            'index' => 'not_analyzed',
+            'store' => 'yes',
+        ],
         '@timestamp' => [
             'type' => 'date',
             'store' => 'yes',
@@ -146,7 +151,7 @@ class ClickStream extends DataAbstract
         if (!isset($data['timestamp'])) {
             $data['timestamp'] = time() * 1000;
         }
-
+        $data['objectType'] = 'event';
         // Add content to clickstream index
         $params = [
             'index' => $this->_indexName,
