@@ -29,7 +29,8 @@
         "mbostock/d3":"*",
         "ded/script.js":"v2.5.7",
         "dalelotts/angular-bootstrap-datetimepicker":"0.3.12",
-        "Valve/fingerprintjs2":"0.7.1"
+        "Valve/fingerprintjs2":"0.7.1",
+        "mozilla/metrics-graphics":"*"
 
     },
     "require-dev": {},
@@ -100,6 +101,16 @@
                 "version": "1.2.23",
                 "dist": {
                     "url": "https://code.angularjs.org/1.2.23/angular-1.2.23.zip",
+                    "type": "zip"
+                }
+            }
+        },{
+            "type": "package",
+            "package": {
+                "name": "mozilla/metrics-graphics",
+                "version": "v2.10.1",
+                "dist": {
+                    "url": "https://github.com/mozilla/metrics-graphics/archive/v2.10.1.zip",
                     "type": "zip"
                 }
             }
