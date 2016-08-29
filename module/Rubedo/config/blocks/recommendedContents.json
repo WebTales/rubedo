@@ -79,6 +79,14 @@
                           "allowDecimals": false,
                           "minValue": 0
                         }
+                      },
+                      {
+                        "type": "Ext.form.field.Checkbox",
+                        "config": {
+                          "fieldLabel": "Use detail content",
+                          "name": "useDetailContent",
+                          "inputValue": true
+                        }
                       }
 
                     ]
@@ -207,7 +215,8 @@
             "summaryHeight": 80,
             "showPager": true,
           "displayImage":true,
-          "imageField": "image"
+          "imageField": "image",
+          "useDetailContent":false
         }
     },
     "category": "#ext-gen1068#",
