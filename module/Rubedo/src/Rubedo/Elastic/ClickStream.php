@@ -180,4 +180,39 @@ class ClickStream extends DataAbstract
         ];
         $this->_client->delete($params);
     }
+
+    /**
+     * Get event list
+     *
+     * @return array
+     */
+    public function getEventList()
+    {
+        $indexMask =  implode("-",explode("-",$this->_indexName,-1))."-*";
+        $params = [
+            'index' => $indexMask,
+            'type' => self::$_type,
+            'size' => 0,
+            'body' => [
+                'query' => [
+                    'match_all' => []
+                ],
+                'aggs' => [
+                    'events' => [
+                        'terms' => [
+                            'field' => 'event',
+                            'min_doc_count' => 0,
+                            'size' => 1000,
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $results = $this->_client->search($params);
+        if (isset($results['aggregations']['events']['buckets'])) {
+            return array_column($results['aggregations']['events']['buckets'],'key');
+        } else {
+            return [];
+        }
+    }
 }
