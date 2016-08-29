@@ -115,6 +115,23 @@ class ClickStream extends DataAbstract
         ],
     ];
 
+
+    /**
+     * Facets.
+     */
+    protected static $_facets = [
+        'Event' => 'event',
+        'Browser' => 'browser',
+        'Browser version' => 'browserVersion',
+        'City' => 'city',
+        'Country' => 'country',
+        'Os' => 'os',
+        'Referering Domain' => 'refereringDomain',
+        'Region' => 'region',
+        'Screen Height' => 'screenHeight',
+        'Screen Width' => 'screenWidth'
+    ];
+
     /**
      * Constructor.
      */
@@ -215,4 +232,15 @@ class ClickStream extends DataAbstract
             return [];
         }
     }
+
+    /**
+     * Get facet list
+     *
+     * @return array
+     */
+    public function getFacetList()
+    {
+        return self::$_facets;
+    }
+
 }
