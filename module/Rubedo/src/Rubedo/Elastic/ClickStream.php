@@ -243,4 +243,51 @@ class ClickStream extends DataAbstract
         return self::$_facets;
     }
 
+    /**
+     * Date histogram aggregations for events
+     *
+     * @return array
+     */
+    public function getDateHistogramAgg($startDate, $endDate, $interval, $events)
+    {
+        $indexMask =  implode("-",explode("-",$this->_indexName,-1))."-*";
+        $params = [
+            'index' => $indexMask,
+            'type' => self::$_type,
+            'size' => 0,
+            'body' => [
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            ['range' => [
+                                'date' => [
+                                    'gte' => $startDate,
+                                    'lte' => $endDate
+                                ]
+                            ]],
+                            ['terms' => ['event' => $events]],
+                        ]
+                    ]
+                ],
+                'aggs' => [
+                    'events' => [
+                        'terms' => [
+                            'field' => 'event',
+                        ],
+                        'aggs' => [
+                            'dateHistogram' => [
+                                'date_histogram' => [
+                                    'field' => 'date',
+                                    'interval' => $interval
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $results = $this->_client->search($params);
+        return isset($results['aggregations']['events']['buckets']) ? $results['aggregations']['events']['buckets'] : [];
+    }
+
 }
