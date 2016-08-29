@@ -1,0 +1,125 @@
+{
+  "type":"Stats graph",
+  "description":"Stats graph showing events over time",
+  "configBasique":{
+    "title":"Stats graph",
+    "bType":"insightsStats",
+    "flex":1,
+    "champsConfig":{
+      "simple":[
+        {
+          "categorie": "Data",
+          "champs": [
+            {
+              "type": "Rubedo.view.EventChoiceField",
+              "config": {
+                "fieldLabel": "Events",
+                "multiSelect": true,
+                "name": "events"
+              }
+            },
+            {
+              "type": "Ext.form.field.ComboBox",
+              "config": {
+                "fieldLabel": "Granularity",
+                "name": "granularity",
+                "editable": false,
+                "forceSelection": true,
+                "queryMode": "local",
+                "store": [
+                  "days",
+                  "hours"
+                ]
+              }
+            },
+            {
+              "type": "Ext.form.field.Number",
+              "config": {
+                "fieldLabel": "Interval (days)",
+                "name": "interval",
+                "allowDecimals": false,
+                "editable": true,
+                "minValue": 0
+              }
+            }
+          ]
+        },
+        {
+          "categorie": "Display",
+          "champs": [
+            {
+              "type": "Ext.form.field.Text",
+              "config": {
+                "fieldLabel": "Title",
+                "name": "title"
+              }
+            },
+            {
+              "type": "Ext.form.field.Text",
+              "config": {
+                "fieldLabel": "Description",
+                "name": "description"
+              }
+            },
+            {
+              "type": "Ext.form.field.Number",
+              "config": {
+                "fieldLabel": "Height",
+                "name": "height",
+                "allowDecimals": false,
+                "editable": true,
+                "minValue": 0
+              }
+            },
+            {
+              "type": "Ext.form.field.Number",
+              "config": {
+                "fieldLabel": "Width",
+                "name": "width",
+                "allowDecimals": false,
+                "editable": true,
+                "minValue": 0
+              }
+            }
+          ]
+        }
+      ],
+      "avance": [
+        {
+          "categorie": "Template",
+          "champs": [
+            {
+              "type": "Rubedo.view.ACEField",
+              "config": {
+                "fieldLabel": "Custom template",
+                "name": "customTemplate",
+                "defaultTemplateUrl": "blocks/insightsStats.html",
+                "twigMode": false
+
+              }
+            },
+            {
+              "type": "Ext.form.field.Number",
+              "config": {
+                "fieldLabel": "#ext-gen1491#",
+                "name": "blockMinHeight",
+                "allowDecimals": false,
+                "editable": true,
+                "minValue": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "configBloc":{
+      "height":200,
+      "width":600,
+      "granularity":"days",
+      "interval":30
+    }
+  },
+  "category":"Insights",
+  "bType":"insightsStats",
+  "id":"57c42b5180dd20f81b00002d"
+}

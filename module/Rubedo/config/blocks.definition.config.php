@@ -197,4 +197,8 @@ return array(
     		'maxlifeTime' => 60,
     		'definitionFile' => $blocksPath . '/rssFeed.json'
     ),
+    'insightsStats' => array(
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/insightsStats.json'
+    ),
 );
