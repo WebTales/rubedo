@@ -290,4 +290,43 @@ class ClickStream extends DataAbstract
         return isset($results['aggregations']['events']['buckets']) ? $results['aggregations']['events']['buckets'] : [];
     }
 
+    /**
+     * Get a given facet for a given event
+     *
+     * @return array
+     */
+    public function getEventFacet($startDate, $endDate, $facet, $event)
+    {
+        $indexMask =  implode("-",explode("-",$this->_indexName,-1))."-*";
+        $params = [
+            'index' => $indexMask,
+            'type' => self::$_type,
+            'size' => 0,
+            'body' => [
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            ['range' => [
+                                'date' => [
+                                    'gte' => $startDate,
+                                    'lte' => $endDate
+                                ]
+                            ]],
+                            ['term' => ['event' => $event]],
+                        ]
+                    ]
+                ],
+                'aggs' => [
+                    $facet => [
+                        'terms' => [
+                            'field' => $facet,
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $results = $this->_client->search($params);
+        return isset($results['aggregations'][$facet]['buckets']) ? $results['aggregations'][$facet]['buckets'] : [];
+    }
+
 }
