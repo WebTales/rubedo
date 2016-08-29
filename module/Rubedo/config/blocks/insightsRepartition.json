@@ -1,9 +1,9 @@
 {
-  "type":"Event histogram",
+  "type":"Event pie",
   "description":"",
   "configBasique":{
-    "title":"Event histogram",
-    "bType":"insightsStats",
+    "title":"Event pie",
+    "bType":"insightsRepartition",
     "flex":1,
     "champsConfig":{
       "simple":[
@@ -13,23 +13,17 @@
             {
               "type": "Rubedo.view.EventChoiceField",
               "config": {
-                "fieldLabel": "Events",
-                "multiSelect": true,
-                "name": "events"
+                "fieldLabel": "Event",
+                "multiSelect": false,
+                "name": "event"
               }
             },
             {
-              "type": "Ext.form.field.ComboBox",
+              "type": "Rubedo.view.FacetChoiceField",
               "config": {
-                "fieldLabel": "Granularity",
-                "name": "granularity",
-                "editable": false,
-                "forceSelection": true,
-                "queryMode": "local",
-                "store": [
-                  "days",
-                  "hours"
-                ]
+                "fieldLabel": "Facet",
+                "multiSelect": false,
+                "name": "facet"
               }
             },
             {
@@ -93,7 +87,7 @@
               "config": {
                 "fieldLabel": "Custom template",
                 "name": "customTemplate",
-                "defaultTemplateUrl": "blocks/insightsStats.html",
+                "defaultTemplateUrl": "blocks/insightsRepartition.html",
                 "twigMode": false
 
               }
@@ -115,11 +109,10 @@
     "configBloc":{
       "height":200,
       "width":600,
-      "granularity":"days",
       "interval":30
     }
   },
   "category":"Insights",
-  "bType":"insightsStats",
-  "id":"57c42b5180dd20f81b00002d"
+  "bType":"insightsRepartition",
+  "id":"57c432b880dd20d01e000037"
 }

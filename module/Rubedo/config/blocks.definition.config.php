@@ -201,4 +201,12 @@ return array(
         'maxlifeTime' => 60,
         'definitionFile' => $blocksPath . '/insightsStats.json'
     ),
+    'insightsRepartition' => array(
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/insightsRepartition.json'
+    ),
+    'insightsMap' => array(
+        'maxlifeTime' => 60,
+        'definitionFile' => $blocksPath . '/insightsMap.json'
+    ),
 );
