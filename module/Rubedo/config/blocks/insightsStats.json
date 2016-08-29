@@ -27,8 +27,8 @@
                 "forceSelection": true,
                 "queryMode": "local",
                 "store": [
-                  "days",
-                  "hours"
+                  "day",
+                  "hour"
                 ]
               }
             },
@@ -115,7 +115,7 @@
     "configBloc":{
       "height":200,
       "width":600,
-      "granularity":"days",
+      "granularity":"day",
       "interval":30
     }
   },
