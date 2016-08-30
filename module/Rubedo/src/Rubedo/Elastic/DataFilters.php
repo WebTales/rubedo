@@ -184,6 +184,31 @@ class DataFilters
     }
 
     /**
+     * Date range filter.
+     *
+     * @param string $filterName
+     * @param string $fieldName
+     * @param string $startDate
+     * @param string $endDate
+     *
+     * @return array
+     */
+    public function addDateRangeFilter($filterName, $fieldName, $startDate, $endDate)
+    {
+        $filter = [
+            'range' => [
+                $fieldName => [
+                    'gte' => $startDate,
+                    'lte' => $endDate
+                ]
+            ],
+        ];
+        SearchContext::addGlobalFilterList($filterName, $filter);
+
+        return $filter;
+    }
+
+    /**
      * Build facet filter from name.
      *
      * @param string $name
