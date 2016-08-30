@@ -23,6 +23,7 @@ use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Rest\V1\AbstractResource;
 use Zend\Debug\Debug;
+use Zend\Json\Json;
 
 /**
  * Class ClickstreamResource
@@ -51,9 +52,9 @@ class HistogramResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('events')
+                            ->setKey('filters')
                             ->setRequired()
-                            ->setDescription('Events')
+                            ->setDescription('Filters')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
@@ -89,7 +90,8 @@ class HistogramResource extends AbstractResource
      */
     public function getAction($params)
     {
-        $data=Manager::getService("ElasticClickStream")->getDateHistogramAgg($params["startDate"],$params["endDate"],$params["granularity"],$params["events"]);
+        $filters=Json::decode($params["filters"],JSON::TYPE_ARRAY);
+        $data=Manager::getService("ElasticClickStream")->getDateHistogramAgg($params["startDate"],$params["endDate"],$params["granularity"],$filters);
         return [
             "success"=>true,
             "data"=>$data
