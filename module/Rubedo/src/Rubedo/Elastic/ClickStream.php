@@ -120,16 +120,16 @@ class ClickStream extends DataAbstract
      * Facets.
      */
     protected static $_facets = [
-        'Event' => 'event',
-        'Browser' => 'browser',
-        'Browser version' => 'browserVersion',
-        'City' => 'city',
-        'Country' => 'country',
-        'Os' => 'os',
-        'Referering Domain' => 'refereringDomain',
-        'Region' => 'region',
-        'Screen Height' => 'screenHeight',
-        'Screen Width' => 'screenWidth'
+        'event',
+        'browser',
+        'browserVersion',
+        'city',
+        'country',
+        'os',
+        'refereringDomain',
+        'region',
+        'screenHeight',
+        'screenWidth'
     ];
 
     /**
@@ -248,7 +248,7 @@ class ClickStream extends DataAbstract
      *
      * @return array
      */
-    public function getDateHistogramAgg($startDate, $endDate, $interval, $events)
+    public function getDateHistogramAgg($startDate, $endDate, $interval, $events, $filters = [])
     {
         $indexMask =  implode("-",explode("-",$this->_indexName,-1))."-*";
         $params = [
@@ -256,19 +256,6 @@ class ClickStream extends DataAbstract
             'type' => self::$_type,
             'size' => 0,
             'body' => [
-                'query' => [
-                    'bool' => [
-                        'must' => [
-                            ['range' => [
-                                'date' => [
-                                    'gte' => $startDate,
-                                    'lte' => $endDate
-                                ]
-                            ]],
-                            ['terms' => ['event' => $events]],
-                        ]
-                    ]
-                ],
                 'aggs' => [
                     'events' => [
                         'terms' => [
@@ -286,6 +273,33 @@ class ClickStream extends DataAbstract
                 ]
             ]
         ];
+        SearchContext::resetContext();
+        SearchContext::setFacetOperator('event','or');
+        // Build filters
+        $filterFactory = new DataFilters();
+        $filterFactory->addDateRangeFilter('date', 'date', $startDate, $endDate);
+        foreach (self::$_facets as $field) {
+            if (array_key_exists($field, $filters)) {
+                $filterFactory->addFilter($field, $filters[$field], $field);
+            }
+        }
+        // Set filters
+        $globalFilter = [];
+        $globalFilterList = SearchContext::getGlobalFilterList();
+        if (!empty($globalFilterList)) {
+            foreach ($globalFilterList as $filter) {
+                $globalFilter['and'][] = $filter;
+            }
+            $params['body']['query']['filtered']['filter'] = $globalFilter;
+        }
+        // Build Facets
+        $facetFactory = new DataAggregations();
+        foreach (self::$_facets as $name => $field) {
+            $facetFactory->addAggregation($field, $field);
+        }
+        // Set facets
+        $params['body']['aggs']['events']['aggs'] = array_merge($params['body']['aggs']['events']['aggs'], SearchContext::getAggs());
+
         $results = $this->_client->search($params);
         return isset($results['aggregations']['events']['buckets']) ? $results['aggregations']['events']['buckets'] : [];
     }
@@ -304,7 +318,7 @@ class ClickStream extends DataAbstract
             'size' => 0,
             'body' => [
                 'query' => [
-                    'bool' => [
+                    'filtered' => [
                         'must' => [
                             ['range' => [
                                 'date' => [
