@@ -121,16 +121,16 @@ class ClickStream extends DataAbstract
      * Facets.
      */
     protected static $_facets = [
-        'event',
-        'browser',
-        'browserVersion',
-        'city',
-        'country',
-        'os',
-        'refereringDomain',
-        'region',
-        'screenHeight',
-        'screenWidth'
+        'Event' => 'event',
+        'Browser' => 'browser',
+        'Browser Version' => 'browserVersion',
+        'City' => 'city',
+        'Country' => 'country',
+        'OS' => 'os',
+        'Refering Domain' => 'refereringDomain',
+        'Region' => 'region',
+        'Screen Height' => 'screenHeight',
+        'Screen Width' => 'screenWidth'
     ];
 
     /**
@@ -281,7 +281,7 @@ class ClickStream extends DataAbstract
         $filterFactory = new DataFilters();
         $filterFactory->addDateRangeFilter('date', 'date', $startDate, $endDate);
         // Build facets filters
-        foreach (self::$_facets as $field) {
+        foreach (self::$_facets as $key => $field) {
             if (array_key_exists($field, $filters)) {
                 $filterFactory->addFilter($field, $filters[$field], $field);
             }
@@ -297,7 +297,7 @@ class ClickStream extends DataAbstract
         }
         // Build facets
         $facetFactory = new DataAggregations();
-        foreach (self::$_facets as $name => $field) {
+        foreach (self::$_facets as $key => $field) {
             $facetFactory->addAggregation($field, $field);
         }
         // Set facets
