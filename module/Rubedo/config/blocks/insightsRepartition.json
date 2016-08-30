@@ -107,8 +107,8 @@
       ]
     },
     "configBloc":{
-      "height":200,
-      "width":600,
+      "height":500,
+      "width":500,
       "interval":30
     }
   },
