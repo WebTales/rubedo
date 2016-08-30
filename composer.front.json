@@ -30,7 +30,7 @@
         "ded/script.js":"v2.5.7",
         "dalelotts/angular-bootstrap-datetimepicker":"0.3.12",
         "Valve/fingerprintjs2":"0.7.1",
-        "mozilla/metrics-graphics":"*"
+        "mozilla/metrics-graphics":"v2.9"
 
     },
     "require-dev": {},
@@ -108,9 +108,9 @@
             "type": "package",
             "package": {
                 "name": "mozilla/metrics-graphics",
-                "version": "v2.10.1",
+                "version": "v2.9",
                 "dist": {
-                    "url": "https://github.com/mozilla/metrics-graphics/archive/v2.10.1.zip",
+                    "url": "https://github.com/mozilla/metrics-graphics/archive/v2.9.0.zip",
                     "type": "zip"
                 }
             }
