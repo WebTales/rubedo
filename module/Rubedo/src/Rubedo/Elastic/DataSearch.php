@@ -242,7 +242,7 @@ class DataSearch extends DataAbstract
                 'inflon' => $params ['inflon'],
                 'suplon' => $params ['suplon'],
             ];
-            list($geoBoundingBoxFilter, $geoPrecision) = $filterFactory->addFilter('geoBoxFilter', $coordinates);
+            list($geoBoundingBoxFilter, $geoPrecision) = $filterFactory->addFilter('geoBoxFilter', $coordinates, 'fields.position.location.coordinates');
         }
 
         // Taxonomies
@@ -414,7 +414,7 @@ class DataSearch extends DataAbstract
 
         // Geosearch
         if ($option == 'geo') {
-            $facetFactory->addGeoFacet($geoPrecision);
+            $facetFactory->addGeoFacet('fields.position.location.coordinates', $geoPrecision);
         }
 
         // Add aggs to search params
