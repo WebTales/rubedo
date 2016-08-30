@@ -249,7 +249,7 @@ class ClickStream extends DataAbstract
      *
      * @return array
      */
-    public function getDateHistogramAgg($startDate, $endDate, $interval, $events, $filters = [])
+    public function getDateHistogramAgg($startDate, $endDate, $interval, $filters = [])
     {
         $params = [
             'index' => self::$_indexMask,
