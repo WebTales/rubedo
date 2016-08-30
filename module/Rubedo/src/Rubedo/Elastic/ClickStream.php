@@ -345,4 +345,66 @@ class ClickStream extends DataAbstract
         return isset($results['aggregations'][$facet]['buckets']) ? $results['aggregations'][$facet]['buckets'] : [];
     }
 
+    /**
+     * Date histogram aggregations for events
+     *
+     * @return array
+     */
+    public function getGeoAgg($startDate, $endDate, $interval, $filters = [])
+    {
+        $params = [
+            'index' => self::$_indexMask,
+            'type' => self::$_type,
+            'size' => 0,
+            'body' => [
+                'aggs' => [
+                    'hash' => [
+                        'geohash_grid' => [
+                            'field' => 'geoip'
+                        ],
+                    ],
+                ]
+            ]
+        ];
+        // Reset search context
+        SearchContext::resetContext();
+        // Set facet operator for events
+        SearchContext::setFacetOperator('event','or');
+        // Build date filter
+        $filterFactory = new DataFilters();
+        $filterFactory->addDateRangeFilter('date', 'date', $startDate, $endDate);
+        // Build geo filter
+        $coordinates = [
+            'inflat' => $filters['inflat'],
+            'suplat' => $filters['suplat'],
+            'inflon' => $filters['inflon'],
+            'suplon' => $filters['suplon'],
+        ];
+        list($geoBoundingBoxFilter, $geoPrecision) = $filterFactory->addFilter('geoBoxFilter', $coordinates, 'geoip');
+        // Build facets filters
+        foreach (self::$_facets as $field) {
+            if (array_key_exists($field, $filters)) {
+                $filterFactory->addFilter($field, $filters[$field], $field);
+            }
+        }
+        // Set filters
+        $globalFilter = [];
+        $globalFilterList = SearchContext::getGlobalFilterList();
+        if (!empty($globalFilterList)) {
+            foreach ($globalFilterList as $filter) {
+                $globalFilter['and'][] = $filter;
+            }
+            $params['body']['query']['filtered']['filter'] = $globalFilter;
+        }
+        // Build facets
+        $facetFactory = new DataAggregations();
+        foreach (self::$_facets as $name => $field) {
+            $facetFactory->addAggregation($field, $field);
+        }
+        // Set facets
+        $params['body']['aggs'] = array_merge($params['body']['aggs'], SearchContext::getAggs());
+        $results = $this->_client->search($params);
+        return isset($results['aggregations']) ? $results['aggregations'] : [];
+    }
+
 }

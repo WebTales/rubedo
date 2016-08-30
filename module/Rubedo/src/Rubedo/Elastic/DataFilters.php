@@ -69,7 +69,7 @@ class DataFilters
                 return self::addProductFilter();
                 break;
             case 'geoBoxFilter':
-                return self::addGeoBoxFilter($value);
+                return self::addGeoBoxFilter($field, $value);
                 break;
             case 'locale':
                 return self::addLocaleFilter($value);
@@ -472,11 +472,11 @@ class DataFilters
      *
      * @return array
      */
-    public function addGeoBoxFilter($coordinates)
+    public function addGeoBoxFilter($fieldName, $coordinates)
     {
         $geoBoundingBoxFilter = [
             'geo_bounding_box' => [
-                'fields.position.location.coordinates' => [
+                $fieldName => [
                     'top_left' => [
                         $coordinates['inflon'] + 0,
                         $coordinates['suplat'] + 0,

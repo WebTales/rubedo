@@ -218,7 +218,7 @@ class DataAggregations
 
      * @return array
      */
-    public function addGeoFacet($geoPrecision)
+    public function addGeoFacet($fieldName, $geoPrecision)
     {
 
         // Apply filters from other facets
@@ -230,7 +230,7 @@ class DataAggregations
             'aggs' => [
                 'hash' => [
                     'geohash_grid' => [
-                        'field' => 'fields.position.location.coordinates',
+                        'field' => $fieldName,
                         'precision' => $geoPrecision,
                     ],
                 ],
