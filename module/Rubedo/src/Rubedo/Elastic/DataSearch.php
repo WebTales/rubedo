@@ -212,22 +212,6 @@ class DataSearch extends DataAbstract
             'isProduct' => 'isProduct',
         ];
 
-        if ($option == 'event') {
-            // Add event facets
-            $systemFilters += [
-                'csEvent' => 'event',
-                'csBrowser' => 'browser',
-                'csBrowserVersion' => 'browserVersion',
-                'csCity' => 'city',
-                'csCountry' => 'country',
-                'csOs' => 'os',
-                'csRefereringDomain' => 'refereringDomain',
-                'csRegion' => 'region',
-                'csScreenHeight' => 'screenHeight',
-                'csScreenWidth' => 'screenWidth'
-            ];
-        }
-
         foreach ($systemFilters as $name => $field) {
             if (array_key_exists($name, $params)) {
                 $filterFactory->addFilter($name, $params[$name], $field);
@@ -292,11 +276,6 @@ class DataSearch extends DataAbstract
                 }
                 $filterFactory->addTermsFilter($field ['name'], $fieldName, $params[urlencode($field ['name'])]);
             }
-        }
-
-        // Set type for events search
-        if ($option=='event') {
-            $filterFactory->addTermsFilter('type', '_type', 'clickstream');
         }
 
         // Localization
@@ -404,22 +383,6 @@ class DataSearch extends DataAbstract
             'price' => 'productProperties.variations.price',
         ];
 
-        if ($option == 'event') {
-            // Add event facets
-            $systemFacets += [
-                'csEvent' => 'event',
-                'csBrowser' => 'browser',
-                'csBrowserVersion' => 'browserVersion',
-                'csCity' => 'city',
-                'csCountry' => 'country',
-                'csOs' => 'os',
-                'csRefereringDomain' => 'refereringDomain',
-                'csRegion' => 'region',
-                'csScreenHeight' => 'screenHeight',
-                'csScreenWidth' => 'screenWidth'
-            ];
-        }
-
         foreach ($systemFacets as $name => $field) {
             $facetFactory->addAggregation($name, $field);
         }
@@ -493,10 +456,6 @@ class DataSearch extends DataAbstract
                 break;
             case 'user' :
                 $searchParams['index'] = $this->getIndexNameFromConfig('userIndex');
-                break;
-            case 'event':
-                $cs = New ClickStream();
-                $searchParams['index'] = implode("-",explode("-",$cs->_indexName,-1))."-*";
                 break;
             case 'all' :
                 $searchParams['index'] = $this->getIndexNameFromConfig('contentIndex').','.$this->getIndexNameFromConfig('damIndex').','.$this->getIndexNameFromConfig('userIndex');
