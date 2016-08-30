@@ -28,6 +28,7 @@ class ClickStream extends DataAbstract
 {
     protected static $_index = 'insights';
     protected static $_type = 'clickstream';
+    protected static $_indexMask;
 
     /**
      * Mapping.
@@ -153,6 +154,7 @@ class ClickStream extends DataAbstract
         if (!$this->_client->indices()->existsType($params)) {
             $this->putMapping(self::$_type, self::$_mapping);
         }
+        self::$_indexMask = implode("-",explode("-",$this->_indexName,-1))."-*";
     }
 
     /**
@@ -205,9 +207,8 @@ class ClickStream extends DataAbstract
      */
     public function getEventList()
     {
-        $indexMask =  implode("-",explode("-",$this->_indexName,-1))."-*";
         $params = [
-            'index' => $indexMask,
+            'index' => self::$_indexMask,
             'type' => self::$_type,
             'size' => 0,
             'body' => [
@@ -250,9 +251,8 @@ class ClickStream extends DataAbstract
      */
     public function getDateHistogramAgg($startDate, $endDate, $interval, $events, $filters = [])
     {
-        $indexMask =  implode("-",explode("-",$this->_indexName,-1))."-*";
         $params = [
-            'index' => $indexMask,
+            'index' => self::$_indexMask,
             'type' => self::$_type,
             'size' => 0,
             'body' => [
@@ -273,11 +273,14 @@ class ClickStream extends DataAbstract
                 ]
             ]
         ];
+        // Reset search context
         SearchContext::resetContext();
+        // Set facet operator for events
         SearchContext::setFacetOperator('event','or');
-        // Build filters
+        // Build date filter
         $filterFactory = new DataFilters();
         $filterFactory->addDateRangeFilter('date', 'date', $startDate, $endDate);
+        // Build facets filters
         foreach (self::$_facets as $field) {
             if (array_key_exists($field, $filters)) {
                 $filterFactory->addFilter($field, $filters[$field], $field);
@@ -292,7 +295,7 @@ class ClickStream extends DataAbstract
             }
             $params['body']['query']['filtered']['filter'] = $globalFilter;
         }
-        // Build Facets
+        // Build facets
         $facetFactory = new DataAggregations();
         foreach (self::$_facets as $name => $field) {
             $facetFactory->addAggregation($field, $field);
@@ -311,9 +314,8 @@ class ClickStream extends DataAbstract
      */
     public function getEventFacet($startDate, $endDate, $facet, $event)
     {
-        $indexMask =  implode("-",explode("-",$this->_indexName,-1))."-*";
         $params = [
-            'index' => $indexMask,
+            'index' => self::$_indexMask,
             'type' => self::$_type,
             'size' => 0,
             'body' => [
