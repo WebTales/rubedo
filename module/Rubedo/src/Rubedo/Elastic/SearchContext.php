@@ -64,6 +64,11 @@ class SearchContext
         return self::$_facetOperators = $value;
     }
 
+    public static function setFacetOperator($key, $value)
+    {
+        return self::$_facetOperators[$key] = $value;
+    }
+
     public static function getGlobalFilterList()
     {
         return self::$_globalFilterList;
