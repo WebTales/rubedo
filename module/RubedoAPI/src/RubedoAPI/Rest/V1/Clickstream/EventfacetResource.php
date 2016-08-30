@@ -22,13 +22,12 @@ use Rubedo\Services\Manager;
 use RubedoAPI\Entities\API\Definition\FilterDefinitionEntity;
 use RubedoAPI\Entities\API\Definition\VerbDefinitionEntity;
 use RubedoAPI\Rest\V1\AbstractResource;
-use Zend\Json\Json;
 
 /**
  * Class ClickstreamResource
  * @package RubedoAPI\Rest\V1
  */
-class HistogramResource extends AbstractResource
+class EventfacetResource extends AbstractResource
 {
     /**
      * { @inheritdoc }
@@ -38,11 +37,11 @@ class HistogramResource extends AbstractResource
         parent::__construct();
         $this
             ->definition
-            ->setName('Click Stream histogram')
-            ->setDescription('Get event histogram')
+            ->setName('Click Stream event facet')
+            ->setDescription('Get event facet')
             ->editVerb('get', function (VerbDefinitionEntity &$entity) {
                 $entity
-                    ->setDescription('Get event histogram')
+                    ->setDescription('Get event facet')
                     ->addOutputFilter(
                         (new FilterDefinitionEntity())
                             ->setKey('data')
@@ -51,9 +50,10 @@ class HistogramResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('filters')
+                            ->setKey('event')
                             ->setRequired()
-                            ->setDescription('Filters')
+                            ->setDescription('Event')
+                            ->setFilter('string')
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
@@ -71,9 +71,9 @@ class HistogramResource extends AbstractResource
                     )
                     ->addInputFilter(
                         (new FilterDefinitionEntity())
-                            ->setKey('granularity')
+                            ->setKey('facet')
                             ->setRequired()
-                            ->setDescription('Granularity : "hour" or "day"')
+                            ->setDescription('Facet')
                             ->setFilter('string')
                     )
                     ;
@@ -89,8 +89,7 @@ class HistogramResource extends AbstractResource
      */
     public function getAction($params)
     {
-        $filters=Json::decode($params["filters"],JSON::TYPE_ARRAY);
-        $data=Manager::getService("ElasticClickStream")->getDateHistogramAgg($params["startDate"],$params["endDate"],$params["granularity"],$filters);
+        $data=Manager::getService("ElasticClickStream")->getEventFacet($params["startDate"],$params["endDate"],$params["facet"],$params["event"]);
         return [
             "success"=>true,
             "data"=>$data
