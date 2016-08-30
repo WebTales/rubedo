@@ -301,10 +301,10 @@ class ClickStream extends DataAbstract
             $facetFactory->addAggregation($field, $field);
         }
         // Set facets
-        $params['body']['aggs']['events']['aggs'] = array_merge($params['body']['aggs']['events']['aggs'], SearchContext::getAggs());
+        $params['body']['aggs'] = array_merge($params['body']['aggs'], SearchContext::getAggs());
 
         $results = $this->_client->search($params);
-        return isset($results['aggregations']['events']['buckets']) ? $results['aggregations']['events']['buckets'] : [];
+        return isset($results['aggregations']) ? $results['aggregations'] : [];
     }
 
     /**
