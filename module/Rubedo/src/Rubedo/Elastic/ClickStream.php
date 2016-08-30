@@ -403,7 +403,7 @@ class ClickStream extends DataAbstract
         // Add geographic info
         foreach ($results ['aggregations']['hash']['buckets'] as $key => $bucket) {
             $point = SearchContext::geoHashDecode($bucket['key']);
-            $result ['aggregations']['hash']['buckets'][$key] += $point;
+            $results ['aggregations']['hash']['buckets'][$key] += $point;
         }
         return isset($results['aggregations']) ? $results['aggregations'] : [];
     }
