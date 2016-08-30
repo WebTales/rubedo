@@ -321,14 +321,16 @@ class ClickStream extends DataAbstract
             'body' => [
                 'query' => [
                     'filtered' => [
-                        'must' => [
-                            ['range' => [
-                                'date' => [
-                                    'gte' => $startDate,
-                                    'lte' => $endDate
-                                ]
-                            ]],
-                            ['term' => ['event' => $event]],
+                        'filter' => [
+                            'and' => [
+                                ['range' => [
+                                    'date' => [
+                                        'gte' => $startDate,
+                                        'lte' => $endDate
+                                    ]
+                                ]],
+                                ['term' => ['event' => $event]],
+                            ]
                         ]
                     ]
                 ],
