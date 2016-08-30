@@ -457,6 +457,11 @@ class DataSearch extends DataAbstract
             case 'user' :
                 $searchParams['index'] = $this->getIndexNameFromConfig('userIndex');
                 break;
+            case 'event':
+                $cs = New ClickStream();
+                //echo json_encode($cs->getDateHistogramAgg('2016-08-01', '2016-08-30', 'day', ['event'=>['Follow','home'],'screenWidth'=>1680]));
+                echo json_encode($cs->getGeoAgg('2016-08-01', '2016-08-30', 'day', ['inflat' => -80, 'suplat' => 80, 'inflon' => -180, 'suplon' => 180]));
+                exit;
             case 'all' :
                 $searchParams['index'] = $this->getIndexNameFromConfig('contentIndex').','.$this->getIndexNameFromConfig('damIndex').','.$this->getIndexNameFromConfig('userIndex');
                 break;
