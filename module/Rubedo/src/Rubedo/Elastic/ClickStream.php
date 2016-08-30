@@ -398,7 +398,13 @@ class ClickStream extends DataAbstract
         }
         // Set facets
         $params['body']['aggs'] = array_merge($params['body']['aggs'], SearchContext::getAggs());
+        // Run query
         $results = $this->_client->search($params);
+        // Add geographic info
+        foreach ($results ['aggregations']['hash']['buckets'] as $key => $bucket) {
+            $point = SearchContext::geoHashDecode($bucket['key']);
+            $result ['aggregations']['hash']['buckets'][$key] += $point;
+        }
         return isset($results['aggregations']) ? $results['aggregations'] : [];
     }
 
