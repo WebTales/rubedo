@@ -355,16 +355,7 @@ class ClickStream extends DataAbstract
         $params = [
             'index' => self::$_indexMask,
             'type' => self::$_type,
-            'size' => 0,
-            'body' => [
-                'aggs' => [
-                    'hash' => [
-                        'geohash_grid' => [
-                            'field' => 'geoip'
-                        ],
-                    ],
-                ]
-            ]
+            'size' => 0
         ];
         // Reset search context
         SearchContext::resetContext();
@@ -381,6 +372,10 @@ class ClickStream extends DataAbstract
             'suplon' => $filters['suplon'],
         ];
         list($geoBoundingBoxFilter, $geoPrecision) = $filterFactory->addFilter('geoBoxFilter', $coordinates, 'geoip');
+        $params['body']['aggs']['hash']['geohash_grid'] = [
+            'field' => 'geoip',
+            'precision' => $geoPrecision
+        ];
         // Build facets filters
         foreach (self::$_facets as $field) {
             if (array_key_exists($field, $filters)) {
