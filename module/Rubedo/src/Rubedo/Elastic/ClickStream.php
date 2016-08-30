@@ -352,7 +352,7 @@ class ClickStream extends DataAbstract
      *
      * @return array
      */
-    public function getGeoAgg($startDate, $endDate, $interval, $filters = [])
+    public function getGeoAgg($startDate, $endDate, $filters = [])
     {
         $params = [
             'index' => self::$_indexMask,

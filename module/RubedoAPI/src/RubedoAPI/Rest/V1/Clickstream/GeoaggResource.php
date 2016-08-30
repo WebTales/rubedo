@@ -69,13 +69,6 @@ class GeoaggResource extends AbstractResource
                             ->setDescription('Start date (YYYY-MM-DD)')
                             ->setFilter('string')
                     )
-                    ->addInputFilter(
-                        (new FilterDefinitionEntity())
-                            ->setKey('granularity')
-                            ->setRequired()
-                            ->setDescription('Granularity : "hour" or "day"')
-                            ->setFilter('string')
-                    )
                     ;
             });
     }
@@ -90,7 +83,7 @@ class GeoaggResource extends AbstractResource
     public function getAction($params)
     {
         $filters=Json::decode($params["filters"],JSON::TYPE_ARRAY);
-        $data=Manager::getService("ElasticClickStream")->getGeoAgg($params["startDate"],$params["endDate"],$params["granularity"],$filters);
+        $data=Manager::getService("ElasticClickStream")->getGeoAgg($params["startDate"],$params["endDate"],$filters);
         return [
             "success"=>true,
             "data"=>$data
