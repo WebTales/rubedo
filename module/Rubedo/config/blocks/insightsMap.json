@@ -34,20 +34,6 @@
           "categorie": "Display",
           "champs": [
             {
-              "type": "Ext.form.field.Text",
-              "config": {
-                "fieldLabel": "Title",
-                "name": "title"
-              }
-            },
-            {
-              "type": "Ext.form.field.Text",
-              "config": {
-                "fieldLabel": "Description",
-                "name": "description"
-              }
-            },
-            {
               "type": "Ext.form.field.Number",
               "config": {
                 "fieldLabel": "Height",
@@ -132,7 +118,9 @@
     },
     "configBloc":{
       "height":500,
-      "interval":30
+      "interval":30,
+      "zoom": 14,
+      "height": 500
     }
   },
   "category":"Insights",
