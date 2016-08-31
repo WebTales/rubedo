@@ -356,12 +356,12 @@ class DataSearch extends DataAbstract
             }
             if (!empty($significantItems)) {
                 $searchParams['body']['query']['filtered']['query']['more_like_this'] = [
-                    'fields' => ['i18n.*.fields.*','taxonomy.*'],
+                    'fields' => ['i18n.*.fields.*','taxonomy.*','fields.*'],
                     'docs' => $significantItems,
                     'min_term_freq' => 1,
                 ];
             } else {
-                $searchParams['body']['query']['filtered']['query']['query_string'] = $elasticQueryString;
+                $searchParams['body']['query']['query_string'] = $elasticQueryString;
             }
         }
 
