@@ -58,14 +58,6 @@
                                 "fieldLabel": "#ext-gen1075#",
                                 "name": "query"
                             }
-                        },
-                        {
-                            "type": "Ext.form.field.Checkbox",
-                            "config": {
-                                "fieldLabel": "#ext-gen1447#",
-                                "name": "magicQuery",
-                                "inputValue": true
-                            }
                         }
                     ]
                 },

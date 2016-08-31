@@ -34,14 +34,6 @@
                             }
                         },
                         {
-                            "type": "Ext.form.field.Checkbox",
-                            "config": {
-                                "fieldLabel": "#ext-gen1447#",
-                                "name": "magicQuery",
-                                "inputValue": true
-                            }
-                        },
-                        {
                             "type": "Ext.form.field.Number",
                             "config": {
                                 "fieldLabel": "#ext-gen1095#",
