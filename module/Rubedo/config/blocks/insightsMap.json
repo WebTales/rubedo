@@ -60,11 +60,43 @@
             {
               "type": "Ext.form.field.Number",
               "config": {
-                "fieldLabel": "Width",
-                "name": "width",
+                "fieldLabel": "#ext-gen1065#",
+                "name": "zoom",
                 "allowDecimals": false,
-                "editable": true,
                 "minValue": 0
+              }
+            },
+            {
+              "type": "Ext.form.field.Checkbox",
+              "config": {
+                "fieldLabel": "#ext-gen1058#",
+                "name": "useLocation",
+                "inputValue": true
+              }
+            },
+            {
+              "type": "Ext.form.field.Text",
+              "config": {
+                "fieldLabel": "#ext-gen1059#",
+                "name": "centerAddress"
+              }
+            },
+            {
+              "type": "Ext.form.field.Number",
+              "config": {
+                "fieldLabel": "#ext-gen1060#",
+                "name": "centerLatitude",
+                "allowDecimals": true,
+                "decimalPrecision": 6
+              }
+            },
+            {
+              "type": "Ext.form.field.Number",
+              "config": {
+                "fieldLabel": "#ext-gen1061#",
+                "name": "centerLongitude",
+                "allowDecimals": true,
+                "decimalPrecision": 6
               }
             }
           ]
@@ -99,8 +131,7 @@
       ]
     },
     "configBloc":{
-      "height":200,
-      "width":600,
+      "height":500,
       "interval":30
     }
   },
