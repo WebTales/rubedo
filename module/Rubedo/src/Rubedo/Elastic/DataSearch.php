@@ -339,16 +339,24 @@ class DataSearch extends DataAbstract
         } else {
             $elasticQueryString['query'] = '*';
         }
-
         if (!$isMagic or $params ['query'] != '') {
             $searchParams['body']['query']['query_string'] = $elasticQueryString;
         } else {
-            $historyDepth = isset($params['historyDepth']) ? $params['historyDepth'] : null;
-            $historySize = isset($params['historySize']) ? $params['historySize'] : null;
-            $significantItems = SearchContext::getSeenItems($fingerprint, $historyDepth, $historySize);
+            // Magic queries
+            if (isset($params['detailContentId'])) {
+                $relatedToContent = $this->_getService('Contents')->findById($params['detailContentId'],true,false);
+                $significantItems = [[
+                    "_type" => $relatedToContent['typeId'],
+                    "_id" => $params['detailContentId']
+                ]];
+            } else {
+                $historyDepth = isset($params['historyDepth']) ? $params['historyDepth'] : null;
+                $historySize = isset($params['historySize']) ? $params['historySize'] : null;
+                $significantItems = SearchContext::getSeenItems($fingerprint, $historyDepth, $historySize);
+            }
             if (!empty($significantItems)) {
                 $searchParams['body']['query']['filtered']['query']['more_like_this'] = [
-                    'fields' => ['taxonomy.*'],
+                    'fields' => ['i18n.*.fields.*','taxonomy.*'],
                     'docs' => $significantItems,
                     'min_term_freq' => 1,
                 ];
