@@ -61,7 +61,8 @@ class DataSearch extends DataAbstract
         SearchContext::setFacetDisplayMode($facetDisplayMode);
 
         $displayedFacets = [];
-
+        $facetOperators = [];
+        
         // front-end search
         if ((self::$_isFrontEnd)) {
 
@@ -92,7 +93,6 @@ class DataSearch extends DataAbstract
 
             // if there is any facet to display, get overrides
             if (!empty($displayedFacets)) {
-                $facetOperators = [];
 
                 // check if facetOverrides exists
                 $facetOverrides = isset($params ['block-config'] ['facetOverrides']) ? (Json::decode($params ['block-config'] ['facetOverrides'], Json::TYPE_ARRAY)) : [];
