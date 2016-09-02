@@ -139,7 +139,8 @@ class Pages extends AbstractLocalizableCollection implements IPages
         'noFollow',
         'UXInstructions',
         'richTextId',
-        'clickStreamEvent'
+        'clickStreamEvent',
+        'metaImage'
     );
 
     protected static $isLocaleFiltered = true;
