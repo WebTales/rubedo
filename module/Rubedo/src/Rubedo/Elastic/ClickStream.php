@@ -92,7 +92,7 @@ class ClickStream extends DataAbstract
             'index' => 'not_analyzed',
             'store' => 'yes',
         ],
-        'refereringDomain' => [
+        'referringDomain' => [
             'type' => 'string',
             'index' => 'not_analyzed',
             'store' => 'yes',
@@ -127,7 +127,7 @@ class ClickStream extends DataAbstract
         'City' => 'city',
         'Country' => 'country',
         'OS' => 'os',
-        'Refering Domain' => 'refereringDomain',
+        'Referring Domain' => 'referringDomain',
         'Region' => 'region',
         'Screen Height' => 'screenHeight',
         'Screen Width' => 'screenWidth'
