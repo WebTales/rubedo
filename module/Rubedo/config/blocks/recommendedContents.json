@@ -1,8 +1,8 @@
 {
-    "type": "Recommended contents",
-    "description": "Recommended contents",
+    "type": "#ext-gen1515#",
+    "description": "",
     "configBasique": {
-        "title": "Recommended contents",
+        "title": "#ext-gen1515#",
         "bType": "recommendedContents",
         "flex": 1,
         "champsConfig": {
@@ -66,7 +66,7 @@
                       },{
                         "type": "Ext.form.field.Number",
                         "config": {
-                          "fieldLabel": "History depth",
+                          "fieldLabel": "#ext-gen1519#",
                           "name": "historyDepth",
                           "allowDecimals": false,
                           "minValue": 0
@@ -74,7 +74,7 @@
                       },{
                         "type": "Ext.form.field.Number",
                         "config": {
-                          "fieldLabel": "History size",
+                          "fieldLabel": "#ext-gen1518#",
                           "name": "historySize",
                           "allowDecimals": false,
                           "minValue": 0
@@ -83,7 +83,7 @@
                       {
                         "type": "Ext.form.field.Checkbox",
                         "config": {
-                          "fieldLabel": "Use detail content",
+                          "fieldLabel": "#ext-gen1517#",
                           "name": "useDetailContent",
                           "inputValue": true
                         }
@@ -128,7 +128,7 @@
                   {
                     "type": "Ext.form.field.Checkbox",
                     "config": {
-                      "fieldLabel": "Display image",
+                      "fieldLabel": "#ext-gen1516#",
                       "name": "displayImage",
                       "inputValue": true
                     }
