@@ -1,19 +1,19 @@
 {
-  "type":"Event histogram",
+  "type":"#ext-gen1512#",
   "description":"",
   "configBasique":{
-    "title":"Event histogram",
+    "title":"#ext-gen1512#",
     "bType":"insightsStats",
     "flex":1,
     "champsConfig":{
       "simple":[
         {
-          "categorie": "Data",
+          "categorie": "#ext-gen1494#",
           "champs": [
             {
               "type": "Rubedo.view.EventChoiceField",
               "config": {
-                "fieldLabel": "Events",
+                "fieldLabel": "#ext-gen1506#",
                 "multiSelect": true,
                 "name": "events"
               }
@@ -21,7 +21,7 @@
             {
               "type": "Ext.form.field.ComboBox",
               "config": {
-                "fieldLabel": "Granularity",
+                "fieldLabel": "#ext-gen1509#",
                 "name": "granularity",
                 "editable": false,
                 "forceSelection": true,
@@ -35,7 +35,7 @@
             {
               "type": "Ext.form.field.Number",
               "config": {
-                "fieldLabel": "Interval (days)",
+                "fieldLabel": "#ext-gen1508#",
                 "name": "interval",
                 "allowDecimals": false,
                 "editable": true,
@@ -45,26 +45,26 @@
           ]
         },
         {
-          "categorie": "Display",
+          "categorie": "#ext-gen1072#",
           "champs": [
             {
               "type": "Ext.form.field.Text",
               "config": {
-                "fieldLabel": "Title",
+                "fieldLabel": "#ext-gen1513#",
                 "name": "title"
               }
             },
             {
               "type": "Ext.form.field.Text",
               "config": {
-                "fieldLabel": "Description",
+                "fieldLabel": "#ext-gen1514#",
                 "name": "description"
               }
             },
             {
               "type": "Ext.form.field.Number",
               "config": {
-                "fieldLabel": "Height",
+                "fieldLabel": "#ext-gen1066#",
                 "name": "height",
                 "allowDecimals": false,
                 "editable": true,
@@ -74,7 +74,7 @@
             {
               "type": "Ext.form.field.Number",
               "config": {
-                "fieldLabel": "Width",
+                "fieldLabel": "#ext-gen1391#",
                 "name": "width",
                 "allowDecimals": false,
                 "editable": true,
