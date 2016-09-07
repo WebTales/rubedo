@@ -62,7 +62,7 @@ class DataSearch extends DataAbstract
 
         $displayedFacets = [];
         $facetOperators = [];
-        
+
         // front-end search
         if ((self::$_isFrontEnd)) {
 
@@ -426,7 +426,8 @@ class DataSearch extends DataAbstract
         }
 
         // Add aggs to search params
-        $searchParams['body']['aggs'] = SearchContext::getAggs();
+        $aggs = SearchContext::getAggs();
+        if (!empty($aggs)) $searchParams['body']['aggs'] = SearchContext::getAggs();
 
         // Add size and from to paginate results
         if (isset($params['start']) && isset($params['limit'])) {
@@ -603,39 +604,41 @@ class DataSearch extends DataAbstract
         }
 
         // Add label to Facets, hide empty facets
+        $result ['activeFacets'] = [];
+        if (isset($elasticResultSet['aggregations'])) {
 
-        $elasticFacetsTemp = $elasticResultSet['aggregations'];
-        $elasticFacets = [];
-        if ((is_array($displayedFacets)) && (!empty($displayedFacets)) && (!is_string($displayedFacets [0]))) {
-            foreach ($displayedFacets as $requestedFacet) {
-                foreach ($elasticFacetsTemp as $id => $obtainedFacet) {
-                    if ($id == $requestedFacet ['name']) {
-                        $elasticFacets [$id] = $obtainedFacet;
+            $elasticFacetsTemp = $elasticResultSet['aggregations'];
+            $elasticFacets = [];
+            if ((is_array($displayedFacets)) && (!empty($displayedFacets)) && (!is_string($displayedFacets [0]))) {
+                foreach ($displayedFacets as $requestedFacet) {
+                    foreach ($elasticFacetsTemp as $id => $obtainedFacet) {
+                        if ($id == $requestedFacet ['name']) {
+                            $elasticFacets [$id] = $obtainedFacet;
+                        }
+                    }
+                }
+            } else {
+                $elasticFacets = $elasticFacetsTemp;
+            }
+
+            $result ['facets'] = [];
+
+            foreach ($elasticFacets as $id => $facet) {
+                if (isset($facet['aggregation'])) {
+                    $temp = $facetFactory->formatFacet($id, $facet, $result['total']);
+                    if (!is_null($temp)) {
+                        $result ['facets'] [] = $temp;
                     }
                 }
             }
-        } else {
-            $elasticFacets = $elasticFacetsTemp;
-        }
 
-        $result ['facets'] = [];
-
-        foreach ($elasticFacets as $id => $facet) {
-            if (isset($facet['aggregation'])) {
-                $temp = $facetFactory->formatFacet($id, $facet, $result['total']);
-                if (!is_null($temp)) {
-                    $result ['facets'] [] = $temp;
+            // Add label to filters
+            $filters = SearchContext::getFilters();
+            if (is_array($filters)) {
+                foreach ($filters as $id => $termId) {
+                    $temp = $filterFactory->formatFilter($id, $termId);
+                    $result ['activeFacets'] [] = $temp;
                 }
-            }
-        }
-
-        // Add label to filters
-        $result ['activeFacets'] = [];
-        $filters = SearchContext::getFilters();
-        if (is_array($filters)) {
-            foreach ($filters as $id => $termId) {
-                $temp = $filterFactory->formatFilter($id, $termId);
-                $result ['activeFacets'] [] = $temp;
             }
         }
 
