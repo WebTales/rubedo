@@ -556,6 +556,7 @@ class DataSearch extends DataAbstract
                         $resultData ['title'] = $data ['i18n.'.$currentLocale.'.fields.text'][0];
                         if ($withSummary) {
                             $resultData ['summary'] = (isset($data ['i18n.'.$currentLocale.'.fields.summary'][0])) ? $data ['i18n.'.$currentLocale.'.fields.summary'][0] : '';
+                            unset($data['summary']);
                         }
                     } else {
                         $resultData ['title'] = $data ['text'][0];
