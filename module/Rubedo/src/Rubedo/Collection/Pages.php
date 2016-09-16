@@ -138,6 +138,9 @@ class Pages extends AbstractLocalizableCollection implements IPages
         'taxonomy',
         'noFollow',
         'UXInstructions',
+        'cauldronInstructions',
+        'cauldronConfig',
+        'UXInstructions',
         'richTextId',
         'clickStreamEvent',
         'metaImage'
