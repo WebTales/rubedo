@@ -372,7 +372,7 @@ class DataAbstract
                             $mapping ['fields'] ['properties'] [$name] = $config;
                         } else {
                             foreach ($this->_activeLanguages as $lang) {
-                                $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] [$name] = $config;
+                                $mapping ['i18n'] ['properties'] [$lang ['locale']] ['properties'] ['fields'] ['properties'] [$name] = $config;
                             }
                         }
                         break;
@@ -614,11 +614,11 @@ class DataAbstract
 
         // Get total items to be indexed
         $dataService = $this->_getService($serviceData);
-        
+
         $filter = Filter::factory('Value')->setName('typeId')->SetValue($id);
-        
+
         $totalToBeIndexed = $dataService->count($filter);
-        
+
         if (!$useQueue) {
             do {
 
