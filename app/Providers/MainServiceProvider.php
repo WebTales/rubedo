@@ -4,9 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Alambic\Alambic;
+use Alambic\Exception\Config;
 use App\Services\ResourceResolver;
-use Exception;
-
 
 class MainServiceProvider extends ServiceProvider
 {
@@ -40,7 +39,7 @@ class MainServiceProvider extends ServiceProvider
                     $tempJson = file_get_contents($filePath);
                     $jsonArray = json_decode($tempJson, true);
                     if(!$jsonArray){
-                        throw new Exception("JSON decode error in file ".$filePath." : ".$this->jsonErrorMessages[json_last_error()]);
+                        throw new Config("JSON decode error in file ".$filePath." : ".$this->jsonErrorMessages[json_last_error()]);
                     }
                     $alambicConfig["alambicConnectors"] = array_merge($alambicConfig["alambicConnectors"] , $jsonArray);
                 }
@@ -49,7 +48,7 @@ class MainServiceProvider extends ServiceProvider
                     $tempJson = file_get_contents($filePath);
                     $jsonArray = json_decode($tempJson, true);
                     if(!$jsonArray){
-                        throw new Exception("JSON decode error in file ".$filePath." : ".$this->jsonErrorMessages[json_last_error()]);
+                        throw new Config("JSON decode error in file ".$filePath." : ".$this->jsonErrorMessages[json_last_error()]);
                     }
                     $alambicConfig["alambicTypeDefs"]  = array_merge($alambicConfig["alambicTypeDefs"], $jsonArray);
                 }
