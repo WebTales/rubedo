@@ -216,7 +216,9 @@
             "showPager": true,
           "displayImage":true,
           "imageField": "image",
-          "useDetailContent":false
+          "useDetailContent":false,
+          "historyDepth":30,
+          "historySize":50
         }
     },
     "category": "#ext-gen1068#",
