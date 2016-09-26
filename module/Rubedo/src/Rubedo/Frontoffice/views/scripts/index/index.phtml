@@ -30,6 +30,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title ng-bind-template="{{rubedo.current.page.title}}"></title>
     <!--og-->
+    <meta property="og:type" content="article" />
     <meta property="og:title" ng-attr-content="{{rubedo.current.page.title}}" />
     <meta property="og:description" ng-if="rubedo.current.page.description" ng-attr-content="{{rubedo.current.page.description}}"  />
     <meta property="og:image" ng-if="rubedo.current.page.metaImage&&rubedo.current.page.metaImage!=''" ng-attr-content="{{rubedo.getMetaImageURL()}}" />
