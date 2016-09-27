@@ -139,7 +139,8 @@ class FileController extends AbstractActionController
             throw new \Rubedo\Exceptions\Server("Unable to download new image");
         }
         $img = $result->getBody();
-        $fs->update($originalId,$img,[
+        $fs->delete($originalId);
+        $fs->write($originalId,$img,[
             'mimetype'=>$mimeType
         ]);
 //        $fileService->destroy(array(
