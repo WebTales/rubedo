@@ -140,9 +140,12 @@ class FileController extends AbstractActionController
         }
         $img = $result->getBody();
         $fs->delete($originalId);
-        $fs->write($originalId,$img,[
+        $writeResult=$fs->write($originalId,$img,[
             'mimetype'=>$mimeType
         ]);
+        if (!$writeResult) {
+            throw new \Rubedo\Exceptions\Server("Unable to write new image");
+        }
 //        $fileService->destroy(array(
 //            'id' => $originalId,
 //            'version' => 1
