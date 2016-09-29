@@ -628,7 +628,8 @@ class DataAbstract
     public function indexByType($option, $id)
     {
         // for big data set
-        set_time_limit(240);
+            set_time_limit(240);
+        }
 
         // Initialize result array and variables
         $result = [];
