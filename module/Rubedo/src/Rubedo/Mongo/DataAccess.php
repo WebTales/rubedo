@@ -155,6 +155,8 @@ class DataAccess implements IDataAccess
      */
     protected $_lostChildren = array();
 
+    protected $countFoundOnly=false;
+
     /**
      * init the filter with a global "and" filter
      */
@@ -607,13 +609,16 @@ class DataAccess implements IDataAccess
         return $result;
     }
 
+    public function setCountFoundOnly($newValue){
+        $this->countFoundOnly=$newValue;
+    }
     /**
      * Do a find request on the current collection
      *
      * @see \Rubedo\Interfaces\IDataAccess::read()
      * @return array
      */
-    public function read(IFilter $filters = null, $countFoundOnly = false)
+    public function read(IFilter $filters = null)
     {
         // get the UI parameters
         $localFilter = clone $this->getFilters();
@@ -645,7 +650,7 @@ class DataAccess implements IDataAccess
         $cursor->limit($numberOfResults);
 
         try {
-            $nbItems = $cursor->count($countFoundOnly);
+            $nbItems = $cursor->count($this->countFoundOnly);
         } catch (\Exception $e) {
             $nbItems = 0;
         }
@@ -1059,7 +1064,7 @@ class DataAccess implements IDataAccess
      * @param IFilter $filters
      * @return array children array
      */
-    public function readChild($parentId, IFilter $filters = null,$countFoundOnly = false)
+    public function readChild($parentId, IFilter $filters = null)
     {
         // get the UI parameters
         $localFilter = clone $this->getFilters();
@@ -1090,7 +1095,7 @@ class DataAccess implements IDataAccess
         $cursor->sort($sort);
 
         try {
-            $nbItems = $cursor->count($countFoundOnly);
+            $nbItems = $cursor->count($this->countFoundOnly);
         } catch (\Exception $e) {
             $nbItems = 0;
         }
