@@ -613,7 +613,7 @@ class DataAccess implements IDataAccess
      * @see \Rubedo\Interfaces\IDataAccess::read()
      * @return array
      */
-    public function read(IFilter $filters = null)
+    public function read(IFilter $filters = null, $countFoundOnly = false)
     {
         // get the UI parameters
         $localFilter = clone $this->getFilters();
@@ -645,7 +645,7 @@ class DataAccess implements IDataAccess
         $cursor->limit($numberOfResults);
 
         try {
-            $nbItems = $cursor->count();
+            $nbItems = $cursor->count($countFoundOnly);
         } catch (\Exception $e) {
             $nbItems = 0;
         }
@@ -1059,7 +1059,7 @@ class DataAccess implements IDataAccess
      * @param IFilter $filters
      * @return array children array
      */
-    public function readChild($parentId, IFilter $filters = null)
+    public function readChild($parentId, IFilter $filters = null,$countFoundOnly = false)
     {
         // get the UI parameters
         $localFilter = clone $this->getFilters();
@@ -1090,7 +1090,7 @@ class DataAccess implements IDataAccess
         $cursor->sort($sort);
 
         try {
-            $nbItems = $cursor->count();
+            $nbItems = $cursor->count($countFoundOnly);
         } catch (\Exception $e) {
             $nbItems = 0;
         }
