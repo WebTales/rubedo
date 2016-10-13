@@ -628,7 +628,7 @@ class DataAbstract
     public function indexByType($option, $id)
     {
         // for big data set
-        if(!ini_get("max_execution_time")||ini_get("max_execution_time")==""||ini_get("max_execution_time")<240){
+        if(!ini_get("max_execution_time")||ini_get("max_execution_time")==""||(ini_get("max_execution_time")!=0&&ini_get("max_execution_time")<240)){
             set_time_limit(240);
         }
 

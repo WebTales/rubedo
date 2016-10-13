@@ -46,7 +46,9 @@ class DataIndex extends DataAbstract
     public function indexAll($option = 'all')
     {
         // for big data set
-        set_time_limit(240);
+        if(!ini_get("max_execution_time")||ini_get("max_execution_time")==""||(ini_get("max_execution_time")!=0&&ini_get("max_execution_time")<240)){
+            set_time_limit(240);
+        }
 
         // Initialize variables
         $result = [];
