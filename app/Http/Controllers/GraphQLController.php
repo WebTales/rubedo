@@ -14,6 +14,9 @@ class GraphQLController extends Controller
         $operationName = isset($params['operation']) ? $params['operation'] : null;
         $variableValues = isset($params['variables']) ? $params['variables'] : null;
         $result=app()['GraphQLHandler']->execute($requestString,$variableValues,$operationName);
+        if(!$result["data"]&&isset($result["errors"][0]["message"])){
+            abort(500,$result["errors"][0]["message"]);
+        }
         return response()->json($result);
     }
 }
