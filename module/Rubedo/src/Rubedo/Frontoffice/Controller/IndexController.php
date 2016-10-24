@@ -119,9 +119,16 @@ class IndexController extends AbstractActionController
             $options = array('query' => $this->params()->fromQuery());
             return $this->redirect()->toRoute('frontoffice/default', $redirectParams, $options);
         }
-
-        $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'];
+        $isHttps = false;
+        $isProxyfied = false;
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+            $isHttps = true;
+        }
+        elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+            $isProxyfied = true;
+        }
         $httpProtocol = $isHttps ? 'HTTPS' : 'HTTP';
+        $redirectProtocol = $isProxyfied ? 'HTTPS' : $httpProtocol;
 
         // init service variables
         $this->_serviceUrl = Manager::getService('Url');
@@ -133,7 +140,6 @@ class IndexController extends AbstractActionController
         if (!$this->_pageId) {
             throw new \Rubedo\Exceptions\NotFound('No Page found', "Exception2");
         }
-
 
         $this->_pageInfo = Manager::getService('Pages')->findById($this->_pageId);
 
@@ -149,7 +155,7 @@ class IndexController extends AbstractActionController
             }
             $uri = $this->getRequest()->getUri();
             $domain = $uri->getHost();
-            return $this->redirect()->toUrl(strtolower(array_pop($site['protocol'])) . '://' . $domain);
+            return $this->redirect()->toUrl(strtolower($redirectProtocol) . '://' . $domain);
         }
 
         $wasFiltered1 = AbstractCollection::disableUserFilter();
@@ -169,7 +175,7 @@ class IndexController extends AbstractActionController
          * @todo rewrite this in ZF2 way
          */
         if (!in_array($httpProtocol, $this->_site['protocol'])) {
-            return $this->redirect()->toUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $domain . $uri->getPath() . '?' . $uri->getQuery());
+            return $this->redirect()->toUrl(strtolower($redirectProtocol) . '://' . $domain . $uri->getPath() . '?' . $uri->getQuery());
         }
 
         AbstractCollection::setIsFrontEnd(true);
@@ -183,7 +189,7 @@ class IndexController extends AbstractActionController
         }
         $lang = Manager::getService('CurrentLocalization')->resolveLocalization($this->_site['id'], $this->params('locale'), $cookieValue);
         if ($lang && !$this->params('locale')) {
-            return $this->redirect()->toUrl(strtolower(array_pop($this->_site['protocol'])) . '://' . $domain . '/' . $lang . $uri->getPath() . '?' . $uri->getQuery())->setStatusCode(301);
+            return $this->redirect()->toUrl(strtolower($redirectProtocol) . '://' . $domain . '/' . $lang . $uri->getPath() . '?' . $uri->getQuery())->setStatusCode(301);
         }
 
         if ($domain && !$this->_site['useBrowserLanguage']) {
