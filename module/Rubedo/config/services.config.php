@@ -41,6 +41,8 @@ return array(
     'ElasticContentTypes' => 'Rubedo\\Elastic\\ContentTypes',
     'ElasticClickStream' => 'Rubedo\\Elastic\\ClickStream',
     'ElasticViewStream' => 'Rubedo\\Elastic\\ViewStream',
+    'ElasticDataFilters' => 'Rubedo\\Elastic\\DataFilters',
+    'ElasticDataAggregations' => 'Rubedo\\Elastic\\DataAggregations',
     'ElasticDam' => 'Rubedo\\Elastic\\Dam',
     'ElasticDamTypes' => 'Rubedo\\Elastic\\DamTypes',
     'ElasticUsers' => 'Rubedo\\Elastic\\Users',

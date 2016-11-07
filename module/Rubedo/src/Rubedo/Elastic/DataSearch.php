@@ -18,6 +18,7 @@
 
 namespace Rubedo\Elastic;
 
+use Rubedo\Services\Manager;
 use Zend\Json\Json;
 
 /**
@@ -194,7 +195,7 @@ class DataSearch extends DataAbstract
         $params ['query'] = strip_tags($params ['query']);
 
         // Build filters
-        $filterFactory = new DataFilters();
+        $filterFactory =Manager::getService("ElasticDataFilters");
 
         // System filters
         $systemFilters = [
@@ -376,7 +377,7 @@ class DataSearch extends DataAbstract
         }
 
         // Build facets
-        $facetFactory = new DataAggregations();
+        $facetFactory = Manager::getService("ElasticDataAggregations");
 
         // Add system facets
         $systemFacets = [

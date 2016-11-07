@@ -16,6 +16,7 @@
  */
 
 namespace Rubedo\Elastic;
+use Rubedo\Services\Manager;
 
 /**
  * Service to handle clickstream indexing and searching.
@@ -278,7 +279,7 @@ class ClickStream extends DataAbstract
         // Set facet operator for events
         SearchContext::setFacetOperator('event','or');
         // Build date filter
-        $filterFactory = new DataFilters();
+        $filterFactory = Manager::getService("ElasticDataFilters");
         $filterFactory->addDateRangeFilter('date', 'date', $startDate, $endDate);
         // Build facets filters
         foreach (self::$_facets as $key => $field) {
@@ -296,7 +297,7 @@ class ClickStream extends DataAbstract
             $params['body']['query']['filtered']['filter'] = $globalFilter;
         }
         // Build facets
-        $facetFactory = new DataAggregations();
+        $facetFactory = Manager::getService("ElasticDataAggregations");
         foreach (self::$_facets as $key => $field) {
             $facetFactory->addAggregation($field, $field);
         }
@@ -364,7 +365,7 @@ class ClickStream extends DataAbstract
         // Set facet operator for events
         SearchContext::setFacetOperator('event','or');
         // Build date filter
-        $filterFactory = new DataFilters();
+        $filterFactory = Manager::getService("ElasticDataFilters");
         $filterFactory->addDateRangeFilter('date', 'date', $startDate, $endDate);
         // Build geo filter
         $coordinates = [
@@ -394,7 +395,7 @@ class ClickStream extends DataAbstract
             $params['body']['query']['filtered']['filter'] = $globalFilter;
         }
         // Build facets
-        $facetFactory = new DataAggregations();
+        $facetFactory = Manager::getService("ElasticDataAggregations");
         foreach (self::$_facets as $name => $field) {
             $facetFactory->addAggregation($field, $field);
         }

@@ -147,7 +147,7 @@ class SearchContext
     public static function getSeenItems($fingerprint)
     {
         if (is_null(self::$_seenItems)) {
-            $viewStream = new ViewStream();
+            $viewStream = Manager::getService('ElasticViewStream');
             self::$_seenItems = $viewStream->getSignificantItems($fingerprint);
         }
 
