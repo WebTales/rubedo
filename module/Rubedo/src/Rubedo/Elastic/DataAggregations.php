@@ -27,6 +27,7 @@ namespace Rubedo\Elastic;
  */
 class DataAggregations
 {
+    protected $taxoTermsCache = [];
     /**
      * Aggregation dispatcher.
      *
@@ -533,7 +534,7 @@ class DataAggregations
                         $temp ['label'] = $vocabularyItem ['name'];
                         if (array_key_exists('buckets', $temp) and count($temp ['buckets']) > 0) {
                             foreach ($temp ['buckets'] as $key => $value) {
-                                $termItem = SearchContext::getService('TaxonomyTerms')->findById($value ['key']);
+                                $termItem = $this->getTaxoTerm($id,$value ['key']);
                                 if ($termItem) {
                                     $temp ['terms'] [] = [
                                             'label' => $termItem ['text'],
@@ -597,5 +598,19 @@ class DataAggregations
                 return;
             }
         }
+    }
+
+    protected function getTaxoTerm($taxoId,$termId){
+        if(!isset($this->taxoTermsCache[$taxoId])){
+            $terms=SearchContext::getService('TaxonomyTerms')->findByVocabulary($taxoId);
+            if(!isset($terms["data"])&&!is_array($terms["data"])){
+                return null;
+            }
+            $this->taxoTermsCache[$taxoId]=[];
+            foreach($terms["data"] as $term){
+                $this->taxoTermsCache[$taxoId][$term["id"]]=$term;
+            }
+        }
+        return isset($this->taxoTermsCache[$taxoId][$termId]) ? $this->taxoTermsCache[$taxoId][$termId] : null;
     }
 }
