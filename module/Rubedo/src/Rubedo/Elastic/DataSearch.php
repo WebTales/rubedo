@@ -426,8 +426,12 @@ class DataSearch extends DataAbstract
         }
 
         // Add aggs to search params
-        $aggs = SearchContext::getAggs();
-        if (!empty($aggs)) $searchParams['body']['aggs'] = SearchContext::getAggs();
+        if (empty($significantItems)) {
+            $aggs = SearchContext::getAggs();
+            if (!empty($aggs)) $searchParams['body']['aggs'] = SearchContext::getAggs();
+        } else {
+            $aggs = [];
+        }
 
         // Add size and from to paginate results
         if (isset($params['start']) && isset($params['limit'])) {
