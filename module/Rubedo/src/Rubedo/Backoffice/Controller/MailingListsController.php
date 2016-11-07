@@ -106,6 +106,7 @@ class MailingListsController extends DataAccessController
 
     public function exportUsersAction()
     {
+        set_time_limit(600);
         $usersService = Manager::getService('Users');
         $fileName = 'export_csv_' . date('Ymd') . '.csv';
         $filePath = sys_get_temp_dir() . '/' . $fileName;
