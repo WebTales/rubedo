@@ -235,9 +235,7 @@ class DataAccess implements IDataAccess
             if (!empty($options['mongo']['replicaSetName'])) {
                 self::$_replicaSetName = $options['mongo']['replicaSetName'];
                 if (empty($options['mongo']['readPreference'])) {
-                    $serviceAuth = Manager::getService('AuthenticationService');
-                    $isAuth= $serviceAuth->hasIdentity();
-                    self::$_readPreference = $isAuth ? "primaryPreferred" : "secondaryPreferred";
+                    self::$_readPreference = "primaryPreferred";
                 } else {
                     self::$_readPreference = $options['mongo']['readPreference'];
                 }
