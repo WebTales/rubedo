@@ -1,0 +1,59 @@
+var CACHE_VERSION = "<?php echo $this->cacheKey; ?>";
+var CURRENT_CACHES = {
+    resource: 'resource-cache-v' + CACHE_VERSION
+};
+
+self.addEventListener('activate', function (event) {
+    var expectedCacheNames = Object.keys(CURRENT_CACHES).map(function (key) {
+        return CURRENT_CACHES[key];
+    });
+
+    event.waitUntil(
+        caches.keys().then(function (cacheNames) {
+            return Promise.all(
+                cacheNames.map(function (cacheName) {
+                    if (expectedCacheNames.indexOf(cacheName) === -1) {
+                        console.log('Deleting out of date cache:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+});
+
+self.addEventListener('fetch', function (event) {
+
+    event.respondWith(
+        caches.open(CURRENT_CACHES.resource).then(function (cache) {
+            return cache.match(event.request).then(function (response) {
+                if (response) {
+
+
+                    return response;
+                }
+
+
+
+
+
+                return fetch(event.request.clone()).then(function (response) {
+
+
+                    if (event.request.url.indexOf("theme/") !== -1 && response.status < 400 &&
+                        response.headers.has('content-type')) {
+
+                        cache.put(event.request, response.clone());
+                    }
+
+                    return response;
+                });
+            }).catch(function (error) {
+
+                console.error('  Error in fetch handler:', error);
+
+                throw error;
+            });
+        })
+    );
+});
