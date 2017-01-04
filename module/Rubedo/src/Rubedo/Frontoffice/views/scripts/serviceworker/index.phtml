@@ -23,7 +23,7 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-
+if (event.request.url.indexOf("theme/") !== -1){
     event.respondWith(
         caches.open(CURRENT_CACHES.resource).then(function (cache) {
             return cache.match(event.request).then(function (response) {
@@ -40,8 +40,7 @@ self.addEventListener('fetch', function (event) {
                 return fetch(event.request.clone()).then(function (response) {
 
 
-                    if (event.request.url.indexOf("theme/") !== -1 && response.status < 400 &&
-                        response.headers.has('content-type')) {
+                    if (response.status < 400) {
 
                         cache.put(event.request, response.clone());
                     }
@@ -56,4 +55,7 @@ self.addEventListener('fetch', function (event) {
             });
         })
     );
+} else {
+    event.respondWith(fetch(event.request));
+}
 });
