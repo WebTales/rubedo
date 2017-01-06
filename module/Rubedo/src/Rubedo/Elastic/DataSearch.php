@@ -360,6 +360,7 @@ class DataSearch extends DataAbstract
                     'fields' => ['i18n.*.fields.*','taxonomy.*','fields.*'],
                     'docs' => $significantItems,
                     'min_term_freq' => 1,
+                    'min_doc_freq' => 1,
                 ];
             } else {
                 $searchParams['body']['query']['query_string'] = $elasticQueryString;
