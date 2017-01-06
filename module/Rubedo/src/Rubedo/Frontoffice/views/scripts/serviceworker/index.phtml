@@ -2,7 +2,9 @@ var CACHE_VERSION = "<?php echo $this->cacheKey; ?>";
 var CURRENT_CACHES = {
     resource: 'resource-cache-v' + CACHE_VERSION
 };
-
+self.addEventListener('install', function (event) {
+    self.skipWaiting();
+});
 self.addEventListener('activate', function (event) {
     var expectedCacheNames = Object.keys(CURRENT_CACHES).map(function (key) {
         return CURRENT_CACHES[key];
@@ -21,36 +23,22 @@ self.addEventListener('activate', function (event) {
         })
     );
 });
-
 self.addEventListener('fetch', function (event) {
 if (event.request.url.indexOf("theme/") !== -1){
     event.respondWith(
         caches.open(CURRENT_CACHES.resource).then(function (cache) {
             return cache.match(event.request).then(function (response) {
                 if (response) {
-
-
                     return response;
                 }
-
-
-
-
-
                 return fetch(event.request.clone()).then(function (response) {
-
-
                     if (response.status < 400) {
-
                         cache.put(event.request, response.clone());
                     }
-
                     return response;
                 });
             }).catch(function (error) {
-
                 console.error('  Error in fetch handler:', error);
-
                 throw error;
             });
         })
