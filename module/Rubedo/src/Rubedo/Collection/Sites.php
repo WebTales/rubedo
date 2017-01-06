@@ -71,6 +71,7 @@ class Sites extends AbstractLocalizableCollection implements ISites
         "sitemapContentTypes",
         "defaultNotFound",
         "iframelyKey",
+        "enableServiceWorker",
         "optimizedRender"
     );
 
