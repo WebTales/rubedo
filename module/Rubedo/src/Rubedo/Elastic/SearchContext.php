@@ -144,11 +144,11 @@ class SearchContext
         return self::$_facetedFields = $value;
     }
 
-    public static function getSeenItems($fingerprint)
+    public static function getSeenItems($fingerprint, $historyDepth = null, $historySize = null)
     {
         if (is_null(self::$_seenItems)) {
             $viewStream = Manager::getService('ElasticViewStream');
-            self::$_seenItems = $viewStream->getSignificantItems($fingerprint);
+            self::$_seenItems = $viewStream->getSignificantItems($fingerprint,$historyDepth,$historySize);
         }
 
         return self::$_seenItems;
