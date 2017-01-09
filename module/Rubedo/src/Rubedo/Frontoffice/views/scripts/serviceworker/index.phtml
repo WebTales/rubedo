@@ -1,6 +1,7 @@
 var CACHE_VERSION = "<?php echo $this->cacheKey; ?>";
 var CURRENT_CACHES = {
-    resource: 'resource-cache-v' + CACHE_VERSION
+    resource: 'resource-cache-v' + CACHE_VERSION,
+    offline: 'offline-cache-v' + CACHE_VERSION
 };
 self.addEventListener('install', function (event) {
     self.skipWaiting();
@@ -40,6 +41,25 @@ if (event.request.url.indexOf("theme/") !== -1 || event.request.url.indexOf("com
             }).catch(function (error) {
                 console.error('  Error in fetch handler:', error);
                 throw error;
+            });
+        })
+    );
+} else if (event.request.method === 'GET') {
+    event.respondWith(
+        caches.open(CURRENT_CACHES.offline).then(function (cache) {
+            return fetch(event.request.clone()).then(function (response) {
+                if (response.status < 400) {
+                    cache.put(event.request, response.clone());
+                }
+                return response;
+            }).catch(function(error) {
+                return cache.match(event.request).then(function (cachedResponse) {
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    } else {
+                        throw error;
+                    }
+                });
             });
         })
     );
