@@ -24,7 +24,7 @@ self.addEventListener('activate', function (event) {
     );
 });
 self.addEventListener('fetch', function (event) {
-if (event.request.url.indexOf("theme/") !== -1){
+if (event.request.url.indexOf("theme/") !== -1 || event.request.url.indexOf("components/") !== -1 || event.request.url.indexOf("extension-path/") !== -1){
     event.respondWith(
         caches.open(CURRENT_CACHES.resource).then(function (cache) {
             return cache.match(event.request).then(function (response) {
