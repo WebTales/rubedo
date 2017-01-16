@@ -333,7 +333,7 @@ class DataAbstract
                     case 'RECField' :
                     case 'Rubedo.view.RECField' :
                         $config = [
-                            'type' => 'object',
+                            'type' => 'nested',
                             'store' => $store,
                             'properties' => [],
                         ];
