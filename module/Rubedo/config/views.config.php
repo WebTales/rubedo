@@ -43,5 +43,6 @@ return array(
     'rubedo/install/controller/index/set-mailer' => $installViewPath . '/index/set-mailer.phtml',
     'rubedo/install/controller/index/set-php-settings' => $installViewPath . '/index/set-php-settings.phtml',
     'rubedo/contact/render-form' => $blockViewPath . '/contact/form.phtml',
-    'rubedo/index/index' => $foViewsPath . '/index/index.phtml'
+    'rubedo/index/index' => $foViewsPath . '/index/index.phtml',
+    'rubedo/controller/serviceworker/index' => $foViewsPath . '/serviceworker/index.phtml'
 );

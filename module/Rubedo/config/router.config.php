@@ -84,6 +84,18 @@ return array(
                 )
             ),
         ),
+        //Service worker
+        'serviceworker' => array(
+            'type' => 'Literal',
+            'options' => array(
+                'route' => '/serviceworker.js',
+                'defaults' => array(
+                    '__NAMESPACE__' => 'Rubedo\\Frontoffice\\Controller',
+                    'controller' => 'Serviceworker',
+                    'action' => 'index'
+                )
+            ),
+        ),
         // Payment controller
         'payment' => array(
             'type' => 'Segment',

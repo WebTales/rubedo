@@ -29,5 +29,6 @@ return array(
     'Rubedo\\Frontoffice\\Controller\\ExtensionPath' => 'Rubedo\\Frontoffice\\Controller\\ExtensionPathController',
     'Rubedo\\Frontoffice\\Controller\\Queue' => 'Rubedo\\Frontoffice\\Controller\\QueueController',
     'Rubedo\\Frontoffice\\Controller\\Css' => 'Rubedo\\Frontoffice\\Controller\\CssController',
-    'Rubedo\\Frontoffice\\Controller\\Sitemap' => 'Rubedo\\Frontoffice\\Controller\\SitemapController'
+    'Rubedo\\Frontoffice\\Controller\\Sitemap' => 'Rubedo\\Frontoffice\\Controller\\SitemapController',
+    'Rubedo\\Frontoffice\\Controller\\Serviceworker' => 'Rubedo\\Frontoffice\\Controller\\ServiceworkerController'
 );

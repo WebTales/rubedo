@@ -1,0 +1,69 @@
+var CACHE_VERSION = "<?php echo $this->cacheKey; ?>";
+var CURRENT_CACHES = {
+    resource: 'resource-cache-v' + CACHE_VERSION,
+    offline: 'offline-cache-v' + CACHE_VERSION
+};
+self.addEventListener('install', function (event) {
+    self.skipWaiting();
+});
+self.addEventListener('activate', function (event) {
+    var expectedCacheNames = Object.keys(CURRENT_CACHES).map(function (key) {
+        return CURRENT_CACHES[key];
+    });
+
+    event.waitUntil(
+        caches.keys().then(function (cacheNames) {
+            return Promise.all(
+                cacheNames.map(function (cacheName) {
+                    if (expectedCacheNames.indexOf(cacheName) === -1) {
+                        console.log('Deleting out of date cache:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+});
+self.addEventListener('fetch', function (event) {
+if (event.request.url.indexOf("theme/") !== -1 || event.request.url.indexOf("components/") !== -1 || event.request.url.indexOf("extension-path/") !== -1){
+    event.respondWith(
+        caches.open(CURRENT_CACHES.resource).then(function (cache) {
+            return cache.match(event.request).then(function (response) {
+                if (response) {
+                    return response;
+                }
+                return fetch(event.request.clone()).then(function (response) {
+                    if (response.status < 400) {
+                        cache.put(event.request, response.clone());
+                    }
+                    return response;
+                });
+            }).catch(function (error) {
+                console.error('  Error in fetch handler:', error);
+                throw error;
+            });
+        })
+    );
+} else if (event.request.method === 'GET') {
+    event.respondWith(
+        caches.open(CURRENT_CACHES.offline).then(function (cache) {
+            return fetch(event.request.clone()).then(function (response) {
+                if (response.status < 400) {
+                    cache.put(event.request, response.clone());
+                }
+                return response;
+            }).catch(function(error) {
+                return cache.match(event.request).then(function (cachedResponse) {
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    } else {
+                        throw error;
+                    }
+                });
+            });
+        })
+    );
+} else {
+    event.respondWith(fetch(event.request));
+}
+});
