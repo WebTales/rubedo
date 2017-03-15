@@ -74,7 +74,8 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         $returnArray = parent::update($obj, $options);
         if ($returnArray['success']) {
             if (!$live) {
-                $this->_transitionEvent($returnArray['data'], $previousStatus);
+                $rawData = !empty($returnArray['rawData']) ? $returnArray['rawData'] : null;
+                $this->_transitionEvent($returnArray['data'], null, $rawData);
             }
         } else {
             $returnArray = array(
@@ -122,7 +123,8 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
                     unset($returnArray['data']);
                 }
             } else {
-                $this->_transitionEvent($returnArray['data'], null);
+                $rawData = !empty($returnArray['rawData']) ? $returnArray['rawData'] : null;
+                $this->_transitionEvent($returnArray['data'], null, $rawData);
             }
         } else {
             $returnArray = array(
@@ -167,18 +169,18 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
      * @return array
      */
     public function findOne(\WebTales\MongoFilters\IFilter $filters = null, $live = true, $raw = true) {
-    	
-    	if ($live === true) {
-    		$this->_dataService->setLive();
-    	} else {
-    		$this->_dataService->setWorkspace();
-    	}
-    	
-    	$obj = $this->_dataService->findOne($filters, $raw);
 
-    	return $obj;
+        if ($live === true) {
+            $this->_dataService->setLive();
+        } else {
+            $this->_dataService->setWorkspace();
+        }
+
+        $obj = $this->_dataService->findOne($filters, $raw);
+
+        return $obj;
     }
-    
+
     /*
      * (non-PHPdoc) @see \Rubedo\Collection\AbstractCollection::getList()
      */
@@ -225,9 +227,9 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
      * @param bool $ignoreIndex
      * @return mixed
      */
-    public function publish($objectId, $ignoreIndex = false)
+    public function publish($objectId, $ignoreIndex = false, $rawObj = null)
     {
-        $result = $this->_dataService->publish($objectId);
+        $result = $this->_dataService->publish($objectId, $rawObj);
         $args = $result;
         $args['data'] = array(
             'id' => $objectId,
@@ -237,11 +239,11 @@ abstract class WorkflowAbstractCollection extends AbstractLocalizableCollection 
         return $result;
     }
 
-    protected function _transitionEvent($obj, $previousStatus)
+    protected function _transitionEvent($obj, $previousStatus, $rawObj = null)
     {
         if (array_key_exists('status', $obj) && $obj['status'] === 'published') {
             $returnArray = array();
-            $result = $this->publish($obj['id']);
+            $result = $this->publish($obj['id'], false, $rawObj);
 
             if (!$result['success']) {
                 $returnArray['success'] = false;

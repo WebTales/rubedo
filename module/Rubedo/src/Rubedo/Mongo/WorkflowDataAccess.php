@@ -52,7 +52,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         'text',
         'isProduct',
         'productProperties',
-   		'orderByUserGroup'
+        'orderByUserGroup'
     );
 
     /**
@@ -245,12 +245,16 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
     /**
      * Publish a content
      */
-    public function publish($objectId)
+    public function publish($objectId, $rawObj = null)
     {
         $versioningService = \Rubedo\Services\Manager::getService('Versioning');
-        $obj = $this->_collection->findOne(array(
-            '_id' => $this->getId($objectId)
-        ));
+        if (empty($rawObj)) {
+            $obj = $this->_collection->findOne(array(
+                '_id' => $this->getId($objectId)
+            ));
+        } else {
+            $obj = $rawObj;
+        }
 
         if (isset($obj['workspace'])) {
             // define the publish values for the version handling
@@ -335,6 +339,7 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
         $result = parent::update($obj, $options);
 
         if ($result['success']) {
+            $result['rawData'] = $result['data'];
             $result['data'] = $this->_outputObjectFilter($result['data']);
             return $result;
         } else {
@@ -357,11 +362,12 @@ class WorkflowDataAccess extends DataAccess implements IWorkflowDataAccess
             $obj['workspace'] = array();
         }
         $result = parent::create($obj, $options);
-		
+
         if (isset($options["w"]) && $options["w"]==0) { // fire and forget option
-        	return null;
+            return null;
         } else {
-        	$result['data'] = $this->_outputObjectFilter($result['data']);
+            $result['rawData'] = $result['data'];
+            $result['data'] = $this->_outputObjectFilter($result['data']);
         }
 
         return $result;
