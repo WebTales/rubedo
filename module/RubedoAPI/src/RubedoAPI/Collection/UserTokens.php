@@ -36,6 +36,11 @@ class UserTokens extends AbstractCollection
         parent::__construct();
     }
 
+    public function create(array $obj, $options = array("w" => "majority"))
+    {
+        return parent::create($obj, $options);
+    }
+
     /**
      * Find user token from refresh token
      *
