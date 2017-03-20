@@ -405,6 +405,10 @@ class Module implements ConsoleUsageProviderInterface, ConsoleBannerProviderInte
                 'collection' => 'sessions'
             ));
 
+            if ($e->getRequest()->getRequestUri() === "/api/v1/auth/oauth2/generate" || $e->getRequest()->getRequestUri() === "/backoffice/") {
+                $options->setSaveOptions(array("w" => "majority"));
+            }
+
             $saveHandler = new MongoDB($adapter, $options);
 
             $this->sessionManager = new SessionManager($sessionConfig);

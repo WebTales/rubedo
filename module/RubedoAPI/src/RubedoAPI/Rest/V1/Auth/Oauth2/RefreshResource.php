@@ -61,7 +61,7 @@ class RefreshResource extends AbstractResource
         $response = $this->getAuthAPIService()->APIRefreshAuth($params['refresh_token']);
         $output['token'] = $this->subTokenFilter($response['token']);
         $this->subUserFilter($response['user']);
-        $this->getCurrentUserAPIService()->setAccessToken($output['token']['access_token']);
+        $this->getCurrentUserAPIService()->setAccessToken($output['token']['access_token'], $output['token']);
         $route = $this->getContext()->params()->fromRoute();
         $route['api'] = array('auth');
         $route['method'] = 'GET';

@@ -92,9 +92,9 @@ class CurrentUser extends \Rubedo\User\CurrentUser
      *
      * @param $access_token
      */
-    public function setAccessToken($access_token)
+    public function setAccessToken($access_token, $token = null)
     {
-        static::$token = $this->getUserTokensAPICollection()->findOneByAccessToken($access_token);
+        static::$token = $this->getUserTokensAPICollection()->findOneByAccessToken($access_token, $token);
         static::$_currentUser = null;
         static::$_currentUserId = null;
     }

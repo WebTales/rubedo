@@ -60,11 +60,11 @@ class UserTokens extends AbstractCollection
      * @return array
      * @throws \RubedoAPI\Exceptions\APIEntityException
      */
-    public function findOneByAccessToken($accessToken)
+    public function findOneByAccessToken($accessToken, $updateToken = null)
     {
         $filter = Filter::factory('Value');
         $filter->setName('access_token')->setValue($accessToken);
-        $token = $this->_dataService->findOne($filter);
+        $token = !empty($updateToken)? $updateToken : $this->_dataService->findOne($filter);
         if (empty($token))
             throw new APIEntityException('Access token not found', 404, true);
         if (($token['lifetime'] + $token['createTime']) < time())

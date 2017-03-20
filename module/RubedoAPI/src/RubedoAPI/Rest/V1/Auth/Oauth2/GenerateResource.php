@@ -80,7 +80,7 @@ class GenerateResource extends AbstractResource
         $route['method'] = 'GET';
         $route['access_token'] = $output['token']['access_token'];
         //Hack Refresh currentUser
-        $this->getCurrentUserAPIService()->setAccessToken($output['token']['access_token']);
+        $this->getCurrentUserAPIService()->setAccessToken($output['token']['access_token'], $output['token']);
         $rightsSubRequest = $this->getContext()->forward()->dispatch('RubedoAPI\\Frontoffice\\Controller\\Api', $route);
         $output['currentUser'] = $rightsSubRequest->getVariables()['currentUser'];
         return $output;
