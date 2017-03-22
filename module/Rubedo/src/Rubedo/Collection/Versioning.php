@@ -53,7 +53,7 @@ class Versioning extends AbstractCollection implements IVersioning
         $createTime = null;
         $version = null;
 
-        $contentId = (string)$obj['_id'];
+        $contentId = !empty($obj["id"]) ? $obj["id"] : (string)$obj['_id'];
 
         $sort = array(
             'publishVersion' => 'desc'
