@@ -23,7 +23,8 @@
         "exceptionClass",
         "execute.controller.xhrgetmongoid.index.backoffice",
         "execute.controller.xhrencodeimage.encode-image.backoffice",
-        "execute.controller.extfinder.index.backoffice"
+        "execute.controller.extfinder.index.backoffice",
+        "execute.controller.elasticsearchdam.index.backoffice"
     ],
     "includes": [
         "contentReader"
