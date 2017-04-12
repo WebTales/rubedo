@@ -143,8 +143,8 @@ class Dam extends DataAbstract
         // Add document
         if (isset($data['originalFileId']) && $data['originalFileId'] != '') {
             $indexedFiles = [
-                'application/pdf',
-                'application/rtf',
+//                'application/pdf',
+//                'application/rtf',
                 'text/html',
                 'text/plain',
                 'text/richtext',
