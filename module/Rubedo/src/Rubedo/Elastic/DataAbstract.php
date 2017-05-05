@@ -142,7 +142,7 @@ class DataAbstract
         $clientBuilder = ClientBuilder::create();
         $clientBuilder->setHosts($hosts);
         $this->_client = $clientBuilder->build();
-
+        var_dump($this->_client->cat()->plugins());
         //$this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
 
         // Create index if not exists
