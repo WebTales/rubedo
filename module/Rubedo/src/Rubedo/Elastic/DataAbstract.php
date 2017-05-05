@@ -115,6 +115,13 @@ class DataAbstract
     protected $_types;
 
     /**
+     * Mapper Attachment plugin existence
+     *
+     * @var boolean
+     */
+    protected $_isMapperAttachmentInstalled;
+
+    /**
      * Load ES configuration from file.
      */
     public function __construct()
@@ -142,8 +149,8 @@ class DataAbstract
         $clientBuilder = ClientBuilder::create();
         $clientBuilder->setHosts($hosts);
         $this->_client = $clientBuilder->build();
-        var_dump($this->_client->cat()->plugins());
-        var_dump(strpos($this->_client->cat()->plugins(),"mapper-attachments"));
+        $this->_isMapperAttachmentInstalled = strpos($this->_client->cat()->plugins(),"mapper-attachments") ? true : false;
+
         //$this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
 
         // Create index if not exists
@@ -459,7 +466,7 @@ class DataAbstract
                         break;
                     case 'document' :
                         $config = [
-                            'type' => 'binary',
+                            'type' => $this->_isMapperAttachmentInstalled ? 'attachment' : 'binary',
                             'store' => $store,
                         ];
                         if ($notAnalyzed) {
