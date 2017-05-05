@@ -143,7 +143,7 @@ class DataAbstract
         $clientBuilder->setHosts($hosts);
         $this->_client = $clientBuilder->build();
         var_dump($this->_client->cat()->plugins());
-        var_dump(array_search("mapper-attachments", $this->_client->cat()->plugins()));
+        var_dump(strpos("mapper-attachments", $this->_client->cat()->plugins()));
         //$this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
 
         // Create index if not exists
