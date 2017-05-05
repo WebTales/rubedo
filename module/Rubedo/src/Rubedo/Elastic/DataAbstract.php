@@ -119,7 +119,7 @@ class DataAbstract
      *
      * @var boolean
      */
-    protected $_isMapperAttachmentInstalled;
+    protected static $_isMapperAttachmentInstalled;
 
     /**
      * Load ES configuration from file.
@@ -149,7 +149,7 @@ class DataAbstract
         $clientBuilder = ClientBuilder::create();
         $clientBuilder->setHosts($hosts);
         $this->_client = $clientBuilder->build();
-        $this->_isMapperAttachmentInstalled = strpos($this->_client->cat()->plugins(),"mapper-attachments") ? true : false;
+        self::$_isMapperAttachmentInstalled = strpos($this->_client->cat()->plugins(),"mapper-attachments") ? true : false;
 
         //$this->_client->setLogger(Manager::getService('SearchLogger')->getLogger());
 
