@@ -125,10 +125,7 @@ class DamTypes extends DataAbstract
         'fileSize' => [
             'type' => 'integer',
             'store' => 'yes',
-        ],
-        'file' => [
-            'type' => 'attachment',
-        ],
+        ]
     ];
 
     /**
@@ -136,6 +133,7 @@ class DamTypes extends DataAbstract
      */
     public function init($indexName = null)
     {
+        self::$_mapping['file']['type'] = self::$_isMapperAttachmentInstalled ? 'attachment' : 'binary';
         if ($indexName) {
             $this->_indexName = $indexName;
         } else {
