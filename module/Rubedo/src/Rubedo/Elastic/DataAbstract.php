@@ -458,7 +458,7 @@ class DataAbstract
                         break;
                     case 'document' :
                         $config = [
-                            'type' => 'attachment',
+                            'type' => 'binary',
                             'store' => $store,
                         ];
                         if ($notAnalyzed) {

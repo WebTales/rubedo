@@ -127,7 +127,7 @@ class DamTypes extends DataAbstract
             'store' => 'yes',
         ],
         'file' => [
-            'type' => 'attachment',
+            'type' => 'binary',
         ],
     ];
 
