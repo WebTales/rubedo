@@ -232,6 +232,14 @@ class DataAccess implements IDataAccess
                 $connectionString .= ',';
             }
             $connectionString = substr($connectionString, 0, -1);
+
+
+            // specify how long a send or receive on a socket can take before timing out.
+            if ( !empty( $options['mongo']['sockettimeoutms'] ) )
+            {
+                $connectionString .= "/?SocketTimeoutMS=".$options['mongo']['sockettimeoutms'];
+            }
+
             if (!empty($options['mongo']['replicaSetName'])) {
                 self::$_replicaSetName = $options['mongo']['replicaSetName'];
                 if (empty($options['mongo']['readPreference'])) {
