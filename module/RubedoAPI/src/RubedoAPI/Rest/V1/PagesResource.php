@@ -435,6 +435,7 @@ class PagesResource extends AbstractResource
     /**
      * Sort blocks
      *
+     * @see https://github.com/WebTales/rubedo/issues/1473
      * @param $blocks
      * @return array
      */
@@ -449,8 +450,21 @@ class PagesResource extends AbstractResource
                 $newBlocks[] = &$block;
             }
         }
-        ksort($newBlocks);
+        usort($newBlocks, array($this, "blockOrderValueDiff"));
         return array_values($newBlocks);
+    }
+
+
+    function blockOrderValueDiff($a, $b){
+
+        if(!isset($a['orderValue']))
+            return -1;
+
+        if(!isset($b['orderValue']))
+            return 1;
+
+        return ($a['orderValue'] == $b['orderValue']) ? 0 : (($a['orderValue'] < $b['orderValue']) ? -1 : 1);
+
     }
 
     /**
