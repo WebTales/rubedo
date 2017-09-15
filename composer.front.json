@@ -132,7 +132,7 @@
                 "name": "OwlFonk/OwlCarousel",
                 "version": "1.3.2",
                 "dist": {
-                    "url": "https://github.com/OwlFonk/OwlCarousel/archive/1.3.2.zip",
+                    "url": "https://git.uwaterloo.ca/libraries/OwlCarousel/repository/archive.zip?ref=1.3.2-uw_wcms",
                     "type": "zip"
                 }
             }
