@@ -35,6 +35,12 @@ class CurrentUser extends \Rubedo\User\CurrentUser
     /** @var  \Rubedo\Interfaces\Collection\IUsers */
     protected $usersCollection;
 
+    protected $config;
+
+    function __construct()
+    {
+        $this->config = Manager::getService('config');
+    }
     /**
      * Check if access token exist
      *
@@ -53,10 +59,13 @@ class CurrentUser extends \Rubedo\User\CurrentUser
      *
      * @return array
      */
-    protected function _fetchCurrentUser()
+    protected function _fetchCurrentUser($id=null)
     {
+        if(!$id){
+            $id=$this->getAccessToken()['user']['id'];
+        }
         $serviceReader = Manager::getService('Users');
-        $user = $serviceReader->findById($this->getAccessToken()['user']['id']);
+        $user = $serviceReader->findById($id);
         if (!empty($user))
             return $user;
         return parent::_fetchCurrentUser();
@@ -108,8 +117,17 @@ class CurrentUser extends \Rubedo\User\CurrentUser
     {
         if (!isset(static::$_currentUser)) {
             if ($this->isAuthenticated()) {
-                $user = $this->_fetchCurrentUser();
-
+                $id=$this->getAccessToken()['user']['id'];
+                if (isset($this->config['rubedo_config']['apiCache'])&&$this->config['rubedo_config']['apiCache']=="1") {
+                    $cacheKey = "internalRights".$id;
+                    $apiCacheService=Manager::getService("ApiCache");
+                    $foundCachedApiCall=$apiCacheService->findByCacheId($cacheKey);
+                    if($foundCachedApiCall){
+                        static::$_currentUser = $foundCachedApiCall["cachedResult"];
+                        return static::$_currentUser ;
+                    }
+                }
+                $user = $this->_fetchCurrentUser($id);
                 static::$_currentUser = $user;
                 if ($user) {
                     $mainWorkspace = $this->getMainWorkspace();
@@ -117,9 +135,22 @@ class CurrentUser extends \Rubedo\User\CurrentUser
                         $user['defaultWorkspace'] = $mainWorkspace['id'];
                         static::$_currentUser = $user;
                     }
+                    if (isset($this->config['rubedo_config']['apiCache'])&&$this->config['rubedo_config']['apiCache']=="1") {
+                        $time = Manager::getService('CurrentTime')->getCurrentTime();
+                        $newCachedApiCall=array(
+                            "cacheId"=>$cacheKey,
+                            "cachedResult"=>$user,
+                            "endpoint"=>"internalRightsCache",
+                            "expireAt"=>new \MongoDate($time+3600)
+                        );
+                        $apiCacheService->upsertByCacheId($newCachedApiCall,$cacheKey);
+                    }
                 }
             }
         }
+
         return static::$_currentUser;
+
+
     }
 }
