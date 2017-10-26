@@ -600,6 +600,31 @@ abstract class AbstractCollection implements IAbstractCollection
 
     public function fetchAllChildren($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null, $limit = 10)
     {
+        $config=Manager::getService('config');
+        if (isset($config['rubedo_config']['apiCache'])&&$config['rubedo_config']['apiCache']=="1") {
+            $cacheKey = "internalTermChildren".$parentId;
+            $apiCacheService=Manager::getService("ApiCache");
+            $foundCachedApiCall=$apiCacheService->findByCacheId($cacheKey);
+            if($foundCachedApiCall){
+                return $foundCachedApiCall["cachedResult"];
+            }
+        }
+        $result=$this->recGetAllChildren($parentId,$filters,$sort,$limit);
+        if (isset($config['rubedo_config']['apiCache'])&&$config['rubedo_config']['apiCache']=="1") {
+            $time = Manager::getService('CurrentTime')->getCurrentTime();
+            $newCachedApiCall=array(
+                "cacheId"=>$cacheKey,
+                "cachedResult"=>$result,
+                "endpoint"=>"internalTermChildrenCache",
+                "expireAt"=>new \MongoDate($time+3600)
+            );
+            $apiCacheService->upsertByCacheId($newCachedApiCall,$cacheKey);
+        }
+        return $result;
+    }
+
+    protected function recGetAllChildren($parentId, \WebTales\MongoFilters\IFilter $filters = null, $sort = null, $limit = 10)
+    {
         $returnArray = array();
         $children = $this->readChild($parentId, $filters, $sort); // Read child
         // of
@@ -610,7 +635,7 @@ abstract class AbstractCollection implements IAbstractCollection
             // do another read child.
             $returnArray[] = $value;
             if ((!isset($value['leaf']) || $value['leaf'] === false) && $limit > 0) {
-                $returnArray = array_merge($returnArray, $this->fetchAllChildren($value['id'], $filters, $sort, $limit - 1));
+                $returnArray = array_merge($returnArray, $this->recGetAllChildren($value['id'], $filters, $sort, $limit - 1));
             }
         }
         return $returnArray;
