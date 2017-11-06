@@ -58,6 +58,24 @@ class Groups extends AbstractCollection implements IGroups
     );
 
     protected static $groupByName = array();
+    protected static $publicGroupCache = null;
+    protected $groupMinProjection = array(
+        "canDeleteElements"=>1,
+        "canWriteUnownedElements"=>1,
+        "expandable"=>1,
+        "name"=>1,
+        "parentId"=>1,
+        "readWorkspaces"=>1,
+        "rights"=>1,
+        "roles"=>1,
+        "writeWorkspaces"=>1,
+        "defaultWorkspace"=>1,
+        "workspace"=>1,
+        "defaultId"=>1,
+        "system"=>1,
+        "inheritWorkspace"=>1,
+        "_id"=>1,
+    );
 
     public function __construct()
     {
@@ -192,23 +210,7 @@ class Groups extends AbstractCollection implements IGroups
             )
         );
         $pipeline[] = array(
-            '$project' => array(
-                "canDeleteElements"=>1,
-                "canWriteUnownedElements"=>1,
-                "expandable"=>1,
-                "name"=>1,
-                "parentId"=>1,
-                "readWorkspaces"=>1,
-                "rights"=>1,
-                "roles"=>1,
-                "writeWorkspaces"=>1,
-                "defaultWorkspace"=>1,
-                "workspace"=>1,
-                "defaultId"=>1,
-                "system"=>1,
-                "inheritWorkspace"=>1,
-                "_id"=>1,
-            )
+            '$project' => $this->groupMinProjection
         );
         $groupList = $this->getAggregation( $pipeline );
         $list = $groupList['data'];
@@ -275,23 +277,7 @@ class Groups extends AbstractCollection implements IGroups
             )
         );
         $pipeline[] = array(
-            '$project' => array(
-                "canDeleteElements"=>1,
-                "canWriteUnownedElements"=>1,
-                "expandable"=>1,
-                "name"=>1,
-                "parentId"=>1,
-                "readWorkspaces"=>1,
-                "rights"=>1,
-                "roles"=>1,
-                "writeWorkspaces"=>1,
-                "defaultWorkspace"=>1,
-                "workspace"=>1,
-                "defaultId"=>1,
-                "system"=>1,
-                "inheritWorkspace"=>1,
-                "_id"=>1,
-            )
+            '$project' => $this->groupMinProjection
         );
         $groupList = $this->getAggregation( $pipeline );
         if(empty($groupList["data"][0]["_id"])){
@@ -387,7 +373,26 @@ class Groups extends AbstractCollection implements IGroups
 
     public function getPublicGroup()
     {
-        return $this->findByName('public');
+        if(empty(static::$publicGroupCache)){
+            $pipeline = array();
+            $pipeline[] = array(
+                '$match' => array(
+                    'name' => 'public'
+                )
+            );
+            $pipeline[] = array(
+                '$project' => $this->groupMinProjection
+            );
+            $groupList = $this->getAggregation( $pipeline );
+            if(empty($groupList["data"][0]["_id"])){
+                return null;
+            }
+            $result=$groupList["data"][0];
+            $result["id"]=(string) $result["_id"];
+            unset($result["_id"]);
+            static::$publicGroupCache=$result;
+        }
+        return static::$publicGroupCache;
     }
 
     public function findByName($name)
