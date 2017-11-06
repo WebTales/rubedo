@@ -92,7 +92,7 @@ class ApiCache extends AbstractCollection
         $updateCond->setName('cacheId')->setValue($id);
         $options = array();
         $result = $this->_dataService->customDelete($updateCond, $options);
-        if ($result['success']) {
+        if (!empty($result['ok'])) {
             return true;
         } else {
             return false;
