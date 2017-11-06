@@ -223,23 +223,23 @@ class Users extends AbstractCollection implements IUsers
         $createUser = $returnValue['data'];
 
         if ($returnValue["success"]) {
+            Manager::getService('Groups')->addUserToGroupList($createUser['id'], $groups);
             $this->_indexUser($createUser);
+            $personalPrefsObj = array(
+                'userId' => $createUser['id'],
+                'stylesheet' => 'resources/css/red_theme.css',
+                'wallpaper' => 'resources/wallpapers/rubedo.png',
+                'iconSet' => 'red',
+                'themeColor' => '#D7251D',
+                'lastEdited' => array(),
+                'HCMode' => false
+            );
+            $personalPrefsService = Manager::getService('PersonalPrefs');
+            $personalPrefsService->create($personalPrefsObj);
         }
-        Manager::getService('Groups')->addUserToGroupList($createUser['id'], $groups);
 
-        $personalPrefsObj = array(
-            'userId' => $createUser['id'],
-            'stylesheet' => 'resources/css/red_theme.css',
-            'wallpaper' => 'resources/wallpapers/rubedo.png',
-            'iconSet' => 'red',
-            'themeColor' => '#D7251D',
-            'lastEdited' => array(),
-            'HCMode' => false
-        );
 
-        $personalPrefsService = Manager::getService('PersonalPrefs');
 
-        $personalPrefsService->create($personalPrefsObj);
 
         return $returnValue;
     }
@@ -323,10 +323,11 @@ class Users extends AbstractCollection implements IUsers
                 Manager::getService('CurrentUser')->getMainWorkspaceId()
             );
         }
-
-        Manager::getService('Groups')->clearUserFromGroups($obj['id']);
-        $groups = isset($obj['groups']) ? $obj['groups'] : array();
-        Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
+        if (!parent::getIsFrontEnd()) {
+            Manager::getService('Groups')->clearUserFromGroups($obj['id']);
+            $groups = isset($obj['groups']) ? $obj['groups'] : array();
+            Manager::getService('Groups')->addUserToGroupList($obj['id'], $groups);
+        }
         $obj['groups'] = null;
         $result = parent::update($obj, $options);
 
@@ -339,6 +340,14 @@ class Users extends AbstractCollection implements IUsers
 
         //$this->propagateUserUpdate($obj['id']);
         //this needs to be fixed later
+
+        $config=Manager::getService('config');
+        if (isset($config['rubedo_config']['apiCache']) && $config['rubedo_config']['apiCache'] == "1")
+        {
+            $cacheKey = "internalRights".$obj['id'];
+            Manager::getService("ApiCache")->deleteByCacheId($cacheKey);
+        }
+
 
         return $result;
     }

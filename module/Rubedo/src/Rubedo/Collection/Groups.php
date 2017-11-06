@@ -438,21 +438,23 @@ class Groups extends AbstractCollection implements IGroups
 
     public function addUserToGroupList($userId, $groupIdList)
     {
-        $inArray = array();
-        foreach ($groupIdList as $groupId) {
-            $inArray[] = $this->_dataService->getId($groupId);
-        }
+        if(!empty($userId)) {
+            $inArray = array();
+            foreach ($groupIdList as $groupId) {
+                $inArray[] = $this->_dataService->getId($groupId);
+            }
 
-        $options = array(
-            'multiple' => true
-        );
-        $data = array(
-            '$push' => array(
-                'members' => $userId
-            )
-        );
-        $updateCond = Filter::factory('InUid')->setValue($inArray);
-        $this->_dataService->customUpdate($data, $updateCond, $options);
+            $options = array(
+                'multiple' => true
+            );
+            $data = array(
+                '$push' => array(
+                    'members' => $userId
+                )
+            );
+            $updateCond = Filter::factory('InUid')->setValue($inArray);
+            $this->_dataService->customUpdate($data, $updateCond, $options);
+        }
     }
 
     protected function _initObject($obj)
