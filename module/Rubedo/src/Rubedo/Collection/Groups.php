@@ -184,10 +184,123 @@ class Groups extends AbstractCollection implements IGroups
 
     public function getListByUserId($userId)
     {
-        $filters = Filter::factory('Value')->setName('members')->setValue($userId);
-        $groupList = $this->getListWithAncestors($filters);
+        $returnArray = array();
+        $pipeline   = array();
+        $pipeline[] = array(
+            '$match' => array(
+                'members' => $userId
+            )
+        );
+        $pipeline[] = array(
+            '$project' => array(
+                "canDeleteElements"=>1,
+                "canWriteUnownedElements"=>1,
+                "expandable"=>1,
+                "name"=>1,
+                "parentId"=>1,
+                "readWorkspaces"=>1,
+                "rights"=>1,
+                "roles"=>1,
+                "writeWorkspaces"=>1,
+                "defaultWorkspace"=>1,
+                "workspace"=>1,
+                "defaultId"=>1,
+                "system"=>1,
+                "inheritWorkspace"=>1,
+                "_id"=>1,
+            )
+        );
+        $groupList = $this->getAggregation( $pipeline );
+        $list = $groupList['data'];
+        foreach ( $list as &$item )
+        {
+            $item["id"] = (string)$item["_id"];
+            unset( $item["_id"] );
+            $returnArray = $this->_addAggregatedParentToArray( $returnArray, $item );
+        }
+        $listResult['count'] = count( $returnArray );
+        $listResult['data']  = array_values( $returnArray );
+        return $listResult;
+    }
 
-        return $groupList;
+    protected function _addAggregatedParentToArray($array, $item, $max = 5)
+    {
+        if (isset($array[$item['id']])) {
+            return $array;
+        }
+        $array[$item['id']] = $item;
+        if ($item['parentId'] == 'root') {
+            return $array;
+        }
+        if (isset($array[$item['parentId']])) {
+            return $array;
+        }
+        $parentItem = $this->findMinById($item['parentId']);
+        if ($parentItem) {
+            $array[$parentItem['id']] = $parentItem;
+            $array = $this->_addAggregatedParentToArray($array, $parentItem, $max - 1);
+        }
+
+        return $array;
+    }
+
+    public function findMinById($contentId, $forceReload = false)
+    {
+        if ($contentId === null) {
+            return null;
+        }
+        $contentId = (string)$contentId;
+        $className = "aggregatedGroupIds";
+        if (!isset(self::$_fetchedObjects[$className])) {
+            self::$_fetchedObjects[$className] = array();
+        }
+        if ($forceReload || !isset(self::$_fetchedObjects[$className][$contentId])) {
+            $obj = $this->fetchAggregatedId($contentId);
+            if ($obj) {
+                $obj = $this->_addReadableProperty($obj);
+            }
+            self::$_fetchedObjects[$className][$contentId] = $obj;
+        }
+        return self::$_fetchedObjects[$className][$contentId];
+    }
+
+    protected function fetchAggregatedId($id){
+        if(empty($id)){
+            return null;
+        }
+        $pipeline = array();
+        $pipeline[] = array(
+            '$match' => array(
+                '_id' => new \MongoId($id)
+            )
+        );
+        $pipeline[] = array(
+            '$project' => array(
+                "canDeleteElements"=>1,
+                "canWriteUnownedElements"=>1,
+                "expandable"=>1,
+                "name"=>1,
+                "parentId"=>1,
+                "readWorkspaces"=>1,
+                "rights"=>1,
+                "roles"=>1,
+                "writeWorkspaces"=>1,
+                "defaultWorkspace"=>1,
+                "workspace"=>1,
+                "defaultId"=>1,
+                "system"=>1,
+                "inheritWorkspace"=>1,
+                "_id"=>1,
+            )
+        );
+        $groupList = $this->getAggregation( $pipeline );
+        if(empty($groupList["data"][0]["_id"])){
+            return null;
+        }
+        $result=$groupList["data"][0];
+        $result["id"]=(string) $result["_id"];
+        unset($result["_id"]);
+        return $result;
     }
 
     public function getValidatingGroupsId()
@@ -293,7 +406,7 @@ class Groups extends AbstractCollection implements IGroups
      */
     public function getReadWorkspaces($groupId)
     {
-        $group = $this->findById($groupId);
+        $group = $this->findMinById($groupId);
         if (!isset($group['readWorkspaces'])) {
             $group['readWorkspaces'] = array(
                 'global'
@@ -311,7 +424,7 @@ class Groups extends AbstractCollection implements IGroups
      */
     public function getMainWorkspace($groupId)
     {
-        $group = $this->findById($groupId);
+        $group = $this->findMinById($groupId);
         if (!isset($group['defaultWorkspace']) || $group['defaultWorkspace'] == "") {
             $group['defaultWorkspace'] = 'global';
         }
@@ -325,7 +438,7 @@ class Groups extends AbstractCollection implements IGroups
      */
     public function getWriteWorkspaces($groupId)
     {
-        $group = $this->findById($groupId);
+        $group = $this->findMinById($groupId);
         if (!isset($group['writeWorkspaces']) || $group['writeWorkspaces'] == "") {
             $group['writeWorkspaces'] = array();
         }
