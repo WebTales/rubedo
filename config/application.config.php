@@ -63,6 +63,7 @@ return array(
     ), $extensionsArray),
     'module_listener_options' => array(
         'config_cache_enabled' => true,
+        'config_cache_key'=>!empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST']  : 'cli',
         'module_map_cache_enabled' => true,
         'cache_dir' => CONFIG_CACHE_DIR,
         'module_paths' => array(
