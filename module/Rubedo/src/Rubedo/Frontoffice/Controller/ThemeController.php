@@ -40,7 +40,13 @@ class ThemeController extends AbstractActionController
     {
         $theme = $this->params()->fromRoute('theme');
         $filePath = $this->params()->fromRoute('filepath');
-        $filePath=basename(realpath($filePath));
+        $realFilePath = realpath($filePath);
+        if($realFilePath){
+            $rubedoBasePath=realpath(__DIR__ . '/../../../../../');
+            if (strpos($realFilePath, $rubedoBasePath) !== 0) {
+                exit();
+            }
+        }
         $config = manager::getService('Config');
         /** @var \Rubedo\Collection\Directories $directoriesCollection */
         $directoriesCollection = Manager::getService('Directories');
