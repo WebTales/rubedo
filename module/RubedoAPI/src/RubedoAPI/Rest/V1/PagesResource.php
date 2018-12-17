@@ -275,6 +275,20 @@ class PagesResource extends AbstractResource
                 $lastMatchedNode['eCTitle']=$lastMatchedNode['i18n'][$params['lang']->getFallback()]['eCTitle'];
             }
         }
+        if (!isset($lastMatchedNode['eCImage'])) {
+            if (isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['eCImage'])){
+                $lastMatchedNode['eCImage']=$lastMatchedNode['i18n'][$params['lang']->getLocale()]['eCImage'];
+            } elseif (isset($lastMatchedNode['i18n'][$params['lang']->getFallback()]['eCImage'])){
+                $lastMatchedNode['eCImage']=$lastMatchedNode['i18n'][$params['lang']->getFallback()]['eCImage'];
+            }
+        }
+        if (!isset($lastMatchedNode['eCDescription'])) {
+            if (isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['eCDescription'])){
+                $lastMatchedNode['eCDescription']=$lastMatchedNode['i18n'][$params['lang']->getLocale()]['eCDescription'];
+            } elseif (isset($lastMatchedNode['i18n'][$params['lang']->getFallback()]['eCDescription'])){
+                $lastMatchedNode['eCDescription']=$lastMatchedNode['i18n'][$params['lang']->getFallback()]['eCDescription'];
+            }
+        }
         if (!isset($lastMatchedNode['description'])) {
             if (isset($lastMatchedNode['i18n'][$params['lang']->getLocale()]['description'])){
                 $lastMatchedNode['description']=$lastMatchedNode['i18n'][$params['lang']->getLocale()]['description'];
