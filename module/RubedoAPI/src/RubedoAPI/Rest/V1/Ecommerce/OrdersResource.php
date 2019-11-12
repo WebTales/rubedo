@@ -234,7 +234,7 @@ class OrdersResource extends AbstractResource
             }
         }
         return array(
-            'cart' => $cart,
+            'cart' => array_values($cart),
             'totalPrice' => $totalPrice,
             'totalTaxedPrice' => $totalTaxedPrice,
             'totalItems' => $totalItems
